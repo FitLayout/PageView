@@ -1,4 +1,5 @@
 import {RdfObjectLoader} from "rdf-object";
+import RDF from "../ontology/RDF.js";
 const N3 = require('n3');
 
 export default class RDFModel {
@@ -39,7 +40,7 @@ export default class RDFModel {
 				if (quad) {
 					quads.push(quad);
 					//window.quads.push(quad);
-					if (quad.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+					if (quad.predicate.value === RDF.TYPE) {
 						if (quad.object.value === this.elementType) {
 							this.elementIRIs.push(quad.subject.value);
 						}

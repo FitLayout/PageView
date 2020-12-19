@@ -16,11 +16,10 @@
 
 <script>
 import Page from './Page.vue';
+import BOX from '../ontology/BOX.js';
 import RDFModel from '../common/rdfmodel.js';
 import BoxCreator from '../common/boxcreator.js';
 const N3 = require('n3');
-
-const BOX = 'http://fitlayout.github.io/ontology/render.owl#';
 
 export default {
 	name: 'PageView',
@@ -51,7 +50,7 @@ export default {
 			this.loading = true;
 			
 			const url = 'http://localhost:8080/fitlayout-web/service/artifact/item/r:art261';
-			let pageModel = new RDFModel('http://fitlayout.github.io/resource/art261', BOX + 'Box', new BoxCreator());
+			let pageModel = new RDFModel('http://fitlayout.github.io/resource/art261', BOX.Box, new BoxCreator());
 			fetch(url, {
 				method: 'GET',
 				headers: {
