@@ -18,7 +18,7 @@
 import Page from './Page.vue';
 import BOX from '../ontology/BOX.js';
 import RDFModel from '../common/rdfmodel.js';
-import BoxCreator from '../common/boxcreator.js';
+import {BoxCreator} from '../common/boxMappers.js';
 const N3 = require('n3');
 
 export default {

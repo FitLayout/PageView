@@ -15,6 +15,7 @@ export default class RDFModel {
 	}
 	
 	iri = null; // main object IRI (e.g. page IRI)
+	mainType = null; // e.g. http://fitlayout.github.io/ontology/render.owl#Box
 	elementType = null; // e.g. http://fitlayout.github.io/ontology/render.owl#Box
 	creator = null; // object creator to be used
 
@@ -66,7 +67,10 @@ export default class RDFModel {
 	getElements() {
 		let ret = [];
 		for (let iri of this.getElementIRIs()) {
-			const elem = this.creator.create(this.loader.resources[iri]);
+			const elem = this.creator.create(this.loader.resources[iri],
+				(objectIri, type) => { 
+					return objectIri + ":" + type
+				});
 			ret.push(elem);
 		}
 		return ret;
