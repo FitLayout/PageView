@@ -1,14 +1,26 @@
 
 export default class ObjectCreator {
 
-	propertyMap = null;
+	propertyMap = {};
 
-	constructor(propertyMap) {
-		this.propertyMap = propertyMap;
+	constructor() {
+		//this.propertyMap = {};
 	}
 
+	addMapping(mapping) {
+		for (const iri in mapping) {
+			this.propertyMap[iri] = mapping[iri];
+		}
+	}
+
+	/**
+	 * Creates an object instance.
+	 * @param {} resource the RDF resource to create from 
+	 * @param {} resolverFunc a resolver function for creating nested objects
+	 */
 	create(resource, resolverFunc) {
 		let ret = {};
+		window.mmm = this.propertyMap;
 		for (const prop in this.propertyMap) {
 			window.ppp = prop;
 			const def = this.propertyMap[prop];

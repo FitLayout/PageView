@@ -1,29 +1,84 @@
 
 import ObjectCreator from './objectcreator.js';
+import RDFModel from './rdfmodel.js';
 
-export class ContentObjectCreator extends ObjectCreator {
-	constructor(mapping = {}) {
-		super({
-			objectInformation: { name: 'http://fitlayout.github.io/ontology/render.owl#objectInformation', type: 'string' },
-			...mapping
+class AreaTreeCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			hasSourcePage: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourcePage', type: 'object' },
 		});
 	}
 }
 
-export class BorderCreator extends ObjectCreator {
-	constructor(mapping = {}) {
-		super({
+class BorderCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
 			borderWidth: { name: 'http://fitlayout.github.io/ontology/render.owl#borderWidth', type: 'int' },
 			borderStyle: { name: 'http://fitlayout.github.io/ontology/render.owl#borderStyle', type: 'string' },
 			borderColor: { name: 'http://fitlayout.github.io/ontology/render.owl#borderColor', type: 'string' },
-			...mapping
 		});
 	}
 }
 
-export class RectangleCreator extends ObjectCreator {
-	constructor(mapping = {}) {
-		super({
+class ContentObjectCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			objectInformation: { name: 'http://fitlayout.github.io/ontology/render.owl#objectInformation', type: 'string' },
+		});
+	}
+}
+
+class ImageCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			imageUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#imageUrl', type: 'string' },
+			imageData: { name: 'http://fitlayout.github.io/ontology/render.owl#imageData', type: 'string' },
+		});
+	}
+}
+
+class LogicalAreaCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			containsArea: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsArea', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>[]' },
+			hasText: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasText', type: 'string' },
+			isSubordinateTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isSubordinateTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>' },
+			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
+		});
+	}
+}
+
+class LogicalAreaTreeCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
+		});
+	}
+}
+
+class PageCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			width: { name: 'http://fitlayout.github.io/ontology/render.owl#width', type: 'int' },
+			hasTitle: { name: 'http://fitlayout.github.io/ontology/render.owl#hasTitle', type: 'string' },
+			pngImage: { name: 'http://fitlayout.github.io/ontology/render.owl#pngImage', type: 'string' },
+			sourceUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#sourceUrl', type: 'string' },
+			height: { name: 'http://fitlayout.github.io/ontology/render.owl#height', type: 'int' },
+		});
+	}
+}
+
+class RectangleCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
 			width: { name: 'http://fitlayout.github.io/ontology/render.owl#width', type: 'int' },
 			imageUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#imageUrl', type: 'string' },
 			backgroundImagePosition: { name: 'http://fitlayout.github.io/ontology/render.owl#backgroundImagePosition', type: 'string' },
@@ -45,14 +100,38 @@ export class RectangleCreator extends ObjectCreator {
 			height: { name: 'http://fitlayout.github.io/ontology/render.owl#height', type: 'int' },
 			fontVariant: { name: 'http://fitlayout.github.io/ontology/render.owl#fontVariant', type: 'string' },
 			hasRightBorder: { name: 'http://fitlayout.github.io/ontology/render.owl#hasRightBorder', type: 'object<http://fitlayout.github.io/ontology/render.owl#Border>' },
-			...mapping
 		});
 	}
 }
 
-export class BoxCreator extends RectangleCreator {
-	constructor(mapping = {}) {
-		super({
+class TagCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			hasName: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasName', type: 'string' },
+			hasType: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasType', type: 'string' },
+		});
+	}
+}
+
+class AreaCreator extends RectangleCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			tagSupport: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#tagSupport', type: 'object' },
+			hasContentLength: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasContentLength', type: 'int' },
+			containsBox: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsBox', type: 'object' },
+			belongsTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
+			isChildOf: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>' },
+			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
+		});
+	}
+}
+
+class BoxCreator extends RectangleCreator {
+	constructor() {
+		super();
+		this.addMapping({
 			containsImage: { name: 'http://fitlayout.github.io/ontology/render.owl#containsImage', type: 'object<http://fitlayout.github.io/ontology/render.owl#Image>[]' },
 			visualHeight: { name: 'http://fitlayout.github.io/ontology/render.owl#visualHeight', type: 'int' },
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/render.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/render.owl#ContainerBox>' },
@@ -66,47 +145,43 @@ export class BoxCreator extends RectangleCreator {
 			htmlTagName: { name: 'http://fitlayout.github.io/ontology/render.owl#htmlTagName', type: 'string' },
 			containsObject: { name: 'http://fitlayout.github.io/ontology/render.owl#containsObject', type: 'object<http://fitlayout.github.io/ontology/render.owl#ContentObject>[]' },
 			color: { name: 'http://fitlayout.github.io/ontology/render.owl#color', type: 'string' },
-			...mapping
 		});
 	}
 }
 
-export class ContainerBoxCreator extends BoxCreator {
-	constructor(mapping = {}) {
-		super({
-			...mapping
+class ContainerBoxCreator extends BoxCreator {
+	constructor() {
+		super();
+		this.addMapping({
 		});
 	}
 }
 
-export class ImageCreator extends ObjectCreator {
-	constructor(mapping = {}) {
-		super({
-			imageUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#imageUrl', type: 'string' },
-			imageData: { name: 'http://fitlayout.github.io/ontology/render.owl#imageData', type: 'string' },
-			...mapping
+class ContentBoxCreator extends BoxCreator {
+	constructor() {
+		super();
+		this.addMapping({
 		});
 	}
 }
 
-export class PageCreator extends ObjectCreator {
-	constructor(mapping = {}) {
-		super({
-			width: { name: 'http://fitlayout.github.io/ontology/render.owl#width', type: 'int' },
-			hasTitle: { name: 'http://fitlayout.github.io/ontology/render.owl#hasTitle', type: 'string' },
-			pngImage: { name: 'http://fitlayout.github.io/ontology/render.owl#pngImage', type: 'string' },
-			sourceUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#sourceUrl', type: 'string' },
-			height: { name: 'http://fitlayout.github.io/ontology/render.owl#height', type: 'int' },
-			...mapping
-		});
-	}
-}
+const registry = {
+	'http://fitlayout.github.io/ontology/segmentation.owl#AreaTree': new AreaTreeCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#Border': new BorderCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#ContentObject': new ContentObjectCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#Image': new ImageCreator(),
+	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea': new LogicalAreaCreator(),
+	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalAreaTree': new LogicalAreaTreeCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#Page': new PageCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#Rectangle': new RectangleCreator(),
+	'http://fitlayout.github.io/ontology/segmentation.owl#Tag': new TagCreator(),
+	'http://fitlayout.github.io/ontology/segmentation.owl#Area': new AreaCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#Box': new BoxCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#ContainerBox': new ContainerBoxCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#ContentBox': new ContentBoxCreator()
+};
 
-export class ContentBoxCreator extends BoxCreator {
-	constructor(mapping = {}) {
-		super({
-			...mapping
-		});
-	}
+export class Model extends RDFModel {
+	constructor() { super(registry); }
 }
 

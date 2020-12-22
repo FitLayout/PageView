@@ -1,5 +1,4 @@
 import {RdfObjectLoader} from "rdf-object";
-import RDF from "../ontology/RDF.js";
 const N3 = require('n3');
 
 export default class RDFModel {
@@ -14,23 +13,16 @@ export default class RDFModel {
 		"r" : "http://fitlayout.github.io/resource/"
 	}
 	
-	iri = null; // main object IRI (e.g. page IRI)
-	mainType = null; // e.g. http://fitlayout.github.io/ontology/render.owl#Box
-	elementType = null; // e.g. http://fitlayout.github.io/ontology/render.owl#Box
-	creator = null; // object creator to be used
-
+	creators = null;
 	loader = null;
-	elementIRIs = [];
+	objects = {};
 
-	constructor(iri, elementType, creator) {
-		this.iri = iri;
-		this.elementType = elementType;
-		this.creator = creator;
+	constructor(creators) {
+		this.creators = creators;
 		this.loader = new RdfObjectLoader({ context: this.context });
 	}
 	
 	parse(text) {
-
 		return new Promise(resolve => {
 			const parser = new N3.Parser();
 			let quads = [];
@@ -40,12 +32,6 @@ export default class RDFModel {
 			parser.parse(text, (err, quad, prefixes) => {
 				if (quad) {
 					quads.push(quad);
-					//window.quads.push(quad);
-					if (quad.predicate.value === RDF.TYPE) {
-						if (quad.object.value === this.elementType) {
-							this.elementIRIs.push(quad.subject.value);
-						}
-					}
 				} else if (prefixes) {
 					this.loader.importArray(quads).then(() => { resolve() });
 				} else {
@@ -53,18 +39,13 @@ export default class RDFModel {
 				}
 			});
 		});
-
 	}
 
 	async add(quad) {
 		await this.loader.importArray([quad]);
 	}
 
-	getElementIRIs() {
-		return this.elementIRIs;
-	}
-
-	getElements() {
+	/*getElements() {
 		let ret = [];
 		for (let iri of this.getElementIRIs()) {
 			const elem = this.creator.create(this.loader.resources[iri],
@@ -74,14 +55,34 @@ export default class RDFModel {
 			ret.push(elem);
 		}
 		return ret;
-	}
+	}*/
 
 	getResources() {
 		return this.loader.resources;
 	}
 
-	getMain() {
-		return this.loader.resources[this.iri];
+	createObject(iri, type) {
+		if (this.objects[iri] === undefined) {
+			const creators = this.creators;
+			const creator = this.creators[type];
+			//const creator = new PageCreator();
+			const resource = this.loader.resources[iri];
+			window.rrr = resource;
+			window.ccc = creator;
+			window.ttt = this;
+			window.uuu = creators;
+			if (creator !== undefined && resource !== undefined) {
+				let obj = creator.create(resource, this.createObject);
+				if (obj) {
+					this.objects[iri] = obj;
+				}
+			}
+		} 
+		return this.objects[iri];
+	}
+
+	getObject(iri, type) {
+		return this.createObject(iri, type);
 	}
 
 }

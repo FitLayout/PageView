@@ -17,8 +17,7 @@
 <script>
 import Page from './Page.vue';
 import BOX from '../ontology/BOX.js';
-import RDFModel from '../common/rdfmodel.js';
-import {BoxCreator} from '../common/boxMappers.js';
+import {Model as BoxModel} from '../common/boxMappers.js';
 const N3 = require('n3');
 
 export default {
@@ -50,7 +49,7 @@ export default {
 			this.loading = true;
 			
 			const url = 'http://localhost:8080/fitlayout-web/service/artifact/item/r:art261';
-			let pageModel = new RDFModel('http://fitlayout.github.io/resource/art261', BOX.Box, new BoxCreator());
+			let pageModel = new BoxModel();
 			fetch(url, {
 				method: 'GET',
 				headers: {
@@ -67,9 +66,9 @@ export default {
 					}
 
 					pageModel.parse(await response.text()).then(() => {
-						window.flres = pageModel.getResources();
-						console.log(pageModel.getElements());
-						this.setPage(pageModel);
+						//window.flres = pageModel.getResources();
+						console.log(pageModel.getObject('http://fitlayout.github.io/resource/art261', BOX.Page));
+						//this.setPage(pageModel);
 					});
 
 					this.loading = false;
