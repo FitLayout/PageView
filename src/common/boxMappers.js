@@ -7,6 +7,10 @@ class AreaTreeCreator extends ObjectCreator {
 		super();
 		this.addMapping({
 			hasSourcePage: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourcePage', type: 'object' },
+			// Inverse collection for Area.belongsTo.
+			areas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>[]', inverse: true },
+			// Inverse collection for LogicalAreaTree.hasAreaTree.
+			logicalAreaTrees: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalAreaTree>[]', inverse: true },
 		});
 	}
 }
@@ -49,6 +53,8 @@ class LogicalAreaCreator extends ObjectCreator {
 			hasText: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasText', type: 'string' },
 			isSubordinateTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isSubordinateTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>' },
 			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
+			// Inverse collection for LogicalArea.isSubordinateTo.
+			logicalAreas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isSubordinateTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>[]', inverse: true },
 		});
 	}
 }
@@ -71,6 +77,8 @@ class PageCreator extends ObjectCreator {
 			pngImage: { name: 'http://fitlayout.github.io/ontology/render.owl#pngImage', type: 'string' },
 			sourceUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#sourceUrl', type: 'string' },
 			height: { name: 'http://fitlayout.github.io/ontology/render.owl#height', type: 'int' },
+			// Inverse collection for Rectangle.belongsTo.
+			rectangles: { name: 'http://fitlayout.github.io/ontology/render.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/render.owl#Rectangle>[]', inverse: true },
 		});
 	}
 }
@@ -110,6 +118,8 @@ class TagCreator extends ObjectCreator {
 		this.addMapping({
 			hasName: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasName', type: 'string' },
 			hasType: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasType', type: 'string' },
+			// Inverse collection for Area.hasTag.
+			areas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>[]', inverse: true },
 		});
 	}
 }
@@ -124,6 +134,10 @@ class AreaCreator extends RectangleCreator {
 			belongsTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>' },
 			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
+			// Inverse collection for LogicalArea.containsArea.
+			logicalAreas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsArea', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>[]', inverse: true },
+			// Inverse collection for Area.isChildOf.
+			areas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>[]', inverse: true },
 		});
 	}
 }
@@ -153,6 +167,8 @@ class ContainerBoxCreator extends BoxCreator {
 	constructor() {
 		super();
 		this.addMapping({
+			// Inverse collection for Box.isChildOf.
+			boxes: { name: 'http://fitlayout.github.io/ontology/render.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/render.owl#Box>[]', inverse: true },
 		});
 	}
 }

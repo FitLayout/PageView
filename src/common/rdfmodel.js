@@ -15,11 +15,26 @@ export default class RDFModel {
 	
 	creators = null;
 	loader = null;
+	//inverse properties to watch separately
+	invProperties = [];
+	//target objects of inverse propeties
+	targets = {};
+	//a cache of already created objects
 	objects = {};
 
 	constructor(creators) {
 		this.creators = creators;
 		this.loader = new RdfObjectLoader({ context: this.context });
+		//scan for inverse properties
+		for (const type in this.creators) {
+			const creator = this.creators[type];
+			for (const key in creator.propertyMap) {
+				if (creator.propertyMap[key].inverse) {
+					const propIri = creator.propertyMap[key].name;
+					this.invProperties[propIri] = type;
+				}
+			}
+		}
 	}
 	
 	parse(text) {
@@ -28,10 +43,14 @@ export default class RDFModel {
 			let quads = [];
 			let errors = [];
 			this.boxIRIs = [];
-					//window.quads = [];
 			parser.parse(text, (err, quad, prefixes) => {
 				if (quad) {
 					quads.push(quad);
+					//store the sources of inverse properties
+					if (this.invProperties[quad.predicate.id] !== undefined)
+					{
+						this.addTarget(quad.object.id, quad.predicate.id, quad.subject.id);
+					}
 				} else if (prefixes) {
 					this.loader.importArray(quads).then(() => { resolve() });
 				} else {
@@ -41,21 +60,23 @@ export default class RDFModel {
 		});
 	}
 
+	addTarget(objectIri, propertyIri, subjectIri) {
+		let target = this.targets[objectIri];
+		if (target === undefined) {
+			target = {};
+			this.targets[objectIri] = target;
+		}
+		let property = target[propertyIri];
+		if (property === undefined) {
+			property = [];
+			target[propertyIri] = property;
+		}
+		property.push(subjectIri);
+	}
+
 	async add(quad) {
 		await this.loader.importArray([quad]);
 	}
-
-	/*getElements() {
-		let ret = [];
-		for (let iri of this.getElementIRIs()) {
-			const elem = this.creator.create(this.loader.resources[iri],
-				(objectIri, type) => { 
-					return objectIri + ":" + type
-				});
-			ret.push(elem);
-		}
-		return ret;
-	}*/
 
 	getResources() {
 		return this.loader.resources;
@@ -63,16 +84,10 @@ export default class RDFModel {
 
 	createObject(iri, type) {
 		if (this.objects[iri] === undefined) {
-			const creators = this.creators;
 			const creator = this.creators[type];
-			//const creator = new PageCreator();
 			const resource = this.loader.resources[iri];
-			window.rrr = resource;
-			window.ccc = creator;
-			window.ttt = this;
-			window.uuu = creators;
 			if (creator !== undefined && resource !== undefined) {
-				let obj = creator.create(resource, this.createObject);
+				let obj = creator.create(resource, this);
 				if (obj) {
 					this.objects[iri] = obj;
 				}
@@ -83,6 +98,20 @@ export default class RDFModel {
 
 	getObject(iri, type) {
 		return this.createObject(iri, type);
+	}
+
+	createInverseObjects(target, property) {
+		let ret = [];
+		if (this.invProperties[target] && this.invProperties[target][property]) {
+			for (const subj of this.invProperties[target][property]) {
+				const type = this.loader.resources[subj].property['rdf:type'];
+				const obj = this.createObject(subj, type);
+				if (obj) {
+					ret.push(obj);
+				}
+			}
+		}
+		return ret;
 	}
 
 }
