@@ -16,7 +16,7 @@ export default {
 	},
 	data () {
 		return {
-			model: null,
+			page: null,
 			dataurl: null
 		}
 	},
@@ -28,28 +28,29 @@ export default {
 	},
 	methods: {
 		render() {
-			this.model = this.pageModel;
-			if (this.model !== null && this.model.getMain().property['b:pngImage'] !== undefined) {
-				const imgData = this.model.getMain().property['b:pngImage'].value;
+			this.page = this.pageModel;
+			if (this.page !== null && this.page.pngImage !== undefined) {
+				const imgData = this.page.pngImage;
 				this.dataurl = 'data:image/png;base64,' + imgData;
 			} else {
 				this.dataurl = null;
 			}
 			console.log(this.$refs);
 			if (this.$refs.boxes !== undefined) {
-				this.renderBoxes(this.model.getElements(), this.$refs.boxes);
+				this.renderBoxes(this.page.rectangles, this.$refs.boxes);
 			}
 		},
 
 		renderBoxes(boxList, target) {
 			//let shadow = target.attachShadow({mode: 'open'});
+			console.log(boxList);
 			const shadow = target;
 			for (let box of boxList) {
 				let el = document.createElement('div');
 				shadow.appendChild(el);
 				el.setAttribute('class', 'box');
-				el.style.left = box.x + 'px';
-				el.style.top = box.y + 'px';
+				el.style.left = box.positionX + 'px';
+				el.style.top = box.positionY + 'px';
 				el.style.width = box.width + 'px';
 				el.style.height = box.height + 'px';
 				el.onclick = function() {

@@ -89,6 +89,8 @@ export default class RDFModel {
 			if (creator !== undefined && resource !== undefined) {
 				let obj = creator.create(resource, this);
 				if (obj) {
+					obj['_iri'] = iri;
+					obj['_type'] = type;
 					this.objects[iri] = obj;
 				}
 			}
@@ -102,12 +104,15 @@ export default class RDFModel {
 
 	createInverseObjects(target, property) {
 		let ret = [];
-		if (this.invProperties[target] && this.invProperties[target][property]) {
-			for (const subj of this.invProperties[target][property]) {
+		const t = this.targets[target];
+		if (t !== undefined && t[property] !== undefined) {
+			for (const subj of t[property]) {
 				const type = this.loader.resources[subj].property['rdf:type'];
-				const obj = this.createObject(subj, type);
-				if (obj) {
-					ret.push(obj);
+				if (type && type.value) {
+					const obj = this.createObject(subj, type.value);
+					if (obj) {
+						ret.push(obj);
+					}
 				}
 			}
 		}

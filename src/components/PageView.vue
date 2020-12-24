@@ -48,7 +48,7 @@ export default {
 			this.error = this.post = null;
 			this.loading = true;
 			
-			const url = 'http://localhost:8080/fitlayout-web/service/artifact/item/r:art261';
+			const url = 'http://localhost:8080/fitlayout-web/service/artifact/item/r:art1';
 			let pageModel = new BoxModel();
 			fetch(url, {
 				method: 'GET',
@@ -67,8 +67,9 @@ export default {
 
 					pageModel.parse(await response.text()).then(() => {
 						//window.flres = pageModel.getResources();
-						console.log(pageModel.getObject('http://fitlayout.github.io/resource/art261', BOX.Page));
-						//this.setPage(pageModel);
+						let page = pageModel.getObject('http://fitlayout.github.io/resource/art1', BOX.Page);
+						console.log(page);
+						this.setPage(page);
 					});
 
 					this.loading = false;

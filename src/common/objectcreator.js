@@ -27,6 +27,8 @@ export default class ObjectCreator {
 				ret[prop] = model.createInverseObjects(resource.value, def.name);
 			} else {
 				const property = resource.property[def.name];
+				if (prop === 'belongsTo')
+					console.log(def);
 				if (property) {
 					ret[prop] = this.getPropertyValue(property, type, model);
 				}
@@ -36,16 +38,16 @@ export default class ObjectCreator {
 	}
 
 	getPropertyValue(property, type, model) {
-			if (type.endsWith('[]')) {
-				type = type.substring(0, type.length - 2);
-				return this.getValueList(property, type, model);
-			}
-			else if (type.startsWith('object<')) {
-				type = type.substring(7, type.length - 8);
-				return this.getObject(property, type, model);
-			} else {
-				return this.getSimpleValue(property, type);
-			}
+		if (type.endsWith('[]')) {
+			type = type.substring(0, type.length - 2);
+			return this.getValueList(property, type, model);
+		}
+		else if (type.startsWith('object<')) {
+			type = type.substring(7, type.length - 1);
+			return this.getObject(property, type, model);
+		} else {
+			return this.getSimpleValue(property, type);
+		}
 	}
 
 	getSimpleValue(property, type) {
