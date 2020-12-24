@@ -14,12 +14,14 @@ export default class ObjectCreator {
 	}
 
 	/**
-	 * Creates an object instance.
+	 * Creates an object instance. Takes an initial target object and fills it with
+	 * the properties and their values.
 	 * @param {} resource the RDF resource to create from 
 	 * @param {} model a model for creating nested objects
+	 * @param {} target target object to be filled with properties 
 	 */
-	create(resource, model) {
-		let ret = {};
+	create(resource, model, target) {
+		let ret = target;
 		for (const prop in this.propertyMap) {
 			const def = this.propertyMap[prop];
 			const type = def.type;
@@ -27,8 +29,6 @@ export default class ObjectCreator {
 				ret[prop] = model.createInverseObjects(resource.value, def.name);
 			} else {
 				const property = resource.property[def.name];
-				if (prop === 'belongsTo')
-					console.log(def);
 				if (property) {
 					ret[prop] = this.getPropertyValue(property, type, model);
 				}

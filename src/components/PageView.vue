@@ -68,6 +68,7 @@ export default {
 					pageModel.parse(await response.text()).then(() => {
 						//window.flres = pageModel.getResources();
 						let page = pageModel.getObject('http://fitlayout.github.io/resource/art1', BOX.Page);
+						console.log('PAGE');
 						console.log(page);
 						this.setPage(page);
 					});

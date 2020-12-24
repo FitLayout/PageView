@@ -87,14 +87,13 @@ export default class RDFModel {
 			const creator = this.creators[type];
 			const resource = this.loader.resources[iri];
 			if (creator !== undefined && resource !== undefined) {
-				let obj = creator.create(resource, this);
-				if (obj) {
-					obj['_iri'] = iri;
-					obj['_type'] = type;
-					this.objects[iri] = obj;
-				}
-			}
-		} 
+				let obj = {};
+				obj['_iri'] = iri;
+				obj['_type'] = type;
+				this.objects[iri] = obj;
+				creator.create(resource, this, obj);
+			} 
+		}
 		return this.objects[iri];
 	}
 
