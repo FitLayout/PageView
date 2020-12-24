@@ -20,12 +20,15 @@ import BOX from '../ontology/BOX.js';
 import {Model as BoxModel} from '../common/boxMappers.js';
 const N3 = require('n3');
 
+const ARTIFACT_ENDPOINT = 'http://localhost:8080/fitlayout-web/service/artifact/item/';
+
 export default {
 	name: 'PageView',
 	components: {
 		Page
 	},
 	props: {
+		artifactIri: null
 	},
 	data () {
 		return {
@@ -42,13 +45,18 @@ export default {
 	watch: {
 		// call again the method if the route changes
 		//'$route': 'fetchData'
+		'artifactIri': 'fetchData'
 	},
 	methods: {
 		async fetchData() {
+			console.log('fetch' + this.artifactIri)
+			if (!this.artifactIri) {
+				return;
+			}
 			this.error = this.post = null;
 			this.loading = true;
 			
-			const url = 'http://localhost:8080/fitlayout-web/service/artifact/item/r:art1';
+			const url = ARTIFACT_ENDPOINT + encodeURIComponent(this.artifactIri);
 			let pageModel = new BoxModel();
 			fetch(url, {
 				method: 'GET',
@@ -67,7 +75,7 @@ export default {
 
 					pageModel.parse(await response.text()).then(() => {
 						//window.flres = pageModel.getResources();
-						let page = pageModel.getObject('http://fitlayout.github.io/resource/art1', BOX.Page);
+						let page = pageModel.getObject(this.artifactIri, BOX.Page);
 						console.log('PAGE');
 						console.log(page);
 						this.setPage(page);

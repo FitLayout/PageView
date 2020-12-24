@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>PageViewer</h1>
-    <PageView />
+    <PageView artifactIri="http://fitlayout.github.io/resource/art1" />
   </div>
 </template>
 

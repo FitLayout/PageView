@@ -43,7 +43,6 @@ export default {
 
 		renderBoxes(boxList, target) {
 			//let shadow = target.attachShadow({mode: 'open'});
-			console.log(boxList);
 			const shadow = target;
 			for (let box of boxList) {
 				let el = document.createElement('div');
