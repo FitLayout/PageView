@@ -47,14 +47,25 @@ export default {
 			for (let box of boxList) {
 				let el = document.createElement('div');
 				shadow.appendChild(el);
+				el.srcBox = box;
 				el.setAttribute('class', 'box');
 				el.style.left = box.positionX + 'px';
 				el.style.top = box.positionY + 'px';
 				el.style.width = box.width + 'px';
 				el.style.height = box.height + 'px';
-				el.onclick = function() {
-					console.log('clicked');
+				el.onclick = function(event) {
+					//console.log(event.currentTarget);
+					event.currentTarget.classList.toggle('selected');
 				};
+
+				//visual bounds inside
+				let vel = document.createElement('div');
+				vel.setAttribute('class', 'vbox');
+				vel.style.left = (box.visualX - box.positionX) + 'px';
+				vel.style.top = (box.visualY - box.positionY) + 'px';
+				vel.style.width = box.visualWidth + 'px';
+				vel.style.height = box.visualHeight + 'px';
+				el.appendChild(vel);
 			}
 		}
 	}
@@ -72,11 +83,20 @@ export default {
 	right: 0;
 	bottom: 0;
 }
-.box {
+.box, .vbox {
 	position: absolute;
+}
+.box.selected {
+	outline: 1px solid red;
+}
+.box.selected .vbox {
+	outline: 1px solid green;
 }
 .box:hover {
 	/*outline: 1px solid red;*/
 	background-color: rgba(200, 200, 255, 0.3);
+}
+.box:hover .vbox {
+	background-color: rgba(255, 200, 255, 0.3);
 }
 </style>
