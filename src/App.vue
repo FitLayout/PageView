@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <h1>PageViewer</h1>
-    <PageView artifactIri="http://fitlayout.github.io/resource/art1" />
+	<router-view></router-view>
+    <!--<PageView artifactIri="http://fitlayout.github.io/resource/art1" />-->
   </div>
 </template>
 
