@@ -12,7 +12,8 @@
 export default {
 	name: 'Page',
 	props: {
-		pageModel: null
+		pageModel: null,
+		rectangles: null
 	},
 	data () {
 		return {
@@ -24,7 +25,8 @@ export default {
 		this.render();
 	},
 	watch: {
-		pageModel: 'render'
+		pageModel: 'render',
+		rectangles: 'render'
 	},
 	methods: {
 		render() {
@@ -36,8 +38,8 @@ export default {
 				this.dataurl = null;
 			}
 			console.log(this.$refs);
-			if (this.$refs.boxes !== undefined) {
-				this.renderBoxes(this.page.rectangles, this.$refs.boxes);
+			if (this.$refs.boxes !== undefined && this.rectangles != null) {
+				this.renderBoxes(this.rectangles, this.$refs.boxes);
 			}
 		},
 

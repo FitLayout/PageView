@@ -82,6 +82,15 @@ export default class RDFModel {
 		return this.loader.resources;
 	}
 
+	getType(subj) {
+		const type = this.loader.resources[subj].property['rdf:type'];
+		if (type && type.value) {
+			return type.value;
+		} else {
+			return undefined;
+		}
+	}
+
 	createObject(iri, type) {
 		if (this.objects[iri] === undefined) {
 			const creator = this.creators[type];
@@ -106,9 +115,9 @@ export default class RDFModel {
 		const t = this.targets[target];
 		if (t !== undefined && t[property] !== undefined) {
 			for (const subj of t[property]) {
-				const type = this.loader.resources[subj].property['rdf:type'];
-				if (type && type.value) {
-					const obj = this.createObject(subj, type.value);
+				const type = this.getType(subj);
+				if (type) {
+					const obj = this.createObject(subj, type);
 					if (obj) {
 						ret.push(obj);
 					}

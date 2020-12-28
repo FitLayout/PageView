@@ -4,7 +4,7 @@
       Loading...
     </div>
 
-	<Page :pageModel="pageModel">
+	<Page :pageModel="pageModel" :rectangles="rectangles">
 	</Page>
 
     <div v-if="error" class="error">
@@ -17,8 +17,9 @@
 <script>
 import Page from './Page.vue';
 import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
 import {Model as BoxModel} from '../common/boxMappers.js';
-const N3 = require('n3');
+import {ApiClient} from '../common/apiclient.js';
 
 const ARTIFACT_ENDPOINT = 'http://localhost:8080/fitlayout-web/service/artifact/item/';
 
@@ -34,7 +35,9 @@ export default {
 		return {
 			loading: false,
 			error: null,
-			pageModel: null
+			artifactModel: null,
+			pageModel: null,
+			rectangles: null
 		}
 	},
 	created () {
@@ -49,48 +52,46 @@ export default {
 	},
 	methods: {
 		async fetchData() {
-			console.log('fetch' + this.artifactIri)
+			console.log('fetch ' + this.artifactIri)
 			if (!this.artifactIri) {
 				return;
 			}
 			this.error = this.post = null;
 			this.loading = true;
 			
-			const url = ARTIFACT_ENDPOINT + encodeURIComponent(this.artifactIri);
-			let pageModel = new BoxModel();
-			fetch(url, {
-				method: 'GET',
-				headers: {
-					'Accept': 'text/turtle'
-				}
-			})
-				.then(async response => {
+			const client = new ApiClient();
+			try {
+				let artifact = await client.fetchArtifact(this.artifactIri);
+				console.log(artifact);
+				let type = artifact._type;
 
-					// check for error response
-					if (!response.ok) {
-						// get error message from body or default to response status
-						this.error = response.status;
-						return;
+				if (type === BOX.Page) {
+					this.setArtifact(artifact);
+					this.setPage(artifact, artifact.rectangles);
+				} else if (type === SEGM.AreaTree) {
+					this.setArtifact(artifact);
+					if (artifact.hasSourcePage) {
+						let page = await client.fetchArtifact(artifact.hasSourcePage);
+						this.setPage(page, artifact.areas);
 					}
+				} else {
+					console.error('Unknown artifact type for ' + this.artifactIri)
+				}
 
-					pageModel.parse(await response.text()).then(() => {
-						//window.flres = pageModel.getResources();
-						let page = pageModel.getObject(this.artifactIri, BOX.Page);
-						console.log('PAGE');
-						console.log(page);
-						this.setPage(page);
-					});
-
-					this.loading = false;
-				})
-				.catch(error => {
-					this.error = error;
-					console.error('There was an error!', error);
-				});
+				this.loading = false;
+			} catch (error) {
+				this.error = error.message;
+				console.error('There was an error!', error);
+			}
 		},
 
-		setPage(page) {
+		setArtifact(artifact) {
+			this.artifactModel = artifact;
+		},
+
+		setPage(page, rectangles) {
 			this.pageModel = page;
+			this.rectangles = rectangles;
 		}
 
 	}
