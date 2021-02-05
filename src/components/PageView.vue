@@ -16,13 +16,13 @@
 		<div class="tools row">
 			<form class="row row-cols-lg-auto g-3 align-items-center">
 				<div class="col-sm-3">
-					<label for="zoom" class="form-label">Zoom</label>
-					<input type="range" class="form-range" min="50" max="200" step="5" id="zoom">
+					<label for="zoom" class="form-label">Zoom <b>{{ zoom }}%</b></label>
+					<input type="range" class="form-range" min="20" max="200" step="5" id="zoom" v-model="zoom">
 				</div>
 			</form>
 		</div>
 		<div class="page-contents row gx-0 h-100 overflow-auto">
-			<Page :pageModel="pageModel" :rectangles="rectangles">
+			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom">
 			</Page>
 		</div>
 	</div>
@@ -53,7 +53,8 @@ export default {
 			error: null,
 			artifactModel: null,
 			pageModel: null,
-			rectangles: null
+			rectangles: null,
+			zoom: 100
 		}
 	},
 	created () {

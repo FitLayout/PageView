@@ -16,7 +16,7 @@ export default {
 	props: {
 		pageModel: null,
 		rectangles: null,
-		zoom: 1.0
+		zoom: null
 	},
 	data () {
 		return {
@@ -83,12 +83,16 @@ export default {
 		},
 
 		updateZoom() {
-			this.zoomStyle = `transform:scale(${this.zoom})`;
+			const ratio = this.zoom / 100.0;
+			this.zoomStyle = `transform:scale(${ratio})`;
 		}
 	}
 }
 </script>
 <style>
+.pageZoom {
+	transform-origin: top left;
+}
 .pageView {
 	overflow: hidden;
 	position: relative;
