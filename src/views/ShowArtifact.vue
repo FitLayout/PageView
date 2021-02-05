@@ -1,6 +1,6 @@
 <template>
-	<div class="view-artifact">
-		<p>Show: <code>{{ iri }}</code></p>
+	<div class="view-artifact h-100">
+		<!--<p>Show: <code>{{ iri }}</code></p>-->
 		<PageView :artifactIri="iri" />
 	</div>
 </template>

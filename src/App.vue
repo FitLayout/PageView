@@ -1,13 +1,17 @@
 <template>
-  <div id="app" class="container-fluid">
+  <div id="app" class="container-fluid vh-100 d-flex flex-column">
 
-	<nav class="navbar navbar-light bg-light bg-gradient">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#">FitLayout</a>
-		</div>
-	</nav>
+	<div class="row">
+		<nav class="navbar navbar-light bg-light bg-gradient">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#">FitLayout</a>
+			</div>
+		</nav>
+	</div>
 
-	<router-view></router-view>
+	<div class="row flex-fill overflow-hidden">
+		<router-view></router-view>
+	</div>
     <!--<PageView artifactIri="http://fitlayout.github.io/resource/art1" />-->
   </div>
 </template>

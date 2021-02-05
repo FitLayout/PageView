@@ -1,15 +1,19 @@
 <template>
-  <div class="post">
-    <div v-if="loading" class="loading">
-      Loading...
-    </div>
+  <div class="page-view h-100 row">
 
-	<Page :pageModel="pageModel" :rectangles="rectangles">
-	</Page>
+	<div class="sidebar col-4">
+		<div v-if="loading" class="loading">
+		Loading...
+		</div>
+		<div v-if="error" class="error">
+		{{ error }}
+		</div>
+	</div>
 
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
+	<div class="page-contents h-100 col-8 overflow-auto">
+		<Page :pageModel="pageModel" :rectangles="rectangles">
+		</Page>
+	</div>
 
   </div>
 </template>

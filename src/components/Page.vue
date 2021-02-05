@@ -1,9 +1,11 @@
 <template>
-  <div class="pageView">
-    <div v-if="dataurl" class="image">
-	  <img :src="dataurl" alt="screenshot">
-    </div>
-	<div class="boxes" ref="boxes">
+  <div class="pageZoom h-100" :style="zoomStyle">
+	<div class="pageView" :style="pageStyle">
+		<div v-if="dataurl" class="image">
+		<img :src="dataurl" alt="screenshot">
+		</div>
+		<div class="boxes" ref="boxes">
+		</div>
 	</div>
   </div>
 </template>
@@ -13,12 +15,15 @@ export default {
 	name: 'Page',
 	props: {
 		pageModel: null,
-		rectangles: null
+		rectangles: null,
+		zoom: 1.0
 	},
 	data () {
 		return {
 			page: null,
-			dataurl: null
+			dataurl: null,
+			pageStyle: '',
+			zoomStyle: ''
 		}
 	},
 	created () {
@@ -26,18 +31,24 @@ export default {
 	},
 	watch: {
 		pageModel: 'render',
-		rectangles: 'render'
+		rectangles: 'render',
+		zoom: 'updateZoom'
 	},
 	methods: {
 		render() {
 			this.page = this.pageModel;
+			// read page size
+			if (this.page !== null) {
+				this.pageStyle = `width:${this.page.width}px;height:${this.page.height}px`;
+			}
+			// decode the screenshot
 			if (this.page !== null && this.page.pngImage !== undefined) {
 				const imgData = this.page.pngImage;
 				this.dataurl = 'data:image/png;base64,' + imgData;
 			} else {
 				this.dataurl = null;
 			}
-			console.log(this.$refs);
+			//console.log(this.$refs);
 			if (this.$refs.boxes !== undefined && this.rectangles != null) {
 				this.renderBoxes(this.rectangles, this.$refs.boxes);
 			}
@@ -69,6 +80,10 @@ export default {
 				vel.style.height = box.visualHeight + 'px';
 				el.appendChild(vel);
 			}
+		},
+
+		updateZoom() {
+			this.zoomStyle = `transform:scale(${this.zoom})`;
 		}
 	}
 }
