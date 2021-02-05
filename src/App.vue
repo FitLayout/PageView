@@ -1,6 +1,12 @@
 <template>
-  <div id="app">
-    <h1>PageViewer</h1>
+  <div id="app" class="container-fluid">
+
+	<nav class="navbar navbar-light bg-light bg-gradient">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">FitLayout</a>
+		</div>
+	</nav>
+
 	<router-view></router-view>
     <!--<PageView artifactIri="http://fitlayout.github.io/resource/art1" />-->
   </div>
