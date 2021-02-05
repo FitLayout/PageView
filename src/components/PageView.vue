@@ -2,17 +2,29 @@
   <div class="page-view h-100 row">
 
 	<div class="sidebar col-4">
-		<div v-if="loading" class="loading">
-		Loading...
+		<div v-if="loading" class="loading alert alert-light">
+			<div class="spinner-border text-primary" role="status">
+			</div>
+			<span>Loading...</span>
 		</div>
-		<div v-if="error" class="error">
+		<div v-if="error" class="error alert alert-danger">
 		{{ error }}
 		</div>
 	</div>
 
-	<div class="page-contents h-100 col-8 overflow-auto">
-		<Page :pageModel="pageModel" :rectangles="rectangles">
-		</Page>
+	<div class="col-page h-100 col-8 d-flex flex-column">
+		<div class="tools row">
+			<form class="row row-cols-lg-auto g-3 align-items-center">
+				<div class="col-sm-3">
+					<label for="zoom" class="form-label">Zoom</label>
+					<input type="range" class="form-range" min="50" max="200" step="5" id="zoom">
+				</div>
+			</form>
+		</div>
+		<div class="page-contents row gx-0 h-100 overflow-auto">
+			<Page :pageModel="pageModel" :rectangles="rectangles">
+			</Page>
+		</div>
 	</div>
 
   </div>
@@ -85,6 +97,7 @@ export default {
 				this.loading = false;
 			} catch (error) {
 				this.error = error.message;
+				this.loading = false;
 				console.error('There was an error!', error);
 			}
 		},
@@ -101,3 +114,12 @@ export default {
 	}
 }
 </script>
+
+<style>
+.loading span {
+	margin-left: 1em;
+}
+.page-contents {
+	border: 2px solid lightgray;
+}
+</style>
