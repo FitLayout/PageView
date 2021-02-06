@@ -5,7 +5,10 @@ export default class ObjectCreator {
 
 	constructor() {
 		this.addMapping({
-			_label: { name: 'http://www.w3.org/2000/01/rdf-schema#label', type: 'string' }
+			_label: { name: 'http://www.w3.org/2000/01/rdf-schema#label', type: 'string' },
+			createdOn: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#createdOn', type: 'string' },
+			creator: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#creator', type: 'string' },
+			creatorParams: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#creatorParams', type: 'string' },
 		});
 	}
 

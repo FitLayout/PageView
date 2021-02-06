@@ -1,8 +1,13 @@
 <template>
 	<div :class="typeClass">
-		<p><small><Iri :iri="iri"></Iri> ({{ typeName }})</small></p>
+		<p><strong>{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
 		<div v-if="artifact">
-			<p class="alabel" v-if="artifact._label"><strong>{{ artifact._label }}</strong></p>
+			<p class="alabel" v-if="artifact._label">{{ artifact._label }}</p>
+			<div v-if="typeName === 'Box Tree'">
+			    <p class="url">{{ artifact.sourceUrl }}</p>
+			</div>
+			<p class="creator" :title="artifact.creatorParams">{{ artifact.creator }}</p>
+			<p class="createdOn">{{ artifact.createdOn }}</p>
 		</div>
 	</div>
 </template>
@@ -15,15 +20,27 @@
 	padding: 0.5em 1em;
 	background-color: var(--bs-light);
 }
-.artifact p {
-	margin: 0;
-}
 .boxtree {
 	background-color: #e1ffe1;
 }
 .areatree {
 	background-color: #ffe1e1;
 }
+.artifact p {
+	margin: 0;
+}
+.artifact .alabel {
+	font-weight: bold;
+	font-size: 115%;
+}
+.artifact .creator, .artifact .url {
+	font-size: 80%;
+}
+.artifact .createdOn {
+	font-size: 80%;
+	font-style: italic;
+}
+
 </style>
 
 <script>
