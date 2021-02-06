@@ -4,7 +4,9 @@ export default class ObjectCreator {
 	propertyMap = {};
 
 	constructor() {
-		//this.propertyMap = {};
+		this.addMapping({
+			_label: { name: 'http://www.w3.org/2000/01/rdf-schema#label', type: 'string' }
+		});
 	}
 
 	addMapping(mapping) {
