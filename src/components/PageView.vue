@@ -10,6 +10,9 @@
 		<div v-if="error" class="error alert alert-danger">
 		{{ error }}
 		</div>
+		<div v-if="pageModel">
+		    <ArtInfo :iri="artifactIri"></ArtInfo>
+		</div>
 	</div>
 
 	<div class="col-page h-100 col-8 d-flex flex-column">
@@ -32,6 +35,7 @@
 
 <script>
 import Page from './Page.vue';
+import ArtInfo from './ArtInfo.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import {Model as BoxModel} from '../common/boxMappers.js';
@@ -42,7 +46,8 @@ const ARTIFACT_ENDPOINT = 'http://localhost:8080/fitlayout-web/service/artifact/
 export default {
 	name: 'PageView',
 	components: {
-		Page
+		Page,
+		ArtInfo
 	},
 	props: {
 		artifactIri: null
@@ -117,6 +122,9 @@ export default {
 </script>
 
 <style>
+.sidebar {
+	font-size: 80%;
+}
 .loading span {
 	margin-left: 1em;
 }
