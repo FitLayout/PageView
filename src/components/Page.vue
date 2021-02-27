@@ -62,10 +62,10 @@ export default {
 				shadow.appendChild(el);
 				el.srcBox = box;
 				el.setAttribute('class', 'box');
-				el.style.left = box.positionX + 'px';
-				el.style.top = box.positionY + 'px';
-				el.style.width = box.width + 'px';
-				el.style.height = box.height + 'px';
+				el.style.left = box.bounds.positionX + 'px';
+				el.style.top = box.bounds.positionY + 'px';
+				el.style.width = box.bounds.width + 'px';
+				el.style.height = box.bounds.height + 'px';
 				el.onclick = function(event) {
 					//console.log(event.currentTarget);
 					event.currentTarget.classList.toggle('selected');
