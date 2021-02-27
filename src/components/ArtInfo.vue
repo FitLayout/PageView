@@ -1,30 +1,30 @@
 <template>
 	<div :class="typeClass">
-		<p><strong>{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
+		<p><strong class="badge">{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
 		<div v-if="artifact">
 			<p class="alabel" v-if="artifact._label">{{ artifact._label }}</p>
-			<div v-if="typeName === 'Box Tree'">
-			    <p class="url">{{ artifact.sourceUrl }}</p>
+			<div v-if="expand">
+				<div v-if="typeName === 'Box Tree'">
+					<p class="url">{{ artifact.sourceUrl }}</p>
+				</div>
+				<p class="creator" :title="artifact.creatorParams">{{ artifact.creator }}</p>
+				<p class="createdOn">{{ artifact.createdOn }}</p>
 			</div>
-			<p class="creator" :title="artifact.creatorParams">{{ artifact.creator }}</p>
-			<p class="createdOn">{{ artifact.createdOn }}</p>
 		</div>
 	</div>
 </template>
 
 <style>
 .artifact {
-	border: 1px dotted var(--bs-gray);
-	border-radius: 5px;
 	margin: 1em;
 	padding: 0.5em 1em;
 	background-color: var(--bs-light);
 }
-.boxtree {
-	background-color: #e1ffe1;
+.boxtree .badge {
+	background-color: var(--bs-green);
 }
-.areatree {
-	background-color: #ffe1e1;
+.areatree .badge {
+	background-color: var(--bs-orange);
 }
 .artifact p {
 	margin: 0;
@@ -45,6 +45,8 @@
 
 <script>
 import Iri from './Iri.vue';
+import BOX from '@/ontology/BOX.js';
+import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
 import {ApiClient} from '../common/apiclient.js';
 
@@ -54,7 +56,8 @@ export default {
 		Iri
 	},
 	props: {
-		iri: null
+		iri: null,
+		expand: null
 	},
 	data () {
 		return {
@@ -83,11 +86,11 @@ export default {
 		update() {
 			console.log(this.artifact);
 			switch (this.artifact._type) {
-				case 'http://fitlayout.github.io/ontology/render.owl#Page':
+				case BOX.Page:
 					this.typeName = 'Box Tree';
 					this.typeClass = 'artifact boxtree';
 					break;
-				case 'http://fitlayout.github.io/ontology/segmentation.owl#AreaTree':
+				case SEGM.AreaTree:
 					this.typeName = 'Area Tree';
 					this.typeClass = 'artifact areatree';
 					break;
