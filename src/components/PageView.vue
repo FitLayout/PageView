@@ -11,7 +11,7 @@
 		{{ error }}
 		</div>
 		<div v-if="pageModel">
-		    <ArtInfo :iri="artifactIri"></ArtInfo>
+			<ArtTree :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
 		</div>
 	</div>
 
@@ -36,18 +36,18 @@
 <script>
 import Page from './Page.vue';
 import ArtInfo from './ArtInfo.vue';
-import BOX from '../ontology/BOX.js';
-import SEGM from '../ontology/SEGM.js';
-import {Model as BoxModel} from '../common/boxMappers.js';
-import {ApiClient} from '../common/apiclient.js';
-
-const ARTIFACT_ENDPOINT = 'http://localhost:8080/fitlayout-web/service/artifact/item/';
+import ArtTree from './ArtTree.vue';
+import BOX from '@/ontology/BOX.js';
+import SEGM from '@/ontology/SEGM.js';
+import {Model as BoxModel} from '@/common/boxMappers.js';
+import {ApiClient} from '@/common/apiclient.js';
 
 export default {
 	name: 'PageView',
 	components: {
 		Page,
-		ArtInfo
+		ArtInfo,
+		ArtTree
 	},
 	props: {
 		artifactIri: null
@@ -89,7 +89,7 @@ export default {
 
 				if (type === BOX.Page) {
 					this.setArtifact(artifact);
-					this.setPage(artifact, artifact.rectangles);
+					this.setPage(artifact, artifact.rectAreas);
 				} else if (type === SEGM.AreaTree) {
 					this.setArtifact(artifact);
 					if (artifact.hasSourcePage) {
@@ -115,6 +115,10 @@ export default {
 		setPage(page, rectangles) {
 			this.pageModel = page;
 			this.rectangles = rectangles;
+		},
+
+		changeArtifact(iri) {
+			this.$emit('select-artifact', iri);
 		}
 
 	}

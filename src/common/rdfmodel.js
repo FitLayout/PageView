@@ -110,6 +110,23 @@ export default class RDFModel {
 		return this.createObject(iri, type);
 	}
 
+	/**
+	 * Creates all objects of known types and returns a collection.
+	 */
+	getAllObjects() {
+		let ret = [];
+		for (let res in this.getResources()) {
+			const rtype = this.getType(res);
+			if (rtype) {
+				const obj = this.getObject(res, rtype);
+				if (obj) {
+					ret.push(obj);
+				}
+			}
+		}
+		return ret;
+	}
+
 	createInverseObjects(target, property) {
 		let ret = [];
 		const t = this.targets[target];

@@ -1,7 +1,7 @@
 <template>
 	<div class="view-artifact h-100">
 		<!--<p>Show: <code>{{ iri }}</code></p>-->
-		<PageView :artifactIri="iri" />
+		<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" />
 	</div>
 </template>
 
@@ -20,6 +20,14 @@ export default {
 	computed: {
 		iri() {
 			return this.$route.params.iri;
+		}
+	},
+	methods: {
+		selectArtifact(iri) {
+			console.log('SEL ' + iri);
+			if (iri !== this.iri) {
+				this.$router.push({name: 'show', params: {iri: iri}});
+			}
 		}
 	}
 }

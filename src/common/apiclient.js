@@ -48,4 +48,23 @@ export class ApiClient {
 			return artifact;
 	}
 
+	async fetchArtifactInfoAll() {
+		const url = ARTIFACT_ENDPOINT;
+		let pageModel = new BoxModel();
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: {
+				'Accept': 'text/turtle'
+			}
+		})
+
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+
+		await pageModel.parse(await response.text());
+		return pageModel.getAllObjects();
+	}
+
 }

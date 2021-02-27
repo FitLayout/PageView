@@ -1,5 +1,5 @@
 <template>
-	<div :class="typeClass">
+	<div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
 		<p><strong class="badge">{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
 		<div v-if="artifact">
 			<p class="alabel" v-if="artifact._label">{{ artifact._label }}</p>
