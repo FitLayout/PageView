@@ -3,7 +3,7 @@
 		<p><strong class="badge">{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
 		<div v-if="artifact">
 			<p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
-			<div v-if="expand">
+			<div class="ainfo">
 				<div v-if="typeName === 'Page'">
 					<p class="url">{{ artifact.sourceUrl }}</p>
 				</div>
@@ -19,6 +19,20 @@
 	margin: 1em;
 	padding: 0.5em 1em;
 	background-color: var(--bs-light);
+	border-radius: 10px;
+	border: 1px solid var(--bs-light);
+}
+.artifact .ainfo {
+	display: none;
+}
+.selected > .artifact {
+	border: 1px dotted var(--bs-dark);
+}
+.selected > .artifact .ainfo {
+	display: block;
+}
+.artifact:hover .ainfo {
+	display: block;
 }
 .boxtree .badge {
 	background-color: var(--bs-green);

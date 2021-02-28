@@ -1,7 +1,7 @@
 <template>
 	<ul class="artlist">
-		<li v-for="art in children" :key="art._iri">
-			<ArtInfo :iri="art._iri" :expand="art._iri === currentIri"
+		<li v-for="art in children" :key="art._iri" :class="(art._iri === currentIri) ? 'selected':''">
+			<ArtInfo :iri="art._iri" 
 				v-on:select-artifact="selectArtifact"></ArtInfo>
 			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri" v-on:select-artifact="selectArtifact"></ArtTree>
 		</li>
