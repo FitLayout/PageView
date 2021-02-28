@@ -24,7 +24,6 @@ export default {
 	},
 	methods: {
 		selectArtifact(iri) {
-			console.log('SEL ' + iri);
 			if (iri !== this.iri) {
 				this.$router.push({name: 'show', params: {iri: iri}});
 			}

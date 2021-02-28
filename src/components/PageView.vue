@@ -2,9 +2,7 @@
   <div class="page-view h-100 row">
 
 	<div class="sidebar col-4">
-		<div v-if="pageModel">
-			<ArtTree :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
-		</div>
+		<ArtTree :artifacts="artifacts" :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
 	</div>
 
 	<div class="col-page h-100 col-8 d-flex flex-column">
@@ -56,6 +54,7 @@ export default {
 		return {
 			loading: false,
 			error: null,
+			artifacts: null,
 			artifactModel: null,
 			pageModel: null,
 			rectangles: null,
@@ -66,6 +65,7 @@ export default {
 		// fetch the data when the view is created and the data is
 		// already being observed
 		this.fetchData();
+		this.fetchArtifacts();
 	},
 	watch: {
 		// call again the method if the route changes
@@ -104,7 +104,23 @@ export default {
 			} catch (error) {
 				this.error = error.message;
 				this.loading = false;
-				console.error('There was an error!', error);
+				console.error('Error while fetching artifact data', error);
+			}
+		},
+
+		async fetchArtifacts() {
+			console.log('fetch art tree')
+			this.error = null;
+			this.loading = true;
+			
+			const client = new ApiClient();
+			try {
+				this.artifacts = await client.fetchArtifactInfoAll();
+				this.loading = false;
+			} catch (error) {
+				this.error = error.message;
+				this.loading = false;
+				console.error('Error while fetching artifact info!', error);
 			}
 		},
 
