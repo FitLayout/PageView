@@ -9,7 +9,7 @@ class ArtifactCreator extends ObjectCreator {
 			createdOn: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#createdOn', type: 'date' },
 			creatorParams: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#creatorParams', type: 'string' },
 			creator: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#creator', type: 'string' },
-			hasParentArtifact: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#hasParentArtifact', type: 'object<http://fitlayout.github.io/ontology/fitlayout.owl#Artifact>[]' },
+			hasParentArtifact: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#hasParentArtifact', type: 'object<http://fitlayout.github.io/ontology/fitlayout.owl#Artifact>' },
 			// Inverse collection for Artifact.hasParentArtifact.
 			artifacts: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#hasParentArtifact', type: 'object<http://fitlayout.github.io/ontology/fitlayout.owl#Artifact>[]', inverse: true },
 		});

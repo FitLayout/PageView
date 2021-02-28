@@ -2,9 +2,9 @@
 	<div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
 		<p><strong class="badge">{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
 		<div v-if="artifact">
-			<p class="alabel" v-if="artifact._label">{{ artifact._label }}</p>
+			<p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
 			<div v-if="expand">
-				<div v-if="typeName === 'Box Tree'">
+				<div v-if="typeName === 'Page'">
 					<p class="url">{{ artifact.sourceUrl }}</p>
 				</div>
 				<p class="creator" :title="artifact.creatorParams">{{ artifact.creator }}</p>
@@ -84,10 +84,10 @@ export default {
 		},
 
 		update() {
-			console.log(this.artifact);
+			//console.log(this.artifact);
 			switch (this.artifact._type) {
 				case BOX.Page:
-					this.typeName = 'Box Tree';
+					this.typeName = 'Page';
 					this.typeClass = 'artifact boxtree';
 					break;
 				case SEGM.AreaTree:

@@ -2,6 +2,12 @@
   <div class="page-view h-100 row">
 
 	<div class="sidebar col-4">
+		<div v-if="pageModel">
+			<ArtTree :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
+		</div>
+	</div>
+
+	<div class="col-page h-100 col-8 d-flex flex-column">
 		<div v-if="loading" class="loading alert alert-light">
 			<div class="spinner-border text-primary" role="status">
 			</div>
@@ -10,13 +16,7 @@
 		<div v-if="error" class="error alert alert-danger">
 		{{ error }}
 		</div>
-		<div v-if="pageModel">
-			<ArtTree :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
-		</div>
-	</div>
-
-	<div class="col-page h-100 col-8 d-flex flex-column">
-		<div class="tools row">
+		<div class="tools row" v-if="!loading && !error">
 			<form class="row row-cols-lg-auto g-3 align-items-center">
 				<div class="col-sm-3">
 					<label for="zoom" class="form-label">Zoom <b>{{ zoom }}%</b></label>
