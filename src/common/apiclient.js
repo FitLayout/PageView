@@ -1,6 +1,7 @@
 import {Model as BoxModel} from '../common/boxMappers.js';
 
 const ARTIFACT_ENDPOINT = 'http://localhost:8080/fitlayout-web/service/artifact';
+const SERVICE_ENDPOINT = 'http://localhost:8080/fitlayout-web/service/service';
 
 export class ApiClient {
 
@@ -65,6 +66,14 @@ export class ApiClient {
 
 		await pageModel.parse(await response.text());
 		return pageModel.getAllObjects();
+	}
+
+	async fetchArtifactServices() {
+		const url = SERVICE_ENDPOINT;
+		let response = await fetch(url, {
+			method: 'GET'
+		});
+		return await response.json();
 	}
 
 }
