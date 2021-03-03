@@ -19,20 +19,24 @@
 	margin: 1em;
 	padding: 0.5em 1em;
 	background-color: var(--bs-light);
-	border-radius: 10px;
+	border-radius: 5px;
 	border: 1px solid var(--bs-light);
 }
 .artifact .ainfo {
-	display: none;
+	display: block;
+	font-size: 0;
 }
 .selected > .artifact {
 	border: 1px dotted var(--bs-dark);
 }
 .selected > .artifact .ainfo {
 	display: block;
+	font-size: 1em;
 }
 .artifact:hover .ainfo {
 	display: block;
+	font-size: 1em;
+	transition: all 0.2s 0.3s;
 }
 .boxtree .badge {
 	background-color: var(--bs-green);

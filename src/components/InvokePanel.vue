@@ -1,14 +1,21 @@
 <template>
 	<div class="container-fluid service-panel">
 		<form v-on:submit="invoke">
-			<select class="form-select" v-model="key" v-on:change="update()">
+			<label for="sel-service">Service</label>
+			<select class="form-select form-select-lg" v-model="key" v-on:change="update()" id="sel-service">
 				<option v-for="serv in selection" :key="serv.id" :value="serv.id">
 					{{serv.name}} ({{serv.id}})
 				</option>
 			</select>
 			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
 			<div class="buttons">
-				<button type="submit" class="btn btn-primary">{{action}}</button>
+				<div v-if="loading" class="loading">
+					<div class="spinner-border text-primary" role="status">
+					</div>
+				</div>
+				<button type="submit" class="btn btn-primary">
+					{{action}}
+				</button>
 			</div>
 		</form>
 	</div>
@@ -29,6 +36,7 @@ export default {
 	},
 	data () {
 		return {
+			loading: false,
 			services: null,  //all services
 			selection: null, //acceptable services
 			key: null,		 //selected service key
@@ -80,6 +88,7 @@ export default {
 		async invoke() {
 			console.log('invoke');
 			console.log(this.params);
+			this.loading = true;
 
 			try {
 				const client = new ApiClient();
@@ -87,6 +96,8 @@ export default {
 				this.$router.push({name: 'show', params: {iri: iri}});
 			} catch (e) {
 				alert(e);
+			} finally {
+				this.loading = false;
 			}
 
 			return false;
@@ -102,5 +113,8 @@ export default {
 .buttons {
 	margin: 1em 0;
 	text-align: right;
+}
+.loading {
+	float: left;
 }
 </style>
