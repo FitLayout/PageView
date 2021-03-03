@@ -70,9 +70,14 @@ export default {
 	watch: {
 		// call again the method if the route changes
 		//'$route': 'fetchData'
-		'artifactIri': 'fetchData'
+		'artifactIri': 'update'
 	},
 	methods: {
+		update() {
+			this.fetchData();
+			this.fetchArtifacts();
+		},
+
 		async fetchData() {
 			console.log('fetch ' + this.artifactIri)
 			if (!this.artifactIri) {

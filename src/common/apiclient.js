@@ -68,12 +68,52 @@ export class ApiClient {
 		return pageModel.getAllObjects();
 	}
 
+	async createArtifact(serviceId, params) {
+		const url = ARTIFACT_ENDPOINT + '/create';
+		const payload = {
+			serviceId: serviceId,
+			params: params
+		};
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data.result;
+
+		} catch (e) {
+			throw new Error(e);
+		}
+	}
+
 	async fetchArtifactServices() {
 		const url = SERVICE_ENDPOINT;
 		let response = await fetch(url, {
 			method: 'GET'
 		});
-		return await response.json();
+		const data = await response.json();
+		return data.result;
 	}
+
+	async getServiceParams(serviceId) {
+		const url = SERVICE_ENDPOINT + '/config?' + new URLSearchParams({'id': serviceId});
+		let response = await fetch(url, {
+			method: 'GET',
+		});
+		const data = await response.json();
+		return data.result.params;
+	}
+
+
 
 }

@@ -1,33 +1,44 @@
 <template>
 	<div class="container-fluid service-panel">
-		<form>
-			<select class="form-select">
+		<form v-on:submit="invoke">
+			<select class="form-select" v-model="key" v-on:change="update()">
 				<option v-for="serv in selection" :key="serv.id" :value="serv.id">
 					{{serv.name}} ({{serv.id}})
 				</option>
 			</select>
+			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
+			<div class="buttons">
+				<button type="submit" class="btn btn-primary">{{action}}</button>
+			</div>
 		</form>
 	</div>
 </template>
 
 <script>
 import {ApiClient} from '@/common/apiclient.js';
+import ParamPanel from './ParamPanel.vue';
 
 export default {
 	name: 'InvokePanel',
 	components: {
+		ParamPanel
 	},
 	props: {
-		target: null
+		target: null,
+		action: null
 	},
 	data () {
 		return {
-			services: null,
-			selection: null
+			services: null,  //all services
+			selection: null, //acceptable services
+			key: null,		 //selected service key
+			paramDescr: null, //selected service param description
+			params: null	 //selected service params
 		}
 	},
 	created () {
 		this.loadServices();
+		this.update();
 	},
 	watch: {
 	},
@@ -36,12 +47,15 @@ export default {
 			const client = new ApiClient();
 			try {
 				let data = await client.fetchArtifactServices();
-				this.services = data.result;
+				this.services = data;
 
 				let sel = {};
 				for (let serv of this.services) {
 					if (serv.produces === this.target) {
 						sel[serv.id] = serv;
+						if (this.key == null) {
+							this.key = serv.id;
+						}
 					}
 				}
 				console.log(sel);
@@ -53,7 +67,29 @@ export default {
 			this.update();
 		},
 
-		update() {
+		async update() {
+			if (this.key) {
+				//choose the service description
+				this.paramDescr = this.selection[this.key].params;
+				//get the current param values
+				const client = new ApiClient();
+				this.params = await client.getServiceParams(this.key);
+			}
+		},
+
+		async invoke() {
+			console.log('invoke');
+			console.log(this.params);
+
+			try {
+				const client = new ApiClient();
+				const iri = await client.createArtifact(this.key, this.params);
+				this.$router.push({name: 'show', params: {iri: iri}});
+			} catch (e) {
+				alert(e);
+			}
+
+			return false;
 		}
 	}
 }
@@ -61,6 +97,10 @@ export default {
 
 <style>
 .service-panel {
-	width: 50em !important;
+	min-width: 50em;
+}
+.buttons {
+	margin: 1em 0;
+	text-align: right;
 }
 </style>

@@ -15,7 +15,7 @@
 							Render
 						</a>
 						<div class="dropdown-menu dropdown-menu-dark" aria-labelledby="renderDropdown">
-							<InvokePanel :target="pageType"></InvokePanel>
+							<InvokePanel :target="pageType" action="Render"></InvokePanel>
 						</div>
 					</li>
 				</ul>
