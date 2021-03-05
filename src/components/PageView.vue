@@ -1,8 +1,10 @@
 <template>
   <div class="page-view h-100 row">
 
-	<div class="sidebar col-4">
-		<ArtTree :artifacts="artifacts" :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
+	<div class="sidebar-scroll col-4">
+		<div class="sidebar">
+			<ArtTree :artifacts="artifacts" :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
+		</div>
 	</div>
 
 	<div class="col-page h-100 col-8 d-flex flex-column">
@@ -147,8 +149,19 @@ export default {
 </script>
 
 <style>
+.sidebar-scroll {
+	height: 100%;
+	overflow: auto;
+}
 .sidebar {
 	font-size: 80%;
+}
+.tools {
+	margin-top: 0;
+	background-color: #f3f3f3;
+	border: 1px ridge #d0d0d0;
+	font-size: 80%;
+	padding: 0.3em 0;
 }
 .loading span {
 	margin-left: 1em;

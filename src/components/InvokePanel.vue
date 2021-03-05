@@ -2,18 +2,21 @@
 	<div class="container-fluid service-panel">
 		<form>
 			<div class="service">
-				<label :for="inputId">Service</label>
-				<select class="form-select" v-model="key" v-on:change="update()" :id="inputId">
+				<label :for="inputId" class="inl">Service</label>
+				<select class="form-select inl" v-model="key" v-on:change="update()" :id="inputId">
 					<option v-for="serv in selection" :key="serv.id" :value="serv.id">
 						{{serv.name}} ({{serv.id}})
 					</option>
 				</select>
-				<button type="button" class="btn btn-primary" v-on:click="invoke">
+				<button type="button" class="btn btn-primary inl" v-on:click="invoke">
 					{{action}}
 				</button>
-				<div v-if="loading" class="loading">
-					<div class="spinner-border text-primary" role="status">
+				<div v-if="loading" class="loading inl">
+					<div class="spinner-border spinner-border-sm text-primary" role="status">
 					</div>
+				</div>
+				<div v-if="error" class="error inl text-danger">
+					<i class="bi bi-x-circle-fill" v-on:click="error=null"></i><span>{{error}}</span>
 				</div>
 			</div>
 			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
@@ -37,6 +40,7 @@ export default {
 	data () {
 		return {
 			loading: false,
+			error: null,
 			services: null,  //all services
 			selection: null, //acceptable services
 			key: null,		 //selected service key
@@ -99,8 +103,9 @@ export default {
 				const client = new ApiClient();
 				const iri = await client.createArtifact(this.key, this.params);
 				this.$router.push({name: 'show', params: {iri: iri}});
+				this.error = null;
 			} catch (e) {
-				alert(e);
+				this.error = e.message;
 			} finally {
 				this.loading = false;
 			}
@@ -124,6 +129,10 @@ export default {
 .service {
 	padding: 0 0 0.5em 0;
 }
+.service .inl {
+	vertical-align: baseline;
+	display: inline-block;
+}
 .service label {
 	font-weight: bold;
 	width: auto;
@@ -132,17 +141,19 @@ export default {
 }
 .service select {
 	width: auto;
-	vertical-align: baseline;
-	display: inline-block;
 	margin-right: 1em;
-}
-.service button {
-	display: inline-block;
-	vertical-align: baseline;
 }
 .loading {
 	display: inline-block;
 	vertical-align: middle;
 	margin-left: 1em;
+}
+.error {
+	font-weight: bold;
+	margin-left: 1em;
+}
+.error i {
+	margin-right: 0.5em;
+	font-size: 135%;
 }
 </style>

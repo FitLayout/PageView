@@ -4,7 +4,7 @@
 	<div class="row">
 		<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="#">FitLayout</a>
+				<a class="navbar-brand mb-0 h1" href="#">FitLayout</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -43,21 +43,19 @@ export default {
 		return {
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
-			mode: 'render',
-			hidePanels: false
+			mode: 'render'
 		}
 	},
 	methods: {
 		selectMode(mode) {
 			if (mode == this.mode) {
-				this.hidePanels = !this.hidePanels;
+				this.mode = 'off';
 			} else {
 				this.mode = mode;
-				this.hidePanels = false;
 			}
 		},
 		panelClass(mode) {
-			return (mode === this.mode && !this.hidePanels) ? 'visible' : 'hidden';
+			return (mode === this.mode) ? 'visible' : 'hidden';
 		}
 	},
 	components: {
@@ -77,4 +75,8 @@ export default {
 .serv-panel.hidden {
 	display: none;
 }
+.navbar .nav-link.active {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
 </style>
