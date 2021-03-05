@@ -1,6 +1,13 @@
 <template>
 	<div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
-		<p><strong class="badge">{{ typeName }}</strong>&nbsp;<Iri :iri="iri"></Iri></p>
+		<div class="icons">
+			<i class="bi bi-trash" title="Delete artifact"></i>
+		</div>
+		<p>
+			<strong class="badge">{{ typeName }}</strong>&nbsp;
+			<Iri :iri="iri"></Iri>
+			<i class="bi bi-eye" title="Focus on this page" v-if="typeName === 'Page'"></i>
+		</p>
 		<div v-if="artifact">
 			<p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
 			<div class="ainfo">
@@ -22,6 +29,17 @@
 	border-radius: 5px;
 	border: 1px solid #d0d0d0;
 	/*box-shadow: 0 6px 6px -6px black;*/
+}
+.artifact .icons {
+	float: right;
+}
+.artifact i.bi {
+	margin-left: 0.5em;
+	cursor: pointer;
+	font-size: 120%;
+}
+.artifact .bi-eye {
+	color: var(--bs-primary);
 }
 .artifact .ainfo {
 	display: block;

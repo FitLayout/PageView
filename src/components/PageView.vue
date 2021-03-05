@@ -2,6 +2,7 @@
   <div class="page-view h-100 row">
 
 	<div class="sidebar-scroll col-4">
+		<div><i class="bi bi-eye-slash-fill"></i></div>
 		<div class="sidebar">
 			<ArtTree :artifacts="artifacts" :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
 		</div>
