@@ -1,5 +1,5 @@
 <template>
-	<div class="param-panel container">
+	<div class="param-panel">
 		<ParamInput v-for="param in descr" :descr="param" :key="param.name" v-model="values[param.name]"></ParamInput>
 	</div>
 </template>

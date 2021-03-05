@@ -112,10 +112,14 @@ export default {
 </script>
 
 <style>
+.service-panel, .service-panel .btn, .service-panel .form-select, .service-panel .form-control {
+	font-size: 0.8rem;
+}
 .service-panel {
 	min-width: 50em;
-	background-color: #ccc;
+	background-color: #f3f3f3;
 	padding: 0.5em 0;
+	border: 1px ridge #d0d0d0;
 }
 .service {
 	padding: 0 0 0.5em 0;

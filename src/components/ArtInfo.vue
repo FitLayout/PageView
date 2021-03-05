@@ -18,16 +18,18 @@
 .artifact {
 	margin: 1em;
 	padding: 0.5em 1em;
-	background-color: var(--bs-light);
+	background-color: #f3f3f3;
 	border-radius: 5px;
-	border: 1px solid var(--bs-light);
+	border: 1px solid #d0d0d0;
+	/*box-shadow: 0 6px 6px -6px black;*/
 }
 .artifact .ainfo {
 	display: block;
 	font-size: 0;
 }
 .selected > .artifact {
-	border: 1px dotted var(--bs-dark);
+	border: 2px dotted var(--bs-dark);
+	/*box-shadow: 0 2px 6px -6px black;*/
 }
 .selected > .artifact .ainfo {
 	display: block;
