@@ -32,4 +32,7 @@ export default {
 </script>
 
 <style>
+.param-panel {
+	margin: 0;
+}
 </style>

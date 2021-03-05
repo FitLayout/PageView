@@ -60,8 +60,12 @@ export default {
 </script>
 
 <style>
-.p-int, .p-float, .p-boolean {
+.p-int, .p-float, .p-boolean, .p-string {
 	display: inline-block;
+}
+.p-string {
+	width: 25em;
+	margin-right: 0.5em;
 }
 .p-int input, .p-float input {
 	width: 6em;

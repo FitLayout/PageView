@@ -10,18 +10,20 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav">
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="#" id="renderDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							Render
-						</a>
-						<div class="dropdown-menu dropdown-menu-dark" aria-labelledby="renderDropdown">
-							<InvokePanel :target="pageType" action="Render"></InvokePanel>
-						</div>
+					<li class="nav-item">
+						<a class="nav-link" :class="mode=='render' ? 'active' : ''" href="#" id="renderItem" role="button" v-on:click="selectMode('render')">Render</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" :class="mode=='segm' ? 'active' : ''" href="#" id="segmentItem" role="button" v-on:click="selectMode('segm')">Segmentation</a>
 					</li>
 				</ul>
 			</div>
 			</div>
 		</nav>
+	</div>
+	<div class="row">
+		<InvokePanel id="r" :target="pageType" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
+		<InvokePanel id="s" :target="areaTreeType" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
 	</div>
 
 	<div class="row flex-fill overflow-hidden">
@@ -39,7 +41,23 @@ export default {
     name: 'app',
 	data () {
 		return {
-			pageType: BOX.Page
+			pageType: BOX.Page,
+			areaTreeType: SEGM.AreaTree,
+			mode: 'render',
+			hidePanels: false
+		}
+	},
+	methods: {
+		selectMode(mode) {
+			if (mode == this.mode) {
+				this.hidePanels = !this.hidePanels;
+			} else {
+				this.mode = mode;
+				this.hidePanels = false;
+			}
+		},
+		panelClass(mode) {
+			return (mode === this.mode && !this.hidePanels) ? 'visible' : 'hidden';
 		}
 	},
 	components: {
@@ -55,5 +73,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   color: #2c3e50;*/
+}
+.serv-panel.hidden {
+	display: none;
 }
 </style>

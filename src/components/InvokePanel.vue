@@ -1,22 +1,22 @@
 <template>
 	<div class="container-fluid service-panel">
-		<form v-on:submit="invoke">
-			<label for="sel-service">Service</label>
-			<select class="form-select form-select-lg" v-model="key" v-on:change="update()" id="sel-service">
-				<option v-for="serv in selection" :key="serv.id" :value="serv.id">
-					{{serv.name}} ({{serv.id}})
-				</option>
-			</select>
-			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
-			<div class="buttons">
+		<form>
+			<div class="service">
+				<label :for="inputId">Service</label>
+				<select class="form-select" v-model="key" v-on:change="update()" :id="inputId">
+					<option v-for="serv in selection" :key="serv.id" :value="serv.id">
+						{{serv.name}} ({{serv.id}})
+					</option>
+				</select>
+				<button type="button" class="btn btn-primary" v-on:click="invoke">
+					{{action}}
+				</button>
 				<div v-if="loading" class="loading">
 					<div class="spinner-border text-primary" role="status">
 					</div>
 				</div>
-				<button type="submit" class="btn btn-primary">
-					{{action}}
-				</button>
 			</div>
+			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
 		</form>
 	</div>
 </template>
@@ -43,6 +43,11 @@ export default {
 			paramDescr: null, //selected service param description
 			params: null	 //selected service params
 		}
+	},
+	computed: {
+		inputId() {
+			return 'serv' + this.action;
+		},
 	},
 	created () {
 		this.loadServices();
@@ -109,12 +114,31 @@ export default {
 <style>
 .service-panel {
 	min-width: 50em;
+	background-color: #ccc;
+	padding: 0.5em 0;
 }
-.buttons {
-	margin: 1em 0;
-	text-align: right;
+.service {
+	padding: 0 0 0.5em 0;
+}
+.service label {
+	font-weight: bold;
+	width: auto;
+	display: inline-block;
+	margin-right: 1em;
+}
+.service select {
+	width: auto;
+	vertical-align: baseline;
+	display: inline-block;
+	margin-right: 1em;
+}
+.service button {
+	display: inline-block;
+	vertical-align: baseline;
 }
 .loading {
-	float: left;
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 1em;
 }
 </style>
