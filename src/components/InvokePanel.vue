@@ -123,7 +123,8 @@ export default {
 .service-panel {
 	min-width: 50em;
 	background-color: #f3f3f3;
-	padding: 0.5em 0;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 	border: 1px ridge #d0d0d0;
 }
 .service {

@@ -18,14 +18,14 @@
 		{{ error }}
 		</div>
 		<div class="tools row" v-if="!loading && !error">
-			<form class="row row-cols-lg-auto g-3 align-items-center">
+			<form class="row row-cols-lg-auto align-items-center">
 				<div class="col-sm-3">
 					<label for="zoom" class="form-label">Zoom <b>{{ zoom }}%</b></label>
 					<input type="range" class="form-range" min="20" max="200" step="5" id="zoom" v-model="zoom">
 				</div>
 			</form>
 		</div>
-		<div class="page-contents row gx-0 h-100 overflow-auto">
+		<div class="page-contents row h-100 overflow-auto">
 			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom">
 			</Page>
 		</div>

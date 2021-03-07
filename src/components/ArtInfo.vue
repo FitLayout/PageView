@@ -23,7 +23,7 @@
 
 <style>
 .artifact {
-	margin: 1em;
+	margin: 1em 0;
 	padding: 0.5em 1em;
 	background-color: #f3f3f3;
 	border-radius: 5px;
