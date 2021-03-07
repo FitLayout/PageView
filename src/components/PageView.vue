@@ -1,12 +1,4 @@
 <template>
-  <div class="page-view h-100 row">
-
-	<div class="sidebar-scroll col-4">
-		<div><i class="bi bi-eye-slash-fill"></i></div>
-		<div class="sidebar">
-			<ArtTree :artifacts="artifacts" :currentIri="artifactIri" v-on:select-artifact="changeArtifact"></ArtTree>
-		</div>
-	</div>
 
 	<div class="col-page h-100 col-8 d-flex flex-column">
 		<div v-if="loading" class="loading alert alert-light">
@@ -31,13 +23,10 @@
 		</div>
 	</div>
 
-  </div>
 </template>
 
 <script>
 import Page from './Page.vue';
-import ArtInfo from './ArtInfo.vue';
-import ArtTree from './ArtTree.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
@@ -46,9 +35,7 @@ import {ApiClient} from '@/common/apiclient.js';
 export default {
 	name: 'PageView',
 	components: {
-		Page,
-		ArtInfo,
-		ArtTree
+		Page
 	},
 	props: {
 		artifactIri: null
@@ -57,7 +44,6 @@ export default {
 		return {
 			loading: false,
 			error: null,
-			artifacts: null,
 			artifactModel: null,
 			pageModel: null,
 			rectangles: null,
@@ -65,20 +51,14 @@ export default {
 		}
 	},
 	created () {
-		// fetch the data when the view is created and the data is
-		// already being observed
 		this.fetchData();
-		this.fetchArtifacts();
 	},
 	watch: {
-		// call again the method if the route changes
-		//'$route': 'fetchData'
 		'artifactIri': 'update'
 	},
 	methods: {
 		update() {
 			this.fetchData();
-			this.fetchArtifacts();
 		},
 
 		async fetchData() {
@@ -116,22 +96,6 @@ export default {
 			}
 		},
 
-		async fetchArtifacts() {
-			console.log('fetch art tree')
-			this.error = null;
-			this.loading = true;
-			
-			const client = new ApiClient();
-			try {
-				this.artifacts = await client.fetchArtifactInfoAll();
-				this.loading = false;
-			} catch (error) {
-				this.error = error.message;
-				this.loading = false;
-				console.error('Error while fetching artifact info!', error);
-			}
-		},
-
 		setArtifact(artifact) {
 			this.artifactModel = artifact;
 		},
@@ -150,13 +114,6 @@ export default {
 </script>
 
 <style>
-.sidebar-scroll {
-	height: 100%;
-	overflow: auto;
-}
-.sidebar {
-	font-size: 80%;
-}
 .tools {
 	margin-top: 0;
 	background-color: #f3f3f3;

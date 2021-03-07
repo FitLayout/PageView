@@ -26,30 +26,42 @@
 		</div>
 		<!-- Artifact view -->
 		<div class="row flex-fill overflow-hidden">
-			<div class="view-artifact h-100">
-				<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" />
+			<div class="view-artifact h-100 row">
+				<!-- Sidebar -->
+				<div class="sidebar-scroll col-4">
+					<div><i class="bi bi-eye-slash-fill"></i></div>
+					<div class="sidebar">
+						<ArtTree :artifacts="artifacts" :currentIri="iri" v-on:select-artifact="selectArtifact"></ArtTree>
+					</div>
+				</div>
+				<!-- Page view -->
+				<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import PageView from '@/components/PageView.vue';
 import InvokePanel from '@/components/InvokePanel.vue';
+import PageView from '@/components/PageView.vue';
+import ArtTree from '@/components/ArtTree.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
+import {ApiClient} from '@/common/apiclient.js';
 
 export default {
 	name: 'RepositoryView',
 	components: {
+		InvokePanel,
 		PageView,
-		InvokePanel
+		ArtTree
 	},
 	data () {
 		return {
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
-			mode: 'render'
+			mode: 'render',
+			artifacts: null
 		}
 	},
 	computed: {
@@ -59,6 +71,9 @@ export default {
 		repoId() {
 			return this.$route.params.repoId;
 		}
+	},
+	created () {
+		this.fetchArtifacts();
 	},
 	methods: {
 		selectMode(mode) {
@@ -76,7 +91,30 @@ export default {
 			if (iri !== this.iri) {
 				this.$router.push({name: 'show', params: {repoId: this.repoId, iri: iri}});
 			}
+		},
+
+		findArtifact(iri) {
+
+		},
+
+		async fetchArtifacts() {
+			console.log('fetch art tree')
+			this.error = null;
+			this.loading = true;
+			
+			const client = new ApiClient();
+			try {
+				this.artifacts = await client.fetchArtifactInfoAll();
+						console.log(this.artifacts);
+
+				this.loading = false;
+			} catch (error) {
+				this.error = error.message;
+				this.loading = false;
+				console.error('Error while fetching artifact info!', error);
+			}
 		}
+
 	}
 }
 </script>
@@ -87,5 +125,13 @@ export default {
 }
 .navbar .nav-link.active {
 	background-color: rgba(255, 255, 255, 0.2);
+
+}
+.sidebar-scroll {
+	height: 100%;
+	overflow: auto;
+}
+.sidebar {
+	font-size: 80%;
 }
 </style>
