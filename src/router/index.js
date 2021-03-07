@@ -25,6 +25,11 @@ export default new Router({
       component: () => import("@/views/Settings")
     },*/
     {
+      name: "repo",
+      path: "/r/:repoId",
+      component: () => import("@/views/RepositoryView")
+    },
+    {
       name: "show",
       path: "/r/:repoId/show/:iri",
       component: () => import("@/views/RepositoryView")

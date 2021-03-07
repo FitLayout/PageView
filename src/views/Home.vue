@@ -3,7 +3,7 @@
 		<!-- Repository menu -->
 		<div class="row">
 			<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-				<a class="navbar-brand mb-0 h1" href="#">FitLayout</a>
+				<a class="navbar-brand mb-0 h1" href="#/">FitLayout</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -17,10 +17,10 @@
 		<p>Welcome home.</p>
 		<p>
 			<router-link
-				:to="{ name: 'show', params: { repoId: 'default', iri: 'http://fitlayout.github.io/resource/art1' } }"
+				:to="{ name: 'repo', params: { repoId: 'default' } }"
 				class="nav-link"
 				active-class="active">
-					Show page
+					Show default repository
 			</router-link>
 		</p>
 	</div>

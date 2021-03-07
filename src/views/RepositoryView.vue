@@ -3,7 +3,7 @@
 		<!-- Repository menu -->
 		<div class="row">
 			<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-				<a class="navbar-brand mb-0 h1" href="#">FitLayout</a>
+				<a class="navbar-brand mb-0 h1" href="#/">FitLayout</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -36,6 +36,9 @@
 				</div>
 				<!-- Page view -->
 				<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
+				<div class="empty-page h-100 col-8 d-flex align-items-center" v-if="!iri">
+					<p class="flex-fill text-center text-secondary">No page selected</p>
+				</div>
 			</div>
 		</div>
 	</div>
