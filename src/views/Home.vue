@@ -3,17 +3,10 @@
 		<p>Welcome home.</p>
 		<p>
 			<router-link
-				:to="{ name: 'show', params: { iri: 'http://fitlayout.github.io/resource/art261' } }"
+				:to="{ name: 'show', params: { repoId: 'default', iri: 'http://fitlayout.github.io/resource/art1' } }"
 				class="nav-link"
 				active-class="active">
 					Show page
-			</router-link>
-			<br>
-			<router-link
-				:to="{ name: 'show', params: { iri: 'http://fitlayout.github.io/resource/art316' } }"
-				class="nav-link"
-				active-class="active">
-					Show area tree
 			</router-link>
 		</p>
 	</div>

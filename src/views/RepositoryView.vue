@@ -9,7 +9,7 @@
 import PageView from '@/components/PageView.vue';
 
 export default {
-	name: 'show',
+	name: 'RepositoryView',
 	components: {
 		PageView
 	},
@@ -20,12 +20,15 @@ export default {
 	computed: {
 		iri() {
 			return this.$route.params.iri;
+		},
+		repoId() {
+			return this.$route.params.repoId;
 		}
 	},
 	methods: {
 		selectArtifact(iri) {
 			if (iri !== this.iri) {
-				this.$router.push({name: 'show', params: {iri: iri}});
+				this.$router.push({name: 'show', params: {repoId: this.repoId, iri: iri}});
 			}
 		}
 	}

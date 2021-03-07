@@ -26,8 +26,8 @@ export default new Router({
     },*/
     {
       name: "show",
-      path: "/show/:iri",
-      component: () => import("@/views/ShowArtifact")
+      path: "/r/:repoId/show/:iri",
+      component: () => import("@/views/RepositoryView")
     }
   ]
 });
