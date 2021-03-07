@@ -10,10 +10,10 @@
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<a class="nav-link" :class="mode=='render' ? 'active' : ''" href="#" id="renderItem" role="button" v-on:click="selectMode('render')">Render</a>
+							<a class="nav-link" :class="mode=='render' ? 'active' : ''" id="renderItem" role="button" v-on:click="selectMode('render')">Render</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" :class="mode=='segm' ? 'active' : ''" href="#" id="segmentItem" role="button" v-on:click="selectMode('segm')">Segmentation</a>
+							<a class="nav-link" :class="mode=='segm' ? 'active' : ''" id="segmentItem" role="button" v-on:click="selectMode('segm')">Segmentation</a>
 						</li>
 					</ul>
 				</div>
