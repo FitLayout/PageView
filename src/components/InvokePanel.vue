@@ -35,7 +35,8 @@ export default {
 	},
 	props: {
 		target: null,
-		action: null
+		action: null,
+		currentArtifact: null
 	},
 	data () {
 		return {
@@ -96,12 +97,22 @@ export default {
 
 		async invoke() {
 			console.log('invoke');
-			console.log(this.params);
+			console.log(this.selection[this.key]);
+			let src = this.findParentOfType()
 			this.loading = true;
+
+			let srcArtifact = null;
+			const srcType = this.selection[this.key].consumes;
+			if (srcType) {
+				srcArtifact = this.findParentOfType(srcType);
+			}
+			const srcIri = srcArtifact ? srcArtifact._iri : null;
+			console.log('src');
+			console.log(srcArtifact);
 
 			try {
 				const client = new ApiClient();
-				const iri = await client.createArtifact(this.key, this.params);
+				const iri = await client.createArtifact(this.key, this.params, srcIri);
 				this.$router.push({name: 'show', params: {iri: iri}});
 				this.error = null;
 			} catch (e) {
@@ -111,7 +122,21 @@ export default {
 			}
 
 			return false;
-		}
+		},
+
+		findParentOfType(type) {
+			let current = this.currentArtifact;
+			while (current && current._type !== type) {
+				if (current.hasParentArtifact)  {
+					current = current.hasParentArtifact;
+				} else {
+					current = null;
+				}
+			}
+			return current;
+		},
+
+
 	}
 }
 </script>

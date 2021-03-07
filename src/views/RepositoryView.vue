@@ -21,8 +21,8 @@
 		</div>
 		<!-- Service panels -->
 		<div class="row">
-			<InvokePanel id="r" :target="pageType" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
-			<InvokePanel id="s" :target="areaTreeType" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
+			<InvokePanel id="r" :target="pageType" :currentArtifact="currentArtifact" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
+			<InvokePanel id="s" :target="areaTreeType" :currentArtifact="currentArtifact" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
 		</div>
 		<!-- Artifact view -->
 		<div class="row flex-fill overflow-hidden">
@@ -64,7 +64,8 @@ export default {
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
 			mode: 'render',
-			artifacts: null
+			artifacts: null,
+			currentArtifact: null
 		}
 	},
 	computed: {
@@ -74,6 +75,9 @@ export default {
 		repoId() {
 			return this.$route.params.repoId;
 		}
+	},
+	watch: {
+		'iri': 'update'
 	},
 	created () {
 		this.fetchArtifacts();
@@ -97,7 +101,12 @@ export default {
 		},
 
 		findArtifact(iri) {
-
+			for (let art of this.artifacts) {
+				if (art._iri === iri) {
+					return art;
+				}
+			}
+			return null;
 		},
 
 		async fetchArtifacts() {
@@ -108,14 +117,19 @@ export default {
 			const client = new ApiClient();
 			try {
 				this.artifacts = await client.fetchArtifactInfoAll();
-						console.log(this.artifacts);
-
+				if (this.iri) {
+					this.currentArtifact = this.findArtifact(this.iri);
+				}
 				this.loading = false;
 			} catch (error) {
 				this.error = error.message;
 				this.loading = false;
 				console.error('Error while fetching artifact info!', error);
 			}
+		},
+
+		update() {
+			this.fetchArtifacts();
 		}
 
 	}

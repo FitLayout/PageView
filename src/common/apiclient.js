@@ -68,12 +68,15 @@ export class ApiClient {
 		return pageModel.getAllObjects();
 	}
 
-	async createArtifact(serviceId, params) {
+	async createArtifact(serviceId, params, srcIri) {
 		const url = ARTIFACT_ENDPOINT + '/create';
 		const payload = {
 			serviceId: serviceId,
 			params: params
 		};
+		if (srcIri) {
+			payload.parentIri = srcIri;
+		}
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
