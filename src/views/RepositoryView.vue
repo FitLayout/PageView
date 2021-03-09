@@ -31,7 +31,10 @@
 				<div class="sidebar-scroll col-4">
 					<div><i class="bi bi-eye-slash-fill"></i></div>
 					<div class="sidebar">
-						<ArtTree :artifacts="artifacts" :currentIri="iri" v-on:select-artifact="selectArtifact"></ArtTree>
+						<ArtTree :artifacts="artifacts" :currentIri="iri"
+							v-on:select-artifact="selectArtifact"
+							v-on:delete-artifact="deleteArtifact">
+						</ArtTree>
 					</div>
 				</div>
 				<!-- Page view -->
@@ -50,6 +53,7 @@ import PageView from '@/components/PageView.vue';
 import ArtTree from '@/components/ArtTree.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
+import IriDecoder from '@/common/iridecoder.js';
 import {ApiClient} from '@/common/apiclient.js';
 
 export default {
@@ -100,6 +104,20 @@ export default {
 			}
 		},
 
+		async deleteArtifact(iri) {
+			let dec = new IriDecoder();
+			let shortIri = dec.encodeIri(iri);
+			if (window.confirm('Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?')) {
+				const client = new ApiClient();
+				try {
+					this.artifact = await client.deleteArtifact(this.iri);
+				} catch (error) {
+					console.error('Couldnt delete artifact!', error);
+				}
+				this.update();
+			}
+		},
+
 		findArtifact(iri) {
 			for (let art of this.artifacts) {
 				if (art._iri === iri) {
@@ -142,7 +160,6 @@ export default {
 }
 .navbar .nav-link.active {
 	background-color: rgba(255, 255, 255, 0.2);
-
 }
 .sidebar-scroll {
 	height: 100%;

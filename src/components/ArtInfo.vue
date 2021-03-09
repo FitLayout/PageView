@@ -1,7 +1,7 @@
 <template>
 	<div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
 		<div class="icons">
-			<i class="bi bi-trash" title="Delete artifact"></i>
+			<i class="bi bi-trash" title="Delete artifact" v-on:click="deleteArtifact"></i>
 		</div>
 		<p>
 			<strong class="badge">{{ typeName }}</strong>&nbsp;
@@ -40,6 +40,9 @@
 }
 .artifact .bi-eye {
 	color: var(--bs-primary);
+}
+.artifact .bi-trash:hover {
+	color: var(--bs-danger);
 }
 .artifact .ainfo {
 	display: block;
@@ -137,7 +140,12 @@ export default {
 					this.typeClass = 'artifact unknown';
 					break;
 			}
+		},
+
+		async deleteArtifact() {
+			this.$emit('delete-artifact', this.iri);
 		}
+		
 	}
 }
 </script>

@@ -99,6 +99,21 @@ export class ApiClient {
 		}
 	}
 
+	async deleteArtifact(artifactIri) {
+			const url = ARTIFACT_ENDPOINT + '/item/' + encodeURIComponent(artifactIri);
+			let response = await fetch(url, {
+				method: 'DELETE'
+			})
+			if (!response.ok) {
+				let error = response.status;
+				throw new Error(error);
+			}
+			const data = await response.json();
+			return data.status == 'ok';
+	}
+
+	//================================================================================
+
 	async fetchArtifactServices() {
 		const url = SERVICE_ENDPOINT;
 		let response = await fetch(url, {

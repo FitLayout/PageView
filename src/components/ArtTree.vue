@@ -2,8 +2,11 @@
 	<ul class="artlist">
 		<li v-for="art in children" :key="art._iri" :class="(art._iri === currentIri) ? 'selected':''">
 			<ArtInfo :iri="art._iri" 
-				v-on:select-artifact="selectArtifact"></ArtInfo>
-			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri" v-on:select-artifact="selectArtifact"></ArtTree>
+				v-on:select-artifact="selectArtifact"
+				v-on:delete-artifact="deleteArtifact"></ArtInfo>
+			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri" 
+				v-on:select-artifact="selectArtifact"
+				v-on:delete-artifact="deleteArtifact"></ArtTree>
 		</li>
 	</ul>
 </template>
@@ -54,6 +57,9 @@ export default {
 	methods: {
 		selectArtifact(iri) {
 			this.$emit('select-artifact', iri);
+		},
+		deleteArtifact(iri) {
+			this.$emit('delete-artifact', iri);
 		}
 	}
 }
