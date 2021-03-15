@@ -34,6 +34,7 @@ export default {
 		ParamPanel
 	},
 	props: {
+		source: null,
 		target: null,
 		action: null,
 		currentArtifact: null
@@ -69,7 +70,8 @@ export default {
 
 				let sel = {};
 				for (let serv of this.services) {
-					if (serv.produces === this.target) {
+					if (serv.produces === this.target
+							&& (!this.source || serv.consumes === this.source)) {
 						sel[serv.id] = serv;
 						if (this.key == null) {
 							this.key = serv.id;

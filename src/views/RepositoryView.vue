@@ -15,6 +15,9 @@
 						<li class="nav-item">
 							<a class="nav-link" :class="mode=='segm' ? 'active' : ''" id="segmentItem" role="button" v-on:click="selectMode('segm')">Segmentation</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" :class="mode=='post' ? 'active' : ''" id="postItem" role="button" v-on:click="selectMode('post')">Postprocess</a>
+						</li>
 					</ul>
 				</div>
 			</nav>
@@ -22,7 +25,8 @@
 		<!-- Service panels -->
 		<div class="row">
 			<InvokePanel id="r" :target="pageType" :currentArtifact="currentArtifact" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
-			<InvokePanel id="s" :target="areaTreeType" :currentArtifact="currentArtifact" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
+			<InvokePanel id="s" :source="pageType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
+			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Process" class="serv-panel panel-post" :class="panelClass('post')"></InvokePanel>
 		</div>
 		<!-- Artifact view -->
 		<div class="row flex-fill overflow-hidden">
