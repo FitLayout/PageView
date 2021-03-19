@@ -1,6 +1,6 @@
 <template>
-	<div class="param-panel">
-		<ParamInput v-for="param in descr" :descr="param" :key="param.name" v-model="values[param.name]"></ParamInput>
+	<div class="param-panel p-fluid">
+		<ParamInput v-for="param in descr" :descr="param" :key="param.name" v-model="curValues[param.name]"></ParamInput>
 	</div>
 </template>
 
@@ -18,11 +18,13 @@ export default {
 	},
 	data () {
 		return {
+			curValues: []
 		}
 	},
 	computed: {
 	},
 	created () {
+		this.curValues = this.values;
 	},
 	watch: {
 	},
@@ -32,7 +34,7 @@ export default {
 </script>
 
 <style>
-.param-panel {
+/*.param-panel {
 	margin: 0;
-}
+}*/
 </style>

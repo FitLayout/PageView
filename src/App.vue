@@ -15,7 +15,12 @@ export default {
 </script>
 
 <style>
+html {
+	font-size: 10pt;
+}
 #app {
+	font-family: var(--font-family);
+	color: var(--text-color);
   /*font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

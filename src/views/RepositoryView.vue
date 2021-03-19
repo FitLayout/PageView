@@ -1,29 +1,11 @@
 <template>
-    <div class="repository-view container-fluid vh-100 d-flex flex-column">
+    <div class="repository-view">
 		<!-- Repository menu -->
-		<div class="row">
-			<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-				<a class="navbar-brand mb-0 h1" href="#/">FitLayout</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav">
-						<li class="nav-item">
-							<a class="nav-link" :class="mode=='render' ? 'active' : ''" id="renderItem" role="button" v-on:click="selectMode('render')">Render</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" :class="mode=='segm' ? 'active' : ''" id="segmentItem" role="button" v-on:click="selectMode('segm')">Segmentation</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" :class="mode=='post' ? 'active' : ''" id="postItem" role="button" v-on:click="selectMode('post')">Postprocess</a>
-						</li>
-					</ul>
-				</div>
-			</nav>
-		</div>
+		<Menubar :model="menuItems" style="font-size:120%">
+			<template #start>FitLayout</template>
+		</Menubar>
 		<!-- Service panels -->
-		<div class="row">
+		<div class="panel-row">
 			<InvokePanel id="r" :target="pageType" :currentArtifact="currentArtifact" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
 			<InvokePanel id="s" :source="pageType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
 			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Process" class="serv-panel panel-post" :class="panelClass('post')"></InvokePanel>
@@ -52,6 +34,9 @@
 </template>
 
 <script>
+import Menubar from 'primevue/menubar';
+//import TabMenu from 'primevue/tabmenu';
+
 import InvokePanel from '@/components/InvokePanel.vue';
 import PageView from '@/components/PageView.vue';
 import ArtTree from '@/components/ArtTree.vue';
@@ -63,6 +48,8 @@ import {ApiClient} from '@/common/apiclient.js';
 export default {
 	name: 'RepositoryView',
 	components: {
+		Menubar,
+		//TabMenu,
 		InvokePanel,
 		PageView,
 		ArtTree
@@ -73,7 +60,13 @@ export default {
 			areaTreeType: SEGM.AreaTree,
 			mode: 'render',
 			artifacts: null,
-			currentArtifact: null
+			currentArtifact: null,
+
+			menuItems: [
+				{ label: 'Render', command: () => {this.selectMode('render');} },
+				{ label: 'Segmentation', command: () => {this.selectMode('segm');} },
+				{ label: 'Postprocess', command: () => {this.selectMode('post');} },
+			]
 		}
 	},
 	computed: {
@@ -162,7 +155,7 @@ export default {
 .serv-panel.hidden {
 	display: none;
 }
-.navbar .nav-link.active {
+/*.navbar .nav-link.active {
 	background-color: rgba(255, 255, 255, 0.2);
 }
 .sidebar-scroll {
@@ -171,5 +164,5 @@ export default {
 }
 .sidebar {
 	font-size: 80%;
-}
+}*/
 </style>

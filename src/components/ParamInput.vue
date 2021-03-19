@@ -1,42 +1,51 @@
 <template>
-	<div :class="paramClass">
-		<div v-if="descr.type=='string'">
+	<div :class="paramClass" class="param-field">
+		<div v-if="descr.type=='string'" class="p-field">
 			<label :for="inputId" >{{descr.name}}</label>
-			<input type="text" v-bind:value="value" :id="inputId" :placeholder="descr.name"
-				:minlength="descr.minLength" :maxlength="descr.maxLength" class="form-control"
-				v-on:input="$emit('input', $event.target.value)">
+			<InputText type="text" :id="inputId" :placeholder="descr.name"
+				:minlength="descr.minLength" :maxlength="descr.maxLength"
+				v-bind:modelValue="modelValue" 
+				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
-		<div v-if="descr.type=='int'">
+		<div v-if="descr.type=='int'" class="p-field">
 			<label :for="inputId" >{{descr.name}}</label>
-			<input type="number" :id="inputId"
-				:min="descr.minValue" :maxlength="descr.maxValue" class="form-control"
-				v-bind:value="value" 
-				v-on:input="$emit('input', parseInt($event.target.value))">
+			<InputNumber mode="decimal" showButtons :id="inputId"
+				:min="descr.minValue" :max="descr.maxValue"
+				v-bind:modelValue="modelValue" 
+				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
-		<div v-if="descr.type=='float'">
+		<div v-if="descr.type=='float'" class="p-field">
 			<label :for="inputId" >{{descr.name}}</label>
-			<input type="number" :id="inputId"
-				:min="descr.minValue" :maxlength="descr.maxValue" class="form-control"
-				v-bind:value="value"
-				v-on:input="$emit('input', parseFloat($event.target.value))">
+			<InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"
+				:min="descr.minValue" :max="descr.maxValue"
+				v-bind:modelValue="modelValue" 
+				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
-		<div class="form-check" v-if="descr.type=='boolean'">
-			<input type="checkbox" :id="inputId" class="form-check-input"
-				v-bind:checked="value" 
-				v-on:input="$emit('input', $event.target.checked)">
+		<div v-if="descr.type=='boolean'" class="p-field-checkbox">
+			<Checkbox :binary="true" :id="inputId"
+				v-bind:modelValue="modelValue" 
+				@update:modelValue="$emit('update:modelValue', $event)" />
 			<label :for="inputId" class="form-check-label">{{descr.name}}</label>
 		</div>
 	</div>
 </template>
 
 <script>
+import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
+import Checkbox from 'primevue/checkbox';
+
+
 export default {
 	name: 'ParamInput',
 	components: {
+		InputText,
+		InputNumber,
+		Checkbox
 	},
 	props: {
 		descr: null,
-		value: null
+		modelValue: null
 	},
 	data () {
 		return {
@@ -67,7 +76,7 @@ export default {
 	width: 25em;
 	margin-right: 0.5em;
 }
-.p-int input, .p-float input {
+.p-int, .p-float {
 	width: 6em;
 	margin-right: 0.5em;
 }

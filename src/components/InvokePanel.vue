@@ -1,36 +1,42 @@
 <template>
-	<div class="container-fluid service-panel">
-		<form>
-			<div class="service">
-				<label :for="inputId" class="inl">Service</label>
-				<select class="form-select inl" v-model="key" v-on:change="update()" :id="inputId">
-					<option v-for="serv in selection" :key="serv.id" :value="serv.id">
-						{{serv.name}} ({{serv.id}})
-					</option>
-				</select>
-				<button type="button" class="btn btn-primary inl" v-on:click="invoke">
-					{{action}}
-				</button>
+	<div class="service-panel card">
+			<div class="service p-fluid">
+				<div class="p-field inl">
+					<label :for="inputId" class="inl">Service</label>
+					<Dropdown v-model="key" :options="selList" optionLabel="name" optionValue="id">
+						<template #option="opt">{{opt.option.name}} ({{opt.option.id}})</template>
+						<template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
+					</Dropdown>
+				</div>
+				<Button class="inl" v-on:click="invoke" :label="action" />
 				<div v-if="loading" class="loading inl">
-					<div class="spinner-border spinner-border-sm text-primary" role="status">
-					</div>
+					<ProgressSpinner class="spinner" />
 				</div>
 				<div v-if="error" class="error inl text-danger">
 					<i class="bi bi-x-circle-fill" v-on:click="error=null"></i><span>{{error}}</span>
 				</div>
 			</div>
 			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
-		</form>
 	</div>
 </template>
 
 <script>
 import {ApiClient} from '@/common/apiclient.js';
+import Dropdown from 'primevue/dropdown';
+import Panel from 'primevue/panel';
+import Card from 'primevue/card';
+import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
 import ParamPanel from './ParamPanel.vue';
 
 export default {
 	name: 'InvokePanel',
 	components: {
+		Panel,
+		Card,
+		Dropdown,
+		Button,
+		ProgressSpinner,
 		ParamPanel
 	},
 	props: {
@@ -41,10 +47,11 @@ export default {
 	},
 	data () {
 		return {
-			loading: false,
+			loading: true,
 			error: null,
 			services: null,  //all services
 			selection: null, //acceptable services
+			selList: null,	 //acceptable service list
 			key: null,		 //selected service key
 			paramDescr: null, //selected service param description
 			params: null	 //selected service params
@@ -68,11 +75,13 @@ export default {
 				let data = await client.fetchArtifactServices();
 				this.services = data;
 
+				this.selList = [];
 				let sel = {};
 				for (let serv of this.services) {
 					if (serv.produces === this.target
 							&& (!this.source || serv.consumes === this.source)) {
 						sel[serv.id] = serv;
+						this.selList.push(serv);
 						if (this.key == null) {
 							this.key = serv.id;
 						}
@@ -144,7 +153,25 @@ export default {
 </script>
 
 <style>
-.service-panel, .service-panel .btn, .service-panel .form-select, .service-panel .form-control {
+.service .inl {
+	vertical-align: baseline;
+	display: inline-block;
+	width: auto;
+}
+.service button.inl {
+	width: auto;
+	margin-left: 0.5em;
+}
+.loading {
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 1em;
+}
+.loading .spinner {
+	width: 2em;
+	height: 2em;
+}
+/*.service-panel, .service-panel .btn, .service-panel .form-select, .service-panel .form-control {
 	font-size: 0.8rem;
 }
 .service-panel {
@@ -183,5 +210,5 @@ export default {
 .error i {
 	margin-right: 0.5em;
 	font-size: 135%;
-}
+}*/
 </style>
