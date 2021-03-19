@@ -71,6 +71,7 @@ export default {
 <style>
 .p-int, .p-float, .p-boolean, .p-string {
 	display: inline-block;
+	vertical-align: bottom;
 }
 .p-string {
 	width: 25em;

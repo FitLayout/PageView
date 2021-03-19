@@ -1,9 +1,11 @@
 <template>
     <div class="repository-view">
 		<!-- Repository menu -->
-		<Menubar :model="menuItems" style="font-size:120%">
-			<template #start>FitLayout</template>
-		</Menubar>
+		<div class="menu-row">
+			<Menubar :model="menuItems" style="font-size:120%">
+				<template #start>FitLayout</template>
+			</Menubar>
+		</div>
 		<!-- Service panels -->
 		<div class="panel-row">
 			<InvokePanel id="r" :target="pageType" :currentArtifact="currentArtifact" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
@@ -11,31 +13,35 @@
 			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Process" class="serv-panel panel-post" :class="panelClass('post')"></InvokePanel>
 		</div>
 		<!-- Artifact view -->
-		<div class="row flex-fill overflow-hidden">
-			<div class="view-artifact h-100 row">
-				<!-- Sidebar -->
-				<div class="sidebar-scroll col-4">
+		<div class="splitter-row">
+			<Splitter style="overflow: hidden; height: 100%">
+				<SplitterPanel>
 					<div><i class="bi bi-eye-slash-fill"></i></div>
 					<div class="sidebar">
-						<ArtTree :artifacts="artifacts" :currentIri="iri"
-							v-on:select-artifact="selectArtifact"
-							v-on:delete-artifact="deleteArtifact">
-						</ArtTree>
+						<div class="sidebar-cont">
+							<ArtTree :artifacts="artifacts" :currentIri="iri"
+								v-on:select-artifact="selectArtifact"
+								v-on:delete-artifact="deleteArtifact">
+							</ArtTree>
+						</div>
 					</div>
-				</div>
-				<!-- Page view -->
-				<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
-				<div class="empty-page h-100 col-8 d-flex align-items-center" v-if="!iri">
-					<p class="flex-fill text-center text-secondary">No page selected</p>
-				</div>
-			</div>
+				</SplitterPanel>
+				<SplitterPanel>
+					<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
+					<div class="empty-page p-d-flex p-ai-center p-jc-center" v-if="!iri">
+						<p class="flex-fill p-text-center p-text-secondary">No page selected</p>
+					</div>
+				</SplitterPanel>
+			</Splitter>
 		</div>
 	</div>
 </template>
 
 <script>
 import Menubar from 'primevue/menubar';
-//import TabMenu from 'primevue/tabmenu';
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
+import ScrollPanel from 'primevue/scrollpanel';
 
 import InvokePanel from '@/components/InvokePanel.vue';
 import PageView from '@/components/PageView.vue';
@@ -49,7 +55,9 @@ export default {
 	name: 'RepositoryView',
 	components: {
 		Menubar,
-		//TabMenu,
+		Splitter,
+		SplitterPanel,
+		ScrollPanel,
 		InvokePanel,
 		PageView,
 		ArtTree
@@ -152,9 +160,41 @@ export default {
 </script>
 
 <style>
+.repository-view {
+	height: 100vh;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
 .serv-panel.hidden {
 	display: none;
 }
+.menu-row, .panel-row {
+	flex: 0 0 auto;
+}
+.panel-row {
+	padding: 0.5em 1em 0 1em;
+}
+.splitter-row {
+	flex: 1 1 auto;
+	overflow: hidden;
+}
+.sidebar {
+	width: 100%;
+	height: 100%;
+	min-width: 20em;
+	overflow: auto;
+	position: relative;
+}
+.sidebar-cont {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	padding: 0 0.5em 0 0.5em;
+	top: 0;
+	left: 0;
+}
+
 /*.navbar .nav-link.active {
 	background-color: rgba(255, 255, 255, 0.2);
 }

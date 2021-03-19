@@ -1,6 +1,6 @@
 <template>
 
-	<div class="col-page h-100 col-8 d-flex flex-column">
+	<div class="col-page">
 		<div v-if="loading" class="loading alert alert-light">
 			<div class="spinner-border text-primary" role="status">
 			</div>
@@ -17,7 +17,7 @@
 				</div>
 			</form>
 		</div>
-		<div class="page-contents row h-100 overflow-auto">
+		<div class="page-contents">
 			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom">
 			</Page>
 		</div>
@@ -114,6 +114,11 @@ export default {
 </script>
 
 <style>
+.col-page {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
 .tools {
 	margin-top: 0;
 	background-color: #f3f3f3;
@@ -126,5 +131,10 @@ export default {
 }
 .page-contents {
 	border: 2px solid lightgray;
+	height: 100%;
+	width: 100%;
+	min-width: 200px;
+	overflow: auto;
+	position: relative;
 }
 </style>

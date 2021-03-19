@@ -1,8 +1,8 @@
 <template>
 	<div class="service-panel card">
-			<div class="service p-fluid">
+			<div class="service p-formgroup-inline">
 				<div class="p-field inl">
-					<label :for="inputId" class="inl">Service</label>
+					<label :for="inputId" class="inl"><strong>Service</strong></label>
 					<Dropdown v-model="key" :options="selList" optionLabel="name" optionValue="id">
 						<template #option="opt">{{opt.option.name}} ({{opt.option.id}})</template>
 						<template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
@@ -47,7 +47,7 @@ export default {
 	},
 	data () {
 		return {
-			loading: true,
+			loading: false,
 			error: null,
 			services: null,  //all services
 			selection: null, //acceptable services
@@ -153,6 +153,12 @@ export default {
 </script>
 
 <style>
+.service-panel .p-field {
+	margin-bottom: 0.5em;
+}
+.service-panel .p-field > label {
+	margin-bottom: 0.1em;
+}
 .service .inl {
 	vertical-align: baseline;
 	display: inline-block;
@@ -160,7 +166,6 @@ export default {
 }
 .service button.inl {
 	width: auto;
-	margin-left: 0.5em;
 }
 .loading {
 	display: inline-block;

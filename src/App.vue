@@ -18,13 +18,12 @@ export default {
 html {
 	font-size: 10pt;
 }
+body {
+	margin: 0;
+	padding: 0;
+}
 #app {
 	font-family: var(--font-family);
 	color: var(--text-color);
-  /*font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: #2c3e50;*/
 }
 </style>

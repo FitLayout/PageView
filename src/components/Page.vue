@@ -1,6 +1,6 @@
 <template>
-  <div class="pageZoom h-100" :style="zoomStyle">
-	<div class="pageView" :style="pageStyle">
+  <div class="page-zoom" :style="zoomStyle">
+	<div class="page-view" :style="pageStyle">
 		<div v-if="dataurl" class="image">
 		<img :src="dataurl" alt="screenshot">
 		</div>
@@ -90,10 +90,14 @@ export default {
 }
 </script>
 <style>
-.pageZoom {
+.page-zoom {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
 	transform-origin: top left;
 }
-.pageView {
+.page-view {
 	overflow: hidden;
 	position: relative;
 }
