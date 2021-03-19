@@ -1,15 +1,13 @@
 <template>
 
 	<div class="col-page">
-		<div v-if="loading" class="loading alert alert-light">
-			<div class="spinner-border text-primary" role="status">
-			</div>
-			<span>Loading...</span>
+		<div v-if="loading">
+			<ProgressBar mode="indeterminate"/>
 		</div>
 		<div v-if="error" class="error alert alert-danger">
 		{{ error }}
 		</div>
-		<div class="tools row" v-if="!loading && !error">
+		<div class="tools" v-if="!loading && !error">
 			<form class="row row-cols-lg-auto align-items-center">
 				<div class="col-sm-3">
 					<label for="zoom" class="form-label">Zoom <b>{{ zoom }}%</b></label>
@@ -26,7 +24,9 @@
 </template>
 
 <script>
+import ProgressBar from 'primevue/progressbar';
 import Page from './Page.vue';
+
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
@@ -35,6 +35,7 @@ import {ApiClient} from '@/common/apiclient.js';
 export default {
 	name: 'PageView',
 	components: {
+		ProgressBar,
 		Page
 	},
 	props: {

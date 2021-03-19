@@ -22,6 +22,14 @@ body {
 	margin: 0;
 	padding: 0;
 }
+.h-100 {
+	height: 100%;
+}
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 #app {
 	font-family: var(--font-family);
 	color: var(--text-color);

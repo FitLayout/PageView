@@ -33,7 +33,7 @@ export default {
 <style>
 .iri {
 	border-bottom: 1px dotted;
-	color: var(--bs-blue);
+	color: var(--blue-500);
 	cursor: default;
 }
 </style>

@@ -12,22 +12,25 @@
 				<div v-if="loading" class="loading inl">
 					<ProgressSpinner class="spinner" />
 				</div>
-				<div v-if="error" class="error inl text-danger">
-					<i class="bi bi-x-circle-fill" v-on:click="error=null"></i><span>{{error}}</span>
-				</div>
+
+				<InlineMessage v-if="error" class="error" severity="error" v-on:click="error=null">{{error}}</InlineMessage>
 			</div>
 			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
 	</div>
 </template>
 
 <script>
-import {ApiClient} from '@/common/apiclient.js';
 import Dropdown from 'primevue/dropdown';
 import Panel from 'primevue/panel';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
+import InlineMessage from 'primevue/inlinemessage';
+
 import ParamPanel from './ParamPanel.vue';
+
+import {ApiClient} from '@/common/apiclient.js';
+
 
 export default {
 	name: 'InvokePanel',
@@ -37,6 +40,7 @@ export default {
 		Dropdown,
 		Button,
 		ProgressSpinner,
+		InlineMessage,
 		ParamPanel
 	},
 	props: {
@@ -176,6 +180,11 @@ export default {
 	width: 2em;
 	height: 2em;
 }
+.service-panel .error {
+	font-weight: bold;
+	margin-left: 1em;
+}
+
 /*.service-panel, .service-panel .btn, .service-panel .form-select, .service-panel .form-control {
 	font-size: 0.8rem;
 }

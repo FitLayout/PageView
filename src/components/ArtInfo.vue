@@ -1,12 +1,12 @@
 <template>
 	<div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
 		<div class="icons">
-			<i class="bi bi-trash" title="Delete artifact" v-on:click="deleteArtifact"></i>
+			<i class="pi pi-trash" title="Delete artifact" v-on:click="deleteArtifact"></i>
 		</div>
 		<p>
 			<strong class="badge">{{ typeName }}</strong>&nbsp;
 			<Iri :iri="iri"></Iri>
-			<i class="bi bi-eye" title="Focus on this page" v-if="typeName === 'Page'"></i>
+			<i class="pi pi-eye" title="Focus on this page" v-if="typeName === 'Page'"></i>
 		</p>
 		<div v-if="artifact">
 			<p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
@@ -25,31 +25,31 @@
 .artifact {
 	margin: 1em 0;
 	padding: 0.5em 1em;
-	background-color: #f3f3f3;
+	background-color: var(--surface-b);
 	border-radius: 5px;
-	border: 1px solid #d0d0d0;
+	border: 1px solid var(--surface-400);
 	/*box-shadow: 0 6px 6px -6px black;*/
 }
 .artifact .icons {
 	float: right;
 }
-.artifact i.bi {
+.artifact i.pi {
 	margin-left: 0.5em;
 	cursor: pointer;
 	font-size: 120%;
 }
-.artifact .bi-eye {
-	color: var(--bs-primary);
+.artifact .pi-eye {
+	color: var(--primary-color);
 }
-.artifact .bi-trash:hover {
-	color: var(--bs-danger);
+.artifact .pi-trash:hover {
+	color: #D32F2F;
 }
 .artifact .ainfo {
 	display: block;
 	font-size: 0;
 }
 .selected > .artifact {
-	border: 2px dotted var(--bs-dark);
+	border: 2px solid var(--primary-color);
 	/*box-shadow: 0 2px 6px -6px black;*/
 }
 .selected > .artifact .ainfo {
@@ -61,18 +61,26 @@
 	font-size: 1em;
 	transition: all 0.2s 0.3s;
 }
+.badge {
+	font-size: 75%;
+	padding: 0.25em 0.4em;
+	border-radius: 3px;
+}
 .boxtree .badge {
-	background-color: var(--bs-green);
+	color: white;
+	background-color: var(--green-500);
 }
 .areatree .badge {
-	background-color: var(--bs-orange);
+	color: black;
+	background-color: var(--yellow-500);
 }
 .artifact p {
 	margin: 0;
 }
 .artifact .alabel {
 	font-weight: bold;
-	font-size: 115%;
+	font-size: 100%;
+	margin: 0.25em 0;
 }
 .artifact .creator, .artifact .url {
 	font-size: 80%;

@@ -17,7 +17,7 @@
 		<div v-if="descr.type=='float'" class="p-field">
 			<label :for="inputId" >{{descr.name}}</label>
 			<InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"
-				:min="descr.minValue" :max="descr.maxValue"
+				:min="descr.minValue" :max="descr.maxValue" :step="0.2"
 				v-bind:modelValue="modelValue" 
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
