@@ -1,13 +1,14 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import App from './App.vue';
-import router from "./router";
-import bootstrap from 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import PrimeVue from 'primevue/config';
+import router from './router';
 
-Vue.config.productionTip = false;
+import 'primevue/resources/themes/saga-blue/theme.css';
+import 'primevue/resources/primevue.min.css';
+import 'primeicons/primeicons.css';          
 
-new Vue({
-	router,
-	bootstrap,
-	render: h => h(App)
-}).$mount('#app')
+const app = createApp(App);
+app.use(PrimeVue);
+app.use(router);
+
+app.mount('#app');

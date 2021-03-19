@@ -1,38 +1,40 @@
-import Vue from "vue";
-import Router from "vue-router";
+import { createWebHistory, createRouter } from "vue-router";
+import Home from "../views/Home.vue";
+import RepositoryView from "../views/RepositoryView.vue";
 
-Vue.use(Router);
-
-export default new Router({
-  routes: [
-    {
-      path: "/",
-      component: () => import("@/views/Home")
-    },
-    /*{
-      name: "login",
-      path: "/login",
-      component: () => import("@/views/Login")
-    },
-    {
-      name: "register",
-      path: "/register",
-      component: () => import("@/views/Register")
-    },
-    {
-      name: "settings",
-      path: "/settings",
-      component: () => import("@/views/Settings")
-    },*/
-    {
-      name: "repo",
-      path: "/r/:repoId",
-      component: () => import("@/views/RepositoryView")
-    },
-    {
-      name: "show",
-      path: "/r/:repoId/show/:iri",
-      component: () => import("@/views/RepositoryView")
-    }
-  ]
+const router = createRouter({
+	history: createWebHistory(),
+	routes: [
+		{
+			path: "/",
+			component: Home
+		},
+		/*{
+		name: "login",
+		path: "/login",
+		component: () => import("@/views/Login")
+		},
+		{
+		name: "register",
+		path: "/register",
+		component: () => import("@/views/Register")
+		},
+		{
+		name: "settings",
+		path: "/settings",
+		component: () => import("@/views/Settings")
+		},*/
+		{
+			name: "repo",
+			path: "/r/:repoId",
+			component: RepositoryView
+		},
+		{
+			name: "show",
+			path: "/r/:repoId/show/:iri",
+			component: RepositoryView
+		}
+	]
 });
+
+export default router;
