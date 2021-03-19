@@ -33,5 +33,6 @@ body {
 #app {
 	font-family: var(--font-family);
 	color: var(--text-color);
+	background-color: var(--surface-a);
 }
 </style>
