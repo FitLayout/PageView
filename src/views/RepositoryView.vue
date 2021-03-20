@@ -2,7 +2,7 @@
     <div class="repository-view">
 		<!-- Repository menu -->
 		<div class="menu-row">
-			<Menubar :model="menuItems" style="font-size:120%">
+			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
 			</Menubar>
 		</div>
@@ -71,9 +71,9 @@ export default {
 			currentArtifact: null,
 
 			menuItems: [
-				{ label: 'Render', command: () => {this.selectMode('render');} },
-				{ label: 'Segmentation', command: () => {this.selectMode('segm');} },
-				{ label: 'Postprocess', command: () => {this.selectMode('post');} },
+				{ label: 'Render', class: 'selected', command: () => {this.selectMode('render', 0);} },
+				{ label: 'Segmentation', class: 'normal', command: () => {this.selectMode('segm', 1);} },
+				{ label: 'Postprocess', class: 'normal', command: () => {this.selectMode('post', 2);} },
 			]
 		}
 	},
@@ -92,11 +92,18 @@ export default {
 		this.fetchArtifacts();
 	},
 	methods: {
-		selectMode(mode) {
+		selectMode(mode, index) {
 			if (mode == this.mode) {
 				this.mode = 'off';
 			} else {
 				this.mode = mode;
+			}
+			for (let i = 0; i < this.menuItems.length; i++) {
+				if (i === index) {
+					this.menuItems[i].class = 'selected';
+				} else {
+					this.menuItems[i].class = 'normal';
+				}
 			}
 		},
 		panelClass(mode) {
@@ -172,6 +179,12 @@ export default {
 	display: inline-block;
 	border-radius: 5px;
 	font-weight: bold;
+}
+#mainmenu .selected .p-menuitem-link {
+	background-color: var(--primary-color);
+}
+#mainmenu .selected .p-menuitem-link .p-menuitem-text {
+	color: var(--primary-color-text);
 }
 .serv-panel.hidden {
 	display: none;
