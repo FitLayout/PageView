@@ -3,7 +3,7 @@
 		<!-- Repository menu -->
 		<div class="menu-row">
 			<Menubar :model="menuItems" style="font-size:120%">
-				<template #start>FitLayout</template>
+				<template #start><span class="logo">FitLayout</span></template>
 			</Menubar>
 		</div>
 		<!-- Service panels -->
@@ -165,6 +165,13 @@ export default {
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+}
+.logo {
+	padding: 0.5em 1em;
+	background: var(--surface-d);
+	display: inline-block;
+	border-radius: 5px;
+	font-weight: bold;
 }
 .serv-panel.hidden {
 	display: none;

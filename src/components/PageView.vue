@@ -8,12 +8,17 @@
 		{{ error }}
 		</div>
 		<div class="tools" v-if="!loading && !error">
-			<form class="row row-cols-lg-auto align-items-center">
-				<div class="col-sm-3">
-					<label for="zoom" class="form-label">Zoom <b>{{ zoom }}%</b></label>
-					<input type="range" class="form-range" min="20" max="200" step="5" id="zoom" v-model="zoom">
+			<div class="p-fluid p-formgrid p-grid">
+
+				<div class="p-field p-col-12 p-md-4 p-lg-3">
+					<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
+					<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
 				</div>
-			</form>
+				<div class="p-field p-col-6 p-md-2 p-lg-1">
+					<label for="screen" class="form-label">Screenshot</label>
+					<InputSwitch id="screen" v-model="screenshot" />
+				</div>
+			</div>
 		</div>
 		<div class="page-contents">
 			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom">
@@ -25,6 +30,8 @@
 
 <script>
 import ProgressBar from 'primevue/progressbar';
+import Slider from 'primevue/slider';
+import InputSwitch from 'primevue/inputswitch';
 import Page from './Page.vue';
 
 import BOX from '@/ontology/BOX.js';
@@ -36,6 +43,8 @@ export default {
 	name: 'PageView',
 	components: {
 		ProgressBar,
+		Slider,
+		InputSwitch,
 		Page
 	},
 	props: {
@@ -48,7 +57,8 @@ export default {
 			artifactModel: null,
 			pageModel: null,
 			rectangles: null,
-			zoom: 100
+			zoom: 100,
+			screenshot: true
 		}
 	},
 	created () {
@@ -122,13 +132,24 @@ export default {
 }
 .tools {
 	margin-top: 0;
-	background-color: #f3f3f3;
-	border: 1px ridge #d0d0d0;
-	font-size: 80%;
+	background-color: var(--surface-b);
 	padding: 0.3em 0;
+	font-size: 90%;
 }
-.loading span {
-	margin-left: 1em;
+.tools .p-field {
+	text-align: center;
+	padding: 0 0.3em;
+	margin-bottom: 0.1em;
+}
+.tools .p-field label {
+	display: block;
+}
+.tools .p-field > label, .tools .p-field > .p-component {
+	margin-left: auto;
+	margin-right: auto;
+}
+.tools .p-field > .p-component {
+	margin-bottom: 0;
 }
 .page-contents {
 	border: 2px solid lightgray;
