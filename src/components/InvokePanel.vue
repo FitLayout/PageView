@@ -184,45 +184,4 @@ export default {
 	font-weight: bold;
 	margin-left: 1em;
 }
-
-/*.service-panel, .service-panel .btn, .service-panel .form-select, .service-panel .form-control {
-	font-size: 0.8rem;
-}
-.service-panel {
-	min-width: 50em;
-	background-color: #f3f3f3;
-	padding-top: 0.5em;
-	padding-bottom: 0.5em;
-	border: 1px ridge #d0d0d0;
-}
-.service {
-	padding: 0 0 0.5em 0;
-}
-.service .inl {
-	vertical-align: baseline;
-	display: inline-block;
-}
-.service label {
-	font-weight: bold;
-	width: auto;
-	display: inline-block;
-	margin-right: 1em;
-}
-.service select {
-	width: auto;
-	margin-right: 1em;
-}
-.loading {
-	display: inline-block;
-	vertical-align: middle;
-	margin-left: 1em;
-}
-.error {
-	font-weight: bold;
-	margin-left: 1em;
-}
-.error i {
-	margin-right: 0.5em;
-	font-size: 135%;
-}*/
 </style>

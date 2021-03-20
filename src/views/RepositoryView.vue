@@ -214,15 +214,4 @@ export default {
 	top: 0;
 	left: 0;
 }
-
-/*.navbar .nav-link.active {
-	background-color: rgba(255, 255, 255, 0.2);
-}
-.sidebar-scroll {
-	height: 100%;
-	overflow: auto;
-}
-.sidebar {
-	font-size: 80%;
-}*/
 </style>
