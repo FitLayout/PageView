@@ -9,19 +9,22 @@
 		</div>
 		<div class="tools" v-if="!loading && !error">
 			<div class="p-fluid p-formgrid p-grid">
-
-				<div class="p-field p-col-12 p-md-4 p-lg-3">
+				<div class="p-field p-col">
 					<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
 					<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
 				</div>
-				<div class="p-field p-col-6 p-md-2 p-lg-1">
+				<div class="p-field p-col">
 					<label for="screen" class="form-label">Screenshot</label>
 					<InputSwitch id="screen" v-model="screenshot" />
+				</div>
+				<div class="p-field p-col">
+					<label for="outlines" class="form-label">Show outlines</label>
+					<InputSwitch id="outlines" v-model="outlines" title="Show area bounds" />
 				</div>
 			</div>
 		</div>
 		<div class="page-contents">
-			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom">
+			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines">
 			</Page>
 		</div>
 	</div>
@@ -58,7 +61,8 @@ export default {
 			pageModel: null,
 			rectangles: null,
 			zoom: 100,
-			screenshot: true
+			screenshot: true,
+			outlines: false
 		}
 	},
 	created () {

@@ -2,9 +2,9 @@
   <div class="page-zoom" :style="zoomStyle">
 	<div class="page-view" :style="pageStyle">
 		<div v-if="dataurl" class="image">
-		<img :src="dataurl" alt="screenshot">
+			<img :src="dataurl" alt="screenshot">
 		</div>
-		<div class="boxes" ref="boxes">
+		<div :class="boxesClass" ref="boxes">
 		</div>
 	</div>
   </div>
@@ -16,7 +16,8 @@ export default {
 	props: {
 		pageModel: null,
 		rectangles: null,
-		zoom: null
+		zoom: null,
+		outlines: null
 	},
 	data () {
 		return {
@@ -24,6 +25,15 @@ export default {
 			dataurl: null,
 			pageStyle: '',
 			zoomStyle: ''
+		}
+	},
+	computed: {
+		boxesClass() {
+			let cls = 'boxes';
+			if (this.outlines) {
+				cls += ' outlines';
+			}
+			return cls;
 		}
 	},
 	created () {
@@ -57,6 +67,7 @@ export default {
 		renderBoxes(boxList, target) {
 			//let shadow = target.attachShadow({mode: 'open'});
 			const shadow = target;
+			shadow.innerHTML = '';
 			for (let box of boxList) {
 				let el = document.createElement('div');
 				shadow.appendChild(el);
@@ -123,5 +134,11 @@ export default {
 }
 .box:hover .vbox {
 	background-color: rgba(255, 200, 255, 0.3);
+}
+.outlines .box {
+	outline: 1px dashed lightgreen;
+}
+.outlines .box.selected {
+	outline: 1px solid red;
 }
 </style>
