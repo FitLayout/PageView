@@ -3,7 +3,9 @@
 	<div class="splitter-row">
 		<Splitter style="overflow: hidden; height: 100%">
 			<SplitterPanel>
-				<p>Tree</p>
+				<div class="boxtree">
+					<Tree :value="treeModel" v-if="treeModel"></Tree>
+				</div>
 			</SplitterPanel>
 
 			<SplitterPanel>
@@ -47,6 +49,7 @@ import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import InputSwitch from 'primevue/inputswitch';
+import Tree from 'primevue/tree';
 import Page from './Page.vue';
 
 import BOX from '@/ontology/BOX.js';
@@ -63,6 +66,7 @@ export default {
 		ProgressBar,
 		Slider,
 		InputSwitch,
+		Tree,
 		Page
 	},
 	props: {
@@ -72,12 +76,14 @@ export default {
 		return {
 			loading: false,
 			error: null,
-			artifactModel: null,
-			pageModel: null,
 			rectangles: null,
 			zoom: 100,
 			screenshot: true,
-			outlines: false
+			outlines: false,
+
+			artifactModel: null,
+			pageModel: null,
+			treeModel: null
 		}
 	},
 	created () {
@@ -108,8 +114,7 @@ export default {
 				if (type === BOX.Page) {
 					this.setArtifact(artifact);
 					this.setPage(artifact, artifact.rectAreas);
-					let treeModel = new TreeModel(artifact.rectAreas);
-					console.log(treeModel.model);
+					this.treeModel = new TreeModel(artifact.rectAreas);
 				} else if (type === SEGM.AreaTree) {
 					this.setArtifact(artifact);
 					if (artifact.hasSourcePage) {
@@ -183,5 +188,13 @@ export default {
 	min-width: 200px;
 	overflow: auto;
 	position: relative;
+}
+
+.boxtree .p-tree .p-tree-container .p-treenode .p-treenode-content {
+	padding: 0;
+}
+.boxtree .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+	width: 1.5rem;
+	height: 1.5rem;
 }
 </style>
