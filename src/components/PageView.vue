@@ -33,11 +33,17 @@
 								<label for="outlines" class="form-label">Show outlines</label>
 								<InputSwitch id="outlines" v-model="outlines" title="Show area bounds" />
 							</div>
+							<div class="p-field p-col">
+								<label for="selection" class="form-label">Selection</label>
+								<InputSwitch id="selection" v-model="rectSelection" title="Selection mode" />
+							</div>
 						</div>
 					</div>
 					<div class="page-contents">
 						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines"
-							@box-selected="pageBoxSelected">
+							:rectSelection="rectSelection"
+							:selectedRect="selectedRect"
+							@rect-selected="pageRectSelected">
 						</Page>
 					</div>
 				</div>
@@ -84,13 +90,14 @@ export default {
 			zoom: 100,
 			screenshot: true,
 			outlines: false,
+			rectSelection: false,
 
 			artifactModel: null,
 			pageModel: null,
 			treeModel: null,
 			expandedTreeKeys: null,
 			selectedTreeKey: null,
-			selectedBox: null
+			selectedRect: null
 		}
 	},
 	created () {
@@ -161,12 +168,12 @@ export default {
 		//============== Events =============================
 
 		treeNodeSelected(node) {
-			this.selectedBox = node.data;
-			console.log(this.selectedTreeKey);
+			this.selectedRect = node.data;
 		},
 
-		pageBoxSelected(box) {
-			this.showBoxInTree(box);
+		pageRectSelected(rect) {
+			this.showBoxInTree(rect);
+			this.selectedRect = rect;
 		},
 
 		//============== Tree operations =============================

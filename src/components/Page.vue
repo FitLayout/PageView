@@ -18,14 +18,17 @@ export default {
 		rectangles: null,
 		selectedRect: null,
 		zoom: null,
-		outlines: null
+		outlines: null,
+		rectSelection: null
 	},
 	data () {
 		return {
 			page: null,
 			dataurl: null,
 			pageStyle: '',
-			zoomStyle: ''
+			zoomStyle: '',
+			boxIndex: null,
+			lastSelectedRect: null
 		}
 	},
 	computed: {
@@ -43,7 +46,9 @@ export default {
 	watch: {
 		pageModel: 'render',
 		rectangles: 'render',
-		zoom: 'updateZoom'
+		rectSelection: 'render',
+		zoom: 'updateZoom',
+		selectedRect: 'highlightSelectedRect'
 	},
 	methods: {
 		render() {
@@ -69,9 +74,11 @@ export default {
 			//let shadow = target.attachShadow({mode: 'open'});
 			const shadow = target;
 			shadow.innerHTML = '';
+			this.boxIndex = {};
 			for (let box of boxList) {
 				let el = document.createElement('div');
 				shadow.appendChild(el);
+				this.boxIndex[box._iri] = el;
 				el.srcBox = box;
 				el.setAttribute('class', 'box');
 				el.setAttribute('id', 'fl-box-' + box.documentOrder);
@@ -81,8 +88,9 @@ export default {
 				el.style.height = box.bounds.height + 'px';
 				let thisObj = this;
 				el.onclick = function(event) {
-					//console.log(event.currentTarget);
-					event.currentTarget.classList.toggle('selected');
+					if (thisObj.rectSelection) {
+						event.currentTarget.classList.toggle('selected');
+					}
 					thisObj.selectBox(box);
 				};
 
@@ -99,12 +107,27 @@ export default {
 
 		selectBox(box) {
 			console.log('emit');
-			this.$emit('box-selected', box);
+			this.$emit('rect-selected', box);
 		},
 
 		updateZoom() {
 			const ratio = this.zoom / 100.0;
 			this.zoomStyle = `transform:scale(${ratio})`;
+		},
+
+		highlightSelectedRect() {
+			if (this.lastSelectedRect) {
+				let lastElem = this.boxIndex[this.lastSelectedRect._iri];
+				if (lastElem) {
+					lastElem.classList.remove('focus');
+				}
+			}
+			let newElem = this.boxIndex[this.selectedRect._iri];
+			console.log(newElem);
+			if (newElem) {
+				newElem.classList.add('focus');
+			}
+			this.lastSelectedRect = this.selectedRect;
 		}
 	}
 }
@@ -130,6 +153,10 @@ export default {
 }
 .box, .vbox {
 	position: absolute;
+}
+.box.focus {
+	outline: 2px solid var(--primary-color) !important;
+	background-color: rgba(255, 200, 200, 0.3);
 }
 .box.selected {
 	outline: 1px solid red;
