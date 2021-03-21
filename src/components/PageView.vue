@@ -289,4 +289,9 @@ export default {
 	width: 1.5rem;
 	height: 1.5rem;
 }
+.box-tree .p-treenode-label {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 </style>
