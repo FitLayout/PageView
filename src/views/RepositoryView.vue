@@ -12,27 +12,27 @@
 			<InvokePanel id="s" :source="pageType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
 			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Process" class="serv-panel panel-post" :class="panelClass('post')"></InvokePanel>
 		</div>
-		<!-- Artifact view -->
-		<div class="splitter-row">
-			<Splitter style="overflow: hidden; height: 100%">
-				<SplitterPanel>
-					<div><i class="bi bi-eye-slash-fill"></i></div>
-					<div class="sidebar">
-						<div class="sidebar-cont">
-							<ArtTree :artifacts="artifacts" :currentIri="iri"
-								v-on:select-artifact="selectArtifact"
-								v-on:delete-artifact="deleteArtifact">
-							</ArtTree>
-						</div>
+
+		<div class="content-row">
+
+			<div class="sidebar" :class="visibleLeft?'visible':'hidden'">
+				<Button class="p-button-sm" v-if="!visibleLeft" icon="pi pi-arrow-right" @click="visibleLeft = true" />
+				<Button class="p-button-sm" v-if="visibleLeft" icon="pi pi-arrow-left" @click="visibleLeft = false" />
+				<div class="sidebar-scroll">
+					<div class="sidebar-cont">
+						<ArtTree :artifacts="artifacts" :currentIri="iri"
+							v-on:select-artifact="selectArtifact"
+							v-on:delete-artifact="deleteArtifact">
+						</ArtTree>
 					</div>
-				</SplitterPanel>
-				<SplitterPanel>
-					<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
-					<div class="empty-page p-d-flex p-ai-center p-jc-center h-100" v-if="!iri">
-						<p class="flex-fill p-text-center p-text-secondary">No page selected</p>
-					</div>
-				</SplitterPanel>
-			</Splitter>
+				</div>
+			</div>
+
+			<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
+			<div class="empty-page p-d-flex p-ai-center p-jc-center h-100" v-if="!iri">
+				<p class="flex-fill p-text-center p-text-secondary">No page selected</p>
+			</div>
+
 		</div>
 	</div>
 </template>
@@ -41,7 +41,8 @@
 import Menubar from 'primevue/menubar';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import ScrollPanel from 'primevue/scrollpanel';
+import Sidebar from 'primevue/sidebar';
+import Button from 'primevue/button';
 
 import InvokePanel from '@/components/InvokePanel.vue';
 import PageView from '@/components/PageView.vue';
@@ -57,7 +58,8 @@ export default {
 		Menubar,
 		Splitter,
 		SplitterPanel,
-		ScrollPanel,
+		Sidebar,
+		Button,
 		InvokePanel,
 		PageView,
 		ArtTree
@@ -69,6 +71,7 @@ export default {
 			mode: 'render',
 			artifacts: null,
 			currentArtifact: null,
+			visibleLeft: null,
 
 			menuItems: [
 				{ label: 'Render', class: 'selected', command: () => {this.selectMode('render', 0);} },
@@ -195,16 +198,32 @@ export default {
 .panel-row {
 	padding: 0.5em 1em 0 1em;
 }
-.splitter-row {
+.content-row {
 	flex: 1 1 auto;
 	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+}
+.sidebar .p-button {
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 100;
 }
 .sidebar {
-	width: 100%;
+	flex: 0 0 auto;
+	position: relative;
+	padding-left: 1em;
+	width: 22em;
+	transition: all 0.3s;
+}
+.sidebar-scroll {
 	height: 100%;
-	min-width: 20em;
 	overflow: auto;
 	position: relative;
+	width: calc(100% - 0.5em);
+	opacity: 1;
+	transition: all 0.5s;
 }
 .sidebar-cont {
 	position: absolute;
@@ -213,5 +232,13 @@ export default {
 	padding: 0 0.5em 0 0.5em;
 	top: 0;
 	left: 0;
+}
+.sidebar.hidden {
+	width: 1.5em;
+	transition: all 0.3s;
+}
+.sidebar.hidden .sidebar-scroll {
+	opacity: 0;
+	transition: all 0.5s;
 }
 </style>

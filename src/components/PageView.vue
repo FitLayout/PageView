@@ -1,37 +1,49 @@
 <template>
 
-	<div class="col-page">
-		<div v-if="loading">
-			<ProgressBar mode="indeterminate"/>
-		</div>
-		<div v-if="error" class="error alert alert-danger">
-		{{ error }}
-		</div>
-		<div class="tools" v-if="!loading && !error">
-			<div class="p-fluid p-formgrid p-grid">
-				<div class="p-field p-col">
-					<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
-					<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
+	<div class="splitter-row">
+		<Splitter style="overflow: hidden; height: 100%">
+			<SplitterPanel>
+				<p>Tree</p>
+			</SplitterPanel>
+
+			<SplitterPanel>
+				<div class="col-page">
+					<div v-if="loading">
+						<ProgressBar mode="indeterminate"/>
+					</div>
+					<div v-if="error" class="error alert alert-danger">
+					{{ error }}
+					</div>
+					<div class="tools" v-if="!loading && !error">
+						<div class="p-fluid p-formgrid p-grid">
+							<div class="p-field p-col">
+								<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
+								<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
+							</div>
+							<div class="p-field p-col">
+								<label for="screen" class="form-label">Screenshot</label>
+								<InputSwitch id="screen" v-model="screenshot" />
+							</div>
+							<div class="p-field p-col">
+								<label for="outlines" class="form-label">Show outlines</label>
+								<InputSwitch id="outlines" v-model="outlines" title="Show area bounds" />
+							</div>
+						</div>
+					</div>
+					<div class="page-contents">
+						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines">
+						</Page>
+					</div>
 				</div>
-				<div class="p-field p-col">
-					<label for="screen" class="form-label">Screenshot</label>
-					<InputSwitch id="screen" v-model="screenshot" />
-				</div>
-				<div class="p-field p-col">
-					<label for="outlines" class="form-label">Show outlines</label>
-					<InputSwitch id="outlines" v-model="outlines" title="Show area bounds" />
-				</div>
-			</div>
-		</div>
-		<div class="page-contents">
-			<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines">
-			</Page>
-		</div>
+			</SplitterPanel>
+		</Splitter>
 	</div>
 
 </template>
 
 <script>
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import InputSwitch from 'primevue/inputswitch';
@@ -41,10 +53,13 @@ import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
 import {ApiClient} from '@/common/apiclient.js';
+import TreeModel from '@/common/treemodel.js';
 
 export default {
 	name: 'PageView',
 	components: {
+		Splitter,
+		SplitterPanel,
 		ProgressBar,
 		Slider,
 		InputSwitch,
@@ -93,6 +108,8 @@ export default {
 				if (type === BOX.Page) {
 					this.setArtifact(artifact);
 					this.setPage(artifact, artifact.rectAreas);
+					let treeModel = new TreeModel(artifact.rectAreas);
+					console.log(treeModel.model);
 				} else if (type === SEGM.AreaTree) {
 					this.setArtifact(artifact);
 					if (artifact.hasSourcePage) {
@@ -129,6 +146,10 @@ export default {
 </script>
 
 <style>
+.splitter-row {
+	flex: 1 1 auto;
+	overflow: hidden;
+}
 .col-page {
 	height: 100%;
 	display: flex;
