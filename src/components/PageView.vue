@@ -3,11 +3,20 @@
 	<div class="splitter-row">
 		<Splitter style="overflow: hidden; height: 100%">
 			<SplitterPanel>
-				<div class="boxtree">
-					<Tree :value="treeModel" v-if="treeModel"
-							v-model:expandedKeys="expandedTreeKeys"
-							v-model:selectionKeys="selectedTreeKey"
-							@node-select="treeNodeSelected" selectionMode="single"></Tree>
+				<div class="box-tree-scroll p-card">
+					<div class="box-tree">
+						<Tree :value="treeModel" v-if="treeModel"
+								v-model:expandedKeys="expandedTreeKeys"
+								v-model:selectionKeys="selectedTreeKey"
+								@node-select="treeNodeSelected" selectionMode="single">
+							<template #default="slotProps">
+        						<span :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</span>
+    						</template>
+							<template #text="slotProps">
+        						<i :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</i>
+    						</template>
+						</Tree>
+					</div>
 				</div>
 			</SplitterPanel>
 
@@ -181,6 +190,11 @@ export default {
 		showBoxInTree(box) {
 			this.expandForBox(box);
 			this.selectBox(box);
+			//try to scroll into view
+			let elem = document.getElementById('btr-' + box.documentOrder);
+			if (elem) {
+				elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+			}
 		},
 
 		selectBox(box) {
@@ -197,7 +211,6 @@ export default {
 		},
 
 		findTreeNode(root, key) {
-			console.log(root);
 			if (root.key === key) {
 				return root;
 			} else if (root.children) {
@@ -256,10 +269,23 @@ export default {
 	position: relative;
 }
 
-.boxtree .p-tree .p-tree-container .p-treenode .p-treenode-content {
+.box-tree-scroll {
+	position: relative;
+	width: auto;
+	height: 50%;
+	min-height: 200px;
+	overflow: auto;
+}
+.box-tree {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+}
+.box-tree .p-tree .p-tree-container .p-treenode .p-treenode-content {
 	padding: 0;
 }
-.boxtree .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+.box-tree .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
 	width: 1.5rem;
 	height: 1.5rem;
 }

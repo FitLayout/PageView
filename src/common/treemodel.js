@@ -3,7 +3,7 @@ export default class TreeModel {
 	root = null;
 
 	constructor(boxlist, createItem) {
-		console.log(boxlist);
+		//console.log(boxlist);
 		if (createItem === undefined) {
 			createItem = this.createItem;
 		}
@@ -47,6 +47,7 @@ export default class TreeModel {
 		if (box.hasText !== undefined) {
 			label = box.hasText;
 			ret.icon = 'pi pi-fw pi-file';
+			ret.type = 'text';
 		} else if (box.htmlTagName !== undefined) {
 			label = '<' + box.htmlTagName + '>';
 			ret.icon = 'pi pi-fw pi-clone';
