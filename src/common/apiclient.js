@@ -115,6 +115,24 @@ export class ApiClient {
 
 	//================================================================================
 
+	/**
+	 * Sorts elements in the list based on their documentOrder property.
+	 * @param {*} list 
+	 */
+	sortBoxes(list) {
+		list.sort((a, b) => {
+			if (a.documentOrder < b.documentOrder) {
+				return -1;
+			} else if (a.documentOrder > b.documentOrder) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+	}
+
+	//================================================================================
+
 	async fetchArtifactServices() {
 		const url = SERVICE_ENDPOINT;
 		let response = await fetch(url, {

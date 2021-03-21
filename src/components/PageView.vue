@@ -4,7 +4,10 @@
 		<Splitter style="overflow: hidden; height: 100%">
 			<SplitterPanel>
 				<div class="boxtree">
-					<Tree :value="treeModel" v-if="treeModel"></Tree>
+					<Tree :value="treeModel" v-if="treeModel"
+							v-model:expandedKeys="expandedTreeKeys"
+							v-model:selectionKeys="selectedTreeKey"
+							@node-select="treeNodeSelected" selectionMode="single"></Tree>
 				</div>
 			</SplitterPanel>
 
@@ -33,7 +36,8 @@
 						</div>
 					</div>
 					<div class="page-contents">
-						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines">
+						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines"
+							@box-selected="pageBoxSelected">
 						</Page>
 					</div>
 				</div>
@@ -83,7 +87,10 @@ export default {
 
 			artifactModel: null,
 			pageModel: null,
-			treeModel: null
+			treeModel: null,
+			expandedTreeKeys: null,
+			selectedTreeKey: null,
+			selectedBox: null
 		}
 	},
 	created () {
@@ -112,9 +119,14 @@ export default {
 				let type = artifact._type;
 
 				if (type === BOX.Page) {
+					client.sortBoxes(artifact.rectAreas);
 					this.setArtifact(artifact);
 					this.setPage(artifact, artifact.rectAreas);
 					this.treeModel = new TreeModel(artifact.rectAreas);
+					this.expandedTreeKeys = {};
+					this.expandedTreeKeys[0] = true;
+					this.selectedTreeKey = {};
+					this.selectedTreeKey[0] = true;
 				} else if (type === SEGM.AreaTree) {
 					this.setArtifact(artifact);
 					if (artifact.hasSourcePage) {
@@ -144,6 +156,53 @@ export default {
 
 		changeArtifact(iri) {
 			this.$emit('select-artifact', iri);
+		},
+
+		//============== Events =============================
+
+		treeNodeSelected(node) {
+			this.selectedBox = node.data;
+			console.log(this.selectedTreeKey);
+		},
+
+		pageBoxSelected(box) {
+			this.showBoxInTree(box);
+		},
+
+		//============== Tree operations =============================
+
+		showBoxInTree(box) {
+			this.expandForBox(box);
+			this.selectBox(box);
+		},
+
+		selectBox(box) {
+			this.selectedTreeKey = {};
+			this.selectedTreeKey[box.documentOrder] = true;
+		},
+		
+		expandForBox(box) {
+			let boxNode = this.findTreeNode(this.treeModel.root, box.documentOrder);
+			while (boxNode) {
+				this.expandedTreeKeys[boxNode.key] = true;
+				boxNode = boxNode.parent;
+			}
+		},
+
+		findTreeNode(root, key) {
+			console.log(root);
+			if (root.key === key) {
+				return root;
+			} else if (root.children) {
+				for (let child of root.children) {
+					let sub = this.findTreeNode(child, key);
+					if (sub !== null) {
+						return sub;
+					}
+				}
+				return null;
+			}
+			return null;
 		}
 
 	}

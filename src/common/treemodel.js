@@ -1,13 +1,13 @@
 export default class TreeModel {
 
-	model = null;
+	root = null;
 
 	constructor(boxlist, createItem) {
 		console.log(boxlist);
 		if (createItem === undefined) {
 			createItem = this.createItem;
 		}
-		this.model = this.createModel(boxlist, createItem);
+		this.root = this.createModel(boxlist, createItem);
 	}
 
 	createModel(boxlist, createItem) {
@@ -31,6 +31,7 @@ export default class TreeModel {
 		for (let box of boxlist) {
 			if (box.isChildOf === curbox) {
 				const child = createItem(box);
+				child.parent = target;
 				target.children.push(child);
 				this.addChildren(box, child, boxlist, createItem);
 			}

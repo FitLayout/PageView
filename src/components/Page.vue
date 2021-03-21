@@ -16,6 +16,7 @@ export default {
 	props: {
 		pageModel: null,
 		rectangles: null,
+		selectedRect: null,
 		zoom: null,
 		outlines: null
 	},
@@ -73,13 +74,16 @@ export default {
 				shadow.appendChild(el);
 				el.srcBox = box;
 				el.setAttribute('class', 'box');
+				el.setAttribute('id', 'fl-box-' + box.documentOrder);
 				el.style.left = box.bounds.positionX + 'px';
 				el.style.top = box.bounds.positionY + 'px';
 				el.style.width = box.bounds.width + 'px';
 				el.style.height = box.bounds.height + 'px';
+				let thisObj = this;
 				el.onclick = function(event) {
 					//console.log(event.currentTarget);
 					event.currentTarget.classList.toggle('selected');
+					thisObj.selectBox(box);
 				};
 
 				//visual bounds inside
@@ -91,6 +95,11 @@ export default {
 				vel.style.height = box.visualHeight + 'px';
 				el.appendChild(vel);
 			}
+		},
+
+		selectBox(box) {
+			console.log('emit');
+			this.$emit('box-selected', box);
 		},
 
 		updateZoom() {
