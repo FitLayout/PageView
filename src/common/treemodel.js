@@ -2,13 +2,20 @@ export default class TreeModel {
 
 	root = null;
 
-	constructor(boxlist, createItem) {
-		//console.log(boxlist);
-		if (createItem === undefined) {
-			createItem = this.createItem;
-		}
-		this.root = this.createModel(boxlist, createItem);
+	constructor() {
 	}
+
+	createForBoxes(boxlist) {
+		this.root = this.createModel(boxlist, this.createBoxItem);
+		return this;
+	}
+
+	createForAreas(boxlist) {
+		this.root = this.createModel(boxlist, this.createAreaItem);
+		return this;
+	}
+
+	//============================================================================
 
 	createModel(boxlist, createItem) {
 		let root = null;
@@ -38,7 +45,7 @@ export default class TreeModel {
 		}
 	} 
 
-	createItem(box) {
+	createBoxItem(box) {
 		let ret = {};
 		ret.key = box.documentOrder;
 		ret.data = box;
@@ -54,6 +61,24 @@ export default class TreeModel {
 		} else {
 			label = '(box)';
 			ret.icon = 'pi pi-fw pi-file';
+		}
+		ret.label = label;
+		ret.children = [];
+		return ret;
+	}
+
+	createAreaItem(box) {
+		let ret = {};
+		ret.key = box.documentOrder;
+		ret.data = box;
+
+		let label = box.documentOrder;
+		if (box._label !== undefined) {
+			label = box._label;
+			ret.icon = 'pi pi-fw pi-file';
+		} else {
+			label = '<area>';
+			ret.icon = 'pi pi-fw pi-clone';
 		}
 		ret.label = label;
 		ret.children = [];

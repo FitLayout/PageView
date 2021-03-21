@@ -127,6 +127,7 @@ export default {
 			}
 			this.error = this.post = null;
 			this.loading = true;
+			this.initTree();
 			
 			const client = new ApiClient();
 			try {
@@ -138,16 +139,14 @@ export default {
 					client.sortBoxes(artifact.rectAreas);
 					this.setArtifact(artifact);
 					this.setPage(artifact, artifact.rectAreas);
-					this.treeModel = new TreeModel(artifact.rectAreas);
-					this.expandedTreeKeys = {};
-					this.expandedTreeKeys[0] = true;
-					this.selectedTreeKey = {};
-					this.selectedTreeKey[0] = true;
+					this.treeModel = (new TreeModel()).createForBoxes(artifact.rectAreas);
 				} else if (type === SEGM.AreaTree) {
 					this.setArtifact(artifact);
 					if (artifact.hasSourcePage) {
 						let page = await client.fetchArtifact(artifact.hasSourcePage);
+						client.sortBoxes(artifact.areas);
 						this.setPage(page, artifact.areas);
+						this.treeModel = (new TreeModel()).createForAreas(artifact.areas);
 					}
 				} else {
 					console.error('Unknown artifact type for ' + this.artifactIri)
@@ -186,6 +185,13 @@ export default {
 		},
 
 		//============== Tree operations =============================
+
+		initTree() {
+			this.expandedTreeKeys = {};
+			this.expandedTreeKeys[0] = true;
+			this.selectedTreeKey = {};
+			this.selectedTreeKey[0] = true;
+		},
 
 		showBoxInTree(box) {
 			this.expandForBox(box);
