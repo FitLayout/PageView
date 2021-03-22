@@ -16,6 +16,14 @@ class ArtifactCreator extends ObjectCreator {
 	}
 }
 
+class AttributeCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+		});
+	}
+}
+
 class BorderCreator extends ObjectCreator {
 	constructor() {
 		super();
@@ -168,7 +176,7 @@ class BoxCreator extends RectAreaCreator {
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/render.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/render.owl#ContainerBox>' },
 			visualBounds: { name: 'http://fitlayout.github.io/ontology/render.owl#visualBounds', type: 'object<http://fitlayout.github.io/ontology/render.owl#Bounds>' },
 			displayType: { name: 'http://fitlayout.github.io/ontology/render.owl#displayType', type: 'string' },
-			hasAttribute: { name: 'http://fitlayout.github.io/ontology/render.owl#hasAttribute', type: 'object' },
+			hasAttribute: { name: 'http://fitlayout.github.io/ontology/render.owl#hasAttribute', type: 'object<http://fitlayout.github.io/ontology/render.owl#Attribute>[]' },
 			contentBounds: { name: 'http://fitlayout.github.io/ontology/render.owl#contentBounds', type: 'object<http://fitlayout.github.io/ontology/render.owl#Bounds>' },
 			hasText: { name: 'http://fitlayout.github.io/ontology/render.owl#hasText', type: 'string' },
 			htmlTagName: { name: 'http://fitlayout.github.io/ontology/render.owl#htmlTagName', type: 'string' },
@@ -214,6 +222,7 @@ class PageCreator extends ArtifactCreator {
 
 const registry = {
 	'http://fitlayout.github.io/ontology/fitlayout.owl#Artifact': new ArtifactCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#Attribute': new AttributeCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Border': new BorderCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Bounds': new BoundsCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContentObject': new ContentObjectCreator(),
