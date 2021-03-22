@@ -30,7 +30,6 @@ export default class TreeModel {
 		}
 		// recursively add children
 		this.addChildren(rootBox, root, boxlist, createItem);
-		console.log(root);
 		return root;
 	}
 
@@ -56,7 +55,17 @@ export default class TreeModel {
 			ret.icon = 'pi pi-fw pi-file';
 			ret.type = 'text';
 		} else if (box.htmlTagName !== undefined) {
-			label = '<' + box.htmlTagName + '>';
+			label = '<' + box.htmlTagName
+			if (box.hasAttribute) {
+				for (let attr of box.hasAttribute) {
+					let val = attr._value;
+					if (val.length > 15) {
+						val = val.substring(0, 12) + '...';
+					}
+					label += ' ' + attr._label + '=' + val;
+				}
+			} 
+			label += '>';
 			ret.icon = 'pi pi-fw pi-clone';
 		} else {
 			label = '(box)';

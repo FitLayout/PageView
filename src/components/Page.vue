@@ -123,7 +123,6 @@ export default {
 				}
 			}
 			let newElem = this.boxIndex[this.selectedRect._iri];
-			console.log(newElem);
 			if (newElem) {
 				newElem.classList.add('focus');
 			}
