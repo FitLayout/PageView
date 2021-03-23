@@ -103,7 +103,6 @@ class RectAreaCreator extends ObjectCreator {
 	constructor() {
 		super();
 		this.addMapping({
-			imageUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#imageUrl', type: 'string' },
 			backgroundImagePosition: { name: 'http://fitlayout.github.io/ontology/render.owl#backgroundImagePosition', type: 'string' },
 			belongsTo: { name: 'http://fitlayout.github.io/ontology/render.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/render.owl#Page>' },
 			fontStyle: { name: 'http://fitlayout.github.io/ontology/render.owl#fontStyle', type: 'float' },
@@ -131,8 +130,6 @@ class TagCreator extends ObjectCreator {
 		this.addMapping({
 			hasName: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasName', type: 'string' },
 			hasType: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasType', type: 'string' },
-			// Inverse collection for Area.hasTag.
-			areas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>[]', inverse: true },
 		});
 	}
 }
