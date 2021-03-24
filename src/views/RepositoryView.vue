@@ -29,7 +29,7 @@
 			</div>
 
 			<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
-			<div class="empty-page p-d-flex p-ai-center p-jc-center h-100" v-if="!iri">
+			<div class="empty-page p-col-12 p-d-flex p-ai-center p-jc-center h-100" v-if="!iri">
 				<p class="flex-fill p-text-center p-text-secondary">No page selected</p>
 			</div>
 
