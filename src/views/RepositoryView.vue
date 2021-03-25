@@ -143,7 +143,6 @@ export default {
 		},
 
 		async fetchArtifacts() {
-			console.log('fetch art tree')
 			this.error = null;
 			this.loading = true;
 			

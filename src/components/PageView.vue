@@ -18,6 +18,9 @@
 						</Tree>
 					</div>
 				</div>
+				<div class="selected-info">
+				    Current: <Iri :iri="artifactIri" />
+				</div>
 			</SplitterPanel>
 
 			<SplitterPanel>
@@ -70,11 +73,13 @@ import Slider from 'primevue/slider';
 import InputSwitch from 'primevue/inputswitch';
 import Tree from 'primevue/tree';
 import Page from './Page.vue';
+import Iri from './Iri.vue';
 
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
 import {ApiClient} from '@/common/apiclient.js';
+import ObjectResolver from '@/common/resolver.js';
 import TreeModel from '@/common/treemodel.js';
 
 export default {
@@ -86,7 +91,8 @@ export default {
 		Slider,
 		InputSwitch,
 		Tree,
-		Page
+		Page,
+		Iri
 	},
 	props: {
 		artifactIri: null
@@ -131,11 +137,24 @@ export default {
 			
 			const client = new ApiClient();
 			try {
-				let artifact = await client.fetchArtifact(this.artifactIri);
-				console.log(artifact);
-				let type = artifact._type;
+				let resolver = new ObjectResolver(client);
+				console.log('RESOLVING');
+				let deps = await resolver.resolveObjectIRI(this.artifactIri);
 
-				if (type === BOX.Page) {
+				console.log(deps);
+				if (deps.type !== 'unknown') {
+					this.setArtifact(deps.artifact);
+					this.setPage(deps.page, deps.rectangles);
+					if (deps.rectangleType == 'box') {
+						this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
+					} else if (deps.rectangleType == 'area') {
+						this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
+					}
+				} else {
+					console.error('Unknown artifact type for ' + this.artifactIri)
+				}
+
+				/*if (type === BOX.Page) {
 					client.sortBoxes(artifact.rectAreas);
 					this.setArtifact(artifact);
 					this.setPage(artifact, artifact.rectAreas);
@@ -150,7 +169,7 @@ export default {
 					}
 				} else {
 					console.error('Unknown artifact type for ' + this.artifactIri)
-				}
+				}*/
 
 				this.loading = false;
 			} catch (error) {
@@ -299,5 +318,9 @@ export default {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+.selected-info {
+	padding: 0.5em 1em;
+	font-weight: bold;
 }
 </style>
