@@ -3,8 +3,36 @@ import {Model as BoxModel} from '../common/boxMappers.js';
 const SERVER_ROOT = 'http://localhost:8080/fitlayout-web';
 const ARTIFACT_ENDPOINT = SERVER_ROOT + '/service/artifact';
 const SERVICE_ENDPOINT = SERVER_ROOT + '/service/service';
+const REPOSITORY_ENDPOINT = SERVER_ROOT + '/service/repository';
 
 export class ApiClient {
+
+    async getTypeByIRI(iri) {
+		const url = REPOSITORY_ENDPOINT + '/type/' + encodeURIComponent(iri);
+		let response = await fetch(url, {
+			method: 'GET',
+		});
+		const data = await response.json();
+		return data.result;
+	}
+
+    async getSubjectDescription(subjectIri) {
+		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri);
+		let response = await fetch(url, {
+			method: 'GET',
+		});
+		const data = await response.json();
+		return data.result;
+	}
+
+    async getSubjectValue(subjectIri, propertyIri) {
+		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri) + '/' + encodeURIComponent(propertyIri);
+		let response = await fetch(url, {
+			method: 'GET',
+		});
+		const data = await response.json();
+		return data.result;
+	}
 
 	async fetchArtifact(artifactIri) {
 			const url = ARTIFACT_ENDPOINT + '/item/' + encodeURIComponent(artifactIri);
