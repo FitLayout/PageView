@@ -18,8 +18,8 @@
 						</Tree>
 					</div>
 				</div>
-				<div class="selected-info">
-				    Current: <Iri :iri="artifactIri" />
+				<div class="selected-info" v-if="selectedRect">
+				    Current: <Iri :iri="selectedRect._iri" />
 				</div>
 			</SplitterPanel>
 
@@ -147,14 +147,22 @@ export default {
 				if (deps.type !== 'unknown') {
 					if (deps.artifactIri !== this.status.artifactIri) {
 						this.setArtifact(deps.artifact);
-						if (deps.rectangleType == 'area') {
+						if (deps.rectangleType === 'area') {
 							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
 						}
 						if (deps.pageIri !== this.status.pageIri) {
 							this.setPage(deps.page, deps.rectangles);
-							if (deps.rectangleType == 'box') {
+							if (deps.rectangleType === 'box') {
 								this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
 							}
+						}
+					}
+					// if the IRI identifies a box or area, highlight the corresponding rectangle
+					if (deps.type === 'box' || deps.type === 'area') {
+						if (!this.selectedRect || this.selectedRect._iri !== this.artifactIri) {
+							const rect = this.findRectangleByIri(this.artifactIri);
+							this.showBoxInTree(rect);
+							this.selectedRect = rect;
 						}
 					}
 				} else {
@@ -233,6 +241,15 @@ export default {
 					}
 				}
 				return null;
+			}
+			return null;
+		},
+
+		findRectangleByIri(iri) {
+			for (let rect of this.rectangles) {
+				if (rect._iri === iri) {
+					return rect;
+				}
 			}
 			return null;
 		}
