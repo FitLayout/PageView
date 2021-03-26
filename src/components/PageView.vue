@@ -107,6 +107,7 @@ export default {
 			outlines: false,
 			rectSelection: false,
 
+			status: null,
 			artifactModel: null,
 			pageModel: null,
 			treeModel: null,
@@ -116,7 +117,8 @@ export default {
 		}
 	},
 	created () {
-		this.fetchData();
+		this.status = { type: 'unknown' };
+		this.update();
 	},
 	watch: {
 		'artifactIri': 'update'
@@ -127,7 +129,7 @@ export default {
 		},
 
 		async fetchData() {
-			console.log('fetch ' + this.artifactIri)
+			console.log('UPDATE ' + this.artifactIri)
 			if (!this.artifactIri) {
 				return;
 			}
@@ -139,38 +141,27 @@ export default {
 			try {
 				let resolver = new ObjectResolver(client);
 				console.log('RESOLVING');
-				let deps = await resolver.resolveObjectIRI(this.artifactIri);
+				let deps = await resolver.resolveObjectIRI(this.artifactIri, this.status);
 
 				console.log(deps);
 				if (deps.type !== 'unknown') {
-					this.setArtifact(deps.artifact);
-					this.setPage(deps.page, deps.rectangles);
-					if (deps.rectangleType == 'box') {
-						this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
-					} else if (deps.rectangleType == 'area') {
-						this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
+					if (deps.artifactIri !== this.status.artifactIri) {
+						this.setArtifact(deps.artifact);
+						if (deps.rectangleType == 'area') {
+							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
+						}
+						if (deps.pageIri !== this.status.pageIri) {
+							this.setPage(deps.page, deps.rectangles);
+							if (deps.rectangleType == 'box') {
+								this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
+							}
+						}
 					}
 				} else {
 					console.error('Unknown artifact type for ' + this.artifactIri)
 				}
 
-				/*if (type === BOX.Page) {
-					client.sortBoxes(artifact.rectAreas);
-					this.setArtifact(artifact);
-					this.setPage(artifact, artifact.rectAreas);
-					this.treeModel = (new TreeModel()).createForBoxes(artifact.rectAreas);
-				} else if (type === SEGM.AreaTree) {
-					this.setArtifact(artifact);
-					if (artifact.hasSourcePage) {
-						let page = await client.fetchArtifact(artifact.hasSourcePage);
-						client.sortBoxes(artifact.areas);
-						this.setPage(page, artifact.areas);
-						this.treeModel = (new TreeModel()).createForAreas(artifact.areas);
-					}
-				} else {
-					console.error('Unknown artifact type for ' + this.artifactIri)
-				}*/
-
+				this.status = deps;
 				this.loading = false;
 			} catch (error) {
 				this.error = error.message;
@@ -186,10 +177,6 @@ export default {
 		setPage(page, rectangles) {
 			this.pageModel = page;
 			this.rectangles = rectangles;
-		},
-
-		changeArtifact(iri) {
-			this.$emit('select-artifact', iri);
 		},
 
 		//============== Events =============================

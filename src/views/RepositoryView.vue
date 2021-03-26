@@ -161,6 +161,7 @@ export default {
 		},
 
 		update() {
+			console.log('IRI UPDATE');
 			this.fetchArtifacts();
 		}
 
