@@ -21,6 +21,26 @@
 				<div class="selected-info" v-if="selectedRect">
 				    Current: <Iri :iri="selectedRect._iri" />
 				</div>
+				<div class="descr-scroll">
+					<div class="descr-table" v-if="subjectModel">
+						<DataTable :value="subjectModel" class="p-datatable-sm" 
+							:resizableColumns="true" columnResizeMode="fit"
+							:scrollable="true" scrollHeight="flex" 
+							showGridlines>
+							<Column header="Property">
+								<template #body="rowdata">
+									<Iri :iri="rowdata.data.p.value" />
+								</template>
+							</Column>
+							<Column header="Value">
+								<template #body="rowdata">
+									<Iri :iri="rowdata.data.v.value" v-if="rowdata.data.v.type==='uri'" />
+									<span v-if="rowdata.data.v.type==='literal'">{{rowdata.data.v.value}}</span>
+								</template>
+							</Column>
+						</DataTable>
+					</div>
+				</div>
 			</SplitterPanel>
 
 			<SplitterPanel>
@@ -72,6 +92,8 @@ import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import InputSwitch from 'primevue/inputswitch';
 import Tree from 'primevue/tree';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import Page from './Page.vue';
 import Iri from './Iri.vue';
 
@@ -91,6 +113,8 @@ export default {
 		Slider,
 		InputSwitch,
 		Tree,
+		DataTable,
+		Column,
 		Page,
 		Iri
 	},
@@ -113,7 +137,8 @@ export default {
 			treeModel: null,
 			expandedTreeKeys: null,
 			selectedTreeKey: null,
-			selectedRect: null
+			selectedRect: null,
+			subjectModel: null
 		}
 	},
 	created () {
@@ -170,6 +195,7 @@ export default {
 				}
 
 				this.status = deps;
+				this.subjectModel = deps.description;
 				this.loading = false;
 			} catch (error) {
 				this.error = error.message;
@@ -324,7 +350,13 @@ export default {
 	text-overflow: ellipsis;
 }
 .selected-info {
-	padding: 0.5em 1em;
+	padding: 0.5em 0.5em;
 	font-weight: bold;
+}
+.descr-scroll {
+	height: 50%;
+}
+.descr-table {
+	height: 100%;
 }
 </style>

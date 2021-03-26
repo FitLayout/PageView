@@ -23,11 +23,16 @@ export default class ObjectResolver {
 	 */
 	async resolveObjectIRI(iri, currentStatus) {
 		const type = await this.client.getTypeByIRI(iri);
+		// get the general description
+		const descrData = await this.client.getSubjectDescription(iri);
+		const descr = descrData.results.bindings;
+		// get the dependent objects based on the type
 		console.log('TYPE ' + type);
 		if (type === BOX.Page) {
 			const page = await this.getPage(iri, currentStatus);
 			return {
 				type: 'page',
+				description: descr,
 				rectangleType: 'box',
 				artifactIri: iri,
 				artifact: page,
@@ -41,6 +46,7 @@ export default class ObjectResolver {
 			this.client.sortBoxes(page.rectAreas);
 			return {
 				type: 'areaTree',
+				description: descr,
 				rectangleType: 'area',
 				artifactIri: iri,
 				artifact: atree,
@@ -54,6 +60,7 @@ export default class ObjectResolver {
 			this.client.sortBoxes(page.rectAreas);
 			return {
 				type: 'box',
+				description: descr,
 				rectangleType: 'box',
 				artifactIri: pageIri,
 				artifact: page,
@@ -68,6 +75,7 @@ export default class ObjectResolver {
 			this.client.sortBoxes(page.rectAreas);
 			return {
 				type: 'area',
+				description: descr,
 				rectangleType: 'area',
 				artifactIri: atree._iri,
 				artifact: atree,
@@ -76,7 +84,10 @@ export default class ObjectResolver {
 				rectangles: atree.areas
 			}
 		} else {
-			return { type: 'unknown' };
+			return {
+				type: 'unknown',
+				description: descr.results
+			};
 		}
 	}
 
