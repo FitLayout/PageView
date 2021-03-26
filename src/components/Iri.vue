@@ -1,5 +1,8 @@
 <template>
-	<span class="iri font-monospace" :title="iri">{{ shortForm }}</span>
+	<a class="iri-link" v-if="active" @click="clicked">
+		<span class="iri font-monospace" :title="iri">{{ shortForm }}</span>
+	</a>
+	<span class="iri font-monospace" v-if="!active" :title="iri">{{ shortForm }}</span>
 </template>
 
 <script>
@@ -8,7 +11,8 @@ import IriDecoder from '@/common/iridecoder.js';
 export default {
 	name: 'Iri',
 	props: {
-		iri: null
+		iri: null,
+		active: null
 	},
 	data () {
 		return {
@@ -25,15 +29,21 @@ export default {
 		update() {
 			let dec = new IriDecoder();
 			this.shortForm = dec.encodeIri(this.iri);
+		},
+
+		clicked() {
+			this.$router.push({name: 'show', params: { iri: this.iri}});
 		}
 	}
 }
 </script>
 
 <style>
+.iri-link {
+	color: var(--blue-500);
+	text-decoration: none;
+}
 .iri {
 	border-bottom: 1px dotted;
-	color: var(--blue-500);
-	cursor: default;
 }
 </style>

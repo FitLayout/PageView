@@ -86,7 +86,7 @@ export default class ObjectResolver {
 		} else {
 			return {
 				type: 'unknown',
-				description: descr.results
+				description: descr
 			};
 		}
 	}

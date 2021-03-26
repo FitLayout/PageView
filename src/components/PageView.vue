@@ -34,7 +34,7 @@
 							</Column>
 							<Column header="Value">
 								<template #body="rowdata">
-									<Iri :iri="rowdata.data.v.value" v-if="rowdata.data.v.type==='uri'" />
+									<Iri :iri="rowdata.data.v.value" :active="true" v-if="rowdata.data.v.type==='uri'" />
 									<span v-if="rowdata.data.v.type==='literal'">{{rowdata.data.v.value}}</span>
 								</template>
 							</Column>
