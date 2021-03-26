@@ -25,7 +25,7 @@ export default class ObjectResolver {
 		const type = await this.client.getTypeByIRI(iri);
 		console.log('TYPE ' + type);
 		if (type === BOX.Page) {
-			const page = this.getPage(iri, currentStatus);
+			const page = await this.getPage(iri, currentStatus);
 			return {
 				type: 'page',
 				rectangleType: 'box',
@@ -84,6 +84,7 @@ export default class ObjectResolver {
 		if (currentStatus.pageIri === iri) {
 			return currentStatus.page;
 		} else {
+			console.log('RELOADING page');
 			const page = await this.client.fetchArtifact(iri);
 			this.client.sortBoxes(page.rectAreas);
 			return page;
@@ -94,6 +95,7 @@ export default class ObjectResolver {
 		if (currentStatus.artifactIri === iri) {
 			return currentStatus.artifact;
 		} else {
+			console.log('RELOADING atree');
 			return await this.client.fetchArtifact(iri);
 		}
 	}

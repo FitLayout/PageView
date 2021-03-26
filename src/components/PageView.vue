@@ -135,7 +135,6 @@ export default {
 			}
 			this.error = this.post = null;
 			this.loading = true;
-			this.initTree();
 			
 			const client = new ApiClient();
 			try {
@@ -147,14 +146,15 @@ export default {
 				if (deps.type !== 'unknown') {
 					if (deps.artifactIri !== this.status.artifactIri) {
 						this.setArtifact(deps.artifact);
-						if (deps.rectangleType === 'area') {
-							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
-						}
 						if (deps.pageIri !== this.status.pageIri) {
 							this.setPage(deps.page, deps.rectangles);
-							if (deps.rectangleType === 'box') {
-								this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
-							}
+						}
+						//update trees for the new artifact
+						this.initTree();
+						if (deps.rectangleType === 'box') {
+							this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
+						} else if (deps.rectangleType === 'area') {
+							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
 						}
 					}
 					// if the IRI identifies a box or area, highlight the corresponding rectangle
