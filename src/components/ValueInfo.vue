@@ -5,6 +5,7 @@
 			<Iri :iri="data.v.value" :active="active" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
+		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
 	</span>
 </template>
 
@@ -35,6 +36,7 @@ export default {
 			iri: null,
 			active: false,
 			typeIri: null,
+			displayValue: null
 		}
 	},
 	computed: {
@@ -65,7 +67,29 @@ export default {
 		},
 		updateType() {
 			console.log('TYPE changed: ' + this.typeIri);
-			if (knownTypes[this.typeIri]) {
+			// undefined type - try to guess
+			if (this.typeIri === 'unknown') {
+				this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {
+					if (descr[BOX.positionX] && descr[BOX.positionY]
+						&& descr[BOX.width] && descr[BOX.height])
+					{
+						//it is a rectangle
+						this.valueType = 'rectangle';
+						this.displayValue = '['
+							+ descr[BOX.positionX][0].value + ', '
+							+ descr[BOX.positionY][0].value + ', '
+							+ (parseInt(descr[BOX.positionX][0].value) + parseInt(descr[BOX.width][0].value) - 1) + ', '
+							+ (parseInt(descr[BOX.positionY][0].value) + parseInt(descr[BOX.height][0].value) - 1) + ']';
+					}
+					else
+					{
+						console.log('Unknown type' + this.iri);
+						console.log(descr);
+					}
+				});
+			}
+			// check known types
+			else if (knownTypes[this.typeIri]) {
 				this.active = true;
 			}
 		}

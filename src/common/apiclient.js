@@ -25,6 +25,15 @@ export class ApiClient {
 		return data.result;
 	}
 
+    async getSubjectDescriptionObj(subjectIri) {
+		const url = REPOSITORY_ENDPOINT + '/describe/' + encodeURIComponent(subjectIri);
+		let response = await fetch(url, {
+			method: 'GET',
+		});
+		const data = await response.json();
+		return data.result.description;
+	}
+
     async getSubjectValue(subjectIri, propertyIri) {
 		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri) + '/' + encodeURIComponent(propertyIri);
 		let response = await fetch(url, {
