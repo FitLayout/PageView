@@ -38,8 +38,7 @@
 									</Column>
 									<Column header="Value">
 										<template #body="rowdata">
-											<Iri :iri="rowdata.data.v.value" :active="true" v-if="rowdata.data.v.type==='uri'" />
-											<span v-if="rowdata.data.v.type==='literal'">{{rowdata.data.v.value}}</span>
+											<ValueInfo :data="rowdata.data" />
 										</template>
 									</Column>
 								</DataTable>
@@ -102,6 +101,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Page from './Page.vue';
 import Iri from './Iri.vue';
+import ValueInfo from './ValueInfo.vue';
 
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
@@ -121,7 +121,8 @@ export default {
 		DataTable,
 		Column,
 		Page,
-		Iri
+		Iri,
+		ValueInfo
 	},
 	inject: ['apiClient'],
 	props: {

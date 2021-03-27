@@ -61,19 +61,6 @@
 	font-size: 1em;
 	transition: all 0.2s 0.3s;
 }
-.badge {
-	font-size: 75%;
-	padding: 0.25em 0.4em;
-	border-radius: 3px;
-}
-.boxtree .badge {
-	color: white;
-	background-color: var(--green-500);
-}
-.areatree .badge {
-	color: black;
-	background-color: var(--yellow-500);
-}
 .artifact p {
 	margin: 0;
 }

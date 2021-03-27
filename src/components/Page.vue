@@ -143,31 +143,31 @@ export default {
 	overflow: hidden;
 	position: relative;
 }
-.boxes {
+.page-view .boxes {
 	position: absolute;
 	left: 0;
 	top: 0;
 	right: 0;
 	bottom: 0;
 }
-.box, .vbox {
+.page-view .box, .page-view .vbox {
 	position: absolute;
 }
-.box.focus {
+.page-view .box.focus {
 	outline: 2px solid var(--primary-color) !important;
 	background-color: rgba(255, 200, 200, 0.3);
 }
-.box.selected {
+.page-view .box.selected {
 	outline: 1px solid red;
 }
-.box.selected .vbox {
+.page-view .box.selected .vbox {
 	outline: 1px solid green;
 }
-.box:hover {
+.page-view .box:hover {
 	/*outline: 1px solid red;*/
 	background-color: rgba(200, 200, 255, 0.3);
 }
-.box:hover .vbox {
+.page-view .box:hover .vbox {
 	background-color: rgba(255, 200, 255, 0.3);
 }
 .outlines .box {
