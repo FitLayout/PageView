@@ -106,7 +106,6 @@ import Iri from './Iri.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
-import {ApiClient} from '@/common/apiclient.js';
 import ObjectResolver from '@/common/resolver.js';
 import TreeModel from '@/common/treemodel.js';
 
@@ -124,6 +123,7 @@ export default {
 		Page,
 		Iri
 	},
+	inject: ['apiClient'],
 	props: {
 		artifactIri: null
 	},
@@ -167,7 +167,7 @@ export default {
 			this.error = this.post = null;
 			this.loading = true;
 			
-			const client = new ApiClient();
+			const client = this.apiClient;
 			try {
 				let resolver = new ObjectResolver(client);
 				console.log('RESOLVING');

@@ -64,8 +64,9 @@ export default {
 		PageView,
 		ArtTree
 	},
-	data () {
+	data() {
 		return {
+			apiClient: new ApiClient(),
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
 			mode: 'render',
@@ -78,6 +79,11 @@ export default {
 				{ label: 'Segmentation', class: 'normal', command: () => {this.selectMode('segm', 1);} },
 				{ label: 'Postprocess', class: 'normal', command: () => {this.selectMode('post', 2);} },
 			]
+		}
+	},
+	provide() {
+		return {
+			apiClient: this.apiClient
 		}
 	},
 	computed: {
@@ -123,9 +129,8 @@ export default {
 			let dec = new IriDecoder();
 			let shortIri = dec.encodeIri(iri);
 			if (window.confirm('Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?')) {
-				const client = new ApiClient();
 				try {
-					this.artifact = await client.deleteArtifact(this.iri);
+					this.artifact = await this.apiClient.deleteArtifact(this.iri);
 				} catch (error) {
 					console.error('Couldnt delete artifact!', error);
 				}
@@ -146,9 +151,8 @@ export default {
 			this.error = null;
 			this.loading = true;
 			
-			const client = new ApiClient();
 			try {
-				this.artifacts = await client.fetchArtifactInfoAll();
+				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				if (this.iri) {
 					this.currentArtifact = this.findArtifact(this.iri);
 				}
