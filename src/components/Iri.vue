@@ -42,8 +42,12 @@ export default {
 .iri-link {
 	color: var(--blue-500);
 	text-decoration: none;
+	cursor: pointer;
 }
 .iri {
 	border-bottom: 1px dotted;
+}
+.iri-link:hover .iri {
+	border-bottom: 1px solid;
 }
 </style>

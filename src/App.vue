@@ -30,6 +30,9 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.font-monospace {
+	font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+}
 #app {
 	font-family: var(--font-family);
 	color: var(--text-color);

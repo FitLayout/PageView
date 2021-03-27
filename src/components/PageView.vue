@@ -3,44 +3,50 @@
 	<div class="splitter-row">
 		<Splitter style="overflow: hidden; height: 100%">
 			<SplitterPanel>
-				<div class="box-tree-scroll p-card">
-					<div class="box-tree">
-						<Tree :value="treeModel" v-if="treeModel"
-								v-model:expandedKeys="expandedTreeKeys"
-								v-model:selectionKeys="selectedTreeKey"
-								@node-select="treeNodeSelected" selectionMode="single">
-							<template #default="slotProps">
-        						<span :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</span>
-    						</template>
-							<template #text="slotProps">
-        						<i :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</i>
-    						</template>
-						</Tree>
-					</div>
-				</div>
-				<div class="selected-info" v-if="selectedRect">
-				    Current: <Iri :iri="selectedRect._iri" />
-				</div>
-				<div class="descr-scroll">
-					<div class="descr-table" v-if="subjectModel">
-						<DataTable :value="subjectModel" class="p-datatable-sm" 
-							:resizableColumns="true" columnResizeMode="fit"
-							:scrollable="true" scrollHeight="flex" 
-							showGridlines>
-							<Column header="Property">
-								<template #body="rowdata">
-									<Iri :iri="rowdata.data.p.value" />
-								</template>
-							</Column>
-							<Column header="Value">
-								<template #body="rowdata">
-									<Iri :iri="rowdata.data.v.value" :active="true" v-if="rowdata.data.v.type==='uri'" />
-									<span v-if="rowdata.data.v.type==='literal'">{{rowdata.data.v.value}}</span>
-								</template>
-							</Column>
-						</DataTable>
-					</div>
-				</div>
+				<Splitter layout="vertical" style="overflow: hidden; width: 100%">
+					<SplitterPanel>
+						<div class="box-tree-scroll p-card">
+							<div class="box-tree">
+								<Tree :value="treeModel" v-if="treeModel"
+										v-model:expandedKeys="expandedTreeKeys"
+										v-model:selectionKeys="selectedTreeKey"
+										@node-select="treeNodeSelected" selectionMode="single">
+									<template #default="slotProps">
+										<span :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</span>
+									</template>
+									<template #text="slotProps">
+										<i :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</i>
+									</template>
+								</Tree>
+							</div>
+						</div>
+					</SplitterPanel>
+					<SplitterPanel>
+						<div class="selected-info" v-if="selectedRect">
+							Current: <Iri :iri="selectedRect._iri" />
+						</div>
+						<div class="descr-scroll">
+							<div class="descr-table" v-if="subjectModel">
+								<DataTable :value="subjectModel" class="p-datatable-sm" 
+									:resizableColumns="true" columnResizeMode="expand"
+									:scrollable="true" scrollHeight="flex" 
+									showGridlines>
+									<Column header="Property">
+										<template #body="rowdata">
+											<Iri :iri="rowdata.data.p.value" />
+										</template>
+									</Column>
+									<Column header="Value">
+										<template #body="rowdata">
+											<Iri :iri="rowdata.data.v.value" :active="true" v-if="rowdata.data.v.type==='uri'" />
+											<span v-if="rowdata.data.v.type==='literal'">{{rowdata.data.v.value}}</span>
+										</template>
+									</Column>
+								</DataTable>
+							</div>
+						</div>
+					</SplitterPanel>
+				</Splitter>
 			</SplitterPanel>
 
 			<SplitterPanel>
@@ -327,8 +333,8 @@ export default {
 .box-tree-scroll {
 	position: relative;
 	width: auto;
-	height: 50%;
-	min-height: 200px;
+	height: 100%;
+	min-height: 100px;
 	overflow: auto;
 }
 .box-tree {
@@ -352,11 +358,22 @@ export default {
 .selected-info {
 	padding: 0.5em 0.5em;
 	font-weight: bold;
+	height: 2em;
 }
 .descr-scroll {
-	height: 50%;
+	height: calc(100% - 2em);
+	min-height: 100px;
+	position: relative;
 }
 .descr-table {
 	height: 100%;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.descr-table .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+	padding: 0.25em 0.5em;
+	font-size: 90%;
 }
 </style>
