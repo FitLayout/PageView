@@ -54,19 +54,21 @@ export default {
 		this.update();
 	},
 	watch: {
-		data: 'update',
-		typeIri: 'updateType'
+		data: 'update'
 	},
 	methods: {
 		update() {
 			this.valueType = this.data.v.type;
 			if (this.valueType === 'uri') {
 				this.iri = this.data.v.value;
-				this.apiClient.getTypeByIRI(this.iri).then(typeIri => this.typeIri = typeIri);
+				this.apiClient.getTypeByIRI(this.iri).then(typeIri => { 
+					this.typeIri = typeIri;
+					this.updateType();
+				});
 			}
 		},
 		updateType() {
-			console.log('TYPE changed: ' + this.typeIri);
+			//console.log('TYPE changed: ' + this.typeIri);
 			// undefined type - try to guess
 			if (this.typeIri === 'unknown') {
 				this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {

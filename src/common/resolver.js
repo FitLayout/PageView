@@ -62,9 +62,9 @@ export default class ObjectResolver {
 				type: 'box',
 				description: descr,
 				rectangleType: 'box',
-				artifactIri: pageIri,
+				artifactIri: page._iri,
 				artifact: page,
-				pageIri: pageIri,
+				pageIri: page._iri,
 				page: page,
 				rectangles: page.rectAreas
 			}
