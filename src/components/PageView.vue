@@ -50,7 +50,7 @@
 
 			<SplitterPanel>
 				<div class="col-page">
-					<div v-if="loading">
+					<div v-if="loading" class="loading">
 						<ProgressBar mode="indeterminate"/>
 					</div>
 					<div v-if="error" class="error alert alert-danger">
@@ -302,25 +302,32 @@ export default {
 	display: flex;
 	flex-direction: column;
 }
-.tools {
+.col-page .loading {
+	margin: 20px 5px;
+	height: 23px;
+	box-sizing: border-box;
+}
+.col-page .tools {
 	margin-top: 0;
 	background-color: var(--surface-b);
-	padding: 0.3em 0;
+	padding: 0.3rem 0;
 	font-size: 90%;
+	height: 65px;
+	box-sizing: border-box;
 }
-.tools .p-field {
+.col-page .tools .p-field {
 	text-align: center;
 	padding: 0 0.3em;
 	margin-bottom: 0.1em;
 }
-.tools .p-field label {
+.col-page .tools .p-field label {
 	display: block;
 }
 .tools .p-field > label, .tools .p-field > .p-component {
 	margin-left: auto;
 	margin-right: auto;
 }
-.tools .p-field > .p-component {
+.col-page .tools .p-field > .p-component {
 	margin-bottom: 0;
 }
 .page-contents {
