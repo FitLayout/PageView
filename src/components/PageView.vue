@@ -223,12 +223,13 @@ export default {
 		//============== Events =============================
 
 		treeNodeSelected(node) {
-			this.selectedRect = node.data;
+			const iri = node.data._iri;
+			this.$router.push({name: 'show', params: { iri: iri }});
 		},
 
 		pageRectSelected(rect) {
-			this.showBoxInTree(rect);
-			this.selectedRect = rect;
+			const iri = rect._iri;
+			this.$router.push({name: 'show', params: { iri: iri }});
 		},
 
 		//============== Tree operations =============================
