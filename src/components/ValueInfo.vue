@@ -6,6 +6,7 @@
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
 		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
+		<span v-if="valueType==='attribute'">{{displayValue}}</span>
 	</span>
 </template>
 
@@ -13,6 +14,8 @@
 import Iri from './Iri.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
+import RDF from '@/ontology/RDF.js';
+import RDFS from '@/ontology/RDFS.js';
 import IriDecoder from '@/common/iridecoder.js';
 
 const knownTypes = {};
@@ -71,8 +74,15 @@ export default {
 			//console.log('TYPE changed: ' + this.typeIri);
 			// undefined type - try to guess
 			if (this.typeIri === 'unknown') {
+				// guess by contents
 				this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {
-					if (descr[BOX.positionX] && descr[BOX.positionY]
+					// attributes
+					if (this.data.p.value === BOX.hasAttribute) {
+						this.valueType = 'attribute';
+						this.displayValue = descr[RDFS.LABEL][0].value + '="' + descr[RDF.VALUE][0].value + '"';
+					}
+					// rectangles
+					else if (descr[BOX.positionX] && descr[BOX.positionY]
 						&& descr[BOX.width] && descr[BOX.height])
 					{
 						//it is a rectangle
