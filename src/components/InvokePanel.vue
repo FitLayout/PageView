@@ -29,8 +29,6 @@ import InlineMessage from 'primevue/inlinemessage';
 
 import ParamPanel from './ParamPanel.vue';
 
-import {ApiClient} from '@/common/apiclient.js';
-
 
 export default {
 	name: 'InvokePanel',
@@ -43,6 +41,7 @@ export default {
 		InlineMessage,
 		ParamPanel
 	},
+	inject: ['apiClient'],
 	props: {
 		source: null,
 		target: null,
@@ -71,12 +70,12 @@ export default {
 		this.update();
 	},
 	watch: {
+		'key': 'update'
 	},
 	methods: {
 		async loadServices() {
-			const client = new ApiClient();
 			try {
-				let data = await client.fetchArtifactServices();
+				let data = await this.apiClient.fetchArtifactServices();
 				this.services = data;
 
 				this.selList = [];
@@ -102,11 +101,10 @@ export default {
 
 		async update() {
 			if (this.key) {
+				//get the current param values
+				this.params = await this.apiClient.getServiceParams(this.key);
 				//choose the service description
 				this.paramDescr = this.selection[this.key].params;
-				//get the current param values
-				const client = new ApiClient();
-				this.params = await client.getServiceParams(this.key);
 			}
 		},
 
@@ -126,8 +124,7 @@ export default {
 			console.log(srcArtifact);
 
 			try {
-				const client = new ApiClient();
-				const iri = await client.createArtifact(this.key, this.params, srcIri);
+				const iri = await this.apiClient.createArtifact(this.key, this.params, srcIri);
 				this.$emit('created', iri);
 				this.error = null;
 			} catch (e) {

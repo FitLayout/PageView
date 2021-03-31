@@ -27,8 +27,12 @@ export default {
 		this.curValues = this.values;
 	},
 	watch: {
+		'descr': 'update'
 	},
 	methods: {
+		update() {
+			this.curValues = this.values;
+		}
 	}
 }
 </script>
