@@ -1,12 +1,13 @@
 <template>
 	<span class="value-info" v-if="valueType">
 		<span v-if="valueType==='literal'">{{data.v.value}}</span>
-		<span v-if="valueType==='uri'" :class='typeInfo.type'>
-			<Iri :iri="data.v.value" :active="active" />
+		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
+			<Iri :iri="data.v.value" :active="true" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
 		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
 		<span v-if="valueType==='attribute'">{{displayValue}}</span>
+		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle">{{displayValue}}</span>
 	</span>
 </template>
 
@@ -17,6 +18,7 @@ import SEGM from '@/ontology/SEGM.js';
 import RDF from '@/ontology/RDF.js';
 import RDFS from '@/ontology/RDFS.js';
 import IriDecoder from '@/common/iridecoder.js';
+import {stringColor} from '@/common/utils.js';
 
 const knownTypes = {};
 knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
@@ -39,7 +41,8 @@ export default {
 			iri: null,
 			active: false,
 			typeIri: null,
-			displayValue: null
+			displayValue: null,
+			displayStyle: null
 		}
 	},
 	computed: {
@@ -81,6 +84,20 @@ export default {
 						this.valueType = 'attribute';
 						this.displayValue = descr[RDFS.LABEL][0].value + '="' + descr[RDF.VALUE][0].value + '"';
 					}
+					// tags
+					else if (this.data.p.value === SEGM.hasTag) {
+						this.valueType = 'tag';
+						this.displayValue = descr[SEGM.hasName][0].value;
+						this.displayStyle = 'background-color:' + stringColor(descr[SEGM.hasName][0].value);
+					}
+					else if (this.data.p.value === SEGM.tagSupport) {
+						this.valueType = 'tag';
+						this.displayValue = descr[SEGM.hasTag][0].value + ':' + descr[SEGM.support][0].value;
+						this.apiClient.getSubjectDescriptionObj(descr[SEGM.hasTag][0].value).then(tagDescr => {
+							this.displayValue = tagDescr[SEGM.hasName][0].value + ':' + descr[SEGM.support][0].value;
+							this.displayStyle = 'background-color:' + stringColor(tagDescr[SEGM.hasName][0].value);
+						});
+					}
 					// rectangles
 					else if (descr[BOX.positionX] && descr[BOX.positionY]
 						&& descr[BOX.width] && descr[BOX.height])
@@ -110,8 +127,11 @@ export default {
 </script>
 
 <style>
-.value-info .badge {
+.value-info .uri-value .badge {
 	margin-left: 0.5em;
 	vertical-align: top;
+}
+.value-info .tag.badge {
+	font-size: 0.95em;
 }
 </style>
