@@ -22,8 +22,8 @@
 						</div>
 					</SplitterPanel>
 					<SplitterPanel>
-						<div class="selected-info" v-if="selectedRect">
-							Current: <Iri :iri="selectedRect._iri" />
+						<div class="selected-info" v-if="artifactIri">
+							Current: <Iri :iri="artifactIri" />
 						</div>
 						<div class="descr-scroll">
 							<div class="descr-table" v-if="subjectModel">
@@ -130,22 +130,26 @@ export default {
 	},
 	data () {
 		return {
+			// UI
 			loading: false,
 			error: null,
-			rectangles: null,
 			zoom: 100,
 			screenshot: true,
 			outlines: false,
 			rectSelection: false,
 
-			status: null,
-			artifactModel: null,
-			pageModel: null,
+			// Displayed data
+			status: null, //artifact status (currently displayed artifacts)
+			artifactModel: null, //currently displayed artifact model
+			pageModel: null, //currently displayed page model
+			rectangles: null, //rectangle overlay on the page
+			selectedRect: null, //selected rectangle
+			subjectModel: null, //selected subject model for the table (page, atree, box, area, ...)
+			
+			// Tree
 			treeModel: null,
 			expandedTreeKeys: null,
-			selectedTreeKey: null,
-			selectedRect: null,
-			subjectModel: null
+			selectedTreeKey: null
 		}
 	},
 	created () {
@@ -177,9 +181,12 @@ export default {
 				console.log(deps);
 				if (deps.type !== 'unknown') {
 					if (deps.artifactIri !== this.status.artifactIri) {
-						this.setArtifact(deps.artifact);
+						console.log('SET artifact')
+						this.artifactModel = deps.artifact;
+						this.rectangles = deps.rectangles;
 						if (deps.pageIri !== this.status.pageIri) {
-							this.setPage(deps.page, deps.rectangles);
+							console.log('SET page')
+							this.pageModel = deps.page;
 						}
 						//update trees for the new artifact
 						this.initTree();
@@ -196,6 +203,8 @@ export default {
 							this.showBoxInTree(rect);
 							this.selectedRect = rect;
 						}
+					} else {
+						this.selectedRect = null;
 					}
 				} else {
 					console.error('Unknown artifact type for ' + this.artifactIri)
@@ -209,15 +218,6 @@ export default {
 				this.loading = false;
 				console.error('Error while fetching artifact data', error);
 			}
-		},
-
-		setArtifact(artifact) {
-			this.artifactModel = artifact;
-		},
-
-		setPage(page, rectangles) {
-			this.pageModel = page;
-			this.rectangles = rectangles;
 		},
 
 		//============== Events =============================

@@ -122,9 +122,11 @@ export default {
 					lastElem.classList.remove('focus');
 				}
 			}
-			let newElem = this.boxIndex[this.selectedRect._iri];
-			if (newElem) {
-				newElem.classList.add('focus');
+			if (this.selectedRect) {
+				let newElem = this.boxIndex[this.selectedRect._iri];
+				if (newElem) {
+					newElem.classList.add('focus');
+				}
 			}
 			this.lastSelectedRect = this.selectedRect;
 		}
