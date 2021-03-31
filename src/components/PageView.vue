@@ -74,11 +74,16 @@
 								<label for="selection" class="form-label">Selection</label>
 								<InputSwitch id="selection" v-model="rectSelection" title="Selection mode" />
 							</div>
+							<div class="p-field p-col">
+								<label for="showTags" class="form-label">Show tags</label>
+								<InputSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
+							</div>
 						</div>
 					</div>
 					<div class="page-contents">
 						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines"
 							:rectSelection="rectSelection"
+							:showTags="showTags"
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
 						</Page>
@@ -137,6 +142,7 @@ export default {
 			screenshot: true,
 			outlines: false,
 			rectSelection: false,
+			showTags: false,
 
 			// Displayed data
 			status: null, //artifact status (currently displayed artifacts)

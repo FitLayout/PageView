@@ -11,6 +11,8 @@
 </template>
 
 <script>
+import {stringColor} from '@/common/utils.js';
+
 export default {
 	name: 'Page',
 	props: {
@@ -19,7 +21,8 @@ export default {
 		selectedRect: null,
 		zoom: null,
 		outlines: null,
-		rectSelection: null
+		rectSelection: null,
+		showTags: null
 	},
 	data () {
 		return {
@@ -47,6 +50,7 @@ export default {
 		pageModel: 'render',
 		rectangles: 'render',
 		rectSelection: 'render',
+		showTags: 'render',
 		zoom: 'updateZoom',
 		selectedRect: 'highlightSelectedRect'
 	},
@@ -86,6 +90,12 @@ export default {
 				el.style.top = box.bounds.positionY + 'px';
 				el.style.width = box.bounds.width + 'px';
 				el.style.height = box.bounds.height + 'px';
+
+				if (this.showTags && box.hasTag && box.hasTag.length > 0) {
+					let tagName = box.hasTag[0].hasName;
+					el.style.backgroundColor = stringColor(tagName);
+				}
+
 				let thisObj = this;
 				el.onclick = function(event) {
 					if (thisObj.rectSelection) {
