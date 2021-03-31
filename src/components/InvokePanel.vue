@@ -128,7 +128,7 @@ export default {
 			try {
 				const client = new ApiClient();
 				const iri = await client.createArtifact(this.key, this.params, srcIri);
-				this.$router.push({name: 'show', params: {iri: iri}});
+				this.$emit('created', iri);
 				this.error = null;
 			} catch (e) {
 				this.error = e.message;

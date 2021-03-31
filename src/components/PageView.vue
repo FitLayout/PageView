@@ -22,8 +22,8 @@
 						</div>
 					</SplitterPanel>
 					<SplitterPanel>
-						<div class="selected-info" v-if="artifactIri">
-							Current: <Iri :iri="artifactIri" />
+						<div class="selected-info" v-if="subjectIri">
+							Subject: <Iri :iri="subjectIri" />
 						</div>
 						<div class="descr-scroll">
 							<div class="descr-table" v-if="subjectModel">
@@ -126,7 +126,7 @@ export default {
 	},
 	inject: ['apiClient'],
 	props: {
-		artifactIri: null
+		subjectIri: null
 	},
 	data () {
 		return {
@@ -157,7 +157,7 @@ export default {
 		this.update();
 	},
 	watch: {
-		'artifactIri': 'update'
+		'subjectIri': 'update'
 	},
 	methods: {
 		update() {
@@ -165,8 +165,8 @@ export default {
 		},
 
 		async fetchData() {
-			console.log('UPDATE ' + this.artifactIri)
-			if (!this.artifactIri) {
+			console.log('UPDATE ' + this.subjectIri)
+			if (!this.subjectIri) {
 				return;
 			}
 			this.error = this.post = null;
@@ -176,7 +176,7 @@ export default {
 			try {
 				let resolver = new ObjectResolver(client);
 				console.log('RESOLVING');
-				let deps = await resolver.resolveObjectIRI(this.artifactIri, this.status);
+				let deps = await resolver.resolveObjectIRI(this.subjectIri, this.status);
 
 				console.log(deps);
 				if (deps.type !== 'unknown') {
@@ -198,8 +198,8 @@ export default {
 					}
 					// if the IRI identifies a box or area, highlight the corresponding rectangle
 					if (deps.type === 'box' || deps.type === 'area') {
-						if (!this.selectedRect || this.selectedRect._iri !== this.artifactIri) {
-							const rect = this.findRectangleByIri(this.artifactIri);
+						if (!this.selectedRect || this.selectedRect._iri !== this.subjectIri) {
+							const rect = this.findRectangleByIri(this.subjectIri);
 							this.showBoxInTree(rect);
 							this.selectedRect = rect;
 						}
@@ -207,12 +207,13 @@ export default {
 						this.selectedRect = null;
 					}
 				} else {
-					console.error('Unknown artifact type for ' + this.artifactIri)
+					console.error('Unknown artifact type for ' + this.subjectIri)
 				}
 
 				this.status = deps;
 				this.subjectModel = deps.description;
 				this.loading = false;
+				this.$emit('status-update', this.status);
 			} catch (error) {
 				this.error = error.message;
 				this.loading = false;

@@ -8,9 +8,18 @@
 		</div>
 		<!-- Service panels -->
 		<div class="panel-row">
-			<InvokePanel id="r" :target="pageType" :currentArtifact="currentArtifact" action="Render" class="serv-panel panel-render" :class="panelClass('render')"></InvokePanel>
-			<InvokePanel id="s" :source="pageType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Segment" class="serv-panel panel-segm" :class="panelClass('segm')"></InvokePanel>
-			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType" :currentArtifact="currentArtifact" action="Process" class="serv-panel panel-post" :class="panelClass('post')"></InvokePanel>
+			<InvokePanel id="r" :target="pageType" 
+				:currentArtifact="currentArtifact" action="Render"
+				class="serv-panel panel-render" :class="panelClass('render')"
+				v-on:created="artifactCreated"></InvokePanel>
+			<InvokePanel id="s" :source="pageType" :target="areaTreeType" 
+				:currentArtifact="currentArtifact" action="Segment" 
+				class="serv-panel panel-segm" :class="panelClass('segm')"
+				v-on:created="artifactCreated"></InvokePanel>
+			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType"
+				:currentArtifact="currentArtifact" action="Process" 
+				class="serv-panel panel-post" :class="panelClass('post')"
+				v-on:created="artifactCreated"></InvokePanel>
 		</div>
 
 		<div class="content-row">
@@ -20,7 +29,7 @@
 				<Button class="p-button-sm" v-if="visibleLeft" icon="pi pi-arrow-left" @click="visibleLeft = false" />
 				<div class="sidebar-scroll">
 					<div class="sidebar-cont">
-						<ArtTree :artifacts="artifacts" :currentIri="iri"
+						<ArtTree :artifacts="artifacts" :currentIri="currentArtifactIri"
 							v-on:select-artifact="selectArtifact"
 							v-on:delete-artifact="deleteArtifact">
 						</ArtTree>
@@ -28,7 +37,7 @@
 				</div>
 			</div>
 
-			<PageView :artifactIri="iri" v-on:select-artifact="selectArtifact" v-if="iri" />
+			<PageView :subjectIri="iri" v-if="iri" v-on:status-update="update" />
 			<div class="empty-page p-col-12 p-d-flex p-ai-center p-jc-center h-100" v-if="!iri">
 				<p class="flex-fill p-text-center p-text-secondary">No page selected</p>
 			</div>
@@ -72,7 +81,9 @@ export default {
 			mode: 'render',
 			artifacts: null,
 			currentArtifact: null,
-			visibleLeft: null,
+			currentArtifactIri: null,
+			selectionStatus: null,
+			visibleLeft: true,
 
 			menuItems: [
 				{ label: 'Render', class: 'selected', command: () => {this.selectMode('render', 0);} },
@@ -95,7 +106,7 @@ export default {
 		}
 	},
 	watch: {
-		'iri': 'update'
+		'pageStatus': 'update'
 	},
 	created () {
 		this.fetchArtifacts();
@@ -134,17 +145,8 @@ export default {
 				} catch (error) {
 					console.error('Couldnt delete artifact!', error);
 				}
-				this.update();
+				this.fetchArtifacts();
 			}
-		},
-
-		findArtifact(iri) {
-			for (let art of this.artifacts) {
-				if (art._iri === iri) {
-					return art;
-				}
-			}
-			return null;
 		},
 
 		async fetchArtifacts() {
@@ -153,9 +155,6 @@ export default {
 			
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
-				if (this.iri) {
-					this.currentArtifact = this.findArtifact(this.iri);
-				}
 				this.loading = false;
 			} catch (error) {
 				this.error = error.message;
@@ -164,9 +163,17 @@ export default {
 			}
 		},
 
-		update() {
-			console.log('IRI UPDATE');
+		update(status) {
+			this.selectionStatus = status;
+			this.currentArtifact = status.artifact;
+			if (status.artifact) {
+				this.currentArtifactIri = status.artifact._iri;
+			}
+		},
+
+		artifactCreated(iri) {
 			this.fetchArtifacts();
+			this.selectArtifact(iri);
 		}
 
 	}
