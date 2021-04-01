@@ -34,25 +34,32 @@ export default class ObjectCreator {
 			if (def.inverse) {
 				ret[prop] = model.createInverseObjects(resource.value, def.name);
 			} else {
-				const property = resource.property[def.name];
-				if (property) {
-					ret[prop] = this.getPropertyValue(property, type, model);
+				const properties = resource.properties[def.name];
+				if (properties && properties.length > 0) {
+					ret[prop] = this.getPropertyValue(properties, type, model);
 				}
 			}
 		}
 		return ret;
 	}
 
-	getPropertyValue(property, type, model) {
-		if (type.endsWith('[]')) {
-			type = type.substring(0, type.length - 2);
-			return this.getValueList(property, type, model);
+	getPropertyValue(properties, type, model) {
+		if (type.startsWith('object<')) {
+			type = type.substring(7, type.length);
+			if (type.endsWith('[]')) {
+				type = type.substring(0, type.length - 3);
+				return this.getObjectList(properties, type, model);
+			} else {
+				type = type.substring(0, type.length - 1);
+				return this.getObject(properties[0], type, model);
+			}
 		}
-		else if (type.startsWith('object<')) {
-			type = type.substring(7, type.length - 1);
-			return this.getObject(property, type, model);
-		} else {
-			return this.getSimpleValue(property, type);
+		else if (type.endsWith('[]')) {
+			type = type.substring(0, type.length - 2);
+			return this.getValueList(properties, type, model);
+		}
+		else {
+			return this.getSimpleValue(properties[0], type);
 		}
 	}
 
@@ -68,15 +75,10 @@ export default class ObjectCreator {
 		}
 	}
 
-	getValueList(property, type, model) {
+	getValueList(properties, type, model) {
 		let ret = [];
-		if (property.list) { // a real list
-			for (const listElement of property.list) {
-				const val = this.getPropertyValue(listElement, type, model);
-				ret.push(val);
-			}
-		} else if (property.value) { // a single value
-			const val = this.getPropertyValue(property, type, model);
+		for (const property of properties) {
+			const val = this.getPropertyValue([property], type, model);
 			ret.push(val);
 		}
 		return ret;
@@ -85,6 +87,15 @@ export default class ObjectCreator {
 	getObject(property, type, model) {
 		const objectIri = property.value;
 		return model.createObject(objectIri, type)
+	}
+
+	getObjectList(properties, type, model) {
+		let ret = [];
+		let iris = this.getValueList(properties, type, model);
+		for (let iri of iris) {
+			ret.push(model.createObject(iri, type));
+		}
+		return ret;
 	}
 
 }
