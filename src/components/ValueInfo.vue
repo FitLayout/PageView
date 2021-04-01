@@ -108,7 +108,8 @@ export default {
 							+ descr[BOX.positionX][0].value + ', '
 							+ descr[BOX.positionY][0].value + ', '
 							+ (parseInt(descr[BOX.positionX][0].value) + parseInt(descr[BOX.width][0].value) - 1) + ', '
-							+ (parseInt(descr[BOX.positionY][0].value) + parseInt(descr[BOX.height][0].value) - 1) + ']';
+							+ (parseInt(descr[BOX.positionY][0].value) + parseInt(descr[BOX.height][0].value) - 1) + ']'
+							+ ' (' + descr[BOX.width][0].value + ' x ' + descr[BOX.height][0].value + ')';
 					}
 					else
 					{
