@@ -23,6 +23,7 @@
 		</div>
 
 		<div class="content-row">
+			<ConfirmDialog></ConfirmDialog>
 
 			<div class="sidebar" :class="visibleLeft?'visible':'hidden'">
 				<Button class="p-button-sm" v-if="!visibleLeft" icon="pi pi-arrow-right" @click="visibleLeft = true" />
@@ -52,6 +53,7 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 import InvokePanel from '@/components/InvokePanel.vue';
 import PageView from '@/components/PageView.vue';
@@ -69,6 +71,7 @@ export default {
 		SplitterPanel,
 		Sidebar,
 		Button,
+		ConfirmDialog,
 		InvokePanel,
 		PageView,
 		ArtTree
@@ -139,14 +142,21 @@ export default {
 		async deleteArtifact(iri) {
 			let dec = new IriDecoder();
 			let shortIri = dec.encodeIri(iri);
-			if (window.confirm('Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?')) {
-				try {
-					this.artifact = await this.apiClient.deleteArtifact(this.iri);
-				} catch (error) {
-					console.error('Couldnt delete artifact!', error);
-				}
-				this.fetchArtifacts();
-			}
+			this.$confirm.require({
+                message: 'Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?',
+                header: 'Artifact deletion',
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => {
+					try {
+						this.artifact = await this.apiClient.deleteArtifact(iri);
+					} catch (error) {
+						console.error('Couldnt delete artifact!', error);
+					}
+					this.fetchArtifacts();
+                },
+                reject: () => {
+                }
+            });
 		},
 
 		async fetchArtifacts() {
