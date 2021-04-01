@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import {stringColor} from '@/common/utils.js';
+import {stringColor, stringsGradient} from '@/common/utils.js';
 
 export default {
 	name: 'Page',
@@ -91,11 +91,24 @@ export default {
 				el.style.width = box.bounds.width + 'px';
 				el.style.height = box.bounds.height + 'px';
 
-				if (this.showTags && box.hasTag && box.hasTag.length > 0) {
-					let tagName = box.hasTag[0].hasName;
-					el.style.backgroundColor = stringColor(tagName);
+				// colorize tags if any
+				if (this.showTags && box.hasTag) {
+					console.log(box);
+					if (box.hasTag.length === 1) {
+						let tagName = box.hasTag[0].hasName;
+						el.style.backgroundColor = stringColor(tagName);
+					} else if (box.hasTag.length > 1) {
+						let tagNames = [];
+						for (let i = 0; i < box.hasTag.length; i++) {
+							tagNames.push(box.hasTag[i].hasName);
+						}
+						console.log(tagNames);
+						console.log(stringsGradient(tagNames));
+						el.style.backgroundImage = stringsGradient(tagNames);
+					}
 				}
 
+				// onclick
 				let thisObj = this;
 				el.onclick = function(event) {
 					if (thisObj.rectSelection) {

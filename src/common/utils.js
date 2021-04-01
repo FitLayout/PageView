@@ -18,3 +18,21 @@ export function stringColor(cname) {
 	//System.out.println(cname + " => " + ret.toString());
 	return ret;
 }
+
+export function stringsGradient(cnames) {
+	if (!cnames || cnames.length == 0) {
+		return '';
+	}
+	let ret = 'linear-gradient(180deg';
+	for (let i = 0; i < cnames.length; i++) {
+		if (i == 0) {
+			ret += ',' + stringColor(cnames[i]);
+		} else {
+			let perc = (i * 100) / cnames.length;
+			ret += ',' + stringColor(cnames[i - 1]) + ' ' + perc + '%';
+			ret += ',' + stringColor(cnames[i]) + ' ' + perc + '%';
+		}
+	}
+	ret += ',' + stringColor(cnames[cnames.length - 1]) + ')';
+	return ret;
+}
