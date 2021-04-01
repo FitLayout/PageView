@@ -80,15 +80,6 @@ class LogicalAreaCreator extends ObjectCreator {
 	}
 }
 
-class LogicalAreaTreeCreator extends ObjectCreator {
-	constructor() {
-		super();
-		this.addMapping({
-			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
-		});
-	}
-}
-
 class PageSetCreator extends ObjectCreator {
 	constructor() {
 		super();
@@ -170,6 +161,7 @@ class BoxCreator extends RectAreaCreator {
 		super();
 		this.addMapping({
 			containsImage: { name: 'http://fitlayout.github.io/ontology/render.owl#containsImage', type: 'object<http://fitlayout.github.io/ontology/render.owl#Image>[]' },
+			visible: { name: 'http://fitlayout.github.io/ontology/render.owl#visible', type: 'boolean' },
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/render.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/render.owl#ContainerBox>' },
 			visualBounds: { name: 'http://fitlayout.github.io/ontology/render.owl#visualBounds', type: 'object<http://fitlayout.github.io/ontology/render.owl#Bounds>' },
 			displayType: { name: 'http://fitlayout.github.io/ontology/render.owl#displayType', type: 'string' },
@@ -202,6 +194,15 @@ class ContentBoxCreator extends BoxCreator {
 	}
 }
 
+class LogicalAreaTreeCreator extends ArtifactCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
+		});
+	}
+}
+
 class PageCreator extends ArtifactCreator {
 	constructor() {
 		super();
@@ -225,7 +226,6 @@ const registry = {
 	'http://fitlayout.github.io/ontology/render.owl#ContentObject': new ContentObjectCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Image': new ImageCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea': new LogicalAreaCreator(),
-	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalAreaTree': new LogicalAreaTreeCreator(),
 	'http://fitlayout.github.io/ontology/fitlayout.owl#PageSet': new PageSetCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#RectArea': new RectAreaCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#Tag': new TagCreator(),
@@ -234,6 +234,7 @@ const registry = {
 	'http://fitlayout.github.io/ontology/render.owl#Box': new BoxCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContainerBox': new ContainerBoxCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContentBox': new ContentBoxCreator(),
+	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalAreaTree': new LogicalAreaTreeCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Page': new PageCreator()
 };
 
