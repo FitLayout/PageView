@@ -25,25 +25,50 @@
 						<div class="selected-info" v-if="subjectIri">
 							Subject: <Iri :iri="subjectIri" />
 						</div>
-						<div class="descr-scroll">
-							<div class="descr-table" v-if="subjectModel">
-								<DataTable :value="subjectModel" class="p-datatable-sm" 
-									:resizableColumns="true" columnResizeMode="expand"
-									:scrollable="true" scrollHeight="flex" 
-									showGridlines>
-									<Column header="Property">
-										<template #body="rowdata">
-											<Iri :iri="rowdata.data.p.value" />
-										</template>
-									</Column>
-									<Column header="Value">
-										<template #body="rowdata">
-											<ValueInfo :data="rowdata.data" />
-										</template>
-									</Column>
-								</DataTable>
-							</div>
-						</div>
+						<TabView v-model:activeIndex="activeTab">
+							<TabPanel header="Description">
+								<div class="descr-scroll">
+									<div class="descr-table" v-if="subjectModel">
+										<DataTable :value="subjectModel" class="p-datatable-sm" 
+											:resizableColumns="true" columnResizeMode="expand"
+											:scrollable="true" scrollHeight="flex"
+											showGridlines>
+											<Column header="Property">
+												<template #body="rowdata">
+													<Iri :iri="rowdata.data.p.value" />
+												</template>
+											</Column>
+											<Column header="Value">
+												<template #body="rowdata">
+													<ValueInfo :data="rowdata.data" />
+												</template>
+											</Column>
+										</DataTable>
+									</div>
+								</div>
+							</TabPanel>
+							<TabPanel header="References">
+								<div class="descr-scroll">
+									<div class="descr-table" v-if="subjectRefs">
+										<DataTable :value="subjectRefs" class="p-datatable-sm" 
+											:resizableColumns="true" columnResizeMode="expand"
+											:scrollable="true" scrollHeight="flex" 
+											showGridlines>
+											<Column header="Subject">
+												<template #body="rowdata">
+													<ValueInfo :data="rowdata.data" />
+												</template>
+											</Column>
+											<Column header="Property">
+												<template #body="rowdata">
+													<Iri :iri="rowdata.data.p.value" />
+												</template>
+											</Column>
+										</DataTable>
+									</div>
+								</div>
+							</TabPanel>
+						</TabView>
 					</SplitterPanel>
 				</Splitter>
 			</SplitterPanel>
@@ -102,6 +127,8 @@ import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import InputSwitch from 'primevue/inputswitch';
 import Tree from 'primevue/tree';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Page from './Page.vue';
@@ -123,6 +150,8 @@ export default {
 		Slider,
 		InputSwitch,
 		Tree,
+		TabView,
+		TabPanel,
 		DataTable,
 		Column,
 		Page,
@@ -150,7 +179,9 @@ export default {
 			pageModel: null, //currently displayed page model
 			rectangles: null, //rectangle overlay on the page
 			selectedRect: null, //selected rectangle
-			subjectModel: null, //selected subject model for the table (page, atree, box, area, ...)
+			activeTab: 0, //active tab in the description
+			subjectModel: null, //selected subject model for the Description table
+			subjectRefs: null, //selected subject references for the References table
 			
 			// Tree
 			treeModel: null,
@@ -168,6 +199,7 @@ export default {
 	methods: {
 		update() {
 			this.fetchData();
+			this.activeTab = 0; //switch to the Description tab when the iri changes
 		},
 
 		async fetchData() {
@@ -217,8 +249,15 @@ export default {
 				}
 
 				this.status = deps;
-				this.subjectModel = deps.description;
+				this.subjectModel = (deps.description.length <= 50) ? deps.description : deps.description.slice(50);
 				this.loading = false;
+
+				//fetch references
+				this.apiClient.getSubjectReferences(this.subjectIri).then((data) => {
+					let refs = data.results.bindings;
+					this.subjectRefs = (refs.length <= 50) ? refs : refs.slice(50);
+				});
+
 				this.$emit('status-update', this.status);
 			} catch (error) {
 				this.error = error.message;
@@ -371,13 +410,30 @@ export default {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
 .selected-info {
-	padding: 0.5em 0.5em;
+	padding: 0.2em 0.5em;
 	font-weight: bold;
 	height: 2em;
 }
-.descr-scroll {
+.splitter-row .p-tabview {
 	height: calc(100% - 2em);
+}
+.splitter-row .p-tabview .p-tabview-nav {
+	height: 2em;
+}
+.splitter-row .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+	padding: 0.2em 1em 0.2em 1em;
+}
+.splitter-row .p-tabview .p-tabview-panels {
+	height: calc(100% - 2em);
+	padding: 0;
+}
+.splitter-row .p-tabview .p-tabview-panel {
+	height: 100%;
+}
+.descr-scroll {
+	height: 100%;
 	min-height: 100px;
 	position: relative;
 }
