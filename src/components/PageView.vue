@@ -77,7 +77,9 @@
 									<div class="descr-table" v-if="subjectAnnotations">
 										<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
 											<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
-											<div class="annotation-item-value">{{item.value}}</div>
+											<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
+												<ValueInfo :data="row" />
+											</span>
 										</div>
 									</div>
 								</div>
@@ -192,7 +194,8 @@ export default {
 			showTags: false,
 
 			// Annotations to show
-			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION],
+			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION], //properties to show in annotations (separate)
+			annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
 
 			// Displayed data
 			status: null, //artifact status (currently displayed artifacts)
@@ -292,10 +295,23 @@ export default {
 		// scans the model and filters out the annotations only
 		getAnnotations(model) {
 			let ret = [];
+			for (let iri of this.annotationGroupIRIs) {
+				let values = [];
+				let rows = [];
+				for (let row of model) {
+					if (row.p.value === iri) {
+						values.push(row.v.value);
+						rows.push(row);
+					}
+				}
+				if (values.length > 0) {
+					ret.push({iri: iri, value: values, row: rows});
+				}
+			}
 			for (let iri of this.annotationIRIs) {
 				for (let row of model) {
 					if (row.p.value === iri) {
-						ret.push({iri: iri, value: row.v.value});
+						ret.push({iri: iri, value: [row.v.value], row: [row]});
 					}
 				}
 			}
@@ -485,7 +501,10 @@ export default {
 	font-size: 90%;
 }
 .annotation-item {
-	padding: 1em;
+	margin: 1em;
+}
+.annotation-item-value::after {
+	content: ' ';
 }
 .annotation-item-iri {
 	font-weight: bold;
