@@ -1,6 +1,6 @@
 <template>
 	<span class="value-info" v-if="valueType">
-		<span v-if="valueType==='literal'">{{data.v.value}}</span>
+		<span v-if="valueType==='literal'">{{literalValue}}</span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
 			<Iri :iri="data.v.value" :active="true" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
@@ -54,6 +54,14 @@ export default {
 				}
 			}
 			return { type: 'unknown' };
+		},
+		literalValue() {
+			let val = this.data.v.value.toString();
+			//limit the displayed length
+			if (val.length > 512) {
+				val = val.substring(0, 512) + '...'; 
+			}
+			return val;
 		}
 	},
 	created () {
