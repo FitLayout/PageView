@@ -3,7 +3,7 @@
 		<div v-if="descr.type=='string'" class="p-field">
 			<label :for="inputId" >{{descr.name}}</label>
 			<InputText type="text" :id="inputId" :placeholder="descr.name"
-				:minlength="descr.minLength" :maxlength="descr.maxLength"
+				:minlength="descr.minLength" :data-maxlength="descr.maxLength"
 				v-bind:modelValue="modelValue" 
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
