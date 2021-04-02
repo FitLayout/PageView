@@ -68,6 +68,20 @@
 									</div>
 								</div>
 							</TabPanel>
+							<TabPanel>
+								<template #header>
+									<span class="p-tabview-title">Annotations</span>
+									<Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
+								</template>
+								<div class="descr-scroll">
+									<div class="descr-table" v-if="subjectAnnotations">
+										<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
+											<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
+											<div class="annotation-item-value">{{item.value}}</div>
+										</div>
+									</div>
+								</div>
+							</TabPanel>
 						</TabView>
 					</SplitterPanel>
 				</Splitter>
@@ -131,10 +145,13 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Badge from 'primevue/badge';
+
 import Page from './Page.vue';
 import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
 
+import RDFS from '@/ontology/RDFS.js';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
@@ -154,6 +171,7 @@ export default {
 		TabPanel,
 		DataTable,
 		Column,
+		Badge,
 		Page,
 		Iri,
 		ValueInfo
@@ -173,6 +191,9 @@ export default {
 			rectSelection: false,
 			showTags: false,
 
+			// Annotations to show
+			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION],
+
 			// Displayed data
 			status: null, //artifact status (currently displayed artifacts)
 			artifactModel: null, //currently displayed artifact model
@@ -182,6 +203,7 @@ export default {
 			activeTab: 0, //active tab in the description
 			subjectModel: null, //selected subject model for the Description table
 			subjectRefs: null, //selected subject references for the References table
+			subjectAnnotations: null, //selected subject annotations for the Annotations table
 			
 			// Tree
 			treeModel: null,
@@ -250,6 +272,7 @@ export default {
 
 				this.status = deps;
 				this.subjectModel = (deps.description.length <= 50) ? deps.description : deps.description.slice(50);
+				this.subjectAnnotations = this.getAnnotations(deps.description);
 				this.loading = false;
 
 				//fetch references
@@ -264,6 +287,19 @@ export default {
 				this.loading = false;
 				console.error('Error while fetching artifact data', error);
 			}
+		},
+
+		// scans the model and filters out the annotations only
+		getAnnotations(model) {
+			let ret = [];
+			for (let iri of this.annotationIRIs) {
+				for (let row of model) {
+					if (row.p.value === iri) {
+						ret.push({iri: iri, value: row.v.value});
+					}
+				}
+			}
+			return ret;
 		},
 
 		//============== Events =============================
@@ -447,5 +483,20 @@ export default {
 .descr-table .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
 	padding: 0.25em 0.5em;
 	font-size: 90%;
+}
+.annotation-item {
+	padding: 1em;
+}
+.annotation-item-iri {
+	font-weight: bold;
+	color: var(--primary-color);
+	margin-bottom: 0.5em;
+}
+.splitter-row .p-tabview .p-tabview-nav li .p-tabview-nav-link .p-badge {
+	min-width: 1.5em;
+	height: 1.5em;
+	line-height: 1.5em;
+	margin-top: -0.5em;
+	margin-left: 0.5em;
 }
 </style>

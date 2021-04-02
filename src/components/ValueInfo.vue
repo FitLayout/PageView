@@ -2,7 +2,7 @@
 	<span class="value-info" v-if="valueType">
 		<span v-if="valueType==='literal'">{{literalValue}}</span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
-			<Iri :iri="data.v.value" :active="true" />
+			<Iri :iri="data.v.value" :active="active" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
 		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
