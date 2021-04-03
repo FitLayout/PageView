@@ -126,6 +126,15 @@ export default {
 					}
 				});
 			}
+			// borders
+			else if (this.typeIri === BOX.Border) {
+				this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {
+					this.valueType = 'attribute';
+					this.displayValue = descr[BOX.borderWidth][0].value + 'px '
+						+ descr[BOX.borderStyle][0].value.toLowerCase() + ' '
+						+ descr[BOX.borderColor][0].value + ' ';
+				});
+			}
 			// check known types
 			else if (knownTypes[this.typeIri]) {
 				this.active = true;
