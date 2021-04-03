@@ -177,9 +177,12 @@ export default {
 			if (box.hasLeftBorder) {
 				style += ';' + this.borderStyle(box.hasLeftBorder, 'left');
 			}
-			if (box.containsImage) {
-				console.log('IMG');
-				console.log(box.containsImage);
+			if (box.containsImage && box.containsImage.length > 0) {
+				for (let i = 0; i < box.containsImage.length; i++) {
+					if (box.containsImage[i].imageData) {
+						el.appendChild(this.createImage(box.containsImage[i]));
+					}
+				}
 			}
 			el.setAttribute('style', style);
 
@@ -188,6 +191,13 @@ export default {
 
 		borderStyle(border, side) {
 			return `border-${side}:${border.borderWidth}px ${border.borderStyle} ${border.borderColor}`;
+		},
+
+		createImage(img) {
+			let el = document.createElement('img');
+			el.setAttribute('class', 'c');
+			el.setAttribute('src', 'data:image/png;base64,' + img.imageData);
+			return el;
 		},
 
 		selectBox(box) {
