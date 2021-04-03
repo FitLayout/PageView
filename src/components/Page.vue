@@ -1,7 +1,7 @@
 <template>
   <div class="page-zoom" :style="zoomStyle">
 	<div class="page-view" :style="pageStyle">
-		<div v-if="dataurl" class="image">
+		<div v-if="dataurl && screenshot" class="image">
 			<img :src="dataurl" alt="screenshot">
 		</div>
 		<div :class="boxesClass" ref="boxes">
@@ -20,6 +20,7 @@ export default {
 		rectangles: null,
 		selectedRect: null,
 		zoom: null,
+		screenshot: null,
 		outlines: null,
 		rectSelection: null,
 		showTags: null
@@ -48,6 +49,7 @@ export default {
 	},
 	watch: {
 		pageModel: 'render',
+		screenshot: 'render',
 		rectangles: 'render',
 		rectSelection: 'render',
 		showTags: 'render',
@@ -91,6 +93,11 @@ export default {
 				el.style.width = box.bounds.width + 'px';
 				el.style.height = box.bounds.height + 'px';
 
+				if (!this.screenshot) {
+					const cont = this.renderContents(box);
+					el.appendChild(cont);
+				}
+
 				// colorize tags if any
 				if (this.showTags && box.hasTag) {
 					console.log(box);
@@ -126,6 +133,61 @@ export default {
 				vel.style.height = box.visualHeight + 'px';
 				el.appendChild(vel);
 			}
+		},
+
+		renderContents(box) {
+			let el = document.createElement('span');
+			el.setAttribute('class', 'c');
+			if (box.hasText) {
+				const text = document.createTextNode(box.hasText);
+				el.appendChild(text);
+			}
+			let style = `font-family:'${box.fontFamily}',sans-serif;font-size:${box.fontSize}px`;
+			if (box.fontWeight >= 0.5) {
+				style += ';font-weight:bold';
+			}
+			if (box.fontStyle >= 0.5) {
+				style += ';font-style:italic';
+			}
+			let decor = '';
+			if (box.underline >= 0.5) {
+				decor += 'underline';
+			}
+			if (box.lineThrough >= 0.5) {
+				decor += ' line-through';
+			}
+			if (decor.length > 0) {
+				style += ';text-decoration:' + decor;
+			}
+			if (box.color) {
+				style += ';color:' + box.color;
+			}
+			if (box.backgroundColor) {
+				style += ';background-color:' + box.backgroundColor;
+			}
+			if (box.hasTopBorder) {
+				style += ';' + this.borderStyle(box.hasTopBorder, 'top');
+			}
+			if (box.hasRightBorder) {
+				style += ';' + this.borderStyle(box.hasRightBorder, 'right');
+			}
+			if (box.hasBottomBorder) {
+				style += ';' + this.borderStyle(box.hasBottomBorder, 'bottom');
+			}
+			if (box.hasLeftBorder) {
+				style += ';' + this.borderStyle(box.hasLeftBorder, 'left');
+			}
+			if (box.containsImage) {
+				console.log('IMG');
+				console.log(box.containsImage);
+			}
+			el.setAttribute('style', style);
+
+			return el;
+		},
+
+		borderStyle(border, side) {
+			return `border-${side}:${border.borderWidth}px ${border.borderStyle} ${border.borderColor}`;
 		},
 
 		selectBox(box) {
@@ -200,5 +262,14 @@ export default {
 }
 .outlines .box.selected {
 	outline: 1px solid red;
+}
+.page-view .box .c {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	white-space: pre;
 }
 </style>

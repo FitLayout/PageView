@@ -122,7 +122,9 @@
 						</div>
 					</div>
 					<div class="page-contents">
-						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom" :outlines="outlines"
+						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
+							:screenshot="screenshot"
+							:outlines="outlines"
 							:rectSelection="rectSelection"
 							:showTags="showTags"
 							:selectedRect="selectedRect"
@@ -191,7 +193,7 @@ export default {
 			screenshot: true,
 			outlines: false,
 			rectSelection: false,
-			showTags: false,
+			showTags: true,
 
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION], //properties to show in annotations (separate)
