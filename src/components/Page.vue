@@ -64,74 +64,94 @@ export default {
 				this.pageStyle = `width:${this.page.width}px;height:${this.page.height}px`;
 			}
 			// decode the screenshot
-			if (this.page !== null && this.page.pngImage !== undefined) {
+			if (this.screenshot && this.page !== null && this.page.pngImage !== undefined) {
 				const imgData = this.page.pngImage;
 				this.dataurl = 'data:image/png;base64,' + imgData;
 			} else {
 				this.dataurl = null;
 			}
 			//console.log(this.$refs);
-			if (this.$refs.boxes !== undefined && this.rectangles != null) {
-				this.renderBoxes(this.rectangles, this.$refs.boxes);
+			if (this.$refs.boxes !== undefined) { // the rendering area is ready
+				this.$refs.boxes.innerHTML = ''; // clear old boxes
+				this.boxIndex = {};
+				const isPage = (this.rectangles === this.page.rectAreas); // are we drawing the page only?
+				if (this.page !== null && !this.dataurl) { // no screenshot is shown - we should draw the contents
+					//console.log('DRAWING base ' + isPage);
+					this.renderBoxes(this.page.rectAreas, this.$refs.boxes, true, isPage); // always use the boxes
+				}
+				if ((!isPage || this.dataurl) && this.rectangles != null) { //not a page or used a screenshot, add the active rectangles separately
+					//console.log('DRAWING overlay');
+					this.renderBoxes(this.rectangles, this.$refs.boxes, false, true);
+				}
 			}
 		},
 
-		renderBoxes(boxList, target) {
+		/**
+		 * Creates a DOM representing the boxes or areas.
+		 * @param boxList the list of rectangles (boxes or visual areas)
+		 * @param target the target element to append the DOM to
+		 * @param showContents when set to true, the complete contents are rendered (for boxes only). Otherwise,
+		 * only the bounds are rendered.
+		 * @param active make the boxes active (hover, clickable)
+		 */
+		renderBoxes(boxList, target, showContents, active) {
 			//let shadow = target.attachShadow({mode: 'open'});
 			const shadow = target;
-			shadow.innerHTML = '';
-			this.boxIndex = {};
 			for (let box of boxList) {
 				let el = document.createElement('div');
 				shadow.appendChild(el);
-				this.boxIndex[box._iri] = el;
 				el.srcBox = box;
-				el.setAttribute('class', 'box');
-				el.setAttribute('id', 'fl-box-' + box.documentOrder);
+				if (active) {
+					el.setAttribute('class', 'box a');
+				    el.setAttribute('id', 'fl-abox-' + box.documentOrder);
+				    this.boxIndex[box._iri] = el;
+				} else {
+					el.setAttribute('class', 'box');
+				    el.setAttribute('id', 'fl-box-' + box.documentOrder);
+				}
 				el.style.left = box.bounds.positionX + 'px';
 				el.style.top = box.bounds.positionY + 'px';
 				el.style.width = box.bounds.width + 'px';
 				el.style.height = box.bounds.height + 'px';
 
-				if (!this.screenshot) {
+				if (showContents) {
 					const cont = this.renderContents(box);
 					el.appendChild(cont);
 				}
 
-				// colorize tags if any
-				if (this.showTags && box.hasTag) {
-					console.log(box);
-					if (box.hasTag.length === 1) {
-						let tagName = box.hasTag[0].hasName;
-						el.style.backgroundColor = stringColor(tagName);
-					} else if (box.hasTag.length > 1) {
-						let tagNames = [];
-						for (let i = 0; i < box.hasTag.length; i++) {
-							tagNames.push(box.hasTag[i].hasName);
+				if (active) {
+					// colorize tags if any
+					if (this.showTags && box.hasTag) {
+						if (box.hasTag.length === 1) {
+							let tagName = box.hasTag[0].hasName;
+							el.style.backgroundColor = stringColor(tagName);
+						} else if (box.hasTag.length > 1) {
+							let tagNames = [];
+							for (let i = 0; i < box.hasTag.length; i++) {
+								tagNames.push(box.hasTag[i].hasName);
+							}
+							el.style.backgroundImage = stringsGradient(tagNames);
 						}
-						console.log(tagNames);
-						console.log(stringsGradient(tagNames));
-						el.style.backgroundImage = stringsGradient(tagNames);
 					}
+
+					// onclick
+					let thisObj = this;
+					el.onclick = function(event) {
+						if (thisObj.rectSelection) {
+							event.currentTarget.classList.toggle('selected');
+						}
+						thisObj.selectBox(box);
+					};
+
+					//visual bounds inside
+					let vel = document.createElement('div');
+					vel.setAttribute('class', 'vbox');
+					vel.style.left = (box.visualX - box.positionX) + 'px';
+					vel.style.top = (box.visualY - box.positionY) + 'px';
+					vel.style.width = box.visualWidth + 'px';
+					vel.style.height = box.visualHeight + 'px';
+					el.appendChild(vel);
 				}
-
-				// onclick
-				let thisObj = this;
-				el.onclick = function(event) {
-					if (thisObj.rectSelection) {
-						event.currentTarget.classList.toggle('selected');
-					}
-					thisObj.selectBox(box);
-				};
-
-				//visual bounds inside
-				let vel = document.createElement('div');
-				vel.setAttribute('class', 'vbox');
-				vel.style.left = (box.visualX - box.positionX) + 'px';
-				vel.style.top = (box.visualY - box.positionY) + 'px';
-				vel.style.width = box.visualWidth + 'px';
-				vel.style.height = box.visualHeight + 'px';
-				el.appendChild(vel);
 			}
 		},
 
@@ -260,11 +280,11 @@ export default {
 .page-view .box.selected .vbox {
 	outline: 1px solid green;
 }
-.page-view .box:hover {
+.page-view .box.a:hover {
 	/*outline: 1px solid red;*/
 	background-color: rgba(200, 200, 255, 0.3);
 }
-.page-view .box:hover .vbox {
+.page-view .box.a:hover .vbox {
 	background-color: rgba(255, 200, 255, 0.3);
 }
 .outlines .box {
