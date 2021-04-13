@@ -95,8 +95,14 @@ export default {
 					// tags
 					else if (this.data.p.value === SEGM.hasTag) {
 						this.valueType = 'tag';
-						this.displayValue = descr[SEGM.hasName][0].value;
-						this.displayStyle = 'background-color:' + stringColor(descr[SEGM.hasName][0].value);
+						let name = this.iri;
+						let isep = name.indexOf('--');
+						if (isep > 0) {
+							name = name.substring(isep + 2);
+						}
+						//this.displayValue = descr[SEGM.hasName][0].value;
+						this.displayValue = name;
+						this.displayStyle = 'background-color:' + stringColor(name);
 					}
 					else if (this.data.p.value === SEGM.tagSupport) {
 						this.valueType = 'tag';

@@ -161,6 +161,62 @@ export class ApiClient {
 
 	//================================================================================
 
+	async addValue(subjectIri, predicateIri, value, artifactIri) {
+		const url = REPOSITORY_ENDPOINT + '/add/';
+		const payload = {
+			s: subjectIri,
+			p: predicateIri,
+			value: value,
+			artifact: artifactIri
+		};
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+		} catch (e) {
+			throw new Error(e);
+		}
+	}
+
+	async addTag(subjectIri, tagName, artifactIri) {
+		const url = REPOSITORY_ENDPOINT + '/add/';
+		const payload = {
+			s: subjectIri,
+			p: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag',
+			o: 'http://fitlayout.github.io/resource/tag-gui--' + tagName,
+			artifact: artifactIri
+		};
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(payload)
+			});
+
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+		} catch (e) {
+			throw new Error(e);
+		}
+	}
+
+	//================================================================================
+
 	/**
 	 * Sorts elements in the list based on their documentOrder property.
 	 * @param {*} list 

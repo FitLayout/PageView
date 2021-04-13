@@ -309,6 +309,8 @@ export default {
 				if (values.length > 0) {
 					ret.push({iri: iri, value: values, row: rows});
 				}
+				console.log('GROUP');
+				console.log(values);
 			}
 			for (let iri of this.annotationIRIs) {
 				for (let row of model) {
