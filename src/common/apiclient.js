@@ -1,9 +1,9 @@
 import {Model as BoxModel} from '../common/boxMappers.js';
 
-const SERVER_ROOT = 'http://localhost:8080/fitlayout-web';
-const ARTIFACT_ENDPOINT = SERVER_ROOT + '/service/artifact';
-const SERVICE_ENDPOINT = SERVER_ROOT + '/service/service';
-const REPOSITORY_ENDPOINT = SERVER_ROOT + '/service/repository';
+const SERVER_ROOT = 'http://localhost:8080/fitlayout-web/api';
+const ARTIFACT_ENDPOINT = SERVER_ROOT + '/r/default/artifact';
+const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
+const REPOSITORY_ENDPOINT = SERVER_ROOT + '/r/default/repository';
 
 export class ApiClient {
 
