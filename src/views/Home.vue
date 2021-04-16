@@ -1,44 +1,89 @@
 <template>
-	<div class="view-home container-fluid">
-		<!-- Repository menu -->
-		<div class="row">
-			<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-				<a class="navbar-brand mb-0 h1" href="#/">FitLayout</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav">
-					</ul>
-				</div>
-			</nav>
+	<div class="view-home">
+		<!-- Main menu -->
+		<div class="menu-row">
+			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
+				<template #start><span class="logo">FitLayout</span></template>
+			</Menubar>
 		</div>
 
-		<h2>Repository list</h2>
-		<ul>
-			<li v-for="repo in repositoryList" :key="repo.id">
-				<router-link
-					:to="{ name: 'repo', params: { repoId: repo.id } }"
-					class="nav-link"
-					active-class="active">
-						{{repo.id}}
-				</router-link>
-				{{repo.description}}
-			</li>
-		</ul>
+		<Card style="width: 50em; margin: 1em;">
+			<!-- <template #header>
+				<img alt="user header" src="demo/images/usercard.png">
+			</template> -->
+			<template #title>
+				Repositories
+			</template>
+			<template #content>
+				<table class="repo-list">
+					<tr v-for="repo in repositoryList" :key="repo.id">
+						<td class="repo-id">{{repo.id}}</td>
+						<td class="repo-descr">{{repo.description}}</td>
+						<td class="repo-actions">
+							<router-link
+								:to="{ name: 'repo', params: { repoId: repo.id } }"
+								active-class="active">
+									browse
+							</router-link>
+						</td>
+						<td class="repo-actions">
+							<router-link
+								:to="{ name: 'repo', params: { repoId: repo.id } }"
+								active-class="active">
+									query
+							</router-link>
+						</td>
+					</tr>
+				</table>
+			</template>
+			<template #footer>
+
+				<div class="p-formgroup-inline" v-if="storageStatus.createAvailable">
+					<div class="p-field">
+						<label for="repo-id" class="p-sr-only">Repository ID</label>
+						<InputText id="repo-id" type="text" placeholder="Repository ID" v-model="newId" />
+					</div>
+					<div class="p-field">
+						<label for="repo-descr" class="p-sr-only">Description</label>
+						<InputText id="repo-descr" type="text" placeholder="Description" v-model="newDescr" />
+					</div>
+					<Button type="button" icon="pi pi-check" label="Create" v-on:click="createRepository" />
+					<InlineMessage v-if="error" v-on:click="error = null">{{error}}</InlineMessage>
+				</div>
+			</template>
+		</Card>
+
 	</div>
 </template>
 
 <script>
+import Menubar from 'primevue/menubar';
+import Card from 'primevue/card';
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import InlineMessage from 'primevue/inlinemessage';
+
 import {ApiClient} from '@/common/apiclient.js';
 
 export default {
 	name: 'home',
+	components: {
+		Menubar,
+		Card,
+		Button,
+		InputText,
+		InlineMessage
+	},
 	data() {
 		return {
 			apiClient: null,
 			storageStatus: null,
-			repositoryList: null
+			repositoryList: null,
+
+			menuItems: [],
+			newId: '',
+			newDescr: '',
+			error: null
 		}
 	},
 	created () {
@@ -49,7 +94,26 @@ export default {
 		async loadRepositoryInfo() {
 			this.storageStatus = await this.apiClient.getStorageStatus();
 			this.repositoryList = await this.apiClient.listRepositories();
+		},
+		async createRepository() {
+			try {
+				await this.apiClient.createRepository({id: this.newId, description: this.newDescr});
+				this.error = null;
+			} catch (e) {
+				this.error = e.message;
+			}
 		}
 	}
 }
 </script>
+
+<style>
+.repo-list td {
+	border: 1px solid var(--surface-d);
+	padding: 1em 1em;
+}
+.repo-list .repo-id {
+	font-weight: bold;
+}
+
+</style>
