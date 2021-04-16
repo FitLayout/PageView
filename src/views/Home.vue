@@ -14,20 +14,42 @@
 			</nav>
 		</div>
 
-		<p>Welcome home.</p>
-		<p>
-			<router-link
-				:to="{ name: 'repo', params: { repoId: 'default' } }"
-				class="nav-link"
-				active-class="active">
-					Show default repository
-			</router-link>
-		</p>
+		<h2>Repository list</h2>
+		<ul>
+			<li v-for="repo in repositoryList" :key="repo.id">
+				<router-link
+					:to="{ name: 'repo', params: { repoId: repo.id } }"
+					class="nav-link"
+					active-class="active">
+						{{repo.id}}
+				</router-link>
+				{{repo.description}}
+			</li>
+		</ul>
 	</div>
 </template>
 
 <script>
+import {ApiClient} from '@/common/apiclient.js';
+
 export default {
-	name: 'home'
+	name: 'home',
+	data() {
+		return {
+			apiClient: null,
+			storageStatus: null,
+			repositoryList: null
+		}
+	},
+	created () {
+		this.apiClient = new ApiClient();
+		this.loadRepositoryInfo();
+	},
+	methods: {
+		async loadRepositoryInfo() {
+			this.storageStatus = await this.apiClient.getStorageStatus();
+			this.repositoryList = await this.apiClient.listRepositories();
+		}
+	}
 }
 </script>
