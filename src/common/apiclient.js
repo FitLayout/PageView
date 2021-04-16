@@ -4,6 +4,7 @@ const SERVER_ROOT = 'http://localhost:8080/fitlayout-web/api';
 const ARTIFACT_ENDPOINT = SERVER_ROOT + '/r/default/artifact';
 const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
 const REPOSITORY_ENDPOINT = SERVER_ROOT + '/r/default/repository';
+const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 
 export class ApiClient {
 
@@ -217,6 +218,46 @@ export class ApiClient {
 
 	//================================================================================
 
+	async getStorageStatus() {
+		const url = REPOSITORY_ADMIN_ENDPOINT + '/status';
+		try {
+			let response = await fetch(url, {
+				method: 'GET'
+			});
+
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data.result;
+		} catch (e) {
+			throw new Error(e);
+		}		
+	}
+
+	async listRepositories() {
+		const url = REPOSITORY_ADMIN_ENDPOINT;
+		try {
+			let response = await fetch(url, {
+				method: 'GET'
+			});
+
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data.result;
+		} catch (e) {
+			throw new Error(e);
+		}		
+	}
+
+	//================================================================================
+
 	/**
 	 * Sorts elements in the list based on their documentOrder property.
 	 * @param {*} list 
@@ -252,7 +293,5 @@ export class ApiClient {
 		const data = await response.json();
 		return data.result.params;
 	}
-
-
 
 }
