@@ -256,6 +256,28 @@ export class ApiClient {
 		}		
 	}
 
+	async createRepository(data) {
+		const url = REPOSITORY_ADMIN_ENDPOINT;
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			});
+
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+		} catch (e) {
+			throw new Error(e);
+		}
+
+	}
+
 	//================================================================================
 
 	/**
