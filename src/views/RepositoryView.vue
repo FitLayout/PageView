@@ -34,6 +34,9 @@
 							v-on:select-artifact="selectArtifact"
 							v-on:delete-artifact="deleteArtifact">
 						</ArtTree>
+						<div class="empty-page p-col-12 p-d-flex p-ai-center p-jc-center h-100" v-if="!artifacts || artifacts.length === 0">
+							<p class="flex-fill p-text-center p-text-secondary">No artifacts</p>
+						</div>
 					</div>
 				</div>
 			</div>
