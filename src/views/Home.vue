@@ -38,7 +38,7 @@
 			</template>
 			<template #footer>
 
-				<div class="p-formgroup-inline" v-if="storageStatus.createAvailable">
+				<div class="p-formgroup-inline" v-if="storageStatus && storageStatus.createAvailable">
 					<div class="p-field">
 						<label for="repo-id" class="p-sr-only">Repository ID</label>
 						<InputText id="repo-id" type="text" placeholder="Repository ID" v-model="newId" />
