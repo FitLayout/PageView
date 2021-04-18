@@ -87,11 +87,13 @@
 								</SplitterPanel>
 								<SplitterPanel>			
 									<div class="descr-scroll">
-										<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
-											<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
-											<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
-												<ValueInfo :data="row" />
-											</span>
+										<div class="descr-table" v-if="subjectAnnotations">
+											<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
+												<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
+												<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
+													<ValueInfo :data="row" />
+												</span>
+											</div>
 										</div>
 									</div>
 								</SplitterPanel>
