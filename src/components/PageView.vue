@@ -201,7 +201,7 @@ export default {
 	},
 	inject: ['apiClient'],
 	props: {
-		subjectIri: null,
+		subjectIri: null
 	},
 	data () {
 		return {
