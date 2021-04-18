@@ -74,7 +74,7 @@
 								</template>
 								<SplitterPanel class="annotationGui">
 									<SplitterPanel class="annotationType">
-										<h4>Additional tag:</h4>
+										<h4>Additional tag</h4>
 										<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="id" placeholder="Select tag" />
 										<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
 									</SplitterPanel>
@@ -202,7 +202,6 @@ export default {
 	inject: ['apiClient'],
 	props: {
 		subjectIri: null,
-		action: null,
 	},
 	data () {
 		return {
@@ -214,7 +213,6 @@ export default {
 			outlines: false,
 			rectSelection: false,
 			showTags: true,
-			tagSelection: null,
 
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION], //properties to show in annotations (separate)
@@ -568,9 +566,6 @@ export default {
 	min-height: 100px;
 	position: relative;
 }
-.annotation-add {
-	position: relative;
-}
 .descr-table {
 	height: 100%;
 	width: 100%;
@@ -604,21 +599,17 @@ export default {
 	min-width: 8em;
 	margin-right: 0.5em;
 }
-
 input.p-inputtext.p-component.descInput {
 	margin-right: 0.5em;
 }
-
 .annotationGui {
 	margin: 1em;
 	padding-bottom: 1em;
 	border-bottom: 1px solid #dee2e6;
 }
-
 .annotationType {
 	margin-bottom: 1em;
 }
-
 .annotationType h4 {
 	margin-bottom: 0.3em;
 }
