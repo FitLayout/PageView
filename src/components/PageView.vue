@@ -1,5 +1,4 @@
 <template>
-
 	<div class="splitter-row">
 		<Splitter style="overflow: hidden; height: 100%">
 			<SplitterPanel>
@@ -73,8 +72,21 @@
 									<span class="p-tabview-title">Annotations</span>
 									<Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
 								</template>
-								<div class="descr-scroll">
-									<div class="descr-table" v-if="subjectAnnotations">
+								<SplitterPanel class="annotationGui">
+									<SplitterPanel class="annotationType">
+										<h4>Additional tag:</h4>
+										<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="id" placeholder="Select tag" />
+										<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
+									</SplitterPanel>
+									<SplitterPanel class="annotationType">
+										<h4>Additional labeling item</h4>
+										<Dropdown class="annotDropdown" v-model="selectedLabelType" :options="labelTypes" optionLabel="name" optionValue="id" placeholder="Select type" />
+										<InputText class="descInput" type="text" v-model="labelText" placeholder="Short description" />
+										<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addLabel" />
+									</SplitterPanel>
+								</SplitterPanel>
+								<SplitterPanel>			
+									<div class="descr-scroll">
 										<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
 											<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
 											<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
@@ -82,7 +94,7 @@
 											</span>
 										</div>
 									</div>
-								</div>
+								</SplitterPanel>
 							</TabPanel>
 						</TabView>
 					</SplitterPanel>
@@ -136,6 +148,7 @@
 		</Splitter>
 	</div>
 
+
 </template>
 
 <script>
@@ -143,6 +156,9 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
+import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
+import InputText from 'primevue/inputtext';
 import InputSwitch from 'primevue/inputswitch';
 import Tree from 'primevue/tree';
 import TabView from 'primevue/tabview';
@@ -169,6 +185,9 @@ export default {
 		SplitterPanel,
 		ProgressBar,
 		Slider,
+		Dropdown,
+		Button,
+		InputText,
 		InputSwitch,
 		Tree,
 		TabView,
@@ -182,7 +201,8 @@ export default {
 	},
 	inject: ['apiClient'],
 	props: {
-		subjectIri: null
+		subjectIri: null,
+		action: null,
 	},
 	data () {
 		return {
@@ -194,10 +214,26 @@ export default {
 			outlines: false,
 			rectSelection: false,
 			showTags: true,
+			tagSelection: null,
 
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION], //properties to show in annotations (separate)
 			annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
+			
+			// Tags and labels addition
+			selectedTag: null,
+			tags: [
+				{id:0, name: 'Tag0'},
+				{id:1, name: 'Tag1'},
+				{id:2, name: 'Tag2'},
+				{id:3, name: 'Tag3'}
+			],
+			selectedLabelType: null,
+			labelText: null,
+			labelTypes: [
+				{id:0, name: 'label'},
+				{id:1, name: 'comment'}
+			],
 
 			// Displayed data
 			status: null, //artifact status (currently displayed artifacts)
@@ -292,6 +328,47 @@ export default {
 				this.loading = false;
 				console.error('Error while fetching artifact data', error);
 			}
+		},
+		async addTag() {
+			if (this.selectedTag == null)
+				return;
+			
+			console.log('Adding a tag!');
+
+			var tagDesc = null;
+			for (var tag of this.tags) {
+				if (tag['id'] == this.selectedTag) {
+					tagDesc = tag['name'];
+					break;
+				}
+			}
+
+			if (tagDesc == null) {
+				console.log('A new tag has not been added, an internal error has occured!');
+				return;
+			}
+			this.apiClient.addTag(this.subjectIri, tagDesc, this.status.artifactIri);
+			this.selectedTag = null;
+			this.fetchData();
+		},
+
+		async addLabel() {
+
+			if (this.selectedLabelType == null || this.labelText == null) {
+				return;
+			}
+			console.log('Adding a label!');
+
+			var descType = null;
+			if (this.labelTypes[0]['id'] == this.selectedLabelType)
+				descType = RDFS.LABEL;
+			else {
+				descType = RDFS.COMMENT;
+			}
+			this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.status.artifactIri);
+			this.selectedLabelType = null;
+			this.labelText = null;
+			this.fetchData();
 		},
 
 		// scans the model and filters out the annotations only
@@ -491,6 +568,9 @@ export default {
 	min-height: 100px;
 	position: relative;
 }
+.annotation-add {
+	position: relative;
+}
 .descr-table {
 	height: 100%;
 	width: 100%;
@@ -519,5 +599,27 @@ export default {
 	line-height: 1.5em;
 	margin-top: -0.5em;
 	margin-left: 0.5em;
+}
+.annotDropdown {
+	min-width: 8em;
+	margin-right: 0.5em;
+}
+
+input.p-inputtext.p-component.descInput {
+	margin-right: 0.5em;
+}
+
+.annotationGui {
+	margin: 1em;
+	padding-bottom: 1em;
+	border-bottom: 1px solid #dee2e6;
+}
+
+.annotationType {
+	margin-bottom: 1em;
+}
+
+.annotationType h4 {
+	margin-bottom: 0.3em;
 }
 </style>
