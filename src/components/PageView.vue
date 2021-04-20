@@ -72,31 +72,36 @@
 									<span class="p-tabview-title">Annotations</span>
 									<Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
 								</template>
-								<SplitterPanel class="annotationGui">
-									<SplitterPanel class="annotationType">
-										<h4>Additional tag</h4>
-										<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="id" placeholder="Select tag" />
-										<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
-									</SplitterPanel>
-									<SplitterPanel class="annotationType">
-										<h4>Additional labeling item</h4>
-										<Dropdown class="annotDropdown" v-model="selectedLabelType" :options="labelTypes" optionLabel="name" optionValue="id" placeholder="Select type" />
-										<InputText class="descInput" type="text" v-model="labelText" placeholder="Short description" />
-										<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addLabel" />
-									</SplitterPanel>
-								</SplitterPanel>
-								<SplitterPanel>			
-									<div class="descr-scroll">
-										<div class="descr-table" v-if="subjectAnnotations">
-											<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
-												<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
-												<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
-													<ValueInfo :data="row" />
-												</span>
-											</div>
+								<div class="annotationGui">
+									<Button class="p-button-raised" icon="pi pi-tag" iconPos="right" v-tooltip="'Add tag'" v-on:click="toggleTag" />
+									<OverlayPanel ref="addTagPanel">
+										<div class="annotationType">
+											<h4>Add tag</h4>
+											<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="id" placeholder="Select tag" />
+											<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
+										</div>
+									</OverlayPanel>
+
+									<Button class="p-button-raised" icon="pi pi-comment" iconPos="right" v-tooltip="'Add annotation'" v-on:click="toggleAnnot" />
+									<OverlayPanel ref="addAnnotationPanel">
+										<div class="annotationType">
+											<h4>Add annotation</h4>
+											<Dropdown class="annotDropdown" v-model="selectedLabelType" :options="labelTypes" optionLabel="name" optionValue="id" placeholder="Select type" />
+											<InputText class="descInput" type="text" v-model="labelText" placeholder="Short description" />
+											<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addLabel" />
+										</div>
+									</OverlayPanel>
+								</div>
+								<div class="annot-scroll">
+									<div class="annot-table" v-if="subjectAnnotations">
+										<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
+											<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
+											<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
+												<ValueInfo :data="row" />
+											</span>
 										</div>
 									</div>
-								</SplitterPanel>
+								</div>
 							</TabPanel>
 						</TabView>
 					</SplitterPanel>
@@ -156,6 +161,7 @@
 <script>
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
+import OverlayPanel from 'primevue/overlaypanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
@@ -185,6 +191,7 @@ export default {
 	components: {
 		Splitter,
 		SplitterPanel,
+		OverlayPanel,
 		ProgressBar,
 		Slider,
 		Dropdown,
@@ -217,7 +224,7 @@ export default {
 			showTags: true,
 
 			// Annotations to show
-			annotationIRIs: [RDFS.LABEL, RDFS.DESCRIPTION], //properties to show in annotations (separate)
+			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
 			annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
 			
 			// Tags and labels addition
@@ -231,8 +238,8 @@ export default {
 			selectedLabelType: null,
 			labelText: null,
 			labelTypes: [
-				{id:0, name: 'label'},
-				{id:1, name: 'comment'}
+				{id:0, name: 'rdfs:label', property: RDFS.LABEL},
+				{id:1, name: 'rdfs:comment', property: RDFS.COMMENT}
 			],
 
 			// Displayed data
@@ -353,18 +360,17 @@ export default {
 		},
 
 		async addLabel() {
-
 			if (this.selectedLabelType == null || this.labelText == null) {
 				return;
 			}
-			console.log('Adding a label!');
+			console.log('Adding a label! ' + this.selectedLabelType + this.labelText);
 
-			var descType = null;
-			if (this.labelTypes[0]['id'] == this.selectedLabelType)
+			let descType = this.labelTypes[this.selectedLabelType].property;
+			/*if (this.labelTypes[0]['id'] == this.selectedLabelType)
 				descType = RDFS.LABEL;
 			else {
 				descType = RDFS.COMMENT;
-			}
+			}*/
 			this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.status.artifactIri);
 			this.selectedLabelType = null;
 			this.labelText = null;
@@ -463,7 +469,15 @@ export default {
 				}
 			}
 			return null;
-		}
+		},
+
+		toggleTag(event) {
+    		this.$refs.addTagPanel.toggle(event);
+		}, 
+
+		toggleAnnot(event) {
+    		this.$refs.addAnnotationPanel.toggle(event);
+		} 
 
 	}
 }
@@ -563,14 +577,22 @@ export default {
 .splitter-row .p-tabview .p-tabview-panel {
 	height: 100%;
 }
-.descr-scroll {
+.descr-scroll, .annot-scroll {
 	height: 100%;
 	min-height: 100px;
 	position: relative;
 }
+.annot-scroll {
+	overflow: auto;
+}
 .descr-table {
 	height: 100%;
 	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.annot-table {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -597,6 +619,9 @@ export default {
 	margin-top: -0.5em;
 	margin-left: 0.5em;
 }
+.splitter-row .p-tabview .p-tabview-panel {
+	position: relative; /* because of annotationGui inside */
+}
 .annotDropdown {
 	min-width: 8em;
 	margin-right: 0.5em;
@@ -606,13 +631,20 @@ input.p-inputtext.p-component.descInput {
 }
 .annotationGui {
 	margin: 1em;
-	padding-bottom: 1em;
-	border-bottom: 1px solid #dee2e6;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 3rem;
+	z-index: 10;
+}
+.annotationGui button {
+	margin-bottom: 0.5em;
 }
 .annotationType {
 	margin-bottom: 1em;
 }
 .annotationType h4 {
+	margin: 0;
 	margin-bottom: 0.3em;
 }
 </style>
