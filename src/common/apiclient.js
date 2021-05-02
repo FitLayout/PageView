@@ -5,6 +5,7 @@ const ARTIFACT_ENDPOINT = SERVER_ROOT + '/r/default/artifact';
 const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
 const REPOSITORY_ENDPOINT = SERVER_ROOT + '/r/default/repository';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
+const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
 export class ApiClient {
 
@@ -314,6 +315,17 @@ export class ApiClient {
 		});
 		const data = await response.json();
 		return data.result.params;
+	}
+
+	//================================================================================
+
+	async getUserInfo() {
+		const url = AUTH_ENDPOINT + '/userInfo';
+		let response = await fetch(url, {
+			method: 'GET',
+		});
+		const data = await response.json();
+		return data.result;
 	}
 
 }

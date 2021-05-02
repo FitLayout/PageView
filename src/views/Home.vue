@@ -4,6 +4,9 @@
 		<div class="menu-row">
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
+				<template #end>
+					<UserAvatar :userInfo="userInfo" />
+            	</template>
 			</Menubar>
 		</div>
 
@@ -12,7 +15,7 @@
 				<img alt="user header" src="demo/images/usercard.png">
 			</template> -->
 			<template #title>
-				Repositories
+				Your Repositories
 			</template>
 			<template #content>
 				<table class="repo-list">
@@ -63,12 +66,15 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
+import UserAvatar from '@/components/UserAvatar.vue';
+
 import {ApiClient} from '@/common/apiclient.js';
 
 export default {
 	name: 'home',
 	components: {
 		Menubar,
+		UserAvatar,
 		Card,
 		Button,
 		InputText,
@@ -77,6 +83,7 @@ export default {
 	data() {
 		return {
 			apiClient: null,
+			userInfo: null,
 			storageStatus: null,
 			repositoryList: null,
 
@@ -92,6 +99,7 @@ export default {
 	},
 	methods: {
 		async loadRepositoryInfo() {
+			this.userInfo = await this.apiClient.getUserInfo();
 			this.storageStatus = await this.apiClient.getStorageStatus();
 			this.repositoryList = await this.apiClient.listRepositories();
 		},
