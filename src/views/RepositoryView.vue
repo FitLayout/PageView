@@ -81,7 +81,7 @@ export default {
 	},
 	data() {
 		return {
-			apiClient: new ApiClient(),
+			apiClient: this.$root.apiClient,
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
 			mode: 'render',
@@ -115,6 +115,7 @@ export default {
 		'pageStatus': 'update'
 	},
 	created () {
+		this.apiClient = this.$root.apiClient;
 		this.fetchArtifacts();
 	},
 	methods: {

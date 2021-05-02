@@ -5,11 +5,21 @@
 </template>
 
 <script>
+import {ApiClient} from '@/common/apiclient.js';
+
 export default {
     name: 'app',
-	methods: {
+	data() {
+		return {
+			apiClient: null
+		}
 	},
 	components: {
+	},
+	created () {
+		this.apiClient = new ApiClient();
+	},
+	methods: {
 	}
 }
 </script>

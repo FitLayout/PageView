@@ -68,8 +68,6 @@ import InlineMessage from 'primevue/inlinemessage';
 
 import UserAvatar from '@/components/UserAvatar.vue';
 
-import {ApiClient} from '@/common/apiclient.js';
-
 export default {
 	name: 'home',
 	components: {
@@ -80,6 +78,7 @@ export default {
 		InputText,
 		InlineMessage
 	},
+	//inject: ['apiClient'],
 	data() {
 		return {
 			apiClient: null,
@@ -94,7 +93,7 @@ export default {
 		}
 	},
 	created () {
-		this.apiClient = new ApiClient();
+		this.apiClient = this.$root.apiClient;
 		this.loadRepositoryInfo();
 	},
 	methods: {
