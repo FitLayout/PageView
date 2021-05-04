@@ -42,10 +42,10 @@ export default {
 				{
 					label: 'Logout',
 					icon: 'pi pi-fw pi-power-off',
-					to: '/logout'
-					/*command: () => {
-						this.$toast.add({severity:'success', summary:'Updated', detail:'Data Updated', life: 3000});
-					}*/
+					to: '/login',
+					command: () => {
+						this.$root.apiClient.logout();
+					}
 				}
 			];
 		},

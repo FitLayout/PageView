@@ -7,12 +7,17 @@ const REPOSITORY_ENDPOINT = SERVER_ROOT + '/r/default/repository';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
+const JWT_SERVER_ROOT = 'http://localhost:8080/jwt-auth';
+const JWT_LOGIN = JWT_SERVER_ROOT + '/auth/login';
+
+
 export class ApiClient {
 
     async getTypeByIRI(iri) {
 		const url = REPOSITORY_ENDPOINT + '/type/' + encodeURIComponent(iri);
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result;
@@ -22,6 +27,7 @@ export class ApiClient {
 		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result;
@@ -31,6 +37,7 @@ export class ApiClient {
 		const url = REPOSITORY_ENDPOINT + '/describe/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result.description;
@@ -40,6 +47,7 @@ export class ApiClient {
 		const url = REPOSITORY_ENDPOINT + '/object/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result;
@@ -49,6 +57,7 @@ export class ApiClient {
 		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri) + '/' + encodeURIComponent(propertyIri);
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result;
@@ -59,9 +68,9 @@ export class ApiClient {
 			let pageModel = new BoxModel();
 			let response = await fetch(url, {
 				method: 'GET',
-				headers: {
+				headers: this.headers({
 					'Accept': 'text/turtle'
-				}
+				})
 			})
 
 			if (!response.ok) {
@@ -81,9 +90,9 @@ export class ApiClient {
 			let pageModel = new BoxModel();
 			let response = await fetch(url, {
 				method: 'GET',
-				headers: {
+				headers: this.headers({
 					'Accept': 'text/turtle'
-				}
+				})
 			})
 
 			if (!response.ok) {
@@ -103,9 +112,9 @@ export class ApiClient {
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
 			method: 'GET',
-			headers: {
+			headers: this.headers({
 				'Accept': 'text/turtle'
-			}
+			})
 		})
 
 		if (!response.ok) {
@@ -129,9 +138,9 @@ export class ApiClient {
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				headers: {
+				headers: this.headers({
 					'Content-Type': 'application/json'
-				},
+				}),
 				body: JSON.stringify(payload)
 			});
 
@@ -151,7 +160,8 @@ export class ApiClient {
 	async deleteArtifact(artifactIri) {
 			const url = ARTIFACT_ENDPOINT + '/item/' + encodeURIComponent(artifactIri);
 			let response = await fetch(url, {
-				method: 'DELETE'
+				method: 'DELETE',
+				headers: this.headers()
 			})
 			if (!response.ok) {
 				let error = response.status;
@@ -174,9 +184,9 @@ export class ApiClient {
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				headers: {
+				headers: this.headers({
 					'Content-Type': 'application/json'
-				},
+				}),
 				body: JSON.stringify(payload)
 			});
 
@@ -201,9 +211,9 @@ export class ApiClient {
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				headers: {
+				headers: this.headers({
 					'Content-Type': 'application/json'
-				},
+				}),
 				body: JSON.stringify(payload)
 			});
 
@@ -223,7 +233,8 @@ export class ApiClient {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/status';
 		try {
 			let response = await fetch(url, {
-				method: 'GET'
+				method: 'GET',
+				headers: this.headers()
 			});
 
 			if (!response.ok) {
@@ -242,7 +253,8 @@ export class ApiClient {
 		const url = REPOSITORY_ADMIN_ENDPOINT;
 		try {
 			let response = await fetch(url, {
-				method: 'GET'
+				method: 'GET',
+				headers: this.headers()
 			});
 
 			if (!response.ok) {
@@ -262,9 +274,9 @@ export class ApiClient {
 		try {
 			let response = await fetch(url, {
 				method: 'POST',
-				headers: {
+				headers: this.headers({
 					'Content-Type': 'application/json'
-				},
+				}),
 				body: JSON.stringify(data)
 			});
 
@@ -302,7 +314,8 @@ export class ApiClient {
 	async fetchArtifactServices() {
 		const url = SERVICE_ENDPOINT;
 		let response = await fetch(url, {
-			method: 'GET'
+			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result;
@@ -312,6 +325,7 @@ export class ApiClient {
 		const url = SERVICE_ENDPOINT + '/config?' + new URLSearchParams({'id': serviceId});
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result.params;
@@ -319,13 +333,62 @@ export class ApiClient {
 
 	//================================================================================
 
+	storeToken(token) {
+		localStorage.setItem('jwt', token);
+	}
+
+	logout() {
+		localStorage.removeItem('jwt');
+	}
+
+	headers(headers) {
+		const src = headers ? headers : {};
+		const token = localStorage.getItem('jwt');
+		if (token) {
+			return {
+				...src,
+				'Authorization': ('Bearer ' + token)
+			};
+		} else {
+			return src;
+		}
+	}
+
 	async getUserInfo() {
 		const url = AUTH_ENDPOINT + '/userInfo';
 		let response = await fetch(url, {
 			method: 'GET',
+			headers: this.headers()
 		});
 		const data = await response.json();
 		return data.result;
 	}
+
+	async login(userid, password) {
+		const url = JWT_LOGIN;
+		try {
+			const udata = { username: userid, password: password };
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(udata)
+			});
+
+			const data = await response.json();
+			if (!response.ok) {
+				throw new Error(data.message);
+			}
+
+			const token = data.token;
+			this.storeToken(token);
+
+		} catch (e) {
+			throw new Error(e);
+		}
+
+	}
+
 
 }
