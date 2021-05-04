@@ -1,9 +1,7 @@
 import {Model as BoxModel} from '../common/boxMappers.js';
 
 const SERVER_ROOT = 'http://localhost:8080/fitlayout-web/api';
-const ARTIFACT_ENDPOINT = SERVER_ROOT + '/r/default/artifact';
 const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
-const REPOSITORY_ENDPOINT = SERVER_ROOT + '/r/default/repository';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
@@ -13,10 +11,20 @@ const JWT_LOGIN = JWT_SERVER_ROOT + '/auth/login';
 
 export class ApiClient {
 
+	currentRepo = 'default';
 	onNotAuthorized = null;
 
+	artifactEndpoint() {
+		return SERVER_ROOT + '/r/' + this.currentRepo + '/artifact';
+	}
+
+	repositoryEndpoint() {
+		return SERVER_ROOT + '/r/' + this.currentRepo + '/repository';
+	}
+
+
     async getTypeByIRI(iri) {
-		const url = REPOSITORY_ENDPOINT + '/type/' + encodeURIComponent(iri);
+		const url = this.repositoryEndpoint() + '/type/' + encodeURIComponent(iri);
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
@@ -27,7 +35,7 @@ export class ApiClient {
 	}
 
     async getSubjectDescription(subjectIri) {
-		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri);
+		const url = this.repositoryEndpoint() + '/subject/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
@@ -38,7 +46,7 @@ export class ApiClient {
 	}
 
     async getSubjectDescriptionObj(subjectIri) {
-		const url = REPOSITORY_ENDPOINT + '/describe/' + encodeURIComponent(subjectIri);
+		const url = this.repositoryEndpoint() + '/describe/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
@@ -49,7 +57,7 @@ export class ApiClient {
 	}
 
     async getSubjectReferences(subjectIri) {
-		const url = REPOSITORY_ENDPOINT + '/object/' + encodeURIComponent(subjectIri);
+		const url = this.repositoryEndpoint() + '/object/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
@@ -60,7 +68,7 @@ export class ApiClient {
 	}
 
     async getSubjectValue(subjectIri, propertyIri) {
-		const url = REPOSITORY_ENDPOINT + '/subject/' + encodeURIComponent(subjectIri) + '/' + encodeURIComponent(propertyIri);
+		const url = this.repositoryEndpoint() + '/subject/' + encodeURIComponent(subjectIri) + '/' + encodeURIComponent(propertyIri);
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
@@ -71,7 +79,7 @@ export class ApiClient {
 	}
 
 	async fetchArtifact(artifactIri) {
-			const url = ARTIFACT_ENDPOINT + '/item/' + encodeURIComponent(artifactIri);
+			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
 			let pageModel = new BoxModel();
 			let response = await fetch(url, {
 				method: 'GET',
@@ -94,7 +102,7 @@ export class ApiClient {
 	}
 
 	async fetchArtifactInfo(artifactIri) {
-			const url = ARTIFACT_ENDPOINT + '/info/' + encodeURIComponent(artifactIri);
+			const url = this.artifactEndpoint() + '/info/' + encodeURIComponent(artifactIri);
 			let pageModel = new BoxModel();
 			let response = await fetch(url, {
 				method: 'GET',
@@ -117,7 +125,7 @@ export class ApiClient {
 	}
 
 	async fetchArtifactInfoAll() {
-		const url = ARTIFACT_ENDPOINT;
+		const url = this.artifactEndpoint();
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
 			method: 'GET',
@@ -137,7 +145,7 @@ export class ApiClient {
 	}
 
 	async createArtifact(serviceId, params, srcIri) {
-		const url = ARTIFACT_ENDPOINT + '/create';
+		const url = this.artifactEndpoint() + '/create';
 		const payload = {
 			serviceId: serviceId,
 			params: params
@@ -169,7 +177,7 @@ export class ApiClient {
 	}
 
 	async deleteArtifact(artifactIri) {
-			const url = ARTIFACT_ENDPOINT + '/item/' + encodeURIComponent(artifactIri);
+			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
 			let response = await fetch(url, {
 				method: 'DELETE',
 				headers: this.headers()
@@ -186,7 +194,7 @@ export class ApiClient {
 	//================================================================================
 
 	async addValue(subjectIri, predicateIri, value, artifactIri) {
-		const url = REPOSITORY_ENDPOINT + '/add/';
+		const url = this.repositoryEndpoint() + '/add/';
 		const payload = {
 			s: subjectIri,
 			p: predicateIri,
@@ -214,7 +222,7 @@ export class ApiClient {
 	}
 
 	async addTag(subjectIri, tagName, artifactIri) {
-		const url = REPOSITORY_ENDPOINT + '/add/';
+		const url = this.repositoryEndpoint() + '/add/';
 		const payload = {
 			s: subjectIri,
 			p: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag',

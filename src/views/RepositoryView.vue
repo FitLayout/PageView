@@ -5,7 +5,12 @@
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
 				<template #end>
-					<UserAvatar :userInfo="userInfo" />
+					<span class="repo-info">Repository: <b>{{repoId}}</b></span>
+					<Button icon="pi pi-sign-out" 
+							class="p-button-rounded p-button-text" 
+							v-tooltip.bottom="'Close repository'" 
+							@click="quit()" />&nbsp;
+					<UserAvatar :userInfo="userInfo" v-tooltip.bottom="userInfo ? ('User: ' + userInfo.userId) : 'User'" />
             	</template>
 			</Menubar>
 		</div>
@@ -122,6 +127,7 @@ export default {
 	},
 	created () {
 		this.apiClient = this.$root.apiClient;
+		this.apiClient.currentRepo = this.$route.params.repoId;
 		this.fetchArtifacts();
 	},
 	methods: {
@@ -195,6 +201,10 @@ export default {
 		artifactCreated(iri) {
 			this.fetchArtifacts();
 			this.selectArtifact(iri);
+		},
+
+		quit() {
+			this.$router.push({name: 'home'});
 		}
 
 	}
@@ -226,6 +236,10 @@ export default {
 }
 .menu-row, .panel-row {
 	flex: 0 0 auto;
+}
+.menu-row .repo-info {
+	font-size: 80%;
+	vertical-align: 50%;
 }
 .panel-row {
 	padding: 0.5em 1em 0 1em;

@@ -84,13 +84,13 @@ import Iri from './Iri.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
-import {ApiClient} from '../common/apiclient.js';
 
 export default {
 	name: 'ArtInfo',
 	components: {
 		Iri
 	},
+	inject: ['apiClient'],
 	props: {
 		iri: null,
 		expand: null
@@ -110,9 +110,8 @@ export default {
 	},
 	methods: {
 		async reload() {
-			const client = new ApiClient();
 			try {
-				this.artifact = await client.fetchArtifactInfo(this.iri);
+				this.artifact = await this.apiClient.fetchArtifactInfo(this.iri);
 			} catch (error) {
 				console.error('Couldnt fetch artifact!', error);
 			}
