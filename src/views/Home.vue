@@ -105,6 +105,7 @@ export default {
 		async createRepository() {
 			try {
 				await this.apiClient.createRepository({id: this.newId, description: this.newDescr});
+				this.loadRepositoryInfo();
 				this.error = null;
 			} catch (e) {
 				this.error = e.message;
