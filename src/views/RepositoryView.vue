@@ -4,6 +4,9 @@
 		<div class="menu-row">
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
+				<template #end>
+					<UserAvatar :userInfo="userInfo" />
+            	</template>
 			</Menubar>
 		</div>
 		<!-- Service panels -->
@@ -58,6 +61,7 @@ import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 
+import UserAvatar from '@/components/UserAvatar.vue';
 import InvokePanel from '@/components/InvokePanel.vue';
 import PageView from '@/components/PageView.vue';
 import ArtTree from '@/components/ArtTree.vue';
@@ -75,6 +79,7 @@ export default {
 		Sidebar,
 		Button,
 		ConfirmDialog,
+		UserAvatar,
 		InvokePanel,
 		PageView,
 		ArtTree
@@ -82,6 +87,7 @@ export default {
 	data() {
 		return {
 			apiClient: this.$root.apiClient,
+			userInfo: null,
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
 			mode: 'render',
@@ -166,6 +172,7 @@ export default {
 		async fetchArtifacts() {
 			this.error = null;
 			this.loading = true;
+			this.userInfo = await this.apiClient.getUserInfo();
 			
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
