@@ -18,8 +18,12 @@ export default {
 	},
 	created () {
 		this.apiClient = new ApiClient();
+		this.apiClient.onNotAuthorized = this.authFailed;
 	},
 	methods: {
+		authFailed() {
+			this.$router.push({name: 'login'});
+		}
 	}
 }
 </script>

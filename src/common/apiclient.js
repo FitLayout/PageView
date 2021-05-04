@@ -13,12 +13,15 @@ const JWT_LOGIN = JWT_SERVER_ROOT + '/auth/login';
 
 export class ApiClient {
 
+	onNotAuthorized = null;
+
     async getTypeByIRI(iri) {
 		const url = REPOSITORY_ENDPOINT + '/type/' + encodeURIComponent(iri);
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result;
 	}
@@ -29,6 +32,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result;
 	}
@@ -39,6 +43,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result.description;
 	}
@@ -49,6 +54,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result;
 	}
@@ -59,6 +65,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result;
 	}
@@ -73,6 +80,7 @@ export class ApiClient {
 				})
 			})
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let error = response.status;
 				throw new Error(error);
@@ -95,6 +103,7 @@ export class ApiClient {
 				})
 			})
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let error = response.status;
 				throw new Error(error);
@@ -117,6 +126,7 @@ export class ApiClient {
 			})
 		})
 
+		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
 			throw new Error(error);
@@ -144,6 +154,7 @@ export class ApiClient {
 				body: JSON.stringify(payload)
 			});
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let data = await response.json();
 				throw new Error(data.message);
@@ -163,6 +174,7 @@ export class ApiClient {
 				method: 'DELETE',
 				headers: this.headers()
 			})
+			this.checkAuth(response);
 			if (!response.ok) {
 				let error = response.status;
 				throw new Error(error);
@@ -190,6 +202,7 @@ export class ApiClient {
 				body: JSON.stringify(payload)
 			});
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let data = await response.json();
 				throw new Error(data.message);
@@ -217,6 +230,7 @@ export class ApiClient {
 				body: JSON.stringify(payload)
 			});
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let data = await response.json();
 				throw new Error(data.message);
@@ -237,6 +251,7 @@ export class ApiClient {
 				headers: this.headers()
 			});
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let data = await response.json();
 				throw new Error(data.message);
@@ -257,6 +272,7 @@ export class ApiClient {
 				headers: this.headers()
 			});
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let data = await response.json();
 				throw new Error(data.message);
@@ -280,6 +296,7 @@ export class ApiClient {
 				body: JSON.stringify(data)
 			});
 
+			this.checkAuth(response);
 			if (!response.ok) {
 				let data = await response.json();
 				throw new Error(data.message);
@@ -317,6 +334,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result;
 	}
@@ -327,6 +345,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result.params;
 	}
@@ -339,6 +358,17 @@ export class ApiClient {
 
 	logout() {
 		localStorage.removeItem('jwt');
+	}
+
+	checkAuth(response) {
+		if (response.status == 401 || response.status == 403) {
+			if (this.onNotAuthorized) {
+				this.onNotAuthorized();
+			}
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	headers(headers) {
@@ -360,6 +390,7 @@ export class ApiClient {
 			method: 'GET',
 			headers: this.headers()
 		});
+		this.checkAuth(response);
 		const data = await response.json();
 		return data.result;
 	}
