@@ -48,6 +48,10 @@ body {
 	font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
 
+.p-inputtext.ok.p-component {
+    border-color: var(--green-500);
+}
+
 .badge {
 	font-size: 75%;
 	padding: 0.25em 0.4em;

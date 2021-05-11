@@ -7,6 +7,7 @@ const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
 const JWT_SERVER_ROOT = 'http://localhost:8080/jwt-auth';
 const JWT_LOGIN = JWT_SERVER_ROOT + '/auth/login';
+const JWT_REGISTER = JWT_SERVER_ROOT + '/auth/register';
 
 
 export class ApiClient {
@@ -403,6 +404,16 @@ export class ApiClient {
 		return data.result;
 	}
 
+	async userExists(userid) {
+		const url = JWT_SERVER_ROOT + '/auth/checkUserId/' + userid;
+		let response = await fetch(url, {
+			method: 'GET'
+		});
+		const data = await response.json();
+		console.log(data);
+		return (data.message === 'yes');
+	}
+
 	async login(userid, password) {
 		const url = JWT_LOGIN;
 		try {
@@ -426,7 +437,29 @@ export class ApiClient {
 		} catch (e) {
 			throw new Error(e);
 		}
+	}
 
+	async register(userdata) {
+		const url = JWT_REGISTER;
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(userdata)
+			});
+
+			const data = await response.json();
+			if (!response.ok) {
+				throw new Error(data.message);
+			}
+
+			return true;
+
+		} catch (e) {
+			throw new Error(e);
+		}
 	}
 
 
