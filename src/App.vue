@@ -22,7 +22,7 @@ export default {
 	},
 	methods: {
 		authFailed() {
-			//this.$router.push({path: '/auth/#/login'});
+			window.localStorage.setItem('redirect', '/browser/');
 			window.location.assign('/auth/#/login');
 		}
 	}

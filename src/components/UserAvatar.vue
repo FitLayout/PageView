@@ -45,6 +45,7 @@ export default {
 					to: '/',
 					command: () => {
 						this.$root.apiClient.logout();
+						location.reload();
 					}
 				}
 			];
