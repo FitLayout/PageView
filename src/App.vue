@@ -22,7 +22,8 @@ export default {
 	},
 	methods: {
 		authFailed() {
-			this.$router.push({name: 'login'});
+			//this.$router.push({path: '/auth/#/login'});
+			window.location.assign('/auth/#/login');
 		}
 	}
 }

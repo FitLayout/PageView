@@ -42,7 +42,7 @@ export default {
 				{
 					label: 'Logout',
 					icon: 'pi pi-fw pi-power-off',
-					to: '/login',
+					to: '/',
 					command: () => {
 						this.$root.apiClient.logout();
 					}

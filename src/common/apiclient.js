@@ -5,9 +5,9 @@ const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
-const JWT_SERVER_ROOT = 'http://localhost:8080/jwt-auth';
+/*const JWT_SERVER_ROOT = 'http://localhost:8080/jwt-auth';
 const JWT_LOGIN = JWT_SERVER_ROOT + '/auth/login';
-const JWT_REGISTER = JWT_SERVER_ROOT + '/auth/register';
+const JWT_REGISTER = JWT_SERVER_ROOT + '/auth/register';*/
 
 
 export class ApiClient {
@@ -361,10 +361,6 @@ export class ApiClient {
 
 	//================================================================================
 
-	storeToken(token) {
-		localStorage.setItem('jwt', token);
-	}
-
 	logout() {
 		localStorage.removeItem('jwt');
 	}
@@ -403,64 +399,5 @@ export class ApiClient {
 		const data = await response.json();
 		return data.result;
 	}
-
-	async userExists(userid) {
-		const url = JWT_SERVER_ROOT + '/auth/checkUserId/' + userid;
-		let response = await fetch(url, {
-			method: 'GET'
-		});
-		const data = await response.json();
-		console.log(data);
-		return (data.message === 'yes');
-	}
-
-	async login(userid, password) {
-		const url = JWT_LOGIN;
-		try {
-			const udata = { username: userid, password: password };
-			let response = await fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(udata)
-			});
-
-			const data = await response.json();
-			if (!response.ok) {
-				throw new Error(data.message);
-			}
-
-			const token = data.token;
-			this.storeToken(token);
-
-		} catch (e) {
-			throw new Error(e);
-		}
-	}
-
-	async register(userdata) {
-		const url = JWT_REGISTER;
-		try {
-			let response = await fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(userdata)
-			});
-
-			const data = await response.json();
-			if (!response.ok) {
-				throw new Error(data.message);
-			}
-
-			return true;
-
-		} catch (e) {
-			throw new Error(e);
-		}
-	}
-
 
 }
