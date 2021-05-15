@@ -7,7 +7,7 @@
 		</span>
 		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
 		<span v-if="valueType==='attribute'">{{displayValue}}</span>
-		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle">{{displayValue}}</span>
+		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip="displayTooltip">{{displayValue}}</span>
 	</span>
 </template>
 
@@ -42,7 +42,8 @@ export default {
 			active: false,
 			typeIri: null,
 			displayValue: null,
-			displayStyle: null
+			displayStyle: null,
+			displayTooltip: null
 		}
 	},
 	computed: {
@@ -103,6 +104,7 @@ export default {
 						//this.displayValue = descr[SEGM.hasName][0].value;
 						this.displayValue = name;
 						this.displayStyle = 'background-color:' + stringColor(name);
+						this.displayTooltip = this.iri;
 					}
 					else if (this.data.p.value === SEGM.tagSupport) {
 						this.valueType = 'tag';
