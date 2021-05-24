@@ -1,7 +1,7 @@
 import {Model as BoxModel} from '../common/boxMappers.js';
 
 //const SERVER_ROOT = 'http://localhost:8080/fitlayout-web/api';
-const SERVER_ROOT = 'https://localhost/api';
+const SERVER_ROOT = 'https://' + window.location.host + '/api';
 const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
