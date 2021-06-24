@@ -10,11 +10,11 @@
 			</Menubar>
 		</div>
 
-		<RepositoryList 
+		<RepositoryList v-if="repositoryList"
 			:repositoryList="repositoryList"
 			:createAvailable="storageStatus && storageStatus.createAvailable"
 			:anonymous="userInfo && userInfo.anonymous"
-			v-on:created="loadRepositoryInfo" />
+			v-on:created="repositoryCreated" />
 
 	</div>
 </template>
@@ -28,6 +28,8 @@ import InlineMessage from 'primevue/inlinemessage';
 
 import UserAvatar from '@/components/UserAvatar.vue';
 import RepositoryList from '@/components/RepositoryList.vue';
+
+import {RepositoryData} from '@/common/repositorydata.js';
 
 export default {
 	name: 'home',
@@ -44,10 +46,7 @@ export default {
 			storageStatus: null,
 			repositoryList: null,
 
-			menuItems: [],
-			newId: '',
-			newDescr: '',
-			error: null
+			menuItems: []
 		}
 	},
 	created () {
@@ -58,16 +57,27 @@ export default {
 		async loadRepositoryInfo() {
 			this.userInfo = await this.apiClient.getUserInfo();
 			this.storageStatus = await this.apiClient.getStorageStatus();
-			this.repositoryList = await this.apiClient.listRepositories();
-		},
-		async createRepository() {
-			try {
-				await this.apiClient.createRepository({id: this.newId, description: this.newDescr});
-				this.loadRepositoryInfo();
-				this.error = null;
-			} catch (e) {
-				this.error = e.message;
+			if (this.userInfo.anonymous) {
+				// anonymous user - no list available. Use local storage for recent repos.
+				const ids = RepositoryData.getIDs();
+				console.log(ids);
+				if (ids && ids.length > 0) {
+					this.repositoryList = await this.apiClient.getRepositoryInfos(ids);
+					console.log(this.repositoryList);
+				}
+				console.log('done');
+			} else {
+				// non-anonymous user - use the API endpoind for getting the repository list
+				this.repositoryList = await this.apiClient.listRepositories();
 			}
+		},
+		async repositoryCreated(rdata) {
+			console.log('created');
+			console.log(rdata);
+			if (rdata && rdata.id) {
+				RepositoryData.addID(rdata.id);
+			}
+			this.loadRepositoryInfo();
 		}
 	}
 }

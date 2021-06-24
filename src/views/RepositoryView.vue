@@ -73,7 +73,7 @@ import ArtTree from '@/components/ArtTree.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
-import {ApiClient} from '@/common/apiclient.js';
+import {RepositoryData} from '@/common/repositorydata.js';
 
 export default {
 	name: 'RepositoryView',
@@ -183,6 +183,7 @@ export default {
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				this.loading = false;
+				RepositoryData.addID(this.$route.params.repoId); // add the repository to the list of known repositories
 			} catch (error) {
 				this.error = error.message;
 				this.loading = false;

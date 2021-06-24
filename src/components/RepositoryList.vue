@@ -62,7 +62,9 @@ export default {
 		InlineMessage
 	},
 	props: {
-		repositoryList: [],
+		repositoryList: {
+			type: Array
+		},
 		createAvailable: null,
 		anonymous: null
 	},
@@ -83,8 +85,8 @@ export default {
 	methods: {
 		async createRepository() {
 			try {
-				await this.apiClient.createRepository({description: this.newDescr, email: this.newEmail});
-				this.$emit('created');
+				const rdata = await this.apiClient.createRepository({description: this.newDescr, email: this.newEmail});
+				this.$emit('created', rdata);
 				this.error = null;
 			} catch (e) {
 				this.error = e.message;

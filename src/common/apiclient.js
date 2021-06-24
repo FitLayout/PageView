@@ -295,6 +295,40 @@ export class ApiClient {
 		}		
 	}
 
+	async getRepositoryInfo(id) {
+		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers()
+			});
+
+			this.checkAuth(response);
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data.result;
+		} catch (e) {
+			throw new Error(e);
+		}		
+	}
+
+	async getRepositoryInfos(ids) {
+		let ret = [];
+		for (const id of ids) {
+			try {
+				const info = await this.getRepositoryInfo(id);
+				ret.push(info);
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		return ret;
+	}
+
 	async createRepository(data) {
 		const url = REPOSITORY_ADMIN_ENDPOINT;
 		try {
@@ -307,10 +341,12 @@ export class ApiClient {
 			});
 
 			this.checkAuth(response);
+			const rdata = await response.json();
 			if (!response.ok) {
-				let data = await response.json();
-				throw new Error(data.message);
+				throw new Error(rdata.message);
 			}
+
+			return rdata.result;
 
 		} catch (e) {
 			throw new Error(e);
