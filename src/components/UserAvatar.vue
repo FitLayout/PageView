@@ -31,24 +31,32 @@ export default {
 	},
 	methods: {
 		createMenu() {
-			this.items = [
-				{
-					label: this.userInfo ? this.userInfo.userId : 'user',
-					class: 'user-id'
-				},
-				{
-					separator: true
-				},
-				{
-					label: 'Logout',
-					icon: 'pi pi-fw pi-power-off',
-					to: '/',
-					command: () => {
-						this.$root.apiClient.logout();
-						location.reload();
-					}
+			this.items = [];
+			if (this.userInfo) {
+				if (this.userInfo.anonymous) {
+					this.items.push({
+						label: 'Anonymous user',
+						class: 'user-id'
+					});
+				} else {
+					this.items.push({
+						label: this.userInfo.userId,
+						class: 'user-id'
+					});
+					this.items.push({
+						separator: true
+					});
+					this.items.push({
+						label: 'Logout',
+						icon: 'pi pi-fw pi-power-off',
+						to: '/',
+						command: () => {
+							this.$root.apiClient.logout();
+							location.reload();
+						}
+					});
 				}
-			];
+			}
 		},
 		toggle(event) {
     		this.$refs.menu.toggle(event);
