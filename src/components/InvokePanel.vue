@@ -65,9 +65,9 @@ export default {
 			return 'serv' + this.action;
 		},
 	},
-	created () {
-		this.loadServices();
-		this.update();
+	async created () {
+		await this.loadServices();
+		await this.restoreParams();
 	},
 	watch: {
 		'key': 'update'
@@ -96,19 +96,19 @@ export default {
 			} catch (error) {
 				console.error('Couldnt fetch artifact services!', error);
 			}
-			this.update();
 		},
 
 		async update() {
 			if (this.key) {
 				//get the current param values
-				this.params = await this.apiClient.getServiceParams(this.key);
+				await this.restoreParams();
 				//choose the service description
 				this.paramDescr = this.selection[this.key].params;
 			}
 		},
 
 		async invoke() {
+			this.saveParams();
 			console.log('invoke');
 			console.log(this.selection[this.key]);
 			let src = this.findParentOfType()
@@ -134,6 +134,24 @@ export default {
 			}
 
 			return false;
+		},
+
+		async restoreParams() {
+			if (this.key) {
+				const str = localStorage.getItem('params-' + this.key);
+				if (str === null) { //not yet in local storage, use defaults from server
+					this.params = await this.apiClient.getServiceParams(this.key);
+					this.saveParams();
+				} else {
+					this.params = JSON.parse(str);
+				}
+			}
+		},
+
+		saveParams() {
+			if (this.key) {
+				localStorage.setItem('params-' + this.key, JSON.stringify(this.params));
+			}
 		},
 
 		findParentOfType(type) {

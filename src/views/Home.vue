@@ -10,51 +10,11 @@
 			</Menubar>
 		</div>
 
-		<Card style="width: 50em; margin: 1em;">
-			<!-- <template #header>
-				<img alt="user header" src="demo/images/usercard.png">
-			</template> -->
-			<template #title>
-				Your Repositories
-			</template>
-			<template #content>
-				<table class="repo-list">
-					<tr v-for="repo in repositoryList" :key="repo.id">
-						<td class="repo-id">{{repo.id}}</td>
-						<td class="repo-descr">{{repo.description}}</td>
-						<td class="repo-actions">
-							<router-link
-								:to="{ name: 'repo', params: { repoId: repo.id } }"
-								active-class="active">
-									browse
-							</router-link>
-						</td>
-						<td class="repo-actions">
-							<router-link
-								:to="{ name: 'repo', params: { repoId: repo.id } }"
-								active-class="active">
-									query
-							</router-link>
-						</td>
-					</tr>
-				</table>
-			</template>
-			<template #footer>
-
-				<div class="p-formgroup-inline" v-if="storageStatus && storageStatus.createAvailable">
-					<div class="p-field">
-						<label for="repo-id" class="p-sr-only">Repository ID</label>
-						<InputText id="repo-id" type="text" placeholder="Repository ID" v-model="newId" />
-					</div>
-					<div class="p-field">
-						<label for="repo-descr" class="p-sr-only">Description</label>
-						<InputText id="repo-descr" type="text" placeholder="Description" v-model="newDescr" />
-					</div>
-					<Button type="button" icon="pi pi-check" label="Create" v-on:click="createRepository" />
-					<InlineMessage v-if="error" v-on:click="error = null">{{error}}</InlineMessage>
-				</div>
-			</template>
-		</Card>
+		<RepositoryList 
+			:repositoryList="repositoryList"
+			:createAvailable="storageStatus && storageStatus.createAvailable"
+			:anonymous="userInfo && userInfo.anonymous"
+			v-on:created="loadRepositoryInfo" />
 
 	</div>
 </template>
@@ -67,16 +27,14 @@ import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
 import UserAvatar from '@/components/UserAvatar.vue';
+import RepositoryList from '@/components/RepositoryList.vue';
 
 export default {
 	name: 'home',
 	components: {
 		Menubar,
 		UserAvatar,
-		Card,
-		Button,
-		InputText,
-		InlineMessage
+		RepositoryList
 	},
 	//inject: ['apiClient'],
 	data() {

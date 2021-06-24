@@ -1,12 +1,14 @@
 <template>
 	<span class="value-info" v-if="valueType">
 		<span v-if="valueType==='literal'">{{literalValue}}</span>
+		<span v-if="valueType==='color'">{{literalValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
 			<Iri :iri="data.v.value" :active="active" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
 		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
 		<span v-if="valueType==='attribute'">{{displayValue}}</span>
+		<span v-if="valueType==='border'">{{displayValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
 		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip="displayTooltip">{{displayValue}}</span>
 	</span>
 </template>
@@ -80,6 +82,16 @@ export default {
 					this.typeIri = typeIri;
 					this.updateType();
 				});
+			} else {
+				this.detectLiteralType();
+			}
+		},
+		detectLiteralType() {
+			let val = this.data.v.value.toString().trim();
+			let m = /#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]/.exec(val);
+			if (m !== null) {
+				this.valueType = 'color';
+				this.displayStyle = 'background-color:' + m[0];
 			}
 		},
 		updateType() {
@@ -137,10 +149,11 @@ export default {
 			// borders
 			else if (this.typeIri === BOX.Border) {
 				this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {
-					this.valueType = 'attribute';
+					this.valueType = 'border';
 					this.displayValue = descr[BOX.borderWidth][0].value + 'px '
 						+ descr[BOX.borderStyle][0].value.toLowerCase() + ' '
 						+ descr[BOX.borderColor][0].value + ' ';
+					this.displayStyle = 'background-color:' + descr[BOX.borderColor][0].value;
 				});
 			}
 			// check known types
@@ -156,8 +169,17 @@ export default {
 .value-info .uri-value .badge {
 	margin-left: 0.5em;
 	vertical-align: top;
+	cursor: default;
 }
 .value-info .tag.badge {
 	font-size: 0.95em;
+	cursor: default;
+}
+.value-info .color-box {
+	border: 1px solid var(--text-color);
+	font-size: 80%;
+	vertical-align: text-top;
+	margin-left: 0.3em;
+	cursor: default;
 }
 </style>
