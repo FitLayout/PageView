@@ -1,6 +1,7 @@
 import { createWebHashHistory, createRouter } from "vue-router";
 import Home from "../views/Home.vue";
 import RepositoryView from "../views/RepositoryView.vue";
+import BrowserView from "../views/BrowserView.vue";
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -27,9 +28,14 @@ const router = createRouter({
 			component: RepositoryView
 		},
 		{
+			name: "browser",
+			path: "/b/:repoId",
+			component: BrowserView
+		},
+		{
 			name: "show",
-			path: "/r/:repoId/show/:iri",
-			component: RepositoryView
+			path: "/b/:repoId/show/:iri",
+			component: BrowserView
 		}
 	]
 });

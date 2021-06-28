@@ -119,7 +119,7 @@ export default {
 			this.$router.push({name: 'repo', params: { repoId: id }});
 		},
 		browseRepo(id) {
-			this.$router.push({name: 'repo', params: { repoId: id }});
+			this.$router.push({name: 'browser', params: { repoId: id }});
 		},
 		getRepoUrl(id) {
 			const res = this.$router.resolve({name: 'repo', params: { repoId: id }});

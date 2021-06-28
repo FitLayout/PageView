@@ -97,6 +97,19 @@ export default {
 .view-home {
 	text-align: center;
 }
+.logo {
+	padding: 0.5em 1em;
+	background: var(--surface-d);
+	display: inline-block;
+	border-radius: 5px;
+	font-weight: bold;
+}
+#mainmenu .selected .p-menuitem-link {
+	background-color: var(--primary-color);
+}
+#mainmenu .selected .p-menuitem-link .p-menuitem-text {
+	color: var(--primary-color-text);
+}
 .jumbotron {
 	margin: 10em 0 15em 0;
 }
@@ -114,5 +127,4 @@ export default {
 .repo-list .repo-id {
 	font-weight: bold;
 }
-
 </style>
