@@ -10,7 +10,7 @@
 			</Menubar>
 		</div>
 
-		<RepositoryList v-if="repositoryList"
+		<RepositoryList v-if="repositoryList !== null"
 			:repositoryList="repositoryList"
 			:createAvailable="storageStatus && storageStatus.createAvailable"
 			:anonymous="userInfo && userInfo.anonymous"
@@ -69,6 +69,9 @@ export default {
 			} else {
 				// non-anonymous user - use the API endpoind for getting the repository list
 				this.repositoryList = await this.apiClient.listRepositories();
+			}
+			if (this.repositoryList === null) {
+				this.repositoryList = []; //use an empty list when some fetch failed
 			}
 		},
 		async repositoryCreated(rdata) {
