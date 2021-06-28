@@ -10,7 +10,14 @@
 			</Menubar>
 		</div>
 
+		<header class="jumbotron">
+			<h1>FitLayout</h1>
+			<p>An extensible web page segmentation and analysis framework.</p>
+			<p><a href="https://github.com/FitLayout/FitLayout"><i class="pi pi-github"></i> GitHub page</a></p>
+		</header>
+
 		<RepositoryList v-if="repositoryList !== null"
+			style="margin:auto"
 			:repositoryList="repositoryList"
 			:createAvailable="storageStatus && storageStatus.createAvailable"
 			:anonymous="userInfo && userInfo.anonymous"
@@ -87,6 +94,19 @@ export default {
 </script>
 
 <style>
+.view-home {
+	text-align: center;
+}
+.jumbotron {
+	margin: 10em 0 15em 0;
+}
+.jumbotron h1 {
+	font-size: 500%;
+	font-variant: small-caps;
+}
+.jumbotron a {
+	text-decoration: none;
+}
 .repo-list td {
 	border: 1px solid var(--surface-d);
 	padding: 1em 1em;

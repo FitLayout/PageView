@@ -4,26 +4,29 @@
 			<img alt="user header" src="demo/images/usercard.png">
 		</template> -->
 		<template #title>
-			Recent Repositories
+			Your Recent Repositories
 		</template>
 		<template #content>
 			<table class="repo-list" v-if="repositoryList && repositoryList.length > 0">
 				<tr v-for="repo in repositoryList" :key="repo.id">
-					<td class="repo-id">{{repo.id}}</td>
-					<td class="repo-descr">{{repo.description}}</td>
-					<td class="repo-actions">
-						<router-link
-							:to="{ name: 'repo', params: { repoId: repo.id } }"
-							active-class="active">
-								browse
-						</router-link>
+					<td class="repo-id">
+						<span v-if="repo.description">{{repo.description}}</span>
+						<em v-if="!repo.description">{{repo.id}}</em>
 					</td>
 					<td class="repo-actions">
-						<router-link
-							:to="{ name: 'repo', params: { repoId: repo.id } }"
-							active-class="active">
-								query
-						</router-link>
+						<span class="p-buttonset">
+							<Button label="Open" icon="pi pi-folder-open" @click="openRepo(repo.id)" />
+							<Button label="Browser" icon="pi pi-globe" @click="browseRepo(repo.id)" />
+							<Button label="Share" icon="pi pi-share-alt" @click="toggleShare" />
+							<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+								<div class="p-fluid">
+									<div class="p-field">
+										<label for="fieldId">Shareable link</label>
+										<InputText id="fieldId" type="text" :value="getRepoUrl(repo.id)" readonly="true" />
+									</div>
+								</div>
+							</OverlayPanel>
+						</span>
 					</td>
 				</tr>
 			</table>
@@ -108,6 +111,20 @@ export default {
 		toggleCreate(event) {
 			this.$refs.op.toggle(event);
 			//this.$refs.inputDescr.focus(); //TODO this should be done later
+		},
+		toggleShare(event) {
+			this.$refs.opsh.toggle(event);
+		},
+		openRepo(id) {
+			this.$router.push({name: 'repo', params: { repoId: id }});
+		},
+		browseRepo(id) {
+			this.$router.push({name: 'repo', params: { repoId: id }});
+		},
+		getRepoUrl(id) {
+			const res = this.$router.resolve({name: 'repo', params: { repoId: id }});
+			const ret = window.location.origin + this.$router.options.history.base + res.fullPath;
+			return ret;
 		}
 	}
 }
@@ -119,7 +136,12 @@ export default {
 	padding: 1em 1em;
 }
 .repo-list .repo-id {
+	text-align: left;
+}
+.repo-list .repo-id span {
 	font-weight: bold;
 }
-
+.repo-list .repo-id em {
+	font-weight: normal;
+}
 </style>
