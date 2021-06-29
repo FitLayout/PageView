@@ -8,7 +8,7 @@
 					<span class="repo-info">Repository: <b>{{repoId}}</b></span>
 					<Button icon="pi pi-sign-out" 
 							class="p-button-rounded p-button-text" 
-							v-tooltip.bottom="'Close repository'" 
+							v-tooltip.bottom="'Close browser'" 
 							@click="quit()" />&nbsp;
 					<UserAvatar :userInfo="userInfo" v-tooltip.bottom="userInfo ? ('User: ' + userInfo.userId) : 'User'" />
             	</template>
@@ -92,6 +92,7 @@ export default {
 	data() {
 		return {
 			apiClient: this.$root.apiClient,
+			repoInfo: null,
 			userInfo: null,
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
@@ -119,7 +120,11 @@ export default {
 			return this.$route.params.iri;
 		},
 		repoId() {
-			return this.$route.params.repoId;
+			if (this.repoInfo) {
+				return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
+			} else {
+				return this.$route.params.repoId;
+			}
 		}
 	},
 	watch: {
@@ -128,6 +133,9 @@ export default {
 	created () {
 		this.apiClient = this.$root.apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
+		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
+			this.repoInfo = info;
+		});
 		this.fetchArtifacts();
 	},
 	methods: {
@@ -205,7 +213,8 @@ export default {
 		},
 
 		quit() {
-			this.$router.push({name: 'home'});
+			//this.$router.push({name: 'home'});
+			this.$router.push({name: 'repo', params: { repoId: this.$route.params.repoId }});
 		}
 
 	}

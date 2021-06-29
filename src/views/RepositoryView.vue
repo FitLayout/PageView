@@ -14,7 +14,10 @@
             	</template>
 			</Menubar>
 		</div>
-		<p>{{repoId}}</p>
+		<div class="repository-view-main" v-if="repoInfo">
+			<h1>{{repoTitle}} <small>({{repoInfo.id}})</small></h1>
+			<Button label="Open in Browser" icon="pi pi-globe" @click="browseRepo()" />
+		</div>
 	</div>
 </template>
 
@@ -39,6 +42,7 @@ export default {
 		return {
 			apiClient: this.$root.apiClient,
 			userInfo: null,
+			repoInfo: null,
 
 			menuItems: [
 			]
@@ -54,7 +58,18 @@ export default {
 			return this.$route.params.iri;
 		},
 		repoId() {
-			return this.$route.params.repoId;
+			if (this.repoInfo) {
+				return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
+			} else {
+				return this.$route.params.repoId;
+			}
+		},
+		repoTitle() {
+			if (this.repoInfo) {
+				return this.repoInfo.description ? this.repoInfo.description : '(no name)';
+			} else {
+				return '(no name)';
+			}
 		}
 	},
 	watch: {
@@ -62,6 +77,9 @@ export default {
 	created () {
 		this.apiClient = this.$root.apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
+		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
+			this.repoInfo = info;
+		});
 		this.fetchArtifacts();
 	},
 	methods: {
@@ -82,6 +100,10 @@ export default {
 			}
 		},
 
+		browseRepo() {
+			this.$router.push({name: 'browser', params: { repoId: this.$route.params.repoId }});
+		},
+
 		quit() {
 			this.$router.push({name: 'home'});
 		}
@@ -92,5 +114,12 @@ export default {
 
 <style>
 .repository-view {
+}
+.repository-view-main {
+	margin: 2em;
+}
+.repository-view h1 small {
+	font-size: 50%;
+	font-weight: normal;
 }
 </style>
