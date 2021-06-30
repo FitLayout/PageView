@@ -15,7 +15,12 @@
 			</Menubar>
 		</div>
 		<div class="repository-view-main" v-if="repoInfo">
-			<h1>{{repoTitle}} <small>({{repoInfo.id}})</small></h1>
+			<h1>{{repoTitle}}</h1>
+			<p>
+				<a :href="repoLink">{{repoLink}}</a>
+				<span v-if="userInfo && userInfo.anonymous"><br/>Please save this link if you want to
+				access this repository from another device or browser.</span>
+			</p>
 			<Button label="Open in Browser" icon="pi pi-globe" @click="browseRepo()" />
 		</div>
 	</div>
@@ -70,6 +75,9 @@ export default {
 			} else {
 				return '(no name)';
 			}
+		},
+		repoLink() {
+			return window.location.href;
 		}
 	},
 	watch: {
