@@ -22,6 +22,7 @@
 				access this repository from another device or browser.</span>
 			</p>
 			<Button label="Open in Browser" icon="pi pi-globe" @click="browseRepo()" />
+			<ArtTable />
 		</div>
 	</div>
 </template>
@@ -31,6 +32,7 @@ import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 
 import UserAvatar from '@/components/UserAvatar.vue';
+import ArtTable from '@/components/ArtTable.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
@@ -41,7 +43,8 @@ export default {
 	components: {
 		Menubar,
 		Button,
-		UserAvatar
+		UserAvatar,
+		ArtTable
 	},
 	data() {
 		return {
@@ -87,25 +90,16 @@ export default {
 		this.apiClient.currentRepo = this.$route.params.repoId;
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
 			this.repoInfo = info;
+			RepositoryData.addID(info.id); // add the repository to the list of known repositories
 		});
-		this.fetchArtifacts();
+		this.fetchUserInfo();
 	},
 	methods: {
 
-		async fetchArtifacts() {
+		async fetchUserInfo() {
 			this.error = null;
 			this.loading = true;
 			this.userInfo = await this.apiClient.getUserInfo();
-			
-			try {
-				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
-				this.loading = false;
-				RepositoryData.addID(this.$route.params.repoId); // add the repository to the list of known repositories
-			} catch (error) {
-				this.error = error.message;
-				this.loading = false;
-				console.error('Error while fetching artifact info!', error);
-			}
 		},
 
 		browseRepo() {
