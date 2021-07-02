@@ -67,10 +67,20 @@ export default {
 			if (this.userInfo.anonymous) {
 				// anonymous user - no list available. Use local storage for recent repos.
 				const ids = RepositoryData.getIDs();
+				let todelete = [];
 				console.log(ids);
 				if (ids && ids.length > 0) {
-					this.repositoryList = await this.apiClient.getRepositoryInfos(ids);
+					this.repositoryList = await this.apiClient.getRepositoryInfos(ids, function(id, e) {
+						todelete.push(id);
+					});
 					console.log(this.repositoryList);
+				}
+				// if some repos have been fetched and other not, delete the failed ones (they probably don't exist anymore)
+				if (todelete.length > 0 && todelete.length < ids.length) {
+					for (let id of todelete) {
+						console.log('Removing ' + id);
+						RepositoryData.deleteID(id);
+					}
 				}
 				console.log('done');
 			} else {

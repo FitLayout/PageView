@@ -316,14 +316,22 @@ export class ApiClient {
 		}		
 	}
 
-	async getRepositoryInfos(ids) {
+	/**
+	 * 
+	 * @param {*} ids a collection of IDs
+	 * @param {*} onError a function that is called when some id cannot be fetched
+	 */
+	async getRepositoryInfos(ids, onError) {
 		let ret = [];
 		for (const id of ids) {
 			try {
 				const info = await this.getRepositoryInfo(id);
 				ret.push(info);
 			} catch (e) {
-				console.error(e);
+				//console.error(e);
+				if (typeof onError === 'function') {
+					onError(id, e);
+				}
 			}
 		}
 		return ret;
