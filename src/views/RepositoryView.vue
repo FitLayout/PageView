@@ -22,7 +22,14 @@
 				access this repository from another device or browser.</span>
 			</p>
 			<Button label="Open in Browser" icon="pi pi-globe" @click="browseRepo()" />
-			<ArtTable />
+			
+			<div class="render-panel">
+			
+			</div>
+
+			<div class="artifact-view">
+				<ArtTable />
+			</div>
 		</div>
 	</div>
 </template>

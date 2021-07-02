@@ -1,9 +1,22 @@
 <template>
 	<div class="art-table">
 		<TreeTable :value="nodes" v-if="nodes">
-			<Column field="createdOn" header="Created" :expander="true"></Column>
-			<Column field="type" header="Type"></Column>
-			<Column field="title" header="Title"></Column>
+			<Column header="Created" :expander="true">
+				<template #body="slotProps">
+					{{formatDate(slotProps.node.data.createdOn)}}
+				</template>				
+			</Column>
+			<Column header="Type">
+				<template #body="slotProps">
+					<TypeBadge :typeIri="slotProps.node.data.type" /> <strong>{{slotProps.node.data.title}}</strong><br/>
+					<code v-if="slotProps.node.data.url">{{slotProps.node.data.url}}</code>
+				</template>
+			</Column>
+			<Column header="Actions">
+				<template #body="slotProps">
+					<Button label="Browse" icon="pi pi-globe" @click="browseArtifact(slotProps.node.data.id)" />
+				</template>
+			</Column>
 		</TreeTable>
 	</div>
 </template>
@@ -11,6 +24,9 @@
 <script>
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
+import Button from 'primevue/button';
+
+import TypeBadge from '@/components/TypeBadge.vue';
 
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
@@ -21,7 +37,9 @@ export default {
 	name: 'ArtTable',
 	components: {
 		TreeTable,
-		Column
+		Column,
+		TypeBadge,
+		Button
 	},
 	props: {
 	},
@@ -37,8 +55,6 @@ export default {
 	computed: {
 	},
 	watch: {
-		// call again the method if the route changes
-		//'$route': 'fetchData'
 	},
 	created () {
 		this.apiClient = this.$root.apiClient;
@@ -53,10 +69,8 @@ export default {
 			
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
-				console.log(this.artifacts);
 				this.loading = false;
 				this.nodes = this.computeNodes(this.artifacts);
-				console.log(JSON.stringify(this.nodes));
 			} catch (error) {
 				this.error = error.message;
 				this.loading = false;
@@ -90,19 +104,37 @@ export default {
 			const ret = {
 				key: art._iri,
 				data: {
+					id: art._iri,
 					createdOn: art.createdOn,
 					creator: art.creator,
-					title: art.hasTitle,
-					type: art._type
+					title: art._label,
+					type: art._type,
 				},
 				children: []
 			};
 			if (art.hasParentArtifact !== undefined) {
 				ret.parent = art.hasParentArtifact._iri;
 			}
+			if (art.sourceUrl !== undefined) {
+				ret.data.url = art.sourceUrl;
+			}
 			return ret;
-		}
+		},
 
+		formatDate(dateString) {
+			const date = new Date(dateString);
+			const options = {
+				year: 'numeric', month: 'numeric', day: 'numeric',
+				hour: 'numeric', minute: 'numeric', second: 'numeric'
+			};
+            return new Intl.DateTimeFormat('default', options).format(date);
+		},
+		
+		browseArtifact(id) {
+			const repoId = this.$route.params.repoId;
+			const route = this.$router.resolve({name: 'show', params: { repoId: repoId, iri: id }});
+			window.open(route.href, '_blank');
+		}
 	}
 }
 </script>
