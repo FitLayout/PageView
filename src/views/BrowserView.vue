@@ -132,7 +132,7 @@ export default {
 	},
 	created () {
 		this.apiClient = this.$root.apiClient;
-		this.apiClient.currentRepo = this.$route.params.repoId;
+		this.apiClient.setRepository(this.$route.params.repoId);
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
 			this.repoInfo = info;
 		});

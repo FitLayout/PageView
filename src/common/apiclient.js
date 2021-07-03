@@ -24,6 +24,18 @@ export class ApiClient {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/repository';
 	}
 
+	setRepository(repo) {
+		this.currentRepo = repo;
+		this.touch(); // async, just for updating the last access time
+	}
+
+	async touch() {
+		const url = this.repositoryEndpoint() + '/touch';
+		await fetch(url, {
+			method: 'GET',
+			headers: this.headers()
+		});
+	}
 
     async getTypeByIRI(iri) {
 		const url = this.repositoryEndpoint() + '/type/' + encodeURIComponent(iri);
