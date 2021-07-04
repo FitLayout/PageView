@@ -1,9 +1,14 @@
 <template>
 	<div class="art-table">
-		<TreeTable :value="nodes" v-if="nodes">
-			<Column header="Created" :expander="true">
+		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true">
+			<Column header="Created" :expander="true" headerStyle="width: 15em">
 				<template #body="slotProps">
 					{{formatDate(slotProps.node.data.createdOn)}}
+				</template>				
+			</Column>
+			<Column header="IRI" headerStyle="width: 8em">
+				<template #body="slotProps">
+					<Iri :iri="slotProps.node.data.id" />
 				</template>				
 			</Column>
 			<Column header="Type">
@@ -32,6 +37,7 @@ import Column from 'primevue/column';
 
 import TypeBadge from '@/components/TypeBadge.vue';
 import LinkButton from '@/components/LinkButton.vue';
+import Iri from '@/components/Iri.vue';
 
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
@@ -44,7 +50,8 @@ export default {
 		TreeTable,
 		Column,
 		TypeBadge,
-		LinkButton
+		LinkButton,
+		Iri
 	},
 	props: {
 	},
