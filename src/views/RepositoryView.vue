@@ -21,7 +21,10 @@
 				<span v-if="userInfo && userInfo.anonymous"><br/>Please save this link if you want to
 				access this repository from another device or browser.</span>
 			</p>
-			<Button label="Open in Browser" icon="pi pi-globe" @click="browseRepo()" />
+
+			<LinkButton label="Open in Browser" icon="pi pi-globe" 
+				:to="{name: 'browser', params: { repoId: this.$route.params.repoId }}"
+				target="_blank" />
 			
 			<div class="render-panel">
 				<h2>Render new page</h2>
@@ -64,6 +67,7 @@ import InputNumber from 'primevue/inputnumber';
 import ProgressSpinner from 'primevue/progressspinner';
 import Message from 'primevue/message';
 
+import LinkButton from '@/components/LinkButton.vue';
 import UserAvatar from '@/components/UserAvatar.vue';
 import ArtTable from '@/components/ArtTable.vue';
 import BOX from '@/ontology/BOX.js';
@@ -81,7 +85,8 @@ export default {
 		InputText,
 		InputNumber,
 		ProgressSpinner,
-		Message
+		Message,
+		LinkButton
 	},
 	data() {
 		return {
@@ -143,10 +148,6 @@ export default {
 		async fetchUserInfo() {
 			this.error = null;
 			this.userInfo = await this.apiClient.getUserInfo();
-		},
-
-		browseRepo() {
-			this.$router.push({name: 'browser', params: { repoId: this.$route.params.repoId }});
 		},
 
 		async renderPage() {

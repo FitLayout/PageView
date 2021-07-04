@@ -14,7 +14,12 @@
 			</Column>
 			<Column header="Actions">
 				<template #body="slotProps">
-					<Button label="Browse" icon="pi pi-globe" @click="browseArtifact(slotProps.node.data.id)" />
+					<LinkButton label="Actions" icon="pi pi-cog" class="p-button-warning"
+						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
+						target="_blank" /> 
+					<LinkButton label="Browse" icon="pi pi-globe" style="margin-left: 0.5em"
+						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
+						target="_blank" /> 
 				</template>
 			</Column>
 		</TreeTable>
@@ -24,9 +29,9 @@
 <script>
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
-import Button from 'primevue/button';
 
 import TypeBadge from '@/components/TypeBadge.vue';
+import LinkButton from '@/components/LinkButton.vue';
 
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
@@ -39,7 +44,7 @@ export default {
 		TreeTable,
 		Column,
 		TypeBadge,
-		Button
+		LinkButton
 	},
 	props: {
 	},

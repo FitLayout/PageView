@@ -14,19 +14,20 @@
 						<em v-if="!repo.description">{{repo.id}}</em>
 					</td>
 					<td class="repo-actions">
-						<span class="p-buttonset">
-							<Button label="Open" icon="pi pi-folder-open" @click="openRepo(repo.id)" />
-							<Button label="Browser" icon="pi pi-globe" @click="browseRepo(repo.id)" />
-							<Button label="Share" icon="pi pi-share-alt" @click="toggleShare" />
-							<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
-								<div class="p-fluid">
-									<div class="p-field">
-										<label for="fieldId">Shareable link</label>
-										<InputText id="fieldId" type="text" :value="getRepoUrl(repo.id)" readonly="true" />
-									</div>
+						<LinkButton label="Open" icon="pi pi-folder-open" class="p-button-warning"
+							:to="{name: 'repo', params: { repoId: repo.id }}" />
+						<LinkButton label="Browser" icon="pi pi-globe" style="margin-left: 0.5em"
+							:to="{name: 'browser', params: { repoId: repo.id }}" />
+						<Button label="Share" icon="pi pi-share-alt" style="margin-left: 0.5em" class="p-button-success"
+							@click="toggleShare" />
+						<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+							<div class="p-fluid">
+								<div class="p-field">
+									<label for="fieldId">Shareable link</label>
+									<InputText id="fieldId" type="text" :value="getRepoUrl(repo.id)" readonly="true" />
 								</div>
-							</OverlayPanel>
-						</span>
+							</div>
+						</OverlayPanel>
 					</td>
 				</tr>
 			</table>
@@ -37,7 +38,7 @@
 		<template #footer>
 
 			<div v-if="createAvailable">
-				<Button type="button" icon="pi pi-plus" :label="'New workspace'" @click="toggleCreate" aria:haspopup="true" aria-controls="overlay_panel" />
+				<Button type="button" icon="pi pi-plus" :label="'New repository'" @click="toggleCreate" aria:haspopup="true" aria-controls="overlay_panel" />
 
 				<OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 					<div class="p-fluid">
@@ -68,6 +69,8 @@ import OverlayPanel from 'primevue/overlaypanel';
 import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
+import LinkButton from '@/components/LinkButton.vue';
+
 export default {
 	name: 'RepositoryList',
 	components: {
@@ -75,7 +78,8 @@ export default {
 		Button,
 		OverlayPanel,
 		InputText,
-		InlineMessage
+		InlineMessage,
+		LinkButton
 	},
 	props: {
 		repositoryList: {
