@@ -20,8 +20,7 @@
 			<Column header="Actions">
 				<template #body="slotProps">
 					<LinkButton label="Actions" icon="pi pi-cog" class="p-button-warning"
-						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
-						target="_blank" /> 
+						:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 
 					<LinkButton label="Browse" icon="pi pi-globe" style="margin-left: 0.5em"
 						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
 						target="_blank" /> 

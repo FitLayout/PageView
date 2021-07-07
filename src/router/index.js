@@ -1,6 +1,7 @@
 import { createWebHashHistory, createRouter } from "vue-router";
 import Home from "../views/Home.vue";
 import RepositoryView from "../views/RepositoryView.vue";
+import PageView from "../views/PageView.vue";
 import BrowserView from "../views/BrowserView.vue";
 
 const router = createRouter({
@@ -26,6 +27,11 @@ const router = createRouter({
 			name: "repo",
 			path: "/r/:repoId",
 			component: RepositoryView
+		},
+		{
+			name: "page",
+			path: "/r/:repoId/page/:iri",
+			component: PageView
 		},
 		{
 			name: "browser",

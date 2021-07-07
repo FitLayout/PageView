@@ -1,5 +1,5 @@
 <template>
-    <div class="repository-view">
+    <div class="page-view">
 		<!-- Repository menu -->
 		<div class="menu-row">
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
@@ -14,46 +14,24 @@
             	</template>
 			</Menubar>
 		</div>
-		<div class="repository-view-main" v-if="repoInfo">
-			<h1>Repository: {{repoTitle}}</h1>
-			<p>
-				<a :href="repoLink">{{repoLink}}</a>
-				<span v-if="userInfo && userInfo.anonymous"><br/>Please save this link if you want to
-				access this repository from another device or browser.</span>
-			</p>
+		<div class="page-view-main">
+			<Iri :iri="iri" />
+			<div v-if="page">
+				<h1>{{pageTitle}}</h1>
 
-			<LinkButton label="Open in Browser" icon="pi pi-globe" 
-				:to="{name: 'browser', params: { repoId: this.$route.params.repoId }}"
-				target="_blank" />
-			
-			<div class="render-panel">
-				<h2>Render new page</h2>
-				<div class="p-fluid p-formgrid p-grid">
-					<div class="p-field p-col-12">
-						<label for="url">URL</label>
-						<InputText id="url" type="text" placeholder="http://" v-model="renderUrl" />
-					</div>
-					<div class="p-field p-col-3">
-						<label for="width">Page width</label>
-						<InputNumber id="width" type="decimal" v-model="renderWidth" showButtons :min="10" :max="10000" :step="10" />
-					</div>
-					<div class="p-field p-col-3">
-						<label for="height">Height</label>
-						<InputNumber id="height" type="decimal" v-model="renderHeight" showButtons :min="10" :max="10000" :step="10" />
-					</div>
-					<div class="p-field p-col-12">
-						<Button @click="renderPage()" class="p-jc-center" :disabled="loading">
-							<span class="p-text-bold">Render</span>
-							<ProgressSpinner v-if="loading" style="width:1.5em;height:1.5em;margin:0" />
-						</Button>
-					</div>
-				</div>
-				<Message severity="error" v-if="error">{{error}}</Message>
+				<img v-if="page.pngImage" :src="pageImage" class="screenshot" />
 
-			</div>
+				<table class="info">
+					<tr><th>Source URL</th><td>{{page.sourceUrl}}</td></tr>
+					<tr><th>Size</th><td>{{page.width}} x {{page.height}} px</td></tr>
+					<tr><th>Rendered on</th><td>{{page.createdOn}}</td></tr>
+					<tr><th>Renderer</th><td>{{page.creator}}</td></tr>
+					<tr><th>Renderer params</th><td>{{page.creatorParams}}</td></tr>
+				</table>
 
-			<div class="artifact-view">
-				<ArtTable />
+				<LinkButton label="Open in Browser" icon="pi pi-globe" 
+					:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }}"
+					target="_blank" />
 			</div>
 		</div>
 	</div>
@@ -70,6 +48,7 @@ import Message from 'primevue/message';
 import LinkButton from '@/components/LinkButton.vue';
 import UserAvatar from '@/components/UserAvatar.vue';
 import ArtTable from '@/components/ArtTable.vue';
+import Iri from '@/components/Iri.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
@@ -86,19 +65,16 @@ export default {
 		InputNumber,
 		ProgressSpinner,
 		Message,
-		LinkButton
+		LinkButton,
+		Iri
 	},
 	data() {
 		return {
 			apiClient: this.$root.apiClient,
 			userInfo: null,
 			repoInfo: null,
-
-			renderUrl: '',
-			renderWidth: 1200,
-			renderHeight: 800,
-			loading: false,
-			error: null,
+			iri: null,
+			page: null,
 
 			menuItems: [
 			]
@@ -126,12 +102,18 @@ export default {
 		},
 		repoLink() {
 			return window.location.href;
+		},
+		pageTitle() {
+			return this.page.title ? this.page.title : '(no title)';
+		},
+		pageImage() {
+			return this.page.pngImage ? ('data:image/png;base64,' + this.page.pngImage) : ''; 
 		}
 	},
 	watch: {
 	},
 	created () {
-		this.loading = false;
+		this.iri = this.$route.params.iri;
 		this.apiClient = this.$root.apiClient;
 		this.apiClient.setRepository(this.$route.params.repoId);
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
@@ -139,6 +121,7 @@ export default {
 			RepositoryData.addID(info.id); // add the repository to the list of known repositories
 		});
 		this.fetchUserInfo();
+		this.fetchPageInfo();
 	},
 	methods: {
 
@@ -147,34 +130,16 @@ export default {
 			this.userInfo = await this.apiClient.getUserInfo();
 		},
 
-		async renderPage() {
-			console.log('invoke');
-			this.loading = true;
-
-			const serviceId = 'FitLayout.Puppeteer';
-			const params = {
-				"acquireImages": false,
-				"width": this.renderWidth,
-				"height": this.renderHeight,
-				"persist": 3,
-				"includeScreenshot": true,
-				"url": this.renderUrl
+		async fetchPageInfo() {
+			this.page = await this.apiClient.fetchArtifact(this.iri);
+			if (this.page._type !== BOX.Page) {
+				// only Page artifacts are supported by this view
+				this.page = null;
 			}
-
-			try {
-				const iri = await this.apiClient.createArtifact(serviceId, params, null);
-				this.error = null;
-			} catch (e) {
-				this.error = e.message;
-			} finally {
-				this.loading = false;
-			}
-
-			return false;
 		},
 
 		quit() {
-			this.$router.push({name: 'home'});
+			this.$router.push({name: 'repo', params: { repoId: this.$route.params.repoId }});
 		}
 
 	}
@@ -182,24 +147,22 @@ export default {
 </script>
 
 <style>
-.repository-view {
-}
-.repository-view-main {
+.page-view-main {
 	margin: 2em;
 }
-.repository-view h1 small {
-	font-size: 50%;
-	font-weight: normal;
+.page-view-main .info {
+	margin: 1em 0;
 }
-.render-panel {
-	margin: 5em auto;
-	width: 50em;
+.page-view-main .info th, .page-view-main .info td {
+	padding: 0.3em;
 }
-.render-panel h2 {
-	text-align: center;
-	font-size: 100%;
+.page-view-main .info th {
+	text-align: left;
+	font-weight: bold;
 }
-.artifact-view {
-	margin-top: 2em;
+.page-view-main .screenshot {
+	float: right;
+	max-height: 20em;
+	min-width: 10em;
 }
 </style>
