@@ -24,6 +24,9 @@
 					<LinkButton label="Browse" icon="pi pi-globe" style="margin-left: 0.5em"
 						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
 						target="_blank" /> 
+					<SplitButton label="Export" icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.5em"
+						@click="exportDefault(slotProps.node)" 
+						:model="createExportMenu(slotProps.node)" />
 				</template>
 			</Column>
 		</TreeTable>
@@ -33,6 +36,7 @@
 <script>
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
+import SplitButton from 'primevue/splitbutton';
 
 import TypeBadge from '@/components/TypeBadge.vue';
 import LinkButton from '@/components/LinkButton.vue';
@@ -48,6 +52,7 @@ export default {
 	components: {
 		TreeTable,
 		Column,
+		SplitButton,
 		TypeBadge,
 		LinkButton,
 		Iri
@@ -145,7 +150,81 @@ export default {
 			const repoId = this.$route.params.repoId;
 			const route = this.$router.resolve({name: 'show', params: { repoId: repoId, iri: id }});
 			window.open(route.href, '_blank');
+		},
+
+		exportDefault(art) {
+			if (art.data.type === BOX.Page || art.data.type === SEGM.AreaTree) {
+				this.exportArtifact(art, 'text/xml', '.xml');
+			} else {
+				this.exportArtifact(art, 'application/rdf+xml', '.rdf');
+			}
+		},
+
+		createExportMenu(art) {
+			let items = [];
+			// for pages and area trees, add the specific serializations
+			if (art.data.type === BOX.Page || art.data.type === SEGM.AreaTree) {
+				items.push(
+					{
+						label: 'XML',
+						command: () => {
+							this.exportArtifact(art, 'text/xml', '.xml');
+						}
+					},
+					{
+						label: 'HTML',
+						command: () => {
+							this.exportArtifact(art, 'text/html', '.html');
+						}
+					},
+					{
+						label: 'PNG',
+						command: () => {
+							this.exportArtifact(art, 'image/png', '.png');
+						}
+					},
+					{
+						label: 'PNG',
+						separator: true
+					}
+				);
+			}
+			// add standard RDF serializations
+			items.push(
+				{
+					label: 'RDF XML',
+					command: () => {
+						this.exportArtifact(art, 'application/rdf+xml', '.rdf');
+					}
+				},
+				{
+					label: 'JSON-LD',
+					command: () => {
+						this.exportArtifact(art, 'application/ld+json', '.jsonld');
+					}
+				},
+				{
+					label: 'Turtle',
+					command: () => {
+						this.exportArtifact(art, 'text/turtle', '.ttl');
+					}
+				}
+			);
+			return items;
+		},
+
+		exportArtifact(art, mime, ext) {
+			console.log(mime);
+			console.log(art);
+			this.apiClient.exportArtifact(art.data.id, mime, function(blob) {
+				const link = document.createElement('a');
+        		link.href = URL.createObjectURL(blob);
+        		link.download = 'export' + ext;
+        		link.click();
+        		URL.revokeObjectURL(link.href);
+			});
 		}
+
 	}
 }
 </script>

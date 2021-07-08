@@ -138,6 +138,25 @@ export class ApiClient {
 			return artifact;
 	}
 
+	async exportArtifact(artifactIri, mime, thenFunction) {
+			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
+			let pageModel = new BoxModel();
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers({
+					'Accept': mime
+				})
+			})
+
+			this.checkAuth(response);
+			if (!response.ok) {
+				let error = response.status;
+				throw new Error(error);
+			}
+
+			response.blob().then(thenFunction);
+	}
+
 	async fetchArtifactInfoAll() {
 		const url = this.artifactEndpoint();
 		let pageModel = new BoxModel();
