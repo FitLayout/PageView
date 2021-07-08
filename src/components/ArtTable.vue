@@ -20,6 +20,7 @@
 			<Column header="Actions">
 				<template #body="slotProps">
 					<LinkButton label="Actions" icon="pi pi-cog" class="p-button-warning"
+						v-if="actionsAvailable(slotProps.node)"
 						:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 
 					<LinkButton label="Browse" icon="pi pi-globe" style="margin-left: 0.5em"
 						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
@@ -151,6 +152,10 @@ export default {
 			const repoId = this.$route.params.repoId;
 			const route = this.$router.resolve({name: 'show', params: { repoId: repoId, iri: id }});
 			window.open(route.href, '_blank');
+		},
+
+		actionsAvailable(art) {
+			return (art.data.type === BOX.Page); //currently, actions are only available for Pages
 		},
 
 		exportDefault(art) {
