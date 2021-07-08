@@ -15,7 +15,8 @@
 			</Menubar>
 		</div>
 		<div class="page-view-main">
-			<Iri :iri="iri" />
+			<Iri :iri="iri" /><br/>
+			<ProgressSpinner v-if="loading" />
 			<div v-if="page">
 				<h1>{{pageTitle}}</h1>
 
@@ -75,6 +76,7 @@ export default {
 			repoInfo: null,
 			iri: null,
 			page: null,
+			loading: false,
 
 			menuItems: [
 			]
@@ -131,11 +133,13 @@ export default {
 		},
 
 		async fetchPageInfo() {
+			this.loading = true;
 			this.page = await this.apiClient.fetchArtifact(this.iri);
 			if (this.page._type !== BOX.Page) {
 				// only Page artifacts are supported by this view
 				this.page = null;
 			}
+			this.loading = false;
 		},
 
 		quit() {
