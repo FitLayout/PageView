@@ -18,10 +18,9 @@
 			<Iri :iri="iri" /><br/>
 			<ProgressSpinner v-if="loading" />
 			<div v-if="page">
+				<img v-if="pngImage" :src="pageImage" class="screenshot" />
+
 				<h1>{{pageTitle}}</h1>
-
-				<img v-if="page.pngImage" :src="pageImage" class="screenshot" />
-
 				<table class="info">
 					<tr><th>Source URL</th><td>{{page.sourceUrl}}</td></tr>
 					<tr><th>Size</th><td>{{page.width}} x {{page.height}} px</td></tr>
@@ -76,6 +75,7 @@ export default {
 			repoInfo: null,
 			iri: null,
 			page: null,
+			pngImage: null,
 			loading: false,
 
 			menuItems: [
@@ -109,7 +109,7 @@ export default {
 			return this.page.title ? this.page.title : '(no title)';
 		},
 		pageImage() {
-			return this.page.pngImage ? ('data:image/png;base64,' + this.page.pngImage) : ''; 
+			return this.pngImage ? ('data:image/png;base64,' + this.pngImage) : ''; 
 		}
 	},
 	watch: {
@@ -124,6 +124,7 @@ export default {
 		});
 		this.fetchUserInfo();
 		this.fetchPageInfo();
+		this.fetchPageImage();
 	},
 	methods: {
 
@@ -134,12 +135,21 @@ export default {
 
 		async fetchPageInfo() {
 			this.loading = true;
-			this.page = await this.apiClient.fetchArtifact(this.iri);
+			this.page = await this.apiClient.fetchArtifactInfo(this.iri);
 			if (this.page._type !== BOX.Page) {
 				// only Page artifacts are supported by this view
 				this.page = null;
 			}
 			this.loading = false;
+		},
+
+		async fetchPageImage() {
+			try {
+				const val = await this.apiClient.getSubjectValue(this.iri, BOX.pngImage);
+				this.pngImage = val.value;
+			} catch (e) {
+				this.pngImage = null;
+			}
 		},
 
 		quit() {
