@@ -1,7 +1,7 @@
 <template>
 	<div class="art-table">
-		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true">
-			<Column header="Created" :expander="true" headerStyle="width: 15em">
+		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true" sortMode="single" sortField="timestamp" :sortOrder="-1">
+			<Column header="Created" field="timestamp" :expander="true" :sortable="true" headerStyle="width: 15em">
 				<template #body="slotProps">
 					{{formatDate(slotProps.node.data.createdOn)}}
 				</template>				
@@ -11,7 +11,7 @@
 					<Iri :iri="slotProps.node.data.id" />
 				</template>				
 			</Column>
-			<Column header="Type">
+			<Column header="Details">
 				<template #body="slotProps">
 					<TypeBadge :typeIri="slotProps.node.data.type" /> <strong>{{slotProps.node.data.title}}</strong><br/>
 					<code v-if="slotProps.node.data.url">{{slotProps.node.data.url}}</code>
@@ -121,6 +121,7 @@ export default {
 				key: art._iri,
 				data: {
 					id: art._iri,
+					timestamp: (new Date(art.createdOn)).getTime(),
 					createdOn: art.createdOn,
 					creator: art.creator,
 					title: art._label,
