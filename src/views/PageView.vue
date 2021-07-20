@@ -5,7 +5,7 @@
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
 				<template #end>
-					<span class="repo-info">Repository: <b>{{repoId}}</b></span>
+					<span class="repo-info">Repository: <b>{{repoName}}</b></span>
 					<Button icon="pi pi-sign-out" 
 							class="p-button-rounded p-button-text" 
 							v-tooltip.bottom="'Close repository'" 
@@ -89,6 +89,9 @@ export default {
 	},
 	computed: {
 		repoId() {
+			return this.$route.params.repoId;
+		},
+		repoName() {
 			if (this.repoInfo) {
 				return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
 			} else {
