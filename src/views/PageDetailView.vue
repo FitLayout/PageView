@@ -171,7 +171,7 @@ export default {
 	margin: 1em 0;
 }
 .page-view-main .info th, .page-view-main .info td {
-	padding: 0.3em;
+	padding: 0.1em 0.3em;
 }
 .page-view-main .info th {
 	text-align: left;
