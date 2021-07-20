@@ -48,6 +48,16 @@ body {
 .font-monospace {
 	font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
 }
+.backlink {
+	margin-bottom: 1.5em;
+	font-weight: bold;
+}
+.backlink i {
+	margin-right: 0.5em;
+}
+.backlink a {
+	text-decoration: none;
+}
 
 .p-inputtext.ok.p-component {
     border-color: var(--green-500);

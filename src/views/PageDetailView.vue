@@ -1,5 +1,9 @@
 <template>
 	<div class="page-view-main">
+		<p class="backlink"><router-link :to="{name: 'repo', params: { repoId: this.$route.params.repoId }}">
+			<i class="pi pi-arrow-circle-left"></i>
+			back to repository</router-link></p>
+
 		<Iri :iri="iri" /><br/>
 		<ProgressSpinner v-if="loading" />
 		<div v-if="page">
