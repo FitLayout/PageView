@@ -158,8 +158,8 @@ export default {
 		renderContents(box) {
 			let el = document.createElement('span');
 			el.setAttribute('class', 'c');
-			if (box.hasText) {
-				const text = document.createTextNode(box.hasText);
+			if (box.text) {
+				const text = document.createTextNode(box.text);
 				el.appendChild(text);
 			}
 			let style = `font-family:'${box.fontFamily}',sans-serif;font-size:${box.fontSize}px`;

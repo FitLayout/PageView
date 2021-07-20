@@ -50,8 +50,8 @@ export default class TreeModel {
 		ret.data = box;
 
 		let label = box.documentOrder;
-		if (box.hasText !== undefined) {
-			label = box.hasText;
+		if (box.text !== undefined) {
+			label = box.text;
 			ret.icon = 'pi pi-fw pi-file';
 			ret.type = 'text';
 		} else if (box.htmlTagName !== undefined) {
