@@ -55,7 +55,7 @@ import IriDecoder from '@/common/iridecoder.js';
 import {RepositoryData} from '@/common/repositorydata.js';
 
 export default {
-	name: 'RepositoryView',
+	name: 'PageDetailView',
 	components: {
 		Menubar,
 		Button,
