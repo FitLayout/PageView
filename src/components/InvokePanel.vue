@@ -4,7 +4,12 @@
 				<div class="p-field inl">
 					<label :for="inputId" class="inl"><strong>Service</strong></label>
 					<Dropdown v-model="key" :options="selList" optionLabel="name" optionValue="id">
-						<template #option="opt">{{opt.option.name}} ({{opt.option.id}})</template>
+						<template #option="opt">
+							<div class="option-cont">
+								{{opt.option.name}} ({{opt.option.id}})
+								<div class="option-descr">{{opt.option.description}}</div>
+							</div>
+						</template>
 						<template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
 					</Dropdown>
 				</div>
@@ -198,5 +203,9 @@ export default {
 .service-panel .error {
 	font-weight: bold;
 	margin-left: 1em;
+}
+.option-cont .option-descr {
+	font-size: 80%;
+	font-style: italic;
 }
 </style>
