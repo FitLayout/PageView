@@ -24,7 +24,7 @@
 				:currentArtifact="currentArtifact" action="Segment" 
 				class="serv-panel panel-segm" :class="panelClass('segm')"
 				v-on:created="artifactCreated"></InvokePanel>
-			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType"
+			<InvokePanel id="p" :source="areaTreeType" :target="areaTreeType" :grouped="true"
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-post" :class="panelClass('post')"
 				v-on:created="artifactCreated"></InvokePanel>

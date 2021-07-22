@@ -3,7 +3,17 @@
 			<div class="service p-formgroup-inline">
 				<div class="p-field inl">
 					<label :for="inputId" class="inl"><strong>Service</strong></label>
-					<Dropdown v-model="key" :options="selList" optionLabel="name" optionValue="id">
+					<Dropdown v-model="key" v-if="grouped" :options="groupList" optionLabel="name" optionValue="id"
+						optionGroupLabel="label" optionGroupChildren="items">
+						<template #option="opt">
+							<div class="option-cont">
+								{{opt.option.name}} ({{opt.option.id}})
+								<div class="option-descr">{{opt.option.description}}</div>
+							</div>
+						</template>
+						<template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
+					</Dropdown>
+					<Dropdown v-model="key" v-else :options="selList" optionLabel="name" optionValue="id">
 						<template #option="opt">
 							<div class="option-cont">
 								{{opt.option.name}} ({{opt.option.id}})
@@ -51,6 +61,7 @@ export default {
 		source: null,
 		target: null,
 		action: null,
+		grouped: null, 
 		currentArtifact: null
 	},
 	data () {
@@ -60,7 +71,9 @@ export default {
 			services: null,  //all services
 			selection: null, //acceptable services
 			selList: null,	 //acceptable service list
+			groupList: null, //grouped list if grouping is required
 			key: null,		 //selected service key
+
 			paramDescr: null, //selected service param description
 			params: null	 //selected service params
 		}
@@ -95,12 +108,38 @@ export default {
 						}
 					}
 				}
-				console.log(sel);
 				this.selection = sel;
+				if (this.grouped) {
+					this.groupList = this.createGroups(this.selList);
+					console.log(this.groupList);
+				}
 
 			} catch (error) {
 				console.error('Couldnt fetch artifact services!', error);
 			}
+		},
+
+		createGroups(list) {
+			// create a map from category to list of services
+			let cats = {};
+			for (let serv of list) {
+				let cat = serv.category ? serv.category : 'Other';
+				let list = cats[cat];
+				if (!list) {
+					list = [];
+					cats[cat] = list;
+				}
+				list.push(serv);
+			}
+			// transform to grouped list for Dropdown
+			let groupList = [];
+			for (let cat in cats) {
+				groupList.push({
+					label: cat,
+					items: cats[cat]
+				});
+			}
+			return groupList;
 		},
 
 		async update() {
