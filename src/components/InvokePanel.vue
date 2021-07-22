@@ -6,7 +6,7 @@
 					<Dropdown v-model="key" v-if="grouped" :options="groupList" optionLabel="name" optionValue="id"
 						optionGroupLabel="label" optionGroupChildren="items">
 						<template #option="opt">
-							<div class="option-cont">
+							<div class="option-cont option-cont-grouped">
 								{{opt.option.name}} ({{opt.option.id}})
 								<div class="option-descr">{{opt.option.description}}</div>
 							</div>
@@ -246,5 +246,12 @@ export default {
 .option-cont .option-descr {
 	font-size: 80%;
 	font-style: italic;
+}
+.option-cont {
+	padding-left: 0.5em;
+	border-left: 1px solid var(--text-color-secondary)
+}
+.option-cont.option-cont-grouped {
+	margin-left: 0.5em;
 }
 </style>
