@@ -1,6 +1,10 @@
 const NAMESPACE = 'http://fitlayout.github.io/ontology/segmentation.owl#';
 
 /**
+ * Document Visual Area Ontology.
+ * <p>
+ * Document visual area (segmentation) ontology..
+ * <p>
  * Namespace SEGM.
  * Prefix: {@code <http://fitlayout.github.io/ontology/segmentation.owl#>}
  */
@@ -12,6 +16,8 @@ const SEGM = {
 
 	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#Area
+	 * A visual area within the page. The areas can be nested an together
+	 * they form an AreaTree.
 	 */
 	Area: NAMESPACE + 'Area',
 
@@ -28,6 +34,17 @@ const SEGM = {
 	belongsTo: NAMESPACE + 'belongsTo',
 
 	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet
+	 */
+	belongsToChunkSet: NAMESPACE + 'belongsToChunkSet',
+
+	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#ChunkSet
+	 * A set of text chunks extreacted from a source page.
+	 */
+	ChunkSet: NAMESPACE + 'ChunkSet',
+
+	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#containsArea
 	 */
 	containsArea: NAMESPACE + 'containsArea',
@@ -38,21 +55,26 @@ const SEGM = {
 	containsBox: NAMESPACE + 'containsBox',
 
 	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#contentLength
+	 * The number of content elements used to compute the style statistics
+	 * such as average font weight.
+	 */
+	contentLength: NAMESPACE + 'contentLength',
+
+	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree
 	 */
 	hasAreaTree: NAMESPACE + 'hasAreaTree',
 
 	/**
-	 * http://fitlayout.github.io/ontology/segmentation.owl#hasContentLength
-	 * The number of content elements used to compute the style statistics
-	 * such as average font weight.
+	 * http://fitlayout.github.io/ontology/segmentation.owl#hasSourceArea
 	 */
-	hasContentLength: NAMESPACE + 'hasContentLength',
+	hasSourceArea: NAMESPACE + 'hasSourceArea',
 
 	/**
-	 * http://fitlayout.github.io/ontology/segmentation.owl#hasName
+	 * http://fitlayout.github.io/ontology/segmentation.owl#hasSourceBox
 	 */
-	hasName: NAMESPACE + 'hasName',
+	hasSourceBox: NAMESPACE + 'hasSourceBox',
 
 	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#hasSourcePage
@@ -63,16 +85,6 @@ const SEGM = {
 	 * http://fitlayout.github.io/ontology/segmentation.owl#hasTag
 	 */
 	hasTag: NAMESPACE + 'hasTag',
-
-	/**
-	 * http://fitlayout.github.io/ontology/segmentation.owl#hasText
-	 */
-	hasText: NAMESPACE + 'hasText',
-
-	/**
-	 * http://fitlayout.github.io/ontology/segmentation.owl#hasType
-	 */
-	hasType: NAMESPACE + 'hasType',
 
 	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#isChildOf
@@ -101,6 +113,12 @@ const SEGM = {
 	LogicalAreaTree: NAMESPACE + 'LogicalAreaTree',
 
 	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#name
+	 * Assigned area name
+	 */
+	name: NAMESPACE + 'name',
+
+	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#support
 	 */
 	support: NAMESPACE + 'support',
@@ -113,7 +131,24 @@ const SEGM = {
 	/**
 	 * http://fitlayout.github.io/ontology/segmentation.owl#tagSupport
 	 */
-	tagSupport: NAMESPACE + 'tagSupport'
+	tagSupport: NAMESPACE + 'tagSupport',
+
+	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#text
+	 */
+	text: NAMESPACE + 'text',
+
+	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#TextChunk
+	 * A connected piece of a document text that forms a rectangular area in
+	 * the page.
+	 */
+	TextChunk: NAMESPACE + 'TextChunk',
+
+	/**
+	 * http://fitlayout.github.io/ontology/segmentation.owl#type
+	 */
+	type: NAMESPACE + 'type'
 
 }
 

@@ -1,7 +1,9 @@
 const NAMESPACE = 'http://fitlayout.github.io/ontology/fitlayout.owl#';
 
 /**
- * FITLayout system types and properties.
+ * FitLayout Core Ontology.
+ * <p>
+ * FITLayout shared types and properties..
  * <p>
  * Namespace FL.
  * Prefix: {@code <http://fitlayout.github.io/ontology/fitlayout.owl#>}
@@ -17,11 +19,6 @@ const FL = {
 	 * An artifact created during the page processing
 	 */
 	Artifact: NAMESPACE + 'Artifact',
-
-	/**
-	 * http://fitlayout.github.io/ontology/fitlayout.owl#containsPage
-	 */
-	containsPage: NAMESPACE + 'containsPage',
 
 	/**
 	 * http://fitlayout.github.io/ontology/fitlayout.owl#createdOn
@@ -45,13 +42,7 @@ const FL = {
 	 * http://fitlayout.github.io/ontology/fitlayout.owl#hasParentArtifact
 	 * Assigns a parent artifact to another artifact.
 	 */
-	hasParentArtifact: NAMESPACE + 'hasParentArtifact',
-
-	/**
-	 * http://fitlayout.github.io/ontology/fitlayout.owl#PageSet
-	 * A set of pages processed together.
-	 */
-	PageSet: NAMESPACE + 'PageSet'
+	hasParentArtifact: NAMESPACE + 'hasParentArtifact'
 
 }
 

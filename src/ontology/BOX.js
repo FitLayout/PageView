@@ -1,6 +1,10 @@
 const NAMESPACE = 'http://fitlayout.github.io/ontology/render.owl#';
 
 /**
+ * Box Model Ontology.
+ * <p>
+ * FitLayout rendered document (box model) description ontology..
+ * <p>
  * Namespace BOX.
  * Prefix: {@code <http://fitlayout.github.io/ontology/render.owl#>}
  */
@@ -11,27 +15,26 @@ const BOX = {
 	PREFIX: 'box',
 
 	/**
+	 * http://fitlayout.github.io/ontology/render.owl#Attribute
+	 * An HTML attribute assigned to a box.
+	 */
+	Attribute: NAMESPACE + 'Attribute',
+
+	/**
 	 * http://fitlayout.github.io/ontology/render.owl#backgroundColor
 	 */
 	backgroundColor: NAMESPACE + 'backgroundColor',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#backgroundImageData
+	 * http://fitlayout.github.io/ontology/render.owl#backgroundSeparated
+	 * Indicates whether the rectangle is separated from it parent rectangle
+	 * by background color or image.
 	 */
-	backgroundImageData: NAMESPACE + 'backgroundImageData',
-
-	/**
-	 * http://fitlayout.github.io/ontology/render.owl#backgroundImagePosition
-	 */
-	backgroundImagePosition: NAMESPACE + 'backgroundImagePosition',
-
-	/**
-	 * http://fitlayout.github.io/ontology/render.owl#backgroundImageUrl
-	 */
-	backgroundImageUrl: NAMESPACE + 'backgroundImageUrl',
+	backgroundSeparated: NAMESPACE + 'backgroundSeparated',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#belongsTo
+	 * Assigns an owning page to a rectangle
 	 */
 	belongsTo: NAMESPACE + 'belongsTo',
 
@@ -56,12 +59,25 @@ const BOX = {
 	borderWidth: NAMESPACE + 'borderWidth',
 
 	/**
+	 * http://fitlayout.github.io/ontology/render.owl#Bounds
+	 * Rectangular bounds specified by its coordinates, width and height.
+	 */
+	Bounds: NAMESPACE + 'Bounds',
+
+	/**
+	 * http://fitlayout.github.io/ontology/render.owl#bounds
+	 * Assigns logical rectangular bounds to an area.
+	 */
+	bounds: NAMESPACE + 'bounds',
+
+	/**
 	 * http://fitlayout.github.io/ontology/render.owl#Box
 	 */
 	Box: NAMESPACE + 'Box',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#color
+	 * Foreground color (#rrggbb)
 	 */
 	color: NAMESPACE + 'color',
 
@@ -71,14 +87,17 @@ const BOX = {
 	ContainerBox: NAMESPACE + 'ContainerBox',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#containsImage
-	 */
-	containsImage: NAMESPACE + 'containsImage',
-
-	/**
 	 * http://fitlayout.github.io/ontology/render.owl#containsObject
 	 */
 	containsObject: NAMESPACE + 'containsObject',
+
+	/**
+	 * http://fitlayout.github.io/ontology/render.owl#contentBounds
+	 * Assigns rectangular content bounds to a box. The content bounds
+	 * correspond to the box border bounds as provided by the box source
+	 * (renderer).
+	 */
+	contentBounds: NAMESPACE + 'contentBounds',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#ContentBox
@@ -134,6 +153,11 @@ const BOX = {
 	hasAttribute: NAMESPACE + 'hasAttribute',
 
 	/**
+	 * http://fitlayout.github.io/ontology/render.owl#hasBackgroundImage
+	 */
+	hasBackgroundImage: NAMESPACE + 'hasBackgroundImage',
+
+	/**
 	 * http://fitlayout.github.io/ontology/render.owl#hasBottomBorder
 	 */
 	hasBottomBorder: NAMESPACE + 'hasBottomBorder',
@@ -149,23 +173,13 @@ const BOX = {
 	hasRightBorder: NAMESPACE + 'hasRightBorder',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#hasText
-	 */
-	hasText: NAMESPACE + 'hasText',
-
-	/**
-	 * http://fitlayout.github.io/ontology/render.owl#hasTitle
-	 * Page title
-	 */
-	hasTitle: NAMESPACE + 'hasTitle',
-
-	/**
 	 * http://fitlayout.github.io/ontology/render.owl#hasTopBorder
 	 */
 	hasTopBorder: NAMESPACE + 'hasTopBorder',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#height
+	 * Effective height of a rectangle.
 	 */
 	height: NAMESPACE + 'height',
 
@@ -200,12 +214,8 @@ const BOX = {
 	lineThrough: NAMESPACE + 'lineThrough',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#objectInformation
-	 */
-	objectInformation: NAMESPACE + 'objectInformation',
-
-	/**
 	 * http://fitlayout.github.io/ontology/render.owl#Page
+	 * A tree of boxes representing a rendered page.
 	 */
 	Page: NAMESPACE + 'Page',
 
@@ -217,18 +227,21 @@ const BOX = {
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#positionX
+	 * Effective X coordinate of a rectangle.
 	 */
 	positionX: NAMESPACE + 'positionX',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#positionY
+	 * Effective Y coordinate of a rectangle.
 	 */
 	positionY: NAMESPACE + 'positionY',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#Rectangle
+	 * http://fitlayout.github.io/ontology/render.owl#RectArea
+	 * A rectangular area in the page with bounds assigned.
 	 */
-	Rectangle: NAMESPACE + 'Rectangle',
+	RectArea: NAMESPACE + 'RectArea',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#sourceUrl
@@ -236,32 +249,45 @@ const BOX = {
 	sourceUrl: NAMESPACE + 'sourceUrl',
 
 	/**
+	 * http://fitlayout.github.io/ontology/render.owl#sourceXPath
+	 * An XPath expression identifying the source element of the box in the
+	 * source document.
+	 */
+	sourceXPath: NAMESPACE + 'sourceXPath',
+
+	/**
+	 * http://fitlayout.github.io/ontology/render.owl#text
+	 */
+	text: NAMESPACE + 'text',
+
+	/**
+	 * http://fitlayout.github.io/ontology/render.owl#title
+	 * Page title
+	 */
+	title: NAMESPACE + 'title',
+
+	/**
 	 * http://fitlayout.github.io/ontology/render.owl#underline
 	 */
 	underline: NAMESPACE + 'underline',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#visualHeight
+	 * http://fitlayout.github.io/ontology/render.owl#visible
+	 * Defines the box visibility
 	 */
-	visualHeight: NAMESPACE + 'visualHeight',
+	visible: NAMESPACE + 'visible',
 
 	/**
-	 * http://fitlayout.github.io/ontology/render.owl#visualWidth
+	 * http://fitlayout.github.io/ontology/render.owl#visualBounds
+	 * Assigns visual rectangular bounds to a box. Visual bounds correspond
+	 * to the minimal rectangle that encloses visible contents inside the
+	 * box.
 	 */
-	visualWidth: NAMESPACE + 'visualWidth',
-
-	/**
-	 * http://fitlayout.github.io/ontology/render.owl#visualX
-	 */
-	visualX: NAMESPACE + 'visualX',
-
-	/**
-	 * http://fitlayout.github.io/ontology/render.owl#visualY
-	 */
-	visualY: NAMESPACE + 'visualY',
+	visualBounds: NAMESPACE + 'visualBounds',
 
 	/**
 	 * http://fitlayout.github.io/ontology/render.owl#width
+	 * Effective width of a rectangle.
 	 */
 	width: NAMESPACE + 'width'
 
