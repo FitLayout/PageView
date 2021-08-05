@@ -129,6 +129,10 @@ export default {
 					this.typeName = 'Area Tree';
 					this.typeClass = 'artifact areatree';
 					break;
+				case SEGM.ChunkSet:
+					this.typeName = 'Chunk Set';
+					this.typeClass = 'artifact chunkset';
+					break;
 				default:
 					this.type = 'unknown';
 					this.typeClass = 'artifact unknown';

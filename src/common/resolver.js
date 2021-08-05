@@ -41,8 +41,8 @@ export default class ObjectResolver {
 				rectangles: page.rectAreas
 			}
 		} else if (type === SEGM.AreaTree) {
-			const atree = await this.getAreaTree(iri, currentStatus);
-			const page = await this.getPage(atree.hasSourcePage, currentStatus);
+			const atree = await this.getArtifact(iri, currentStatus);
+			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
 			this.client.sortBoxes(page.rectAreas);
 			return {
 				type: 'areaTree',
@@ -53,6 +53,21 @@ export default class ObjectResolver {
 				pageIri: page._iri,
 				page: page,
 				rectangles: atree.areas
+			}
+		} else if (type === SEGM.ChunkSet) {
+			const cset = await this.getArtifact(iri, currentStatus);
+			const atreeIri = await this.client.getSubjectValue(iri, SEGM.hasAreaTree);
+			const pageIri = await this.client.getSubjectValue(atreeIri.value, SEGM.hasSourcePage);
+			const page = await this.getPage(pageIri.value, currentStatus);
+			return {
+				type: 'chunkSet',
+				description: descr,
+				rectangleType: 'textChunk',
+				artifactIri: iri,
+				artifact: cset,
+				pageIri: page._iri,
+				page: page,
+				rectangles: cset.textChunks
 			}
 		} else if (type === BOX.Box) {
 			const pageIri = await this.client.getSubjectValue(iri, BOX.belongsTo);
@@ -70,8 +85,8 @@ export default class ObjectResolver {
 			}
 		} else if (type === SEGM.Area) {
 			const atreeIri = await this.client.getSubjectValue(iri, SEGM.belongsTo);
-			const atree = await this.getAreaTree(atreeIri.value, currentStatus);
-			const page = await this.getPage(atree.hasSourcePage, currentStatus);
+			const atree = await this.getArtifact(atreeIri.value, currentStatus);
+			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
 			this.client.sortBoxes(page.rectAreas);
 			return {
 				type: 'area',
@@ -82,6 +97,23 @@ export default class ObjectResolver {
 				pageIri: page._iri,
 				page: page,
 				rectangles: atree.areas
+			}
+		} else if (type === SEGM.TextChunk) {
+			const chunkSetIri = await this.client.getSubjectValue(iri, SEGM.belongsToChunkSet);
+			const chunkSet = await this.getArtifact(chunkSetIri.value, currentStatus);
+			const atreeIri = await this.client.getSubjectValue(chunkSetIri.value, SEGM.hasAreaTree);
+			const pageIri = await this.client.getSubjectValue(atreeIri.value, SEGM.hasSourcePage);
+			const page = await this.getPage(pageIri.value, currentStatus);
+			this.client.sortBoxes(page.rectAreas);
+			return {
+				type: 'textChunk',
+				description: descr,
+				rectangleType: 'textChunk',
+				artifactIri: chunkSet._iri,
+				artifact: chunkSet,
+				pageIri: page._iri,
+				page: page,
+				rectangles: chunkSet.textChunks
 			}
 		} else {
 			return {
@@ -102,7 +134,7 @@ export default class ObjectResolver {
 		}
 	}
 
-	async getAreaTree(iri, currentStatus) {
+	async getArtifact(iri, currentStatus) {
 		if (currentStatus.artifactIri === iri) {
 			return currentStatus.artifact;
 		} else {

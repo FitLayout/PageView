@@ -84,6 +84,14 @@ body {
 	color: black;
 	background-color: var(--yellow-700);
 }
+.chunkset .badge {
+	color: black;
+	background-color: var(--indigo-200);
+}
+.textchunk .badge {
+	color: white;
+	background-color: var(--indigo-700);
+}
 
 
 #app {

@@ -27,6 +27,8 @@ knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
 knownTypes[BOX.Box] = { name: 'Box', type: 'box' }
 knownTypes[SEGM.AreaTree] = { name: 'AreaTree', type: 'areatree' }
 knownTypes[SEGM.Area] = { name: 'Area', type: 'area' }
+knownTypes[SEGM.ChunkSet] = { name: 'ChunkSet', type: 'chunkset' }
+knownTypes[SEGM.TextChunk] = { name: 'TextChunk', type: 'textchunk' }
 
 export default {
 	name: 'ValueInfo',
