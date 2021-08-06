@@ -17,6 +17,17 @@
 										<i :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</i>
 									</template>
 								</Tree>
+								<DataTable :value="tableModel" v-if="tableModel"
+									class="p-datatable-sm"
+									v-model:selection="selectedTableRow"
+									selectionMode="single"
+									@rowSelect="tableRowSelected">
+									<Column>
+										<template #body="rowdata">
+											<span :id="'btr-' + rowdata.data.documentOrder">{{rowdata.data._label}}</span>
+										</template>
+									</Column>
+								</DataTable>
 							</div>
 						</div>
 					</SplitterPanel>
@@ -256,7 +267,11 @@ export default {
 			// Tree
 			treeModel: null,
 			expandedTreeKeys: null,
-			selectedTreeKey: null
+			selectedTreeKey: null,
+
+			// Data table for showing chunks
+			tableModel: null,
+			selectedTableRow: null
 		}
 	},
 	created () {
@@ -302,13 +317,19 @@ export default {
 							this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
 						} else if (deps.rectangleType === 'area') {
 							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
+						} else if (deps.rectangleType === 'textChunk') {
+							this.tableModel = this.createChunksModel(deps.rectangles);
 						}
 					}
 					// if the IRI identifies a box or area, highlight the corresponding rectangle
-					if (deps.type === 'box' || deps.type === 'area') {
+					if (deps.type === 'box' || deps.type === 'area' || deps.type === 'textChunk') {
 						if (!this.selectedRect || this.selectedRect._iri !== this.subjectIri) {
 							const rect = this.findRectangleByIri(this.subjectIri);
-							this.showBoxInTree(rect);
+							if (deps.type === 'box' || deps.type === 'area') {
+								this.showBoxInTree(rect);
+							} else if (deps.type === 'textChunk') {
+								this.showBoxInTable(rect);
+							}
 							this.selectedRect = rect;
 						}
 					} else {
@@ -336,6 +357,7 @@ export default {
 				console.error('Error while fetching artifact data', error);
 			}
 		},
+
 		async addTag() {
 			if (this.selectedTag == null)
 				return;
@@ -461,6 +483,31 @@ export default {
 			}
 			return null;
 		},
+
+		// Table of rectangles
+
+		createChunksModel(rects) {
+			const list = [];
+			for (let rect of rects) {
+				list.push(rect);
+			}
+			return list;
+		},
+
+		tableRowSelected(node) {
+			const iri = node.data._iri;
+			this.$router.push({name: 'show', params: { iri: iri }});
+		},
+
+		showBoxInTable(rect) {
+			this.selectedTableRow = rect;
+			let elem = document.getElementById('btr-' + rect.documentOrder);
+			if (elem) {
+				elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+			}
+		},
+
+		// ---
 
 		findRectangleByIri(iri) {
 			for (let rect of this.rectangles) {
