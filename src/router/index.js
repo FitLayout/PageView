@@ -4,6 +4,7 @@ import RepositoryView from "../views/RepositoryView.vue";
 import RepositoryContentView from "../views/RepositoryContentView.vue";
 import PageDetailView from "../views/PageDetailView.vue";
 import BrowserView from "../views/BrowserView.vue";
+import AdminRepos from "../views/AdminRepos.vue";
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -38,6 +39,11 @@ const router = createRouter({
 			name: 'show',
 			path: '/b/:repoId/show/:iri',
 			component: BrowserView
+		},
+		{
+			name: 'adminRepos',
+			path: '/admin/repos',
+			component: AdminRepos
 		}
 	]
 });

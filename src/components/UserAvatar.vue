@@ -43,6 +43,13 @@ export default {
 						label: this.userInfo.userId,
 						class: 'user-id'
 					});
+					if (this.isAdmin()) {
+						this.items.push({
+							label: 'Repository administration',
+							icon: 'pi pi-fw pi-file-o',
+							to: '/admin/repos'
+						});
+					}
 					this.items.push({
 						separator: true
 					});
@@ -60,6 +67,9 @@ export default {
 		},
 		toggle(event) {
     		this.$refs.menu.toggle(event);
+		},
+		isAdmin() {
+			return this.userInfo && this.userInfo.roles && this.userInfo.roles.includes('admin');
 		}
 	}
 }

@@ -326,6 +326,27 @@ export class ApiClient {
 		}		
 	}
 
+	async listAllRepositories() {
+		const url = REPOSITORY_ADMIN_ENDPOINT + '/all';
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers()
+			});
+
+			this.checkAuth(response);
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data.result;
+		} catch (e) {
+			throw new Error(e);
+		}		
+	}
+
 	async getRepositoryInfo(id) {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
 		try {
