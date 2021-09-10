@@ -4,6 +4,7 @@ import RepositoryView from "../views/RepositoryView.vue";
 import RepositoryContentView from "../views/RepositoryContentView.vue";
 import PageDetailView from "../views/PageDetailView.vue";
 import BrowserView from "../views/BrowserView.vue";
+import AdminView from "../views/AdminView.vue";
 import AdminRepos from "../views/AdminRepos.vue";
 
 const router = createRouter({
@@ -41,9 +42,20 @@ const router = createRouter({
 			component: BrowserView
 		},
 		{
-			name: 'adminRepos',
-			path: '/admin/repos',
-			component: AdminRepos
+			path: '/admin',
+			component: AdminView,
+			children: [
+				{
+					name: 'adminHome',
+					path: '',
+					redirect: '/admin/repos'
+				},
+				{
+					name: 'adminRepos',
+					path: '/admin/repos',
+					component: AdminRepos
+				}
+			]		
 		}
 	]
 });

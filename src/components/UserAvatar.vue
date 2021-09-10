@@ -45,9 +45,9 @@ export default {
 					});
 					if (this.isAdmin()) {
 						this.items.push({
-							label: 'Repository administration',
+							label: 'Administration',
 							icon: 'pi pi-fw pi-file-o',
-							to: '/admin/repos'
+							to: '/admin'
 						});
 					}
 					this.items.push({

@@ -31,14 +31,13 @@ import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 
 export default {
-	name: 'home',
+	name: 'AdminRepos',
 	components: {
 		DataTable,
 		Column,
 		InputText,
 		Checkbox
 	},
-	//inject: ['apiClient'],
 	data() {
 		return {
 			apiClient: null,
