@@ -28,6 +28,10 @@
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-post" :class="panelClass('post')"
 				v-on:created="artifactCreated"></InvokePanel>
+			<InvokePanel id="c" :source="areaTreeType" :target="chunkSetType"
+				:currentArtifact="currentArtifact" action="Process" 
+				class="serv-panel panel-text" :class="panelClass('text')"
+				v-on:created="artifactCreated"></InvokePanel>
 		</div>
 
 		<div class="content-row">
@@ -96,6 +100,7 @@ export default {
 			userInfo: null,
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
+			chunkSetType: SEGM.ChunkSet,
 			mode: 'render',
 			artifacts: null,
 			currentArtifact: null,
@@ -107,6 +112,7 @@ export default {
 				{ label: 'Render', class: 'selected', command: () => {this.selectMode('render', 0);} },
 				{ label: 'Segmentation', class: 'normal', command: () => {this.selectMode('segm', 1);} },
 				{ label: 'Postprocess', class: 'normal', command: () => {this.selectMode('post', 2);} },
+				{ label: 'Text', class: 'normal', command: () => {this.selectMode('text', 3);} },
 			]
 		}
 	},
