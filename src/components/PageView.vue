@@ -315,10 +315,13 @@ export default {
 						this.initTree();
 						if (deps.rectangleType === 'box') {
 							this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
+							this.tableModel = null;
 						} else if (deps.rectangleType === 'area') {
 							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
+							this.tableModel = null;
 						} else if (deps.rectangleType === 'textChunk') {
 							this.tableModel = this.createChunksModel(deps.rectangles);
+							this.treeModel = null;
 						}
 					}
 					// if the IRI identifies a box or area, highlight the corresponding rectangle
