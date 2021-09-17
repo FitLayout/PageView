@@ -123,12 +123,12 @@ export default {
 					// colorize tags if any
 					if (this.showTags && box.hasTag) {
 						if (box.hasTag.length === 1) {
-							let tagName = box.hasTag[0].hasName;
+							let tagName = box.hasTag[0].name;
 							el.style.backgroundColor = stringColor(tagName);
 						} else if (box.hasTag.length > 1) {
 							let tagNames = [];
 							for (let i = 0; i < box.hasTag.length; i++) {
-								tagNames.push(box.hasTag[i].hasName);
+								tagNames.push(box.hasTag[i].name);
 							}
 							el.style.backgroundImage = stringsGradient(tagNames);
 						}

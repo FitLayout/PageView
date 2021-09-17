@@ -5,7 +5,7 @@
 export function stringColor(cname) {
 	
 	if (!cname) {
-		return 'rgb(255,255,255)';
+		return 'rgba(255,255,255,0.5)';
 	}
 	let s = cname;
 	while (s.length < 6) { 
