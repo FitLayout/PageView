@@ -16,12 +16,17 @@
 			<p><a href="https://github.com/FitLayout/FitLayout"><i class="pi pi-github"></i> GitHub page</a></p>
 		</header>
 
-		<RepositoryList v-if="repositoryList !== null"
+		<RepositoryList v-if="repositoryList !== null && error === null"
 			style="margin:auto"
 			:repositoryList="repositoryList"
 			:createAvailable="storageStatus && storageStatus.createAvailable"
 			:anonymous="userInfo && userInfo.anonymous"
 			v-on:created="repositoryCreated" />
+
+		<div class="error" v-if="error">
+			<h3>We're sorry</h3>
+			<p>The FitLayout backend seems to be down in the moment. Please try again later.</p>
+		</div>
 
 	</div>
 </template>
@@ -48,6 +53,7 @@ export default {
 	//inject: ['apiClient'],
 	data() {
 		return {
+			error: null,
 			apiClient: null,
 			userInfo: null,
 			storageStatus: null,
@@ -62,30 +68,35 @@ export default {
 	},
 	methods: {
 		async loadRepositoryInfo() {
-			this.userInfo = await this.apiClient.getUserInfo();
-			this.storageStatus = await this.apiClient.getStorageStatus();
-			if (this.userInfo.anonymous) {
-				// anonymous user - no list available. Use local storage for recent repos.
-				const ids = RepositoryData.getIDs();
-				let todelete = [];
-				console.log(ids);
-				if (ids && ids.length > 0) {
-					this.repositoryList = await this.apiClient.getRepositoryInfos(ids, function(id, e) {
-						todelete.push(id);
-					});
-					console.log(this.repositoryList);
-				}
-				// if some repos have been fetched and other not, delete the failed ones (they probably don't exist anymore)
-				if (todelete.length > 0 && todelete.length < ids.length) {
-					for (let id of todelete) {
-						console.log('Removing ' + id);
-						RepositoryData.deleteID(id);
+			this.error = null;
+			try {
+				this.userInfo = await this.apiClient.getUserInfo();
+				this.storageStatus = await this.apiClient.getStorageStatus();
+				if (this.userInfo.anonymous) {
+					// anonymous user - no list available. Use local storage for recent repos.
+					const ids = RepositoryData.getIDs();
+					let todelete = [];
+					console.log(ids);
+					if (ids && ids.length > 0) {
+						this.repositoryList = await this.apiClient.getRepositoryInfos(ids, function(id, e) {
+							todelete.push(id);
+						});
+						console.log(this.repositoryList);
 					}
+					// if some repos have been fetched and other not, delete the failed ones (they probably don't exist anymore)
+					if (todelete.length > 0 && todelete.length < ids.length) {
+						for (let id of todelete) {
+							console.log('Removing ' + id);
+							RepositoryData.deleteID(id);
+						}
+					}
+					console.log('done');
+				} else {
+					// non-anonymous user - use the API endpoind for getting the repository list
+					this.repositoryList = await this.apiClient.listRepositories();
 				}
-				console.log('done');
-			} else {
-				// non-anonymous user - use the API endpoind for getting the repository list
-				this.repositoryList = await this.apiClient.listRepositories();
+			} catch (e) {
+				this.error = e.message;
 			}
 			if (this.repositoryList === null) {
 				this.repositoryList = []; //use an empty list when some fetch failed
