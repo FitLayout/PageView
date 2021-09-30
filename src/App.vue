@@ -23,6 +23,10 @@ export default {
 	methods: {
 		authFailed() {
 			window.localStorage.setItem('redirect', '/browser/');
+			if (this.apiClient.hasToken()) {
+				this.apiClient.logout();
+				window.localStorage.setItem('loginMsg', 'Your session has expired; please re-login.');
+			}
 			window.location.assign('/auth/#/login');
 		}
 	}

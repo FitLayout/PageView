@@ -456,6 +456,10 @@ export class ApiClient {
 
 	//================================================================================
 
+	hasToken() {
+		return (localStorage.getItem('jwt') !== null);
+	}
+
 	logout() {
 		localStorage.removeItem('jwt');
 	}
