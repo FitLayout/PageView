@@ -1,14 +1,12 @@
 import {Model as BoxModel} from '../common/boxMappers.js';
 
-//const SERVER_ROOT = 'http://localhost:8080/fitlayout-web/api';
-const SERVER_ROOT = 'https://' + window.location.host + '/api';
+const develMode = (window.location.port === '3000'); //development server detection
+const flhost = develMode ? 'http://localhost:8080' : ('https://' + window.location.host);  
+
+const SERVER_ROOT = flhost + '/api';
 const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
-
-/*const JWT_SERVER_ROOT = 'http://localhost:8080/jwt-auth';
-const JWT_LOGIN = JWT_SERVER_ROOT + '/auth/login';
-const JWT_REGISTER = JWT_SERVER_ROOT + '/auth/register';*/
 
 
 export class ApiClient {
