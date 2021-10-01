@@ -38,6 +38,18 @@ export default {
 						label: 'Anonymous user',
 						class: 'user-id'
 					});
+					this.items.push({
+						separator: true
+					});
+					this.items.push({
+						label: 'Sign in',
+						icon: 'pi pi-fw pi-sign-in',
+						to: '/',
+						command: () => {
+							window.localStorage.setItem('redirect', '/browser/');
+							location.assign('/auth/#/login');
+						}
+					});
 				} else {
 					this.items.push({
 						label: this.userInfo.userId,
@@ -54,8 +66,8 @@ export default {
 						separator: true
 					});
 					this.items.push({
-						label: 'Logout',
-						icon: 'pi pi-fw pi-power-off',
+						label: 'Sign out',
+						icon: 'pi pi-fw pi-sign-out',
 						to: '/',
 						command: () => {
 							this.$root.apiClient.logout();

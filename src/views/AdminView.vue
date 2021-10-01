@@ -38,7 +38,8 @@ export default {
 			userInfo: null,
 
 			menuItems: [
-				{label: 'Repositories', icon: 'pi pi-fw pi-file-o', to: '/admin/repos'}
+				{label: 'Repositories', icon: 'pi pi-fw pi-file-o', to: '/admin/repos'},
+				{label: 'Authorization', icon: 'pi pi-fw pi-users', url: '/auth/'}
 			]
 		}
 	},
