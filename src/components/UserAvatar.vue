@@ -53,7 +53,8 @@ export default {
 				} else {
 					this.items.push({
 						label: this.userInfo.userId,
-						class: 'user-id'
+						class: 'user-id',
+						url: '/auth/#/profile'
 					});
 					if (this.isAdmin()) {
 						this.items.push({
