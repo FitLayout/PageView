@@ -412,6 +412,27 @@ export class ApiClient {
 
 	}
 
+	async sendReminder(email) {
+		const url = REPOSITORY_ADMIN_ENDPOINT + '/remind/' + encodeURIComponent(email);
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers({
+					'Content-Type': 'application/json'
+				})
+			});
+
+			const rdata = await response.json();
+			if (!response.ok) {
+				throw new Error(rdata.message);
+			}
+
+			return rdata.result;
+		} catch (e) {
+			throw new Error(e);
+		}
+	}
+
 	//================================================================================
 
 	/**

@@ -55,7 +55,27 @@
 						<InlineMessage v-if="error" v-on:click="error = null">{{error}}</InlineMessage>
 					</div>
 				</OverlayPanel>
+			</div>
 
+			<div class="repo-missing">
+				<a href="#" @click="toggleMissing">Missing some repositories?</a>
+
+				<OverlayPanel ref="opMissing" appendTo="body" :showCloseIcon="true" id="op_missing" style="width: 500px" :breakpoints="{'960px': '75vw'}">
+					<p>If you think there are some repositories missing in the list, we may <a href="#" @click="toggleRemind">e-mail you the links
+					to your repositories</a> associated with your e-mail. If you have created your account previously,
+					it may be also a good idea to <a href="/auth/#/login">sign in</a>.</p>
+				</OverlayPanel>
+				<OverlayPanel ref="opRemind" appendTo="body" :showCloseIcon="true" id="op_remind" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+					<div class="p-fluid">
+						<div class="p-field">
+							<label for="remind-email">Your e-mail</label>
+							<InputText id="remind-email" type="email" placeholder="Your e-mail" v-model="remindEmail" />
+							<small id="repo-email-help">We will e-mail you the links to all repositories associated with the given e-mail (if any).</small>
+						</div>
+						<Button type="button" icon="pi pi-check" label="Send reminder" v-on:click="sendReminder" />
+						<InlineMessage v-if="remindError" :severity="remindSeverity" v-on:click="remindError = null">{{remindError}}</InlineMessage>
+					</div>
+				</OverlayPanel>
 			</div>
 
 		</template>
@@ -95,7 +115,11 @@ export default {
 			menuItems: [],
 			newDescr: '',
 			newEmail: '',
-			error: null
+			error: null,
+
+			remindEmail: '',
+			remindError: null,
+			remindSeverity: 'error'
 		}
 	},
 	created () {
@@ -112,9 +136,29 @@ export default {
 				this.error = e.message;
 			}
 		},
+		async sendReminder() {
+			if (this.remindEmail) {
+				try {
+					await this.apiClient.sendReminder(this.remindEmail);
+					this.remindSeverity = 'success';
+					this.remindError = 'Done.';
+				} catch (e) {
+					this.remindSeverity = 'error';
+					this.remindError = e.message;
+				}
+			}
+		},
 		toggleCreate(event) {
 			this.$refs.op.toggle(event);
 			//this.$refs.inputDescr.focus(); //TODO this should be done later
+		},
+		toggleMissing(event) {
+			this.$refs.opMissing.toggle(event);
+		},
+		toggleRemind(event) {
+			console.log('heh');
+			this.$refs.opMissing.toggle(event);
+			this.$refs.opRemind.toggle(event);
 		},
 		toggleShare(event) {
 			this.$refs.opsh.toggle(event);
@@ -147,5 +191,8 @@ export default {
 }
 .repo-list .repo-id em {
 	font-weight: normal;
+}
+.repo-missing {
+	margin: 1em 0 0 0;
 }
 </style>
