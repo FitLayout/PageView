@@ -62,8 +62,9 @@
 
 				<OverlayPanel ref="opMissing" appendTo="body" :showCloseIcon="true" id="op_missing" style="width: 500px" :breakpoints="{'960px': '75vw'}">
 					<p>If you think there are some repositories missing in the list, we may <a href="#" @click="toggleRemind">e-mail you the links
-					to your repositories</a> associated with your e-mail. If you have created your account previously,
-					it may be also a good idea to <a href="/auth/#/login">sign in</a>.</p>
+					to your repositories</a> associated with your e-mail. 
+					<!-- If you have created your account previously,
+					it may be also a good idea to <a href="/auth/#/login">sign in</a>.--></p>
 				</OverlayPanel>
 				<OverlayPanel ref="opRemind" appendTo="body" :showCloseIcon="true" id="op_remind" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 					<div class="p-fluid">
@@ -156,7 +157,6 @@ export default {
 			this.$refs.opMissing.toggle(event);
 		},
 		toggleRemind(event) {
-			console.log('heh');
 			this.$refs.opMissing.toggle(event);
 			this.$refs.opRemind.toggle(event);
 		},

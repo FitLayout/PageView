@@ -3,8 +3,9 @@
 		<h1>Repository: {{repoTitle.value}}</h1>
 		<p>
 			<a :href="repoLink.value">{{repoLink.value}}</a>
-			<span v-if="userInfo && userInfo.anonymous"><br/>Please save this link if you want to
-			access this repository from another device or browser.</span>
+			<span v-if="userInfo && userInfo.value && userInfo.value.anonymous"><br/>
+			Please bookmark this link if you want to access this repository later
+			(e.g. from another device or browser).</span>
 		</p>
 
 		<LinkButton label="Open in Browser" icon="pi pi-globe" 
