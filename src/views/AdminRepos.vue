@@ -6,7 +6,7 @@
 		<DataTable :value="repos" editMode="row" dataKey="username" v-model:editingRows="editingRows"
                 @rowEditInit="onRowEditInit" @rowEditSave="onRowEditSave" @rowEditCancel="onRowEditCancel" responsiveLayout="scroll">
 			<Column field="id" header="ID"></Column>
-			<Column field="owner" header="Owner"></Column>
+			<Column field="owner" header="Owner" :sortable="true"></Column>
 			<Column field="email" header="E-mail">
 				<template #editor="slotProps">
 					<InputText v-model="slotProps.data[slotProps.column.props.field]" autofocus />
@@ -17,6 +17,8 @@
 					<InputText v-model="slotProps.data[slotProps.column.props.field]" autofocus />
 				</template>			
 			</Column>
+			<Column field="createdOn" header="Created" :sortable="true"></Column>
+			<Column field="accessedOn" header="Accessed" :sortable="true"></Column>
 			<Column :rowEditor="true" style="width: 10%; min-width:8rem" bodyStyle="text-align:center"></Column>			
 		</DataTable>
 	</div>
