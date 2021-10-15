@@ -409,7 +409,30 @@ export class ApiClient {
 		} catch (e) {
 			throw new Error(e);
 		}
+	}
 
+	async updateRepositoryInfo(id, data) {
+		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
+		try {
+			let response = await fetch(url, {
+				method: 'PUT',
+				headers: this.headers({
+					'Content-Type': 'application/json'
+				}),
+				body: JSON.stringify(data)
+			});
+
+			this.checkAuth(response);
+			const rdata = await response.json();
+			if (!response.ok) {
+				throw new Error(rdata.message);
+			}
+
+			return rdata.result;
+
+		} catch (e) {
+			throw new Error(e);
+		}
 	}
 
 	async sendReminder(email) {

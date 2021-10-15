@@ -58,8 +58,8 @@ export default {
             this.originalRows[event.index] = {...this.repos[event.index]};
 		},
         onRowEditSave(event) {
-			const userdata = this.repos[event.index];
-			this.apiClient.updateUser(userdata);
+			const rdata = this.repos[event.index];
+			this.apiClient.updateRepositoryInfo(rdata.id, rdata);
         },
         onRowEditCancel(event) {
             this.repos[event.index] = this.originalRows[event.index];
