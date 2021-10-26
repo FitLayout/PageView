@@ -54,7 +54,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result;
+		return data;
 	}
 
     async getSubjectDescriptionObj(subjectIri) {
@@ -65,7 +65,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result.description;
+		return data.description;
 	}
 
     async getSubjectReferences(subjectIri) {
@@ -76,7 +76,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result;
+		return data;
 	}
 
     async getSubjectValue(subjectIri, propertyIri) {
@@ -87,7 +87,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result;
+		return data;
 	}
 
 	async fetchArtifact(artifactIri) {
@@ -138,7 +138,6 @@ export class ApiClient {
 
 	async exportArtifact(artifactIri, mime, thenFunction) {
 			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
-			let pageModel = new BoxModel();
 			let response = await fetch(url, {
 				method: 'GET',
 				headers: this.headers({
@@ -297,7 +296,7 @@ export class ApiClient {
 			}
 
 			const data = await response.json();
-			return data.result;
+			return data;
 		} catch (e) {
 			throw new Error(e);
 		}		
@@ -318,7 +317,7 @@ export class ApiClient {
 			}
 
 			const data = await response.json();
-			return data.result;
+			return data;
 		} catch (e) {
 			throw new Error(e);
 		}		
@@ -339,7 +338,7 @@ export class ApiClient {
 			}
 
 			const data = await response.json();
-			return data.result;
+			return data;
 		} catch (e) {
 			throw new Error(e);
 		}		
@@ -360,7 +359,7 @@ export class ApiClient {
 			}
 
 			const data = await response.json();
-			return data.result;
+			return data;
 		} catch (e) {
 			throw new Error(e);
 		}		
@@ -404,7 +403,7 @@ export class ApiClient {
 				throw new Error(rdata.message);
 			}
 
-			return rdata.result;
+			return rdata;
 
 		} catch (e) {
 			throw new Error(e);
@@ -428,7 +427,7 @@ export class ApiClient {
 				throw new Error(rdata.message);
 			}
 
-			return rdata.result;
+			return rdata;
 
 		} catch (e) {
 			throw new Error(e);
@@ -484,7 +483,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result;
+		return data;
 	}
 
 	async getServiceParams(serviceId) {
@@ -495,7 +494,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result.params;
+		return data.params;
 	}
 
 	//================================================================================
@@ -540,7 +539,7 @@ export class ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data.result;
+		return data;
 	}
 
 }
