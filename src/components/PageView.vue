@@ -453,10 +453,12 @@ export default {
 			this.expandForBox(box);
 			this.selectBox(box);
 			//try to scroll into view
-			let elem = document.getElementById('btr-' + box.documentOrder);
-			if (elem) {
-				elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-			}
+			this.$nextTick(function() {
+				let elem = document.getElementById('btr-' + box.documentOrder);
+				if (elem) {
+					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+				}
+			});
 		},
 
 		selectBox(box) {
@@ -504,10 +506,12 @@ export default {
 
 		showBoxInTable(rect) {
 			this.selectedTableRow = rect;
-			let elem = document.getElementById('btr-' + rect.documentOrder);
-			if (elem) {
-				elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-			}
+			this.$nextTick(function() {
+				let elem = document.getElementById('btr-' + rect.documentOrder);
+				if (elem) {
+					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+				}
+			});
 		},
 
 		// ---
