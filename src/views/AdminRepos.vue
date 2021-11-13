@@ -5,7 +5,11 @@
 	<div class="user-list">
 		<DataTable :value="repos" editMode="row" dataKey="username" v-model:editingRows="editingRows"
                 @rowEditInit="onRowEditInit" @rowEditSave="onRowEditSave" @rowEditCancel="onRowEditCancel" responsiveLayout="scroll">
-			<Column field="id" header="ID"></Column>
+			<Column field="id" header="ID">
+				<template #body="slotProps">
+					<routerLink :to="{name: 'repo', params: { repoId: slotProps.data.id }}" target="_blank">{{slotProps.data.id}}</routerLink>
+				</template>			
+			</Column>
 			<Column field="owner" header="Owner" :sortable="true"></Column>
 			<Column field="email" header="E-mail">
 				<template #editor="slotProps">
