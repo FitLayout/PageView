@@ -149,6 +149,10 @@
 								<label for="showTags" class="form-label">Show tags</label>
 								<InputSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
 							</div>
+							<div class="p-field p-col">
+								<label for="dragSelection" class="form-label">Drag select</label>
+								<InputSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
+							</div>
 						</div>
 					</div>
 					<div class="page-contents">
@@ -157,6 +161,7 @@
 							:outlines="outlines"
 							:rectSelection="rectSelection"
 							:showTags="showTags"
+							:dragSelection="dragSelection"
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
 						</Page>
@@ -233,6 +238,7 @@ export default {
 			outlines: false,
 			rectSelection: false,
 			showTags: true,
+			dragSelection: true,
 
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
