@@ -90,6 +90,23 @@ export class ApiClient {
 		return data;
 	}
 
+	async updateQuery(query) {
+		const url = this.repositoryEndpoint() + '/updateQuery';
+		let response = await fetch(url, {
+			method: 'POST',
+			headers: this.headers({
+				'Content-Type': 'application/sparql-query'
+			}),
+			body: query
+		});
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		return true;
+	}
+
 	async fetchArtifact(artifactIri) {
 			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
 			let pageModel = new BoxModel();

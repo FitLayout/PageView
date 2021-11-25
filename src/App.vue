@@ -6,12 +6,14 @@
 
 <script>
 import {ApiClient} from '@/common/apiclient.js';
+import {RdfUtil} from '@/common/rdfutil.js';
 
 export default {
     name: 'app',
 	data() {
 		return {
-			apiClient: null
+			apiClient: null,
+			rdfUtil: null
 		}
 	},
 	components: {
@@ -19,6 +21,8 @@ export default {
 	created () {
 		this.apiClient = new ApiClient();
 		this.apiClient.onNotAuthorized = this.authFailed;
+		this.rdfUtil = new RdfUtil(this.apiClient);
+		window.rdfutil = this.rdfUtil; //TODO debuging
 	},
 	methods: {
 		authFailed() {
