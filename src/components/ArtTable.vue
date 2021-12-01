@@ -20,17 +20,19 @@
 			</Column>
 			<Column header="Actions">
 				<template #body="slotProps">
-					<LinkButton label="Actions" icon="pi pi-cog" class="p-button-warning"
-						v-if="actionsAvailable(slotProps.node)"
-						:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 
-					<LinkButton label="Browse" icon="pi pi-globe" style="margin-left: 0.5em"
-						:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
-						target="_blank" /> 
-					<SplitButton label="Export" icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.5em"
-						@click="exportDefault(slotProps.node)" 
-						:model="createExportMenu(slotProps.node)" />
-					<Button label="Delete" icon="pi pi-trash" class="p-button-danger" style="margin-left: 0.5em"
-						@click="deleteArtifact(slotProps.node.key)" /> 
+					<div class="repository-actions">
+						<LinkButton icon="pi pi-cog" class="p-button-warning"
+							v-if="actionsAvailable(slotProps.node)"
+							:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 
+						<LinkButton icon="pi pi-globe" style="margin-left: 0.2em"
+							:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
+							target="_blank" /> 
+						<SplitButton icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.2em"
+							@click="exportDefault(slotProps.node)" 
+							:model="createExportMenu(slotProps.node)" />
+						<Button icon="pi pi-trash" class="p-button-danger" style="margin-left: 0.2em"
+							@click="deleteArtifact(slotProps.node.key)" />
+					</div> 
 				</template>
 			</Column>
 		</TreeTable>
@@ -271,4 +273,7 @@ export default {
 </script>
 
 <style>
+.repository-actions {
+	white-space: nowrap;
+}
 </style>
