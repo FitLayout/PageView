@@ -111,7 +111,14 @@ export default {
 					root.push(nart);
 				} else {
 					let part = index[nart.parent];
-					part.children.push(nart);
+					if (part === undefined) {
+						console.warn('Artifact ' + nart.key + ' has parent ' + nart.parent
+						+ ' but there is no such artifact available.');
+						// console.log(nart);
+						root.push(nart);
+					} else {
+						part.children.push(nart);
+					}
 				}
 			}
 			return root;
