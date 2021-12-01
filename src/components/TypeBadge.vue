@@ -40,6 +40,10 @@ export default {
 					this.typeName = 'Area Tree';
 					this.typeClass = 'areatree';
 					break;
+				case SEGM.ChunkSet:
+					this.typeName = 'Chunk Set';
+					this.typeClass = 'chunkset';
+					break;
 				default:
 					this.type = 'unknown';
 					this.typeClass = 'unknown';
