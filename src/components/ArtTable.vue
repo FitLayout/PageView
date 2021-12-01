@@ -1,5 +1,6 @@
 <template>
 	<div class="art-table">
+		<ConfirmDialog></ConfirmDialog>
 		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true" sortMode="single" sortField="timestamp" :sortOrder="-1">
 			<Column header="Created" field="timestamp" :expander="true" :sortable="true" headerStyle="width: 15em">
 				<template #body="slotProps">
@@ -28,6 +29,8 @@
 					<SplitButton label="Export" icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.5em"
 						@click="exportDefault(slotProps.node)" 
 						:model="createExportMenu(slotProps.node)" />
+					<Button label="Delete" icon="pi pi-trash" class="p-button-danger" style="margin-left: 0.5em"
+						@click="deleteArtifact(slotProps.node.key)" /> 
 				</template>
 			</Column>
 		</TreeTable>
@@ -38,6 +41,8 @@
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import SplitButton from 'primevue/splitbutton';
+import Button from 'primevue/button';
+import ConfirmDialog from 'primevue/confirmdialog';
 
 import TypeBadge from '@/components/TypeBadge.vue';
 import LinkButton from '@/components/LinkButton.vue';
@@ -47,6 +52,7 @@ import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
 import {ApiClient} from '@/common/apiclient.js';
+import IriDecoder from '@/common/iridecoder.js';
 
 export default {
 	name: 'ArtTable',
@@ -54,9 +60,11 @@ export default {
 		TreeTable,
 		Column,
 		SplitButton,
+		Button,
 		TypeBadge,
 		LinkButton,
-		Iri
+		Iri,
+		ConfirmDialog
 	},
 	props: {
 	},
@@ -236,6 +244,26 @@ export default {
         		link.click();
         		URL.revokeObjectURL(link.href);
 			});
+		},
+
+		deleteArtifact(iri) {
+			let dec = new IriDecoder();
+			let shortIri = dec.encodeIri(iri);
+			this.$confirm.require({
+                message: 'Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?',
+                header: 'Artifact deletion',
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => {
+					try {
+						this.artifact = await this.apiClient.deleteArtifact(iri);
+					} catch (error) {
+						console.error('Couldnt delete artifact!', error);
+					}
+					this.fetchArtifacts();
+                },
+                reject: () => {
+                }
+            });
 		}
 
 	}
