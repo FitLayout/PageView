@@ -6,7 +6,10 @@
 		<p>
 			<strong class="badge">{{ typeName }}</strong>&nbsp;
 			<Iri :iri="iri"></Iri>
-			<i class="pi pi-eye" title="Focus on this page" v-if="typeName === 'Page'"></i>
+			<span v-if="isRoot">
+				<i class="pi pi-eye" v-tooltip="'Focus on this page only'" v-if="!focus" @click="toggleFocus"></i>
+				<i class="pi pi-eye focused" v-tooltip="'Page focused, click to cancel focus'" v-if="focus" @click="toggleFocus"></i>
+			</span>
 		</p>
 		<div v-if="artifact">
 			<p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
@@ -40,6 +43,12 @@
 }
 .artifact .pi-eye {
 	color: var(--primary-color);
+	padding: 3px;
+}
+.artifact .pi-eye.focused {
+	background-color: var(--primary-color);
+	color: var(--primary-color-text);
+	font-weight: bold;
 }
 .artifact .pi-trash:hover {
 	color: #D32F2F;
@@ -93,13 +102,14 @@ export default {
 	inject: ['apiClient'],
 	props: {
 		iri: null,
-		expand: null
+		focus: null
 	},
 	data () {
 		return {
 			artifact: null,
 			typeName: null,
-			typeClass: null
+			typeClass: null,
+			isRoot: null
 		}
 	},
 	created () {
@@ -120,6 +130,7 @@ export default {
 
 		update() {
 			//console.log(this.artifact);
+			this.isRoot = (this.artifact.hasParentArtifact === undefined);
 			switch (this.artifact._type) {
 				case BOX.Page:
 					this.typeName = 'Page';
@@ -142,6 +153,10 @@ export default {
 
 		async deleteArtifact() {
 			this.$emit('delete-artifact', this.iri);
+		},
+
+		toggleFocus() {
+			this.$emit('toggle-focus');
 		}
 		
 	}

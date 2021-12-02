@@ -1,7 +1,8 @@
 <template>
 	<ul class="artlist">
 		<li v-for="art in children" :key="art._iri" :class="(art._iri === currentIri) ? 'selected':''">
-			<ArtInfo :iri="art._iri" 
+			<ArtInfo :iri="art._iri" :focus="itemFocused"
+				v-on:toggle-focus="toggleFocus"
 				v-on:select-artifact="selectArtifact"
 				v-on:delete-artifact="deleteArtifact"></ArtInfo>
 			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri" 
@@ -32,6 +33,8 @@ export default {
 	},
 	data () {
 		return {
+			focus: true,
+			parents: null
 		}
 	},
 	computed: {
@@ -39,20 +42,30 @@ export default {
 			if (this.artifacts) {
 				let ret = [];
 				for (let art of this.artifacts) {
-					if ((this.root !== undefined && art.hasParentArtifact !== undefined && art.hasParentArtifact._iri === this.root) 
-					    || (this.root === undefined && art.hasParentArtifact === undefined)) {
+					if (this.root === undefined && art.hasParentArtifact === undefined) {
+						// root artifacts
+						if (this.focus && this.currentIri) {
+							this.indexParents();
+							const rootIri = this.findRootIri(this.currentIri);
+							if (art._iri === rootIri) { //allow only root artifact for the current selection  
+								ret.push(art);
+							}
+						} else {
+							ret.push(art); // no focus - push all
+						}
+					} else if (this.root !== undefined && art.hasParentArtifact !== undefined && art.hasParentArtifact._iri === this.root) {
+						// derived artifacts
 						ret.push(art);
-					}
+					} 
 				}
 				return ret;
 			} else {
 				return null;
 			}
+		},
+		itemFocused() {
+			return this.focus && this.currentIri;
 		}
-	},
-	watch: {
-		// call again the method if the route changes
-		//'$route': 'fetchData'
 	},
 	methods: {
 		selectArtifact(iri) {
@@ -60,6 +73,29 @@ export default {
 		},
 		deleteArtifact(iri) {
 			this.$emit('delete-artifact', iri);
+		},
+		indexParents() {
+			this.parents = {};
+			for (let art of this.artifacts) {
+				if (art.hasParentArtifact !== undefined) {
+					this.parents[art._iri] = art.hasParentArtifact._iri;
+				}
+			}
+		},
+		findRootIri(iri) {
+			let ret = iri;
+			let change = true;
+			while (change) {
+				if (this.parents[ret] !== undefined) {
+					ret = this.parents[ret];
+				} else {
+					change = false;
+				}
+			}
+			return ret;
+		},
+		toggleFocus() {
+			this.focus = !this.focus;
 		}
 	}
 }
