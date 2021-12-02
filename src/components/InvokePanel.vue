@@ -58,6 +58,7 @@ export default {
 	},
 	inject: ['apiClient'],
 	props: {
+		id: null,
 		source: null,
 		target: null,
 		action: null,
@@ -85,6 +86,7 @@ export default {
 	},
 	async created () {
 		await this.loadServices();
+		this.restoreService();
 		await this.restoreParams();
 	},
 	watch: {
@@ -180,6 +182,13 @@ export default {
 			return false;
 		},
 
+		restoreService() {
+			let selected = localStorage.getItem('service-' + this.id);
+			if (selected) {
+				this.key = selected;
+			}
+		},
+
 		async restoreParams() {
 			if (this.key) {
 				const str = localStorage.getItem('params-' + this.key);
@@ -194,6 +203,7 @@ export default {
 
 		saveParams() {
 			if (this.key) {
+				localStorage.setItem('service-' + this.id, this.key);
 				localStorage.setItem('params-' + this.key, JSON.stringify(this.params));
 			}
 		},
