@@ -22,15 +22,19 @@
 				<template #body="slotProps">
 					<div class="repository-actions">
 						<LinkButton icon="pi pi-cog" class="p-button-warning"
+							v-tooltip.top="'Details and Actions'"
 							v-if="actionsAvailable(slotProps.node)"
 							:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 
 						<LinkButton icon="pi pi-globe" style="margin-left: 0.2em"
+							v-tooltip.top="'Open in Browser'"
 							:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
 							target="_blank" /> 
 						<SplitButton icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.2em"
+							v-tooltip.top="'Export artifact'"
 							@click="exportDefault(slotProps.node)" 
 							:model="createExportMenu(slotProps.node)" />
 						<Button icon="pi pi-trash" class="p-button-danger" style="margin-left: 0.2em"
+							v-tooltip.top="'Delete artifact'"
 							@click="deleteArtifact(slotProps.node.key)" />
 					</div> 
 				</template>
