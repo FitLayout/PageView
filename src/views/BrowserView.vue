@@ -32,6 +32,10 @@
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-text" :class="panelClass('text')"
 				v-on:created="artifactCreated"></InvokePanel>
+			<InvokePanel id="rr" :target="connectionSetType"
+				:currentArtifact="currentArtifact" action="Process" 
+				class="serv-panel panel-rels" :class="panelClass('rels')"
+				v-on:created="artifactCreated"></InvokePanel>
 		</div>
 
 		<div class="content-row">
@@ -101,6 +105,7 @@ export default {
 			pageType: BOX.Page,
 			areaTreeType: SEGM.AreaTree,
 			chunkSetType: SEGM.ChunkSet,
+			connectionSetType: BOX.ConnectionSet,
 			mode: 'render',
 			artifacts: null,
 			currentArtifact: null,
@@ -113,6 +118,7 @@ export default {
 				{ label: 'Segmentation', class: 'normal', command: () => {this.selectMode('segm', 1);} },
 				{ label: 'Postprocess', class: 'normal', command: () => {this.selectMode('post', 2);} },
 				{ label: 'Text', class: 'normal', command: () => {this.selectMode('text', 3);} },
+				{ label: 'Relations', class: 'normal', command: () => {this.selectMode('rels', 3);} },
 			]
 		}
 	},
