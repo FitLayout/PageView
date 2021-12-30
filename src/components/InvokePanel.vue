@@ -157,7 +157,6 @@ export default {
 			this.saveParams();
 			console.log('invoke');
 			console.log(this.selection[this.key]);
-			let src = this.findParentOfType()
 			this.loading = true;
 
 			let srcArtifact = null;
@@ -166,7 +165,6 @@ export default {
 				srcArtifact = this.findParentOfType(srcType);
 			}
 			const srcIri = srcArtifact ? srcArtifact._iri : null;
-			console.log('src');
 			console.log(srcArtifact);
 
 			try {
@@ -184,7 +182,7 @@ export default {
 
 		restoreService() {
 			let selected = localStorage.getItem('service-' + this.id);
-			if (selected) {
+			if (selected && this.selection[selected] !== undefined) {
 				this.key = selected;
 			}
 		},
