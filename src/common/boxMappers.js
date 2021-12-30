@@ -82,6 +82,7 @@ class RectAreaCreator extends ObjectCreator {
 			documentOrder: { name: 'http://fitlayout.github.io/ontology/render.owl#documentOrder', type: 'int' },
 			hasTopBorder: { name: 'http://fitlayout.github.io/ontology/render.owl#hasTopBorder', type: 'object<http://fitlayout.github.io/ontology/render.owl#Border>' },
 			hasLeftBorder: { name: 'http://fitlayout.github.io/ontology/render.owl#hasLeftBorder', type: 'object<http://fitlayout.github.io/ontology/render.owl#Border>' },
+			contentLength: { name: 'http://fitlayout.github.io/ontology/render.owl#contentLength', type: 'int' },
 			fontWeight: { name: 'http://fitlayout.github.io/ontology/render.owl#fontWeight', type: 'float' },
 			fontSize: { name: 'http://fitlayout.github.io/ontology/render.owl#fontSize', type: 'float' },
 			underline: { name: 'http://fitlayout.github.io/ontology/render.owl#underline', type: 'float' },
@@ -109,7 +110,6 @@ class AreaCreator extends RectAreaCreator {
 		this.addMapping({
 			tagSupport: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#tagSupport', type: 'object' },
 			containsBox: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsBox', type: 'object<http://fitlayout.github.io/ontology/render.owl#Box>[]' },
-			contentLength: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#contentLength', type: 'int' },
 			belongsTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>' },
 			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
@@ -161,6 +161,15 @@ class ChunkSetCreator extends ArtifactCreator {
 			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			// Inverse collection for TextChunk.belongsToChunkSet.
 			textChunks: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#TextChunk>[]', inverse: true },
+		});
+	}
+}
+
+class ConnectionSetCreator extends ArtifactCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			hasSource: { name: 'http://fitlayout.github.io/ontology/render.owl#hasSource', type: 'object<http://fitlayout.github.io/ontology/fitlayout.owl#Artifact>' },
 		});
 	}
 }
@@ -242,6 +251,7 @@ const registry = {
 	'http://fitlayout.github.io/ontology/segmentation.owl#AreaTree': new AreaTreeCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Box': new BoxCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#ChunkSet': new ChunkSetCreator(),
+	'http://fitlayout.github.io/ontology/render.owl#ConnectionSet': new ConnectionSetCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContainerBox': new ContainerBoxCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContentBox': new ContentBoxCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Image': new ImageCreator(),
