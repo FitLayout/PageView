@@ -118,7 +118,7 @@ export default {
 				{ label: 'Segmentation', class: 'normal', command: () => {this.selectMode('segm', 1);} },
 				{ label: 'Postprocess', class: 'normal', command: () => {this.selectMode('post', 2);} },
 				{ label: 'Text', class: 'normal', command: () => {this.selectMode('text', 3);} },
-				{ label: 'Relations', class: 'normal', command: () => {this.selectMode('rels', 3);} },
+				{ label: 'Relations', class: 'normal', command: () => {this.selectMode('rels', 4);} },
 			]
 		}
 	},
