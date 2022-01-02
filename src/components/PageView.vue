@@ -39,19 +39,26 @@
 							<TabPanel header="Description">
 								<div class="descr-scroll">
 									<div class="descr-table" v-if="subjectModel">
-										<DataTable :value="subjectModel" class="p-datatable-sm" 
+										<DataTable :value="subjectModel" class="p-datatable-sm"
+											v-model:filters="dFilters" filterDisplay="row"
 											:resizableColumns="true" columnResizeMode="expand"
 											:scrollable="true" scrollHeight="flex"
 											showGridlines>
-											<Column header="Property">
+											<Column header="Property" filterField="p.value">
 												<template #body="rowdata">
 													<Iri :iri="rowdata.data.p.value" />
 												</template>
+												<template #filter="{filterModel,filterCallback}">
+													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+												</template>												
 											</Column>
-											<Column header="Value">
+											<Column header="Value" filterField="v.value">
 												<template #body="rowdata">
 													<ValueInfo :data="rowdata.data" />
 												</template>
+												<template #filter="{filterModel,filterCallback}">
+													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+												</template>												
 											</Column>
 										</DataTable>
 									</div>
@@ -61,18 +68,25 @@
 								<div class="descr-scroll">
 									<div class="descr-table" v-if="subjectRefs">
 										<DataTable :value="subjectRefs" class="p-datatable-sm" 
+											v-model:filters="rFilters" filterDisplay="row"
 											:resizableColumns="true" columnResizeMode="expand"
 											:scrollable="true" scrollHeight="flex" 
 											showGridlines>
-											<Column header="Subject">
+											<Column header="Subject" filterField="v.value">
 												<template #body="rowdata">
 													<ValueInfo :data="rowdata.data" />
 												</template>
+												<template #filter="{filterModel,filterCallback}">
+													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+												</template>												
 											</Column>
-											<Column header="Property">
+											<Column header="Property" filterField="p.value">
 												<template #body="rowdata">
 													<Iri :iri="rowdata.data.p.value" />
 												</template>
+												<template #filter="{filterModel,filterCallback}">
+													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+												</template>												
 											</Column>
 										</DataTable>
 									</div>
@@ -197,6 +211,8 @@ import {Model as BoxModel} from '@/common/boxMappers.js';
 import ObjectResolver from '@/common/resolver.js';
 import TreeModel from '@/common/treemodel.js';
 
+import {FilterMatchMode,FilterOperator} from 'primevue/api';
+
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
 
 export default {
@@ -273,7 +289,17 @@ export default {
 
 			// Data table for showing chunks
 			tableModel: null,
-			selectedTableRow: null
+			selectedTableRow: null,
+
+			// Property table filters
+			dFilters: {
+                'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
+				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
+            },			
+			rFilters: {
+				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
+            }			
 		}
 	},
 	created () {
@@ -656,6 +682,13 @@ export default {
 .descr-table .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
 	padding: 0.25em 0.5em;
 	font-size: 90%;
+}
+.descr-table .p-datatable.p-datatable-sm .p-datatable-thead > tr > th.p-filter-column {
+	padding: 0.25em 0.5em;
+	font-size: 90%;
+}
+th.p-filter-column .p-inputtext {
+	padding: 0.25em 0.5em;
 }
 .annotation-item {
 	margin: 1em;
