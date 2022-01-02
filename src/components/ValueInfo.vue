@@ -124,8 +124,8 @@ export default {
 						this.valueType = 'tag';
 						this.displayValue = descr[SEGM.hasTag][0].value + ':' + descr[SEGM.support][0].value;
 						this.apiClient.getSubjectDescriptionObj(descr[SEGM.hasTag][0].value).then(tagDescr => {
-							this.displayValue = tagDescr[SEGM.hasName][0].value + ':' + descr[SEGM.support][0].value;
-							this.displayStyle = 'background-color:' + stringColor(tagDescr[SEGM.hasName][0].value);
+							this.displayValue = tagDescr[SEGM.name][0].value + ':' + descr[SEGM.support][0].value;
+							this.displayStyle = 'background-color:' + stringColor(tagDescr[SEGM.name][0].value);
 						});
 					}
 					// rectangles
