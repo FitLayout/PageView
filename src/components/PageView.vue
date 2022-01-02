@@ -197,6 +197,8 @@ import {Model as BoxModel} from '@/common/boxMappers.js';
 import ObjectResolver from '@/common/resolver.js';
 import TreeModel from '@/common/treemodel.js';
 
+const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
+
 export default {
 	name: 'PageView',
 	components: {
@@ -343,14 +345,14 @@ export default {
 				}
 
 				this.status = deps;
-				this.subjectModel = (deps.description.length <= 50) ? deps.description : deps.description.slice(50);
+				this.subjectModel = (deps.description.length <= MAX_PROPERTY_ITEMS) ? deps.description : deps.description.slice(MAX_PROPERTY_ITEMS);
 				this.subjectAnnotations = this.getAnnotations(deps.description);
 				this.loading = false;
 
 				//fetch references
 				this.apiClient.getSubjectReferences(this.subjectIri).then((data) => {
 					let refs = data.results.bindings;
-					this.subjectRefs = (refs.length <= 50) ? refs : refs.slice(50);
+					this.subjectRefs = (refs.length <= MAX_PROPERTY_ITEMS) ? refs : refs.slice(MAX_PROPERTY_ITEMS);
 				});
 
 				this.$emit('status-update', this.status);
