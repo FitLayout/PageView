@@ -192,6 +192,15 @@ export default {
 						console.error('Couldnt delete artifact!', error);
 					}
 					this.fetchArtifacts();
+					// if the deleted artifact was selected try to select another one
+					if (this.currentArtifactIri === iri) {
+						if (this.currentArtifact.hasParentArtifact) {
+							const parentIri = this.currentArtifact.hasParentArtifact._iri;
+							this.$router.push({name: 'show', params: {repoId: this.repoId, iri: parentIri}});
+						} else {
+							this.$router.push({name: 'browser', params: {repoId: this.repoId }});
+						}
+					}
                 },
                 reject: () => {
                 }
