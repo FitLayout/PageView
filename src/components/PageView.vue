@@ -207,6 +207,7 @@ import ValueInfo from './ValueInfo.vue';
 import RDFS from '@/ontology/RDFS.js';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
+import FL from '@/ontology/FL.js';
 import {Model as BoxModel} from '@/common/boxMappers.js';
 import ObjectResolver from '@/common/resolver.js';
 import TreeModel from '@/common/treemodel.js';
@@ -327,7 +328,7 @@ export default {
 			try {
 				let resolver = new ObjectResolver(client);
 				console.log('RESOLVING');
-				let deps = await resolver.resolveObjectIRI(this.subjectIri, this.status);
+				let deps = await this.resolveArtifact(resolver, this.subjectIri);
 
 				console.log(deps);
 				if (deps.type !== 'unknown') {
@@ -387,6 +388,28 @@ export default {
 				this.loading = false;
 				console.error('Error while fetching artifact data', error);
 			}
+		},
+
+		async resolveArtifact(resolver, iri) {
+			let baseDeps = await resolver.resolveObjectIRI(iri, this.status);
+			let deps = baseDeps;
+			let resolved = false;
+			while (!resolved) {
+				if (deps.type === 'unknown') { //if the type is unknown, repeat the resolution with a parent
+					if (deps.objData[FL.hasParentArtifact]) {
+						let pIri = deps.objData[FL.hasParentArtifact][0].value;
+						deps = await resolver.resolveObjectIRI(pIri, this.status);
+					} else {
+						resolved = true; //no parent - give up
+					}
+				} else {
+					resolved = true; //a know type found
+				}
+			}
+			deps.description = baseDeps.description;
+			//deps.artifactIri = baseDeps.artifactIri;
+			//deps.artifact = baseDeps.artifact;
+			return deps;
 		},
 
 		async addTag() {

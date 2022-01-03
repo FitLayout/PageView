@@ -116,9 +116,14 @@ export default class ObjectResolver {
 				rectangles: chunkSet.textChunks
 			}
 		} else {
+			const objData = await this.client.getSubjectDescriptionObj(iri);
+			const art = await this.getArtifact(iri, currentStatus);
 			return {
 				type: 'unknown',
-				description: descr
+				description: descr,
+				objData: objData,
+				artifactIri: art._iri,
+				artifact: art 
 			};
 		}
 	}
