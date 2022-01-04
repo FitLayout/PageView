@@ -407,8 +407,8 @@ export default {
 				}
 			}
 			deps.description = baseDeps.description;
-			//deps.artifactIri = baseDeps.artifactIri;
-			//deps.artifact = baseDeps.artifact;
+			deps.artifactIri = baseDeps.artifactIri;
+			deps.artifact = baseDeps.artifact;
 			return deps;
 		},
 
