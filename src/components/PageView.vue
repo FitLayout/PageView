@@ -102,7 +102,7 @@
 									<OverlayPanel ref="addTagPanel">
 										<div class="annotationType">
 											<h4>Add tag</h4>
-											<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="id" placeholder="Select tag" />
+											<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" />
 											<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
 										</div>
 									</OverlayPanel>
@@ -259,12 +259,7 @@ export default {
 			
 			// Tags and labels addition
 			selectedTag: null,
-			tags: [
-				{id:0, name: 'Tag0'},
-				{id:1, name: 'Tag1'},
-				{id:2, name: 'Tag2'},
-				{id:3, name: 'Tag3'}
-			],
+			tags: [],
 			selectedLabelType: null,
 			labelText: null,
 			labelTypes: [
@@ -305,6 +300,7 @@ export default {
 	},
 	created () {
 		this.status = { type: 'unknown' };
+		this.fetchTags();
 		this.update();
 	},
 	watch: {
@@ -412,6 +408,10 @@ export default {
 			return deps;
 		},
 
+		async fetchTags() {
+			this.tags = await this.apiClient.getTags();
+		},
+
 		async addTag() {
 			if (this.selectedTag == null)
 				return;
@@ -420,7 +420,7 @@ export default {
 
 			var tagDesc = null;
 			for (var tag of this.tags) {
-				if (tag['id'] == this.selectedTag) {
+				if (tag['iri'] == this.selectedTag) {
 					tagDesc = tag['name'];
 					break;
 				}

@@ -22,6 +22,10 @@ export class ApiClient {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/repository';
 	}
 
+	tagsEndpoint() {
+		return SERVER_ROOT + '/r/' + this.currentRepo + '/tags';		
+	}
+
 	setRepository(repo) {
 		this.currentRepo = repo;
 		this.touch(); // async, just for updating the last access time
@@ -557,6 +561,27 @@ export class ApiClient {
 		this.checkAuth(response);
 		const data = await response.json();
 		return data;
+	}
+
+	async getTags() {
+		const url = this.tagsEndpoint();
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers()
+			});
+
+			this.checkAuth(response);
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data;
+		} catch (e) {
+			throw new Error(e);
+		}		
 	}
 
 }
