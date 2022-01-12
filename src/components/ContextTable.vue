@@ -1,6 +1,17 @@
 <template>
 	<div class="context-table">
 		<ConfirmDialog></ConfirmDialog>
+		<Dialog header="Edit context" v-model:visible="displayEditor"
+		      :maximizable=true :modal=true >
+			<p><b>Editing context</b> <code>{{editIri}}</code></p>
+			<Textarea v-model="editorText" rows="30" cols="100" />
+			<template #footer>
+		        <Button label="Cancel" icon="pi pi-times" class="p-button-text"
+			        @click="closeEditor()" />
+                <Button label="Save" icon="pi pi-check" autofocus
+					@click="saveEditor()" />
+	        </template>
+		</Dialog>		
 		<DataTable :value="contexts">
 			<Column field="iri" header="IRI"></Column>
 			<Column header="Actions">
@@ -29,6 +40,8 @@ import Column from 'primevue/column';
 import SplitButton from 'primevue/splitbutton';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
+import Dialog from 'primevue/dialog';
+import Textarea from 'primevue/textarea';
 
 import IriDecoder from '@/common/iridecoder.js';
 
@@ -39,17 +52,23 @@ export default {
 		Column,
 		SplitButton,
 		Button,
-		ConfirmDialog
+		ConfirmDialog,
+		Dialog,
+		Textarea
 	},
 	props: {
 	},
 	data () {
 		return {
 			apiClient: this.$root.apiClient,
-			contexts: null
+			contexts: null,
+			displayEditor: false,
+			editorText: null,
+			editIri: null
 		}
 	},
 	created () {
+		this.editorText = '';
 		this.update();
 	},
 	watch: {
@@ -88,6 +107,22 @@ export default {
 				}
 			);
 			return items;
+		},
+
+		editContext(iri) {
+			let me = this;
+			this.editIri = iri;
+			this.apiClient.exportContext(iri, 'text/turtle', async function(blob) {
+				me.editorText = await blob.text();
+				me.displayEditor = true;
+			});
+		},
+		closeEditor() {
+			this.displayEditor = false;
+		},
+		saveEditor() {
+			this.apiClient.replaceContext(this.editIri, 'text/turtle', this.editorText);
+			this.displayEditor = false;
 		},
 
 		exportContext(iri, mime, ext) {

@@ -131,19 +131,35 @@ export class ApiClient {
 	}
 
 	async exportContext(contextIri, mime, thenFunction) {
-			const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
-			let response = await fetch(url, {
-				method: 'GET',
-				headers: this.headers({
-					'Accept': mime
-				})
+		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers({
+				'Accept': mime
 			})
-			this.checkAuth(response);
-			if (!response.ok) {
-				let error = response.status;
-				throw new Error(error);
-			}
-			response.blob().then(thenFunction);
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		response.blob().then(thenFunction);
+	}
+
+	async replaceContext(contextIri, mime, data) {
+		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
+		let response = await fetch(url, {
+			method: 'PUT',
+			headers: this.headers({
+				'Content-Type': mime
+			}),
+			body: data
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
 	}
 
 	async fetchArtifact(artifactIri) {
