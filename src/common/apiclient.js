@@ -111,6 +111,41 @@ export class ApiClient {
 		return true;
 	}
 
+	async getContexts() {
+		const url = this.repositoryEndpoint() + '/contexts';
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers()
+		});
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		const resp = await response.json();
+		let ret = [];
+		for (let bind of resp.results.bindings) {
+			ret.push({ iri: bind.contextID.value });
+		}
+		return ret;
+	}
+
+	async exportContext(contextIri, mime, thenFunction) {
+			const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers({
+					'Accept': mime
+				})
+			})
+			this.checkAuth(response);
+			if (!response.ok) {
+				let error = response.status;
+				throw new Error(error);
+			}
+			response.blob().then(thenFunction);
+	}
+
 	async fetchArtifact(artifactIri) {
 			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
 			let pageModel = new BoxModel();

@@ -241,8 +241,6 @@ export default {
 		},
 
 		exportArtifact(art, mime, ext) {
-			console.log(mime);
-			console.log(art);
 			this.apiClient.exportArtifact(art.data.id, mime, function(blob) {
 				const link = document.createElement('a');
         		link.href = URL.createObjectURL(blob);

@@ -38,9 +38,27 @@
 
 		</div>
 
-		<div class="artifact-view">
-			<ArtTable />
-		</div>
+		<TabView>
+			<TabPanel>
+				<template #header>
+					<i class="pi pi-fw pi-sitemap"></i>
+					<span>Artifacts</span>
+				</template>
+				<div class="artifact-view">
+					<ArtTable />
+				</div>
+			</TabPanel>
+			<TabPanel>
+				<template #header>
+					<i class="pi pi-fw pi-database"></i>
+					<span>Contexts</span>
+				</template>
+				<div class="context-view">
+					<ContextTable />
+				</div>
+			</TabPanel>
+		</TabView>
+
 	</div>
 </template>
 
@@ -50,9 +68,12 @@ import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import ProgressSpinner from 'primevue/progressspinner';
 import Message from 'primevue/message';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 
 import LinkButton from '@/components/LinkButton.vue';
 import ArtTable from '@/components/ArtTable.vue';
+import ContextTable from '@/components/ContextTable.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
@@ -62,11 +83,14 @@ export default {
 	components: {
 		Button,
 		ArtTable,
+		ContextTable,
 		InputText,
 		InputNumber,
 		ProgressSpinner,
 		Message,
-		LinkButton
+		LinkButton,
+		TabView,
+		TabPanel
 	},
 	inject: ['apiClient', 'userInfo', 'repoInfo', 'repoTitle', 'repoLink'],
 	data() {
@@ -75,7 +99,7 @@ export default {
 			renderWidth: 1200,
 			renderHeight: 800,
 			loading: false,
-			error: null,
+			error: null
 		}
 	},
 	computed: {
