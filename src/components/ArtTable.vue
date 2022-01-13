@@ -1,6 +1,6 @@
 <template>
 	<div class="art-table">
-		<ConfirmDialog></ConfirmDialog>
+		<ConfirmDialog group="confirmDeleteArtifact"></ConfirmDialog>
 		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true" sortMode="single" sortField="timestamp" :sortOrder="-1">
 			<Column header="Created" field="timestamp" :expander="true" :sortable="true" headerStyle="width: 15em">
 				<template #body="slotProps">
@@ -254,6 +254,7 @@ export default {
 			let dec = new IriDecoder();
 			let shortIri = dec.encodeIri(iri);
 			this.$confirm.require({
+				group: 'confirmDeleteArtifact',
                 message: 'Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?',
                 header: 'Artifact deletion',
                 icon: 'pi pi-exclamation-triangle',

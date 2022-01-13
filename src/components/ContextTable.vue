@@ -1,6 +1,7 @@
 <template>
 	<div class="context-table">
-		<ConfirmDialog></ConfirmDialog>
+		<ConfirmDialog group="confirmDelete"></ConfirmDialog>
+		<ConfirmDialog group="confirmInit"></ConfirmDialog>
 		<Dialog header="Edit context" v-model:visible="displayEditor"
 		      :maximizable=true :modal=true >
 			<p><b>Editing context</b> <code>{{editIri}}</code></p>
@@ -74,8 +75,8 @@ export default {
 			serviceMenu: [
 				{
 					label: 'Re-initialize metadata contexts',
-					command: () => {
-						this.reinitMetadata();
+					command: async () => {
+						await this.reinitMetadata();
 					}
 				}
 			]
@@ -153,6 +154,7 @@ export default {
 			let dec = new IriDecoder();
 			let shortIri = dec.encodeIri(iri);
 			this.$confirm.require({
+				group: 'confirmDelete',
                 message: 'Are you sure to delete the context ' + shortIri + '?',
                 header: 'Context deletion',
                 icon: 'pi pi-exclamation-triangle',
@@ -169,8 +171,9 @@ export default {
             });
 		},
 
-		reinitMetadata() {
+		async reinitMetadata() {
 			this.$confirm.require({
+				group: 'confirmInit',
                 message: 'This will replace the metadata contexts by their default contents. Proceed?',
                 header: 'Re-initialize metadata',
                 icon: 'pi pi-exclamation-triangle',
