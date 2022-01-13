@@ -39,6 +39,14 @@ export class ApiClient {
 		});
 	}
 
+	async forceInitMetadata() {
+		const url = this.repositoryEndpoint() + '/forceInitRepo';
+		await fetch(url, {
+			method: 'GET',
+			headers: this.headers()
+		});
+	}
+
     async getTypeByIRI(iri) {
 		const url = this.repositoryEndpoint() + '/type/' + encodeURIComponent(iri);
 		let response = await fetch(url, {

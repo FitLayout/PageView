@@ -13,6 +13,11 @@
 	        </template>
 		</Dialog>		
 		<DataTable :value="contexts">
+			<template #header>
+				<div class="table-header">
+                    <SplitButton icon="pi pi-cog" :model="serviceMenu" />
+                </div>
+			</template>
 			<Column field="iri" header="IRI"></Column>
 			<Column header="Actions">
 				<template #body="slotProps">
@@ -64,7 +69,16 @@ export default {
 			contexts: null,
 			displayEditor: false,
 			editorText: null,
-			editIri: null
+			editIri: null,
+
+			serviceMenu: [
+				{
+					label: 'Re-initialize metadata contexts',
+					command: () => {
+						this.reinitMetadata();
+					}
+				}
+			]
 		}
 	},
 	created () {
@@ -153,6 +167,24 @@ export default {
                 reject: () => {
                 }
             });
+		},
+
+		reinitMetadata() {
+			this.$confirm.require({
+                message: 'This will replace the metadata contexts by their default contents. Proceed?',
+                header: 'Re-initialize metadata',
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => {
+					try {
+						await this.apiClient.forceInitMetadata();
+					} catch (error) {
+						console.error('Error!', error);
+					}
+					this.update();
+                },
+                reject: () => {
+                }
+            });
 		}
 
 	}
@@ -160,4 +192,9 @@ export default {
 </script>
 
 <style>
+.table-header {
+	display: flex;
+	align-items: center;
+	justify-content: right;
+}
 </style>
