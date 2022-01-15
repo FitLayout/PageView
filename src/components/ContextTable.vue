@@ -9,6 +9,7 @@
 			</p>
 			<Textarea v-model="editorText" rows="30" cols="100" />
 			<template #footer>
+				<InlineMessage v-if="editorError">{{editorError}}</InlineMessage>
 		        <Button label="Cancel" icon="pi pi-times" class="p-button-text"
 			        @click="closeEditor()" />
                 <Button label="Save" icon="pi pi-check" autofocus
@@ -53,6 +54,7 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
+import InlineMessage from 'primevue/inlinemessage';
 
 import IriDecoder from '@/common/iridecoder.js';
 
@@ -66,7 +68,8 @@ export default {
 		ConfirmDialog,
 		Dialog,
 		Textarea,
-		InputText
+		InputText,
+		InlineMessage
 	},
 	props: {
 	},
@@ -76,6 +79,7 @@ export default {
 			contexts: null,
 			displayEditor: false,
 			editorText: null,
+			editorError: null,
 			editIri: null,
 
 			serviceMenu: [
@@ -134,10 +138,12 @@ export default {
 			this.editIri = this.findNewContextName();
 			this.editorText = '';
 			this.displayEditor = true;
+			this.editorError = null;
 		},
 		editContext(iri) {
 			let me = this;
 			this.editIri = iri;
+			this.editorError = null;
 			this.apiClient.exportContext(iri, 'text/turtle', async function(blob) {
 				me.editorText = await blob.text();
 				me.displayEditor = true;
@@ -146,9 +152,14 @@ export default {
 		closeEditor() {
 			this.displayEditor = false;
 		},
-		saveEditor() {
-			this.apiClient.replaceContext(this.editIri, 'text/turtle', this.editorText);
-			this.displayEditor = false;
+		async saveEditor() {
+			try {
+				await this.apiClient.replaceContext(this.editIri, 'text/turtle', this.editorText);
+				this.displayEditor = false;
+				this.update();
+			} catch (error) {
+				this.editorError = error.message;
+			}
 		},
 
 		exportContext(iri, mime, ext) {

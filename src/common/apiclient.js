@@ -165,8 +165,8 @@ export class ApiClient {
 		})
 		this.checkAuth(response);
 		if (!response.ok) {
-			let error = response.status;
-			throw new Error(error);
+			let data = await response.json();
+			throw new Error(data.message);
 		}
 	}
 
