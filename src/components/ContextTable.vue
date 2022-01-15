@@ -159,7 +159,7 @@ export default {
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => {
 					try {
-						//this.artifact = await this.apiClient.deleteArtifact(iri);
+						this.artifact = await this.apiClient.deleteContext(iri);
 					} catch (error) {
 						console.error('Couldnt delete context!', error);
 					}
