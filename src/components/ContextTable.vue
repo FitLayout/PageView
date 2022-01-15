@@ -3,7 +3,10 @@
 		<ConfirmDialog group="confirmContext"></ConfirmDialog>
 		<Dialog header="Edit context" v-model:visible="displayEditor"
 		      :maximizable=true :modal=true >
-			<p><b>Editing context</b> <code>{{editIri}}</code></p>
+			<p class="context-editor-iri">
+				<label for="editIri">Context IRI</label>
+				<InputText id="editIri" v-model="editIri" />
+			</p>
 			<Textarea v-model="editorText" rows="30" cols="100" />
 			<template #footer>
 		        <Button label="Cancel" icon="pi pi-times" class="p-button-text"
@@ -14,7 +17,9 @@
 		</Dialog>		
 		<DataTable :value="contexts">
 			<template #header>
-				<div class="table-header">
+				<div class="context-table-header">
+					<Button icon="pi pi-plus" class="p-button-success" v-tooltip.top="'Add new context'" 
+						@click="addContext()" />
                     <SplitButton icon="pi pi-cog" :model="serviceMenu" />
                 </div>
 			</template>
@@ -47,6 +52,7 @@ import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
+import InputText from 'primevue/inputtext';
 
 import IriDecoder from '@/common/iridecoder.js';
 
@@ -59,7 +65,8 @@ export default {
 		Button,
 		ConfirmDialog,
 		Dialog,
-		Textarea
+		Textarea,
+		InputText
 	},
 	props: {
 	},
@@ -123,6 +130,11 @@ export default {
 			return items;
 		},
 
+		addContext() {
+			this.editIri = this.findNewContextName();
+			this.editorText = '';
+			this.displayEditor = true;
+		},
 		editContext(iri) {
 			let me = this;
 			this.editIri = iri;
@@ -187,6 +199,25 @@ export default {
                 reject: () => {
                 }
             });
+		},
+
+		findNewContextName() {
+			let n = 1;
+			let cname = '';
+			do {
+				cname = 'file://local/context' + n + '.ttl';
+				n++;
+			} while (this.contextExists(cname));
+			return cname;
+		},
+
+		contextExists(iri) {
+			for (let ctx of this.contexts) {
+				if (ctx.iri === iri) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 	}
@@ -194,9 +225,16 @@ export default {
 </script>
 
 <style>
-.table-header {
+.context-editor-iri label {
+	font-weight: bold;
+	margin-right: 0.3em;
+}
+.context-table-header {
 	display: flex;
 	align-items: center;
 	justify-content: right;
+}
+.context-table-header .p-splitbutton {
+	margin-left: 1em;
 }
 </style>
