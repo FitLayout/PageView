@@ -4,7 +4,6 @@ const develMode = (window.location.port === '3000'); //development server detect
 const flhost = develMode ? 'http://localhost:8080' : ('https://' + window.location.host);  
 
 const SERVER_ROOT = flhost + '/api';
-const SERVICE_ENDPOINT = SERVER_ROOT + '/service';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
@@ -20,6 +19,14 @@ export class ApiClient {
 
 	repositoryEndpoint() {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/repository';
+	}
+
+	serviceEndpoint() {
+		return SERVER_ROOT + '/r/' + this.currentRepo + '/service';
+	}
+
+	operatorEndpoint() {
+		return SERVER_ROOT + '/r/' + this.currentRepo + '/operator';
 	}
 
 	tagsEndpoint() {
@@ -571,7 +578,7 @@ export class ApiClient {
 	//================================================================================
 
 	async fetchArtifactServices() {
-		const url = SERVICE_ENDPOINT;
+		const url = this.serviceEndpoint();
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
@@ -582,7 +589,7 @@ export class ApiClient {
 	}
 
 	async getServiceParams(serviceId) {
-		const url = SERVICE_ENDPOINT + '/config?' + new URLSearchParams({'id': serviceId});
+		const url = this.serviceEndpoint() + '/config?' + new URLSearchParams({'id': serviceId});
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers()
