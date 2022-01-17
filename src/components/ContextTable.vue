@@ -16,7 +16,7 @@
 					@click="saveEditor()" />
 	        </template>
 		</Dialog>		
-		<DataTable :value="contexts">
+		<DataTable :value="contexts" v-model:filters="filters" filterDisplay="row">
 			<template #header>
 				<div class="context-table-header">
 					<Button icon="pi pi-plus" class="p-button-success" v-tooltip.top="'Add new context'" 
@@ -24,7 +24,13 @@
                     <SplitButton icon="pi pi-cog" :model="serviceMenu" />
                 </div>
 			</template>
-			<Column field="iri" header="IRI"></Column>
+			<Column field="iri" header="IRI">
+				<template #filter="{filterModel,filterCallback}">
+					<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" 
+						class="p-column-filter" :placeholder="`Search by IRI - `" 
+						v-tooltip.top.focus="'Hit enter key to filter'" />
+				</template>												
+			</Column>
 			<Column header="Actions">
 				<template #body="slotProps">
 					<div class="repository-actions">
@@ -56,6 +62,8 @@ import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
+import {FilterMatchMode,FilterOperator} from 'primevue/api';
+
 import IriDecoder from '@/common/iridecoder.js';
 
 export default {
@@ -81,6 +89,10 @@ export default {
 			editorText: null,
 			editorError: null,
 			editIri: null,
+
+			filters: {
+                'iri': {value: null, matchMode: FilterMatchMode.CONTAINS}
+            },			
 
 			serviceMenu: [
 				{
