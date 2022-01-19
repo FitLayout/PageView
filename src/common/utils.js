@@ -36,3 +36,21 @@ export function stringsGradient(cnames) {
 	ret += ',' + stringColor(cnames[cnames.length - 1]) + ')';
 	return ret;
 }
+
+/**
+ * Infers a tag name from an IRI.
+ * 
+ * @param {} iri the IRI to analyze
+ */
+export function inferTagName(iri) {
+	let name = iri;
+	let isep = name.lastIndexOf('/');
+	if (isep > 0 && isep + 1 < name.length) {
+		name = name.substring(isep + 1);
+	}
+	isep = name.indexOf('--');
+	if (isep > 0) {
+		name = name.substring(isep + 2);
+	}
+    return name;
+}

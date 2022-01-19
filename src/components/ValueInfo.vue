@@ -20,7 +20,7 @@ import SEGM from '@/ontology/SEGM.js';
 import RDF from '@/ontology/RDF.js';
 import RDFS from '@/ontology/RDFS.js';
 import IriDecoder from '@/common/iridecoder.js';
-import {stringColor} from '@/common/utils.js';
+import {stringColor,inferTagName} from '@/common/utils.js';
 
 const knownTypes = {};
 knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
@@ -107,16 +107,12 @@ export default {
 						this.valueType = 'attribute';
 						this.displayValue = descr[RDFS.LABEL][0].value + '="' + descr[RDF.VALUE][0].value + '"';
 					}
-					// tags
+					// undeclared tags - unknown name
 					else if (this.data.p.value === SEGM.hasTag) {
 						this.valueType = 'tag';
-						let name = this.iri;
-						let isep = name.indexOf('--');
-						if (isep > 0) {
-							name = name.substring(isep + 2);
-						}
+						let name = inferTagName(this.iri);
 						//this.displayValue = descr[SEGM.hasName][0].value;
-						this.displayValue = name;
+						this.displayValue = 'x:' + name;
 						this.displayStyle = 'background-color:' + stringColor(name);
 						this.displayTooltip = this.iri;
 					}
@@ -157,6 +153,23 @@ export default {
 						+ descr[BOX.borderColor][0].value + ' ';
 					this.displayStyle = 'background-color:' + descr[BOX.borderColor][0].value;
 				});
+			}
+			// declared tags
+			else if (this.typeIri == SEGM.Tag) {
+				this.valueType = 'tag';
+				// use an inferred name until the declared name is retrieved
+				let name = inferTagName(this.iri);
+				this.displayValue = 'x:' + name;
+				this.displayStyle = 'background-color:' + stringColor(name);
+				this.displayTooltip = this.iri;
+				// retrieve the declared name
+                this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {
+					let type = (descr[SEGM.type][0]) ? descr[SEGM.type][0].value : 'x';
+					let name = (descr[SEGM.name][0]) ? descr[SEGM.name][0].value : null;
+					if (name) {
+						this.displayValue = type + ':' + name;
+					}
+				});				
 			}
 			// check known types
 			else if (knownTypes[this.typeIri]) {

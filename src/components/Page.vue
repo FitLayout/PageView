@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import {stringColor, stringsGradient} from '@/common/utils.js';
+import {stringColor, stringsGradient, inferTagName} from '@/common/utils.js';
 
 export default {
 	name: 'Page',
@@ -123,12 +123,12 @@ export default {
 					// colorize tags if any
 					if (this.showTags && box.hasTag) {
 						if (box.hasTag.length === 1) {
-							let tagName = box.hasTag[0].name;
+							let tagName = inferTagName(box.hasTag[0]._iri);
 							el.style.backgroundColor = stringColor(tagName);
 						} else if (box.hasTag.length > 1) {
 							let tagNames = [];
 							for (let i = 0; i < box.hasTag.length; i++) {
-								tagNames.push(box.hasTag[i].name);
+								tagNames.push(inferTagName(box.hasTag[i]._iri));
 							}
 							el.style.backgroundImage = stringsGradient(tagNames);
 						}
