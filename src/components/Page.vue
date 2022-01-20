@@ -4,7 +4,7 @@
 		<div v-if="dataurl && screenshot" class="image">
 			<img :src="dataurl" alt="screenshot">
 		</div>
-		<Selection v-bind:pageRectAreas="this.pageModel" v-bind:refsBoxes="this.$refs" v-bind:selectedRect="this.selectedRect"></Selection>
+		<Selection v-bind:pageRectAreas="this.pageModel"></Selection>
 		<div :class="boxesClass" ref="boxes">
 		</div>
 	</div>

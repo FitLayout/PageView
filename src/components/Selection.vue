@@ -7,7 +7,7 @@
 			</div>	
 		</div> -->
 		<!-- nefunguje klikanie ked je zapnuty vyber -->
-		<div id="mouseDragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">					
+		<div id="mouseDragView" ref="dragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">					
 
 		</div>
 	</div>
@@ -20,7 +20,6 @@ export default {
 	
 	 props: {
 	 	pageRectAreas:null,
-		refsBoxes:null,
 	 },
 	data () {
 		return {
@@ -133,7 +132,7 @@ export default {
 			{
 				//create border div that will be removed on click
 				this.borderDiv = document.createElement('div');
-				this.refsBoxes.boxes.appendChild(this.borderDiv);
+				this.$refs.dragView.appendChild(this.borderDiv);
 				this.borderDiv.setAttribute('id', 'divBorder');
 				// document.documentElement.appendChild(this.borderDiv);
 				let divStyle = 'position:absolute;' + 'z-index:1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + this.heightBorderDiv + 'px;' + 'width:' + this.widthBorderDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
