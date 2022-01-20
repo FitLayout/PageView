@@ -4,7 +4,7 @@
 		<div v-if="dataurl && screenshot" class="image">
 			<img :src="dataurl" alt="screenshot">
 		</div>
-		<Selection v-if="dragSelection" v-bind:pageRectAreas="this.rectangles"></Selection>
+		<slot></slot>
 		<div :class="boxesClass" ref="boxes">
 		</div>
 	</div>
@@ -13,13 +13,9 @@
 
 <script>
 import {stringColor, stringsGradient, inferTagName} from '@/common/utils.js';
-import Selection from './Selection.vue'
 
 export default {
 	name: 'Page',
-	components: {
-		Selection
-	},
 	props: {
 		pageModel: null,
 		rectangles: null,

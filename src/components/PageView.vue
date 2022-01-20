@@ -175,9 +175,9 @@
 							:outlines="outlines"
 							:rectSelection="rectSelection"
 							:showTags="showTags"
-							:dragSelection="dragSelection"
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
+							<Selection v-if="dragSelection" :pageRectAreas="rectangles"></Selection>
 						</Page>
 					</div>
 				</div>
@@ -208,6 +208,7 @@ import Badge from 'primevue/badge';
 import Page from './Page.vue';
 import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
+import Selection from './Selection.vue'
 
 import RDFS from '@/ontology/RDFS.js';
 import BOX from '@/ontology/BOX.js';
@@ -241,7 +242,8 @@ export default {
 		Badge,
 		Page,
 		Iri,
-		ValueInfo
+		ValueInfo,
+		Selection
 	},
 	inject: ['apiClient'],
 	props: {
