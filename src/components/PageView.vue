@@ -257,7 +257,7 @@ export default {
 			outlines: false,
 			rectSelection: false,
 			showTags: true,
-			dragSelection: true,
+			dragSelection: false,
 
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
