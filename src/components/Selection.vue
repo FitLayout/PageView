@@ -105,8 +105,8 @@ export default {
 			this.widthBorderDiv =  0;
 
 			//choose all boxes in selection and set coordinates for border div
-			console.log(this.pageRectAreas.rectAreas);
-			var boxes = this.pageRectAreas.rectAreas;
+			console.log(this.pageRectAreas);
+			var boxes = this.pageRectAreas;
 			boxes.forEach(box => {
 				if (box.bounds.positionX > this.startBorderX && box.bounds.positionY > this.startBorderY && (box.bounds.height + box.bounds.positionY) < this.endBorderY && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
 					//write out selected boxes to console
