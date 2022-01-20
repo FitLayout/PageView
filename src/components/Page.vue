@@ -24,8 +24,7 @@ export default {
 		screenshot: null,
 		outlines: null,
 		rectSelection: null,
-		showTags: null,
-		dragSelection: null
+		showTags: null
 	},
 	data () {
 		return {
