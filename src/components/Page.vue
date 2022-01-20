@@ -4,18 +4,8 @@
 		<div v-if="dataurl && screenshot" class="image">
 			<img :src="dataurl" alt="screenshot">
 		</div>
-		<!-- funguje aj klikat aj vyberat ale robi tam chyby a ziskavanie suradnic nejde spravne -->
-		<!-- <div id="mouseDragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">					
-			<div :class="boxesClass" ref="boxes">
-
-			</div>	
-		</div> -->
-		<!-- nefunguje klikanie ked je zapnuty vyber -->
-		<div id="mouseDragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">					
-
-		</div>
+		<Selection v-bind:pageRectAreas="this.pageModel" v-bind:refsBoxes="this.$refs" v-bind:selectedRect="this.selectedRect"></Selection>
 		<div :class="boxesClass" ref="boxes">
-
 		</div>	
 	</div>
   </div>
@@ -23,9 +13,13 @@
 
 <script>
 import {stringColor, stringsGradient} from '@/common/utils.js';
+import Selection from './Selection.vue'
 
 export default {
 	name: 'Page',
+	components: {
+		Selection
+		},
 	props: {
 		pageModel: null,
 		rectangles: null,
@@ -34,7 +28,8 @@ export default {
 		screenshot: null,
 		outlines: null,
 		rectSelection: null,
-		showTags: null
+		showTags: null,
+		dragSelection: null
 	},
 	data () {
 		return {
@@ -44,26 +39,6 @@ export default {
 			zoomStyle: '',
 			boxIndex: null,
 			lastSelectedRect: null,
-
-			//used for selecting div
-			selectDiv: null,
-			startX: 0,
-			startY: 0,
-			moveX: 0,
-			moveY: 0,
-			endX: 0,
-			endY: 0,
-			startBorderX: 0, //relative to page view
-			startBorderY: 0, //relative to page view
-			endBorderX: 0, //relative to page view
-			endBorderY: 0, //relative to page view
-			//used for selected area div
-			borderDiv: null,
-			//TODO zmenit hodnoty na nieco rozumnejsie
-			topBorderDiv: 2000,
-			leftBorderDiv: 2000,
-			heightBorderDiv: 0,
-			widthBorderDiv: 0
 		}
 	},
 	computed: {
@@ -276,158 +251,6 @@ export default {
 			}
 			this.lastSelectedRect = this.selectedRect;
 		},
-
-		
-		//create div and get its starging position
-		divCreator(event) { 
-
-			//remove div of selected boxes
-			let el = document.getElementById('divBorder');
-			if (el != null) {
-				el.remove();
-			}
-			// set default values for border div 
-			this.topBorderDiv = 2000;
-			this.leftBorderDiv = 2000;
-			this.heightBorderDiv = 0;
-			this.widthBorderDiv =  0;
-
-
-			//create div for selection of boxes with mouse drag
-			this.selectDiv = document.createElement('div');
-			this.selectDiv.setAttribute('id', 'divSelector');
-			document.documentElement.appendChild(this.selectDiv);
-			this.startX = event.clientX;
-			this.startY = event.clientY;
-			this.startBorderX = event.offsetX; 
-    			this.startBorderY = event.offsetY; 
-			let divStyle = 'position:absolute;' + 'z-index:2;' + 'top:'+ this.startY + 'px;' + 'left:'+ this.startX +'px;' + 'height:0px;' + 'width:0px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
-			this.selectDiv.setAttribute('style', divStyle);
-
-			//variable to let know mover to be used
-			this.canMove = true;
-		},
-
-		//on mouse move compute new position of div
-		divMover(event) {
-			if (this.canMove) {
-				this.moveX = event.clientX;
-				this.moveY = event.clientY;
-				this.selectDiv.style.width= (this.moveX - this.startX) + 'px';
-				this.selectDiv.style.height= (this.moveY - this.startY) + 'px';
-			}
-		},
-
-		//on mouse up choose boxes in selection and remove selector div
-		divUp(event) {
-			//remove selection div 
-			let el = document.getElementById('divSelector');
-			if (el != null) {
-				el.remove();
-			}
-
-			//variable to let know mover to not be used
-			this.canMove = false;
-
-			//calculate on mouse up position
-			this.endX = event.clientX;
-                	this.endY = event.clientY;
-			this.endBorderX = event.offsetX;
-                	this.endBorderY = event.offsetY;		
-
-			console.log("StartX:" + this.startBorderX);
-			console.log("StartY:" + this.startBorderY);
-			console.log("EndX:" + this.endBorderX);
-			console.log("EndY:" + this.endBorderY);
-
-			console.log(this.page.rectAreas);
-			var boxes = this.page.rectAreas;
-			boxes.forEach(box => {
-				// console.log(box.bounds.positionX);	
-				// console.log(box.bounds.positionY);
-				// console.log(box.bounds.width);
-				// console.log(box.bounds.height);
-				if (box.bounds.positionX > this.startBorderX && box.bounds.positionY > this.startBorderY && (box.bounds.height + box.bounds.positionY) < this.endBorderY && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
-					//write out selected boxes to console
-					console.log(box);
-
-					//set border div size
-					if (box.bounds.positionX < this.leftBorderDiv) {
-						this.leftBorderDiv = box.bounds.positionX;
-					}
-					if (box.bounds.positionY < this.topBorderDiv) {
-						this.topBorderDiv = box.bounds.positionY;
-					}
-					if ((box.bounds.height + box.bounds.positionY - this.topBorderDiv) > this.heightBorderDiv) {
-						this.heightBorderDiv =  box.bounds.height + box.bounds.positionY - this.topBorderDiv;
-					}
-					if ((box.bounds.width + box.bounds.positionX - this.leftBorderDiv) > this.widthBorderDiv) {
-						this.widthBorderDiv = box.bounds.width + box.bounds.positionX - this.leftBorderDiv;
-					}		
-				}
-			});
-
-			// // console.log(this.$refs.boxes);
-			// var children = this.$refs.boxes.children;
-			// for (var i = 0; i < children.length; i++) {
-  			// 	var box = children[i];
-			// 	//choose boxes in selection
-			// 	if (box.offsetLeft > this.startBorderX && box.offsetTop > this.startBorderY && (box.clientHeight + box.offsetTop) < this.endBorderY && (box.clientWidth + box.offsetLeft) < this.endBorderX) {
-			// 		//write out selected boxes to console
-			// 		console.log(box);
-
-			// 		//set border div size
-			// 		if (box.offsetLeft < this.leftBorderDiv) {
-			// 			this.leftBorderDiv = box.offsetLeft;
-			// 		}
-			// 		if (box.offsetTop < this.topBorderDiv) {
-			// 			this.topBorderDiv = box.offsetTop;
-			// 		}
-			// 		if (box.offsetTop > this.heightBorderDiv) {
-			// 			this.heightBorderDiv =  box.clientHeight + box.offsetTop - this.topBorderDiv;
-			// 		}
-			// 		if (box.clientWidth > this.widthBorderDiv) {
-			// 			this.widthBorderDiv = box.clientWidth + box.offsetLeft - this.leftBorderDiv;
-			// 		}		
-			// 	}
-			// }
-
-			//create border div that will be removed on click
-			this.borderDiv = document.createElement('div');
-			this.$refs.boxes.appendChild(this.borderDiv);
-			this.borderDiv.setAttribute('id', 'divBorder');
-			// document.documentElement.appendChild(this.borderDiv);
-			let divStyle = 'position:absolute;' + 'z-index:1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + this.heightBorderDiv + 'px;' + 'width:' + this.widthBorderDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
-			this.borderDiv.setAttribute('style', divStyle);		
-
-			// //create border div that will be removed on click
-			// this.borderDiv = document.createElement('div');
-			// this.borderDiv.setAttribute('id', 'divBorder');
-			// document.documentElement.appendChild(this.borderDiv);
-			// let divStyle = 'position:static;' + 'z-index:1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + this.heightBorderDiv + 'px;' + 'width:' + this.widthBorderDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
-			// this.borderDiv.setAttribute('style', divStyle);
-
-			// TODOs:
-			// PROBLEM kde umiestnit vyberaci div aby islo robit aj ostatne veci ale zaroven islo vyberat bez problemov?
-			// PROBLEM pred prvym kliknutim to hadze chyby pri move
-			// 1. prejst vsetky divy a overit ktore sa nachadzaju v rozsahu
-			// 2. vlozit ich do noveho pola boxov v rozsahu
-			// 3. z tohto pola vybrat najlavsie, najhornejsie, najpravsie a najspodnejsie
-			// 4. zistit ako pristupovat k bounds parametrom
-			// 5. tieto pridat do noveho pola a vypisat do konzole
-		},
-
-		//on mouse leave from pageview div remove selector div
-		divLeave() {
-			//remove div 
-			let el = document.getElementById('divSelector');
-			if (el != null) {
-				el.remove();
-			}
-
-			//variable to let know mover to not be used
-			this.canMove = false;
-		}
 	}
 }
 </script>
@@ -486,16 +309,4 @@ export default {
 	white-space: pre;
 }
 
-#mouseDragView {
-    /* background-color: rgba(238, 91, 6, 0.6); */
-    background-color: transparent;
-    z-index:1000;
-    position: absolute; 
-    width: auto;
-    height: auto;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
 </style>
