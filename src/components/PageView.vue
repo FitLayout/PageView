@@ -163,6 +163,10 @@
 								<label for="showTags" class="form-label">Show tags</label>
 								<InputSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
 							</div>
+							<div class="p-field p-col">
+								<label for="dragSelection" class="form-label">Drag select</label>
+								<InputSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
+							</div>
 						</div>
 					</div>
 					<div class="page-contents">
@@ -173,6 +177,7 @@
 							:showTags="showTags"
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
+							<Selection v-if="dragSelection" :pageRectAreas="rectangles"></Selection>
 						</Page>
 					</div>
 				</div>
@@ -203,6 +208,7 @@ import Badge from 'primevue/badge';
 import Page from './Page.vue';
 import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
+import Selection from './Selection.vue'
 
 import RDFS from '@/ontology/RDFS.js';
 import BOX from '@/ontology/BOX.js';
@@ -236,7 +242,8 @@ export default {
 		Badge,
 		Page,
 		Iri,
-		ValueInfo
+		ValueInfo,
+		Selection
 	},
 	inject: ['apiClient'],
 	props: {
@@ -252,6 +259,7 @@ export default {
 			outlines: false,
 			rectSelection: false,
 			showTags: true,
+			dragSelection: false,
 
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
