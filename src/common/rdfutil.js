@@ -1,3 +1,6 @@
+/**
+ * Implementations of complex operations with the RDF API.
+ */
 export class RdfUtil {
 
 	PREFIXES = `PREFIX fl: <http://fitlayout.github.io/ontology/fitlayout.owl#>
@@ -9,10 +12,23 @@ export class RdfUtil {
 		`;
 		
 
+	/**
+	 * Creates an instance for a specified API client.
+	 * 
+	 * @param {ApiClient} client 
+	 */
 	constructor(client) {
 		this.client = client;
 	}
 
+	/**
+	 * Creates a new area in the area tree that contains specified child areas. 
+	 * 
+	 * @param {*} artIri artifact IRI 
+	 * @param {*} parentIri IRI of the parent area of the newly created area
+	 * @param {*} childIris array of child area IRIs that will be child nodes of the new area
+	 * @param {*} areaData area property specification: positionX, positionY, width, height, iri, label
+	 */
 	async createSuperArea(artIri, parentIri, childIris, areaData) {
 
 		let delQuery = this.PREFIXES + `DELETE DATA { GRAPH <${artIri}> { `;
@@ -21,6 +37,7 @@ export class RdfUtil {
 		}
 		delQuery += '}}';
 		console.log(delQuery);
+		await this.client.updateQuery(delQuery);
 
 		const rectIri = areaData.iri + '-rect-b'; 
 		let insQuery = this.PREFIXES + `INSERT DATA { GRAPH <${artIri}> { 
@@ -41,6 +58,7 @@ export class RdfUtil {
 		}
 		insQuery += '}}';
 		console.log(insQuery);
+		await this.client.updateQuery(insQuery);
 	}
 
 }
