@@ -177,7 +177,7 @@
 							:showTags="showTags"
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
-							<Selection v-if="dragSelection" :pageRectAreas="rectangles"></Selection>
+							<Selection v-if="dragSelection" :pageRectAreas="rectangles" @update="updateTreeView"></Selection>
 						</Page>
 					</div>
 				</div>
@@ -251,6 +251,7 @@ export default {
 	},
 	data () {
 		return {
+
 			// UI
 			loading: false,
 			error: null,
@@ -303,7 +304,8 @@ export default {
 			rFilters: {
 				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
                 'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
-            }			
+            },
+			    
 		}
 	},
 	created () {
@@ -590,7 +592,12 @@ export default {
 
 		toggleAnnot(event) {
     		this.$refs.addAnnotationPanel.toggle(event);
-		} 
+		}, 
+		
+		//refresh tree view after adding selection
+		updateTreeView() {
+			this.update();
+		},
 
 	}
 }
