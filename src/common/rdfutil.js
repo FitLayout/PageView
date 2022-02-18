@@ -21,6 +21,7 @@ export class RdfUtil {
 		}
 		delQuery += '}}';
 		console.log(delQuery);
+		await this.client.updateQuery(delQuery);
 
 		const rectIri = areaData.iri + '-rect-b'; 
 		let insQuery = this.PREFIXES + `INSERT DATA { GRAPH <${artIri}> { 
@@ -41,6 +42,7 @@ export class RdfUtil {
 		}
 		insQuery += '}}';
 		console.log(insQuery);
+		await this.client.updateQuery(insQuery);
 	}
 
 }
