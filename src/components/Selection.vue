@@ -50,9 +50,6 @@ export default {
 			// array of selected iri boxes
 			iriBoxes: [],
 			newBounds: {},
-
-			//button visibility
-			buttonVisible : true
 			// -------------------------------------------
 		}
 	},
