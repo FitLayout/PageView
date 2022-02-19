@@ -193,7 +193,7 @@ export default {
 		},
 		
 		//add selected areas to new super area and update view
-		addIriObjectsToArea() {
+		async addIriObjectsToArea() {
 			//array of areas
 			let sel = this.iriBoxes;
 			// iri of whole artifact
@@ -223,7 +223,7 @@ export default {
 			console.log(data);
 
 			//create new area and update tree view
-			this.$root.rdfUtil.createSuperArea(artIri, parent, children, data);
+			await this.$root.rdfUtil.createSuperArea(artIri, parent, children, data);
 			this.$emit('update');	
 		}
 	}
