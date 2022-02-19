@@ -318,11 +318,15 @@ export default {
 	},
 	methods: {
 		update() {
-			this.fetchData();
+			this.fetchData(false);
 			this.activeTab = 0; //switch to the Description tab when the iri changes
 		},
 
-		async fetchData() {
+		/**
+		 * Reloads the artifact info.
+		 * @param {boolean} forceReload force reloading the entire artifact (e.g. all areas)
+		 */
+		async fetchData(forceReload) {
 			console.log('UPDATE ' + this.subjectIri)
 			if (!this.subjectIri) {
 				return;
@@ -338,7 +342,7 @@ export default {
 
 				console.log(deps);
 				if (deps.type !== 'unknown') {
-					if (deps.artifactIri !== this.status.artifactIri) {
+					if (forceReload || deps.artifactIri !== this.status.artifactIri) {
 						console.log('SET artifact')
 						this.artifactModel = deps.artifact;
 						this.rectangles = deps.rectangles;
@@ -442,7 +446,7 @@ export default {
 			}
 			this.apiClient.addTag(this.subjectIri, tagDesc, this.status.artifactIri);
 			this.selectedTag = null;
-			this.fetchData();
+			this.fetchData(false);
 		},
 
 		async addLabel() {
@@ -460,7 +464,7 @@ export default {
 			this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.status.artifactIri);
 			this.selectedLabelType = null;
 			this.labelText = null;
-			this.fetchData();
+			this.fetchData(false);
 		},
 
 		// scans the model and filters out the annotations only
@@ -596,7 +600,7 @@ export default {
 		
 		//refresh tree view after adding selection
 		updateTreeView() {
-			this.update();
+			this.fetchData(true);
 		},
 
 	}
