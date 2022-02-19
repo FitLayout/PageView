@@ -1,19 +1,14 @@
 <template>
 	<div>
-		<!-- funguje aj klikat aj vyberat ale robi tam chyby a ziskavanie suradnic nejde spravne -->
-		<!-- <div id="mouseDragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">					
-			<div :class="boxesClass" ref="boxes">
-
-			</div>	
-		</div> -->
-		<!-- nefunguje klikanie ked je zapnuty vyber -->
-		<div id="mouseDragView" ref="dragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">					
-
+		<div id="mouseDragView" ref="dragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">	
+			<!-- add objects to tree area-->
+			<Button id="addIriObjectsToAreaButton" @click="addIriObjectsToArea" label="Add selection"> </Button>	
 		</div>
 	</div>
 </template>
 
 <script>
+import Button from 'primevue/button';
 
 export default {
 	name: 'Selection',
@@ -21,6 +16,13 @@ export default {
 	 props: {
 	 	pageRectAreas:null,
 	 },
+
+	inject:['apiClient'],
+
+	components: {
+		Button,
+	},
+
 	data () {
 		return {
 			//used for selecting div----------------------
@@ -37,12 +39,17 @@ export default {
 			endBorderX: 0, //relative to page view
 			endBorderY: 0, //relative to page view
 
-			borderDiv: null,//used for selected area div
+			borderDiv: null,//div used for selected area
+			
 			//positions for comparing and final rendering of border div
-			topBorderDiv: 2000,
-			leftBorderDiv: 2000,
-			heightBorderDiv: 0,
-			widthBorderDiv: 0
+			topBorderDiv: 10000,
+			leftBorderDiv: 10000,
+			bottomBorderDiv: 0,
+			rightBorderDiv: 0,
+
+			// array of selected iri boxes
+			iriBoxes: [],
+			newBounds: {},
 			// -------------------------------------------
 		}
 	},
@@ -101,42 +108,75 @@ export default {
 			//positions for comparing
 			this.topBorderDiv = this.endBorderY;
 			this.leftBorderDiv = this.endBorderX;
-			this.heightBorderDiv = 0;
-			this.widthBorderDiv =  0;
+			this.bottomBorderDiv = 0;
+			this.rightBorderDiv =  0;
 
 			//choose all boxes in selection and set coordinates for border div
-			console.log(this.pageRectAreas);
 			var boxes = this.pageRectAreas;
+
 			boxes.forEach(box => {
 				if (box.bounds.positionX > this.startBorderX && box.bounds.positionY > this.startBorderY && (box.bounds.height + box.bounds.positionY) < this.endBorderY && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
-					//write out selected boxes to console
-					console.log(box);
-					console.log(box.bounds._iri);
+					//add iris to array of selected boxes
+					this.iriBoxes.push(box);
+					
 					//set border div size
+					// if (box.bounds.positionX < this.leftBorderDiv) {
+					// 	this.leftBorderDiv = box.bounds.positionX;
+					// }
+					// if (box.bounds.positionY < this.topBorderDiv) {
+					// 	this.topBorderDiv = box.bounds.positionY;
+					// }
+					// if ((box.bounds.width + box.bounds.positionX - this.leftBorderDiv) > this.rightBorderDiv) {
+					// 	this.rightBorderDiv = box.bounds.width + box.bounds.positionX - this.leftBorderDiv;
+					// }
+					// if ((box.bounds.height + box.bounds.positionY - this.topBorderDiv) > this.bottomBorderDiv) {
+					// 	this.bottomBorderDiv =  box.bounds.height + box.bounds.positionY - this.topBorderDiv;
+					// }
+
+					//set borders of div
 					if (box.bounds.positionX < this.leftBorderDiv) {
 						this.leftBorderDiv = box.bounds.positionX;
 					}
 					if (box.bounds.positionY < this.topBorderDiv) {
 						this.topBorderDiv = box.bounds.positionY;
 					}
-					if ((box.bounds.height + box.bounds.positionY - this.topBorderDiv) > this.heightBorderDiv) {
-						this.heightBorderDiv =  box.bounds.height + box.bounds.positionY - this.topBorderDiv;
+					if ((box.bounds.width + box.bounds.positionX) > this.rightBorderDiv) {
+						this.rightBorderDiv = box.bounds.width + box.bounds.positionX;
 					}
-					if ((box.bounds.width + box.bounds.positionX - this.leftBorderDiv) > this.widthBorderDiv) {
-						this.widthBorderDiv = box.bounds.width + box.bounds.positionX - this.leftBorderDiv;
-					}	
+					if ((box.bounds.height + box.bounds.positionY) > this.bottomBorderDiv) {
+						this.bottomBorderDiv =  box.bounds.height + box.bounds.positionY;
+					}
 					isBox = true;	
 				}
 			});
+
+			//Selection containts at least one box and selection div will be drawn
 			if (isBox)
 			{
+				// width and height of selection div
+				let widthDiv = this.rightBorderDiv - this.leftBorderDiv;
+				let heightDiv = this.bottomBorderDiv - this.topBorderDiv;
 				//create border div that will be removed on click
 				this.borderDiv = document.createElement('div');
 				this.$refs.dragView.appendChild(this.borderDiv);
 				this.borderDiv.setAttribute('id', 'divBorder');
 				// document.documentElement.appendChild(this.borderDiv);
-				let divStyle = 'position:absolute;' + 'z-index:1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + this.heightBorderDiv + 'px;' + 'width:' + this.widthBorderDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
+				let divStyle = 'position:absolute;' + 'z-index:1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + heightDiv + 'px;' + 'width:' + widthDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
 				this.borderDiv.setAttribute('style', divStyle);
+				
+				//bounds of new area
+				this.newBounds = {
+					positionX: this.leftBorderDiv, //rozměry
+					positionY: this.topBorderDiv,
+					width: widthDiv,
+					height: heightDiv,
+				}
+				//show button for adding selection to tree
+				document.getElementById("addIriObjectsToAreaButton").style.display = "block";
+			}
+			else {
+				//hide button for adding selection to tree
+				document.getElementById("addIriObjectsToAreaButton").style.display = "none";
 			}		
 		},
 
@@ -150,6 +190,41 @@ export default {
 
 			//variable to let know mover to not be used
 			this.canMove = false;
+		},
+		
+		//add selected areas to new super area and update view
+		addIriObjectsToArea() {
+			//array of areas
+			let sel = this.iriBoxes;
+			// iri of whole artifact
+			let artIri = sel[0].belongsTo._iri;
+			//iri of parent area
+			let parent = sel[0].isChildOf._iri;
+
+			//array if children iris
+			let children = [];
+			//new ID of area is concatenation of whole artifact ID and all children IDs
+			let newID = artIri.concat('#');
+			sel.forEach(area => {
+				children.push(area._iri);
+				let splitIri = area._iri.split('#');
+				newID = newID.concat(splitIri[splitIri.length - 1]);
+			});
+
+			//data of new area
+			let data = {
+				positionX: this.newBounds.positionX, //rozměry
+				positionY: this.newBounds.positionY,
+				width: this.newBounds.width,
+				height: this.newBounds.height,
+				label: 'new area', //textový popis (cokoliv)
+				iri: newID //nové IRI
+			}
+			console.log(data);
+
+			//create new area and update tree view
+			this.$root.rdfUtil.createSuperArea(artIri, parent, children, data);
+			this.$emit('update');	
 		}
 	}
 }
@@ -166,5 +241,13 @@ export default {
     right: 0;
     top: 0;
     bottom: 0;
+}
+#addIriObjectsToAreaButton
+{
+	z-index: 1001;
+	position: fixed;
+	margin: 5px;
+	background-color: rgba(55, 55, 255, 0.5);
+	/* display: none; */
 }
 </style>
