@@ -323,6 +323,21 @@ export class ApiClient {
 			return data.status == 'ok';
 	}
 
+	async refreshArtifact(artifactIri) {
+			const url = this.artifactEndpoint() + '/refresh/' + encodeURIComponent(artifactIri);
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers()
+			})
+			this.checkAuth(response);
+			if (!response.ok) {
+				let error = response.status;
+				throw new Error(error);
+			}
+			const data = await response.json();
+			return data.status == 'ok';
+	}
+
 	//================================================================================
 
 	async addValue(subjectIri, predicateIri, value, artifactIri) {

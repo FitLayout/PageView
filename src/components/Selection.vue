@@ -224,6 +224,7 @@ export default {
 
 			//create new area and update tree view
 			await this.$root.rdfUtil.createSuperArea(artIri, parent, children, data);
+			await this.apiClient.refreshArtifact(artIri);
 			this.$emit('update');	
 		}
 	}
