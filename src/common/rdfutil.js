@@ -36,7 +36,7 @@ export class RdfUtil {
 			delQuery += ` <${childIri}> segm:isChildOf <${parentIri}> . `;
 		}
 		delQuery += '}}';
-		console.log(delQuery);
+		//console.log(delQuery);
 		await this.client.updateQuery(delQuery);
 
 		const rectIri = areaData.iri + '-rect-b'; 
@@ -57,7 +57,7 @@ export class RdfUtil {
 			insQuery += ` <${childIri}> segm:isChildOf <${areaData.iri}> . `;
 		}
 		insQuery += '}}';
-		console.log(insQuery);
+		//console.log(insQuery);
 		await this.client.updateQuery(insQuery);
 	}
 
