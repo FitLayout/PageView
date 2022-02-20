@@ -334,6 +334,10 @@ export default {
 			this.error = this.post = null;
 			this.loading = true;
 			
+			if (forceReload) {
+				this.status.reloadArtifact = true; // force the resolver to reload current artifact 
+			}
+
 			const client = this.apiClient;
 			try {
 				let resolver = new ObjectResolver(client);
@@ -365,7 +369,7 @@ export default {
 					}
 					// if the IRI identifies a box or area, highlight the corresponding rectangle
 					if (deps.type === 'box' || deps.type === 'area' || deps.type === 'textChunk') {
-						if (!this.selectedRect || this.selectedRect._iri !== this.subjectIri) {
+						if (!this.selectedRect || this.selectedRect._iri !== this.subjectIri || forceReload) {
 							const rect = this.findRectangleByIri(this.subjectIri);
 							if (deps.type === 'box' || deps.type === 'area') {
 								this.showBoxInTree(rect);

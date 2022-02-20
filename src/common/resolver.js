@@ -28,9 +28,10 @@ export default class ObjectResolver {
 		const descr = descrData.results.bindings;
 		// get the dependent objects based on the type
 		console.log('TYPE ' + type);
+		let ret = {}; 
 		if (type === BOX.Page) {
 			const page = await this.getPage(iri, currentStatus);
-			return {
+			ret = {
 				type: 'page',
 				description: descr,
 				rectangleType: 'box',
@@ -44,7 +45,7 @@ export default class ObjectResolver {
 			const atree = await this.getArtifact(iri, currentStatus);
 			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
 			this.client.sortBoxes(page.rectAreas);
-			return {
+			ret = {
 				type: 'areaTree',
 				description: descr,
 				rectangleType: 'area',
@@ -59,7 +60,7 @@ export default class ObjectResolver {
 			const atreeIri = await this.client.getSubjectValue(iri, SEGM.hasAreaTree);
 			const pageIri = await this.client.getSubjectValue(atreeIri.value, SEGM.hasSourcePage);
 			const page = await this.getPage(pageIri.value, currentStatus);
-			return {
+			ret = {
 				type: 'chunkSet',
 				description: descr,
 				rectangleType: 'textChunk',
@@ -73,7 +74,7 @@ export default class ObjectResolver {
 			const pageIri = await this.client.getSubjectValue(iri, BOX.belongsTo);
 			const page = await this.getPage(pageIri.value, currentStatus);
 			this.client.sortBoxes(page.rectAreas);
-			return {
+			ret = {
 				type: 'box',
 				description: descr,
 				rectangleType: 'box',
@@ -88,7 +89,7 @@ export default class ObjectResolver {
 			const atree = await this.getArtifact(atreeIri.value, currentStatus);
 			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
 			this.client.sortBoxes(page.rectAreas);
-			return {
+			ret = {
 				type: 'area',
 				description: descr,
 				rectangleType: 'area',
@@ -105,7 +106,7 @@ export default class ObjectResolver {
 			const pageIri = await this.client.getSubjectValue(atreeIri.value, SEGM.hasSourcePage);
 			const page = await this.getPage(pageIri.value, currentStatus);
 			this.client.sortBoxes(page.rectAreas);
-			return {
+			ret = {
 				type: 'textChunk',
 				description: descr,
 				rectangleType: 'textChunk',
@@ -118,7 +119,7 @@ export default class ObjectResolver {
 		} else {
 			const objData = await this.client.getSubjectDescriptionObj(iri);
 			const art = await this.getArtifact(iri, currentStatus);
-			return {
+			ret = {
 				type: 'unknown',
 				description: descr,
 				objData: objData,
@@ -126,13 +127,15 @@ export default class ObjectResolver {
 				artifact: art 
 			};
 		}
+		return ret;
 	}
 
 	async getPage(iri, currentStatus) {
-		if (currentStatus.pageIri === iri) {
+		if (currentStatus.pageIri === iri && !currentStatus.reloadArtifact) {
 			return currentStatus.page;
 		} else {
 			console.log('RELOADING page');
+			currentStatus.reloadArtifact = false; // artifact reloaded, put the force reload flag down
 			const page = await this.client.fetchArtifact(iri);
 			this.client.sortBoxes(page.rectAreas);
 			return page;
@@ -140,10 +143,11 @@ export default class ObjectResolver {
 	}
 
 	async getArtifact(iri, currentStatus) {
-		if (currentStatus.artifactIri === iri) {
+		if (currentStatus.artifactIri === iri && !currentStatus.reloadArtifact) {
 			return currentStatus.artifact;
 		} else {
 			console.log('RELOADING atree');
+			currentStatus.reloadArtifact = false; // artifact reloaded, put the force reload flag down
 			return await this.client.fetchArtifact(iri);
 		}
 	}
