@@ -44,7 +44,6 @@ export default class ObjectResolver {
 		} else if (type === SEGM.AreaTree) {
 			const atree = await this.getArtifact(iri, currentStatus);
 			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
-			this.client.sortBoxes(page.rectAreas);
 			ret = {
 				type: 'areaTree',
 				description: descr,
@@ -73,7 +72,6 @@ export default class ObjectResolver {
 		} else if (type === BOX.Box) {
 			const pageIri = await this.client.getSubjectValue(iri, BOX.belongsTo);
 			const page = await this.getPage(pageIri.value, currentStatus);
-			this.client.sortBoxes(page.rectAreas);
 			ret = {
 				type: 'box',
 				description: descr,
@@ -88,7 +86,6 @@ export default class ObjectResolver {
 			const atreeIri = await this.client.getSubjectValue(iri, SEGM.belongsTo);
 			const atree = await this.getArtifact(atreeIri.value, currentStatus);
 			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
-			this.client.sortBoxes(page.rectAreas);
 			ret = {
 				type: 'area',
 				description: descr,
@@ -105,7 +102,6 @@ export default class ObjectResolver {
 			const atreeIri = await this.client.getSubjectValue(chunkSetIri.value, SEGM.hasAreaTree);
 			const pageIri = await this.client.getSubjectValue(atreeIri.value, SEGM.hasSourcePage);
 			const page = await this.getPage(pageIri.value, currentStatus);
-			this.client.sortBoxes(page.rectAreas);
 			ret = {
 				type: 'textChunk',
 				description: descr,
