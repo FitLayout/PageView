@@ -42,7 +42,7 @@ export default class ObjectResolver {
 				rectangles: page.rectAreas
 			}
 		} else if (type === SEGM.AreaTree) {
-			const atree = await this.getArtifact(iri, currentStatus);
+			const atree = await this.getAreaTree(iri, currentStatus);
 			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
 			ret = {
 				type: 'areaTree',
@@ -84,7 +84,7 @@ export default class ObjectResolver {
 			}
 		} else if (type === SEGM.Area) {
 			const atreeIri = await this.client.getSubjectValue(iri, SEGM.belongsTo);
-			const atree = await this.getArtifact(atreeIri.value, currentStatus);
+			const atree = await this.getAreaTree(atreeIri.value, currentStatus);
 			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
 			ret = {
 				type: 'area',
@@ -136,6 +136,12 @@ export default class ObjectResolver {
 			this.client.sortBoxes(page.rectAreas);
 			return page;
 		}
+	}
+
+	async getAreaTree(iri, currentStatus) {
+		const ret = await this.getArtifact(iri, currentStatus);
+		this.client.sortBoxes(ret.areas);
+		return ret;
 	}
 
 	async getArtifact(iri, currentStatus) {
