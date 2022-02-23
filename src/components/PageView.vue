@@ -97,36 +97,11 @@
 									<span class="p-tabview-title">Annotations</span>
 									<Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
 								</template>
-								<div class="annotationGui">
-									<Button class="p-button-raised" icon="pi pi-tag" iconPos="right" v-tooltip="'Add tag'" v-on:click="toggleTag" />
-									<OverlayPanel ref="addTagPanel">
-										<div class="annotationType">
-											<h4>Add tag</h4>
-											<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" />
-											<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
-										</div>
-									</OverlayPanel>
-
-									<Button class="p-button-raised" icon="pi pi-comment" iconPos="right" v-tooltip="'Add annotation'" v-on:click="toggleAnnot" />
-									<OverlayPanel ref="addAnnotationPanel">
-										<div class="annotationType">
-											<h4>Add annotation</h4>
-											<Dropdown class="annotDropdown" v-model="selectedLabelType" :options="labelTypes" optionLabel="name" optionValue="id" placeholder="Select type" />
-											<InputText class="descInput" type="text" v-model="labelText" placeholder="Short description" />
-											<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addLabel" />
-										</div>
-									</OverlayPanel>
-								</div>
-								<div class="annot-scroll">
-									<div class="annot-table" v-if="subjectAnnotations">
-										<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
-											<div class="annotation-item-iri"><Iri :iri="item.iri" /></div>
-											<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
-												<ValueInfo :data="row" />
-											</span>
-										</div>
-									</div>
-								</div>
+								<AnnotationPanel
+									@update="fetchData(false)" 
+									:subjectIri="subjectIri" 
+									:artifactIri="status.artifactIri" 
+									:subjectAnnotations="subjectAnnotations" />
 							</TabPanel>
 						</TabView>
 					</SplitterPanel>
@@ -191,11 +166,9 @@
 <script>
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
-import OverlayPanel from 'primevue/overlaypanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import InputSwitch from 'primevue/inputswitch';
 import Tree from 'primevue/tree';
@@ -208,6 +181,7 @@ import Badge from 'primevue/badge';
 import Page from './Page.vue';
 import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
+import AnnotationPanel from './AnnotationPanel.vue';
 import Selection from './Selection.vue'
 
 import RDFS from '@/ontology/RDFS.js';
@@ -227,10 +201,8 @@ export default {
 	components: {
 		Splitter,
 		SplitterPanel,
-		OverlayPanel,
 		ProgressBar,
 		Slider,
-		Dropdown,
 		Button,
 		InputText,
 		InputSwitch,
@@ -243,6 +215,7 @@ export default {
 		Page,
 		Iri,
 		ValueInfo,
+		AnnotationPanel,
 		Selection
 	},
 	inject: ['apiClient'],
@@ -266,16 +239,6 @@ export default {
 			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
 			annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
 			
-			// Tags and labels addition
-			selectedTag: null,
-			tags: [],
-			selectedLabelType: null,
-			labelText: null,
-			labelTypes: [
-				{id:0, name: 'rdfs:label', property: RDFS.LABEL},
-				{id:1, name: 'rdfs:comment', property: RDFS.COMMENT}
-			],
-
 			// Displayed data
 			status: null, //artifact status (currently displayed artifacts)
 			artifactModel: null, //currently displayed artifact model
@@ -310,7 +273,6 @@ export default {
 	},
 	created () {
 		this.status = { type: 'unknown' };
-		this.fetchTags();
 		this.update();
 	},
 	watch: {
@@ -319,7 +281,7 @@ export default {
 	methods: {
 		update() {
 			this.fetchData(false);
-			this.activeTab = 0; //switch to the Description tab when the iri changes
+			//this.activeTab = 0; //switch to the Description tab when the iri changes
 		},
 
 		/**
@@ -424,51 +386,6 @@ export default {
 			deps.artifactIri = baseDeps.artifactIri;
 			deps.artifact = baseDeps.artifact;
 			return deps;
-		},
-
-		async fetchTags() {
-			this.tags = await this.apiClient.getTags();
-		},
-
-		async addTag() {
-			if (this.selectedTag == null)
-				return;
-			
-			console.log('Adding a tag!');
-
-			var tagDesc = null;
-			for (var tag of this.tags) {
-				if (tag['iri'] == this.selectedTag) {
-					tagDesc = tag['name'];
-					break;
-				}
-			}
-
-			if (tagDesc == null) {
-				console.log('A new tag has not been added, an internal error has occured!');
-				return;
-			}
-			this.apiClient.addTag(this.subjectIri, tagDesc, this.status.artifactIri);
-			this.selectedTag = null;
-			this.fetchData(false);
-		},
-
-		async addLabel() {
-			if (this.selectedLabelType == null || this.labelText == null) {
-				return;
-			}
-			console.log('Adding a label! ' + this.selectedLabelType + this.labelText);
-
-			let descType = this.labelTypes[this.selectedLabelType].property;
-			/*if (this.labelTypes[0]['id'] == this.selectedLabelType)
-				descType = RDFS.LABEL;
-			else {
-				descType = RDFS.COMMENT;
-			}*/
-			this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.status.artifactIri);
-			this.selectedLabelType = null;
-			this.labelText = null;
-			this.fetchData(false);
 		},
 
 		// scans the model and filters out the annotations only
@@ -594,14 +511,6 @@ export default {
 			return null;
 		},
 
-		toggleTag(event) {
-    		this.$refs.addTagPanel.toggle(event);
-		}, 
-
-		toggleAnnot(event) {
-    		this.$refs.addAnnotationPanel.toggle(event);
-		}, 
-		
 		//refresh tree view after adding selection
 		updateTreeView() {
 			this.fetchData(true);
@@ -705,22 +614,14 @@ export default {
 .splitter-row .p-tabview .p-tabview-panel {
 	height: 100%;
 }
-.descr-scroll, .annot-scroll {
+.descr-scroll {
 	height: 100%;
 	min-height: 100px;
 	position: relative;
 }
-.annot-scroll {
-	overflow: auto;
-}
 .descr-table {
 	height: 100%;
 	width: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-.annot-table {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -736,17 +637,6 @@ export default {
 th.p-filter-column .p-inputtext {
 	padding: 0.25em 0.5em;
 }
-.annotation-item {
-	margin: 1em;
-}
-.annotation-item-value::after {
-	content: ' ';
-}
-.annotation-item-iri {
-	font-weight: bold;
-	color: var(--primary-color);
-	margin-bottom: 0.5em;
-}
 .splitter-row .p-tabview .p-tabview-nav li .p-tabview-nav-link .p-badge {
 	min-width: 1.5em;
 	height: 1.5em;
@@ -757,29 +647,7 @@ th.p-filter-column .p-inputtext {
 .splitter-row .p-tabview .p-tabview-panel {
 	position: relative; /* because of annotationGui inside */
 }
-.annotDropdown {
-	min-width: 8em;
-	margin-right: 0.5em;
-}
 input.p-inputtext.p-component.descInput {
 	margin-right: 0.5em;
-}
-.annotationGui {
-	margin: 1em;
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 3rem;
-	z-index: 10;
-}
-.annotationGui button {
-	margin-bottom: 0.5em;
-}
-.annotationType {
-	margin-bottom: 1em;
-}
-.annotationType h4 {
-	margin: 0;
-	margin-bottom: 0.3em;
 }
 </style>
