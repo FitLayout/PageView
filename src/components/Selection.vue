@@ -6,7 +6,7 @@
 				<div class="floatBlock"><Button id="addIriObjectsToAreaButton" @click="addIriObjectsToArea" label="Add selection"> </Button></div>
 				<div class="floatBlock"><InputText id="addLabelToAreaText" type="text" v-model="labelText" placeholder="Insert Label" /></div>
 				<div class="floatBlock">
-					<Dropdown id="addTagToAreaDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag"></Dropdown>
+					<Dropdown id="addTagToAreaDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" :show-clear="true"></Dropdown>
 				</div>
 			</div>
 		</div>
@@ -242,20 +242,15 @@ export default {
 				this.labelText = null;
 			}
 			
+
 			//get tag and if it is empty, tag will be null
-			if (this.selectedTag == null)
-				return;
-			var tagDesc = null;
+			let tagDesc = null;
 			for (var tag of this.tags) {
 				if (tag['iri'] == this.selectedTag) {
 					tagDesc = tag['name'];
 					break;
 				}
-			}
-			if (tagDesc == null) {
-				console.log('A new tag has not been added, an internal error has occured!');
-				return;
-			}
+			}		
 			console.log(tagDesc);
 			
 
@@ -267,7 +262,7 @@ export default {
 				height: this.newBounds.height,
 				label: labelString, //textový popis
 				iri: newID, //nové IRI
-				data: tagDesc //tag
+				tag: tagDesc //tag
 			}
 			console.log(data);
 
@@ -280,6 +275,7 @@ export default {
 			document.getElementById("addIriObjectsToAreaButton").style.display = "none";
 			document.getElementById("addLabelToAreaText").style.display = "none";
 			document.getElementById("addTagToAreaDropdown").style.display = "none";
+
 
 			//remove div of selected boxes
 			let el = document.getElementById('divBorder');
