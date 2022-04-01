@@ -1,26 +1,38 @@
 <template>
 	<div>
-		<div id="mouseDragView" ref="dragView" v-on:mousedown="divCreator" v-on:mouseup="divUp" v-on:mousemove="divMover" v-on:mouseleave="divLeave">	
-			<!-- add objects to tree area-->
-			<Button id="addIriObjectsToAreaButton" @click="addIriObjectsToArea" label="Add selection"> </Button>	
+		<div id="mouseDragView" ref="dragView" v-on:mousedown.self="divCreator" v-on:mouseup.self="divUp" v-on:mousemove.self="divMover" v-on:mouseleave.self="divLeave">	
+			<!-- add objects to tree area-->			
+			<div class="floatRow">				
+				<div class="floatBlock"><Button id="addIriObjectsToAreaButton" @click="addIriObjectsToArea" label="Add selection"> </Button></div>
+				<div class="floatBlock"><InputText id="addLabelToAreaText" type="text" v-model="labelText" placeholder="Insert Label" /></div>
+				<div class="floatBlock">
+					<Dropdown id="addTagToAreaDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" :show-clear="true"></Dropdown>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
 import Button from 'primevue/button';
+import OverlayPanel from 'primevue/overlaypanel';
+import Dropdown from 'primevue/dropdown';
+import InputText from 'primevue/inputtext';
 
 export default {
 	name: 'Selection',
 	
-	 props: {
-	 	pageRectAreas:null,
-	 },
+	props: {
+		pageRectAreas:null,
+	},
 
 	inject:['apiClient'],
 
 	components: {
 		Button,
+		OverlayPanel,
+		Dropdown,
+		InputText
 	},
 
 	data () {
@@ -50,10 +62,23 @@ export default {
 			// array of selected iri boxes
 			iriBoxes: [],
 			newBounds: {},
+
+			//tag and label for selection area
+			selectedTag: null,
+			tags: [],
+			labelText: null,
 			// -------------------------------------------
 		}
 	},
-	methods: {		
+	created () {
+		this.fetchTags();
+	},
+	methods: {
+		//get tag values
+		async fetchTags() {
+			this.tags = await this.apiClient.getTags();
+		},	
+
 		//create div and get its starging position
 		divCreator(event) { 
 			//remove div of selected boxes
@@ -118,20 +143,6 @@ export default {
 				if (box.bounds.positionX > this.startBorderX && box.bounds.positionY > this.startBorderY && (box.bounds.height + box.bounds.positionY) < this.endBorderY && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
 					//add iris to array of selected boxes
 					this.iriBoxes.push(box);
-					
-					//set border div size
-					// if (box.bounds.positionX < this.leftBorderDiv) {
-					// 	this.leftBorderDiv = box.bounds.positionX;
-					// }
-					// if (box.bounds.positionY < this.topBorderDiv) {
-					// 	this.topBorderDiv = box.bounds.positionY;
-					// }
-					// if ((box.bounds.width + box.bounds.positionX - this.leftBorderDiv) > this.rightBorderDiv) {
-					// 	this.rightBorderDiv = box.bounds.width + box.bounds.positionX - this.leftBorderDiv;
-					// }
-					// if ((box.bounds.height + box.bounds.positionY - this.topBorderDiv) > this.bottomBorderDiv) {
-					// 	this.bottomBorderDiv =  box.bounds.height + box.bounds.positionY - this.topBorderDiv;
-					// }
 
 					//set borders of div
 					if (box.bounds.positionX < this.leftBorderDiv) {
@@ -161,7 +172,7 @@ export default {
 				this.$refs.dragView.appendChild(this.borderDiv);
 				this.borderDiv.setAttribute('id', 'divBorder');
 				// document.documentElement.appendChild(this.borderDiv);
-				let divStyle = 'position:absolute;' + 'z-index:1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + heightDiv + 'px;' + 'width:' + widthDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
+				let divStyle = 'position:absolute;' + 'z-index:-1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + heightDiv + 'px;' + 'width:' + widthDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
 				this.borderDiv.setAttribute('style', divStyle);
 				
 				//bounds of new area
@@ -173,10 +184,16 @@ export default {
 				}
 				//show button for adding selection to tree
 				document.getElementById("addIriObjectsToAreaButton").style.display = "block";
+				document.getElementById("addLabelToAreaText").style.display = "block";
+				document.getElementById("addTagToAreaDropdown").style.display = "flex"; //dropdown is rendered wrong as block, flex must be used
+				
 			}
 			else {
 				//hide button for adding selection to tree
 				document.getElementById("addIriObjectsToAreaButton").style.display = "none";
+				document.getElementById("addLabelToAreaText").style.display = "none";
+				document.getElementById("addTagToAreaDropdown").style.display = "none";
+
 			}		
 		},
 
@@ -211,14 +228,41 @@ export default {
 				newID = newID.concat(splitIri[splitIri.length - 1]);
 			});
 
+			//get label and if it is empty label with be "no label"
+			let labelString = "";
+			if (this.labelText === null) {
+				labelString = "no label";
+			}
+			else if (!this.labelText.length){
+				labelString = "no label";
+			}
+			else {
+
+				labelString = this.labelText;
+				this.labelText = null;
+			}
+			
+
+			//get tag and if it is empty, tag will be null
+			let tagDesc = null;
+			for (var tag of this.tags) {
+				if (tag['iri'] == this.selectedTag) {
+					tagDesc = tag['name'];
+					break;
+				}
+			}		
+			console.log(tagDesc);
+			
+
 			//data of new area
 			let data = {
 				positionX: this.newBounds.positionX, //rozměry
 				positionY: this.newBounds.positionY,
 				width: this.newBounds.width,
 				height: this.newBounds.height,
-				label: 'new area', //textový popis (cokoliv)
-				iri: newID //nové IRI
+				label: labelString, //textový popis
+				iri: newID, //nové IRI
+				tag: tagDesc //tag
 			}
 			console.log(data);
 
@@ -226,6 +270,18 @@ export default {
 			await this.$root.rdfUtil.createSuperArea(artIri, parent, children, data);
 			await this.apiClient.refreshArtifact(artIri);
 			this.$emit('update');	
+
+			//hide buttons and controls for adding selection to tree
+			document.getElementById("addIriObjectsToAreaButton").style.display = "none";
+			document.getElementById("addLabelToAreaText").style.display = "none";
+			document.getElementById("addTagToAreaDropdown").style.display = "none";
+
+
+			//remove div of selected boxes
+			let el = document.getElementById('divBorder');
+			if (el != null) {
+				el.remove();
+			}
 		}
 	}
 }
@@ -243,12 +299,43 @@ export default {
     top: 0;
     bottom: 0;
 }
+#tagOverlayPanel {
+	z-index: 1002;
+	position: absolute;
+}
+
+.floatRow {
+	height: 0;
+	width: 100% !important;
+	display: flex !important;
+	float: left !important;
+	flex-direction: row !important;
+	justify-content: left !important;
+	position: fixed !important;
+}
+.floatRow .floatBlock {
+	margin: 0.5em !important;	
+	z-index: 1001 !important;
+	position: relative !important;
+}
 #addIriObjectsToAreaButton
 {
-	z-index: 1001;
-	position: fixed;
-	margin: 5px;
-	background-color: rgba(55, 55, 255, 0.5);
-	/* display: none; */
+	background-color: rgba(55, 55, 255, 0.75);
+	height: 2.5em;
+	width: 9em;
+	z-index: 2002;
+	display: none;
 }
+#addLabelToAreaText{
+	height: 2.5em;
+	width: 9em;
+	z-index: 2002;
+	display: none;
+}
+#addTagToAreaDropdown {
+	height: 2.5em;
+	z-index: 2002;
+	display:none;
+}
+
 </style>
