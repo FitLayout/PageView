@@ -146,7 +146,7 @@ export class ApiClient {
 	}
 
 	async exportContext(contextIri, mime, thenFunction) {
-		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
+		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent('<' + contextIri + '>');
 		let response = await fetch(url, {
 			method: 'GET',
 			headers: this.headers({
@@ -162,7 +162,7 @@ export class ApiClient {
 	}
 
 	async replaceContext(contextIri, mime, data) {
-		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
+		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent('<' + contextIri + '>');
 		let response = await fetch(url, {
 			method: 'PUT',
 			headers: this.headers({
@@ -178,7 +178,7 @@ export class ApiClient {
 	}
 
 	async deleteContext(contextIri) {
-		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent(contextIri);
+		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent('<' + contextIri + '>');
 		let response = await fetch(url, {
 			method: 'DELETE',
 			headers: this.headers()
@@ -368,6 +368,24 @@ export class ApiClient {
 		}
 	}
 
+	async deleteValue(subjectIri, predicateIri, artifactIri) {
+		const url = this.repositoryEndpoint()
+			+ '/statements?context=' + encodeURIComponent('<' + artifactIri + '>')
+			+ '&subj=' + encodeURIComponent('<' + subjectIri + '>')
+			+ '&pred=' + encodeURIComponent('<' + predicateIri + '>');
+		let response = await fetch(url, {
+			method: 'DELETE',
+			headers: this.headers()
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		const data = await response.json();
+		return data.status == 'ok';
+	}
+
 	async addTag(subjectIri, tagName, artifactIri) {
 		const url = this.repositoryEndpoint() + '/add/';
 		const payload = {
@@ -394,6 +412,26 @@ export class ApiClient {
 		} catch (e) {
 			throw new Error(e);
 		}
+	}
+
+	async deleteTag(subjectIri, tagIri, artifactIri) {
+		const predicateIri = 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag';
+		const url = this.repositoryEndpoint()
+			+ '/statements?context=' + encodeURIComponent('<' + artifactIri + '>')
+			+ '&subj=' + encodeURIComponent('<' + subjectIri + '>')
+			+ '&pred=' + encodeURIComponent('<' + predicateIri + '>')
+			+ '&obj=' + encodeURIComponent('<' + tagIri + '>');
+		let response = await fetch(url, {
+			method: 'DELETE',
+			headers: this.headers()
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		const data = await response.json();
+		return data.status == 'ok';
 	}
 
 	//================================================================================
