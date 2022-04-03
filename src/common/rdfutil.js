@@ -27,7 +27,7 @@ export class RdfUtil {
 	 * @param {*} artIri artifact IRI 
 	 * @param {*} parentIri IRI of the parent area of the newly created area
 	 * @param {*} childIris array of child area IRIs that will be child nodes of the new area
-	 * @param {*} areaData area property specification: positionX, positionY, width, height, iri, label
+	 * @param {*} areaData area property specification: positionX, positionY, width, height, iri, label, tagIris[]
 	 */
 	async createSuperArea(artIri, parentIri, childIris, areaData) {
 
@@ -52,6 +52,12 @@ export class RdfUtil {
   			box:positionY "${areaData.positionY}"^^xsd:int;
 			box:width "${areaData.width}"^^xsd:int .
 		`;
+
+		if (areaData.tagIris) {
+			for (let tagIri of areaData.tagIris) {
+				insQuery += ` <${areaData.iri}> segm:hasTag <${tagIri}> . `;
+			}
+		}
 
 		for (let childIri of childIris) {
 			insQuery += ` <${childIri}> segm:isChildOf <${areaData.iri}> . `;
