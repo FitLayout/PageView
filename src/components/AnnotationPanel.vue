@@ -177,7 +177,7 @@ export default {
 		//TODO FUNCTIONS
 		//open overlay panel for editation of annotation
 		editToggleAnnot(event,item) {
-    			this.$refs.editAnnotationPanel.toggle(event);
+    		this.$refs.editAnnotationPanel.toggle(event);
 			this.selectedAnnotForEdit = item; //pass value of selected annotation
 			this.labelEditText = item.value[0]; // open overlay with actual value of annotation
 		},  
@@ -186,16 +186,24 @@ export default {
 			console.log("edit annotation");
 			console.log(item.iri);
 			console.log(this.labelEditText);
+			this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
+			this.apiClient.addValue(this.subjectIri, item.iri, this.labelEditText, this.artifactIri);
+			this.$refs.editAnnotationPanel.toggle();
+			this.$emit('update');
 		}, 
 		//delete annotation
 		deleteAnnot(item) {
 			console.log("delete annotation");
 			console.log(item.iri);
+			this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
+			this.$emit('update');
 		}, 
 		//delete tag
 		deleteTag(item) {
 			console.log("delete tag");
-			console.log(item.iri);
+			console.log(item);
+			this.apiClient.deleteTag(this.subjectIri, item, this.artifactIri);
+			this.$emit('update');
 		}, 
 		
 	}
