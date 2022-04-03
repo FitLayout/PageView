@@ -243,11 +243,11 @@ export default {
 			}
 			
 
-			//get tag and if it is empty, tag will be null
-			let tagDesc = null;
+			//get tag (if any)
+			let tagDesc = [];
 			for (var tag of this.tags) {
 				if (tag['iri'] == this.selectedTag) {
-					tagDesc = tag['name'];
+					tagDesc.push(tag['iri']);
 					break;
 				}
 			}		
@@ -262,7 +262,7 @@ export default {
 				height: this.newBounds.height,
 				label: labelString, //textový popis
 				iri: newID, //nové IRI
-				tag: tagDesc //tag
+				tagIris: tagDesc //tags
 			}
 			console.log(data);
 
