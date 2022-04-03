@@ -386,12 +386,12 @@ export class ApiClient {
 		return data.status == 'ok';
 	}
 
-	async addTag(subjectIri, tagName, artifactIri) {
+	async addTag(subjectIri, tagIri, artifactIri) {
 		const url = this.repositoryEndpoint() + '/add/';
 		const payload = {
 			s: subjectIri,
 			p: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag',
-			o: 'http://fitlayout.github.io/resource/tag-gui--' + tagName,
+			o: tagIri,
 			artifact: artifactIri
 		};
 		try {

@@ -118,7 +118,7 @@ export default {
 			var tagDesc = null;
 			for (var tag of this.tags) {
 				if (tag['iri'] == this.selectedTag) {
-					tagDesc = tag['name'];
+					tagDesc = tag['iri'];
 					break;
 				}
 			}
@@ -129,6 +129,7 @@ export default {
 			}
 			this.apiClient.addTag(this.subjectIri, tagDesc, this.artifactIri);
 			this.selectedTag = null;
+			this.$refs.addTagPanel.hide();
 			this.$emit('update');
 		},
 
@@ -147,6 +148,7 @@ export default {
 			this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.artifactIri);
 			this.selectedLabelType = null;
 			this.labelText = null;
+			this.$refs.addAnnotationPanel.hide();
 			this.$emit('update');
 		},
 
@@ -188,7 +190,7 @@ export default {
 			console.log(this.labelEditText);
 			this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
 			this.apiClient.addValue(this.subjectIri, item.iri, this.labelEditText, this.artifactIri);
-			this.$refs.editAnnotationPanel.toggle();
+			this.$refs.editAnnotationPanel.hide();
 			this.$emit('update');
 		}, 
 		//delete annotation
