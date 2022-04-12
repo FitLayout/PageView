@@ -6,6 +6,9 @@ import PageDetailView from "../views/PageDetailView.vue";
 import BrowserView from "../views/BrowserView.vue";
 import AdminView from "../views/AdminView.vue";
 import AdminRepos from "../views/AdminRepos.vue";
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+import RdfProjTestPage from "../views/RdfProjTestPage.vue";
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -56,7 +59,12 @@ const router = createRouter({
 					component: AdminRepos
 				}
 			]		
-		}
+		},
+		{
+			path: "/rT/:repo/:name?/:do?",
+			name: "RdfProjTestPage",
+			component: RdfProjTestPage,
+		},
 	]
 });
 

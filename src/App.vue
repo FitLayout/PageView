@@ -7,19 +7,22 @@
 <script>
 import {ApiClient} from '@/common/apiclient.js';
 import {RdfUtil} from '@/common/rdfutil.js';
+import {RdfApiClient} from 'rdf-storage-browsing-web-interface'
 
 export default {
     name: 'app',
 	data() {
 		return {
 			apiClient: null,
-			rdfUtil: null
+			rdfUtil: null,
+			rdfApiClient: null
 		}
 	},
 	components: {
 	},
 	created () {
 		this.apiClient = new ApiClient();
+		this.rdfApiClient = this.apiClient; //new RdfApiClient();
 		this.apiClient.onNotAuthorized = this.authFailed;
 		this.rdfUtil = new RdfUtil(this.apiClient);
 		window.rdfutil = this.rdfUtil; //TODO debuging
