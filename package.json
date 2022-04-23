@@ -14,7 +14,7 @@
     "primeicons": "^5.0.0",
     "primevue": "^3.7.2",
     "rdf-object": "^1.10.2",
-    "rdf-storage-browsing-web-interface": "file:../dp_kiss/rdf-storage-browsing-web-interface/rdf-storage-browsing-web-interface-0.1.11.tgz",
+    "rdf-storage-browsing-web-interface": "^0.1.2",
     "vue": "^3.1.1",
     "vue-router": "^4.0.8"
   },

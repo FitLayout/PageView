@@ -672,8 +672,15 @@ export class ApiClient {
 	}
 
 	// Sending SPARQL query to the specified server
-	async sendSparqlQuery(url, queryText) {
-		let data = await fetch(url, {
+	async sendSparqlQuery(repo, queryText, queryType) {
+		let sendQueryToUrl = SERVER_ROOT + "/r/" + repo;
+    	// change the URL end based on the type of query
+    	if (queryType == "update") {
+      		sendQueryToUrl = sendQueryToUrl + "/repository/updateQuery";
+    	} else {
+      		sendQueryToUrl = sendQueryToUrl + "/repository/query";
+    	}
+		let data = await fetch(sendQueryToUrl, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/sparql-query",
@@ -687,7 +694,8 @@ export class ApiClient {
 	}
 
 	// Data upload to server
-	async uploadDataToServer(url, data, selectedFormat) {
+	async uploadDataToServer(repo, data, selectedFormat) {
+		const url = SERVER_ROOT + "/r/" + repo + "/repository/statements";
 		let response = await fetch(url, {
 			method: "POST",
 			headers: {
@@ -701,7 +709,7 @@ export class ApiClient {
 	}
 
 	// Fetching RDF data from URL
-	async fetchDataFromUrl(url, ref) {
+	async fetchDataFromUrl(url) {
 		let data = await fetch(url, {
 			method: "GET",
 			headers: {},
@@ -711,7 +719,8 @@ export class ApiClient {
 		return data;
 	}
 
-	async removeNamespaceFromRepo(url, prefixToRemove) {
+	async removeNamespaceFromRepo(repo, prefixToRemove) {
+		const url = SERVER_ROOT + "/r/" + repo + "/repository/namespaces/";
 		let res = await fetch(url + prefixToRemove, {
 			method: "DELETE",
 		})
@@ -720,7 +729,8 @@ export class ApiClient {
 		return res;
 	}
 
-	async createNamespace(url, newNSprefix, newNSname) {
+	async createNamespace(repo, newNSprefix, newNSname) {
+		const url = SERVER_ROOT + "/r/" + repo + "/repository/namespaces/";
 		let res = await fetch(url + newNSprefix, {
 			method: "PUT",
 			headers: {
