@@ -145,7 +145,7 @@ export default {
 			else {
 				descType = RDFS.COMMENT;
 			}*/
-			this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.artifactIri);
+			await this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.artifactIri);
 			this.selectedLabelType = null;
 			this.labelText = null;
 			this.$refs.addAnnotationPanel.hide();
@@ -184,27 +184,27 @@ export default {
 			this.labelEditText = item.value[0]; // open overlay with actual value of annotation
 		},  
 		//edit annotation
-		editAnnot(item) {
+		async editAnnot(item) {
 			console.log("edit annotation");
 			console.log(item.iri);
 			console.log(this.labelEditText);
-			this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
-			this.apiClient.addValue(this.subjectIri, item.iri, this.labelEditText, this.artifactIri);
+			await this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
+			await this.apiClient.addValue(this.subjectIri, item.iri, this.labelEditText, this.artifactIri);
 			this.$refs.editAnnotationPanel.hide();
 			this.$emit('update');
 		}, 
 		//delete annotation
-		deleteAnnot(item) {
+		async deleteAnnot(item) {
 			console.log("delete annotation");
 			console.log(item.iri);
-			this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
+			await this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
 			this.$emit('update');
 		}, 
 		//delete tag
-		deleteTag(item) {
+		async deleteTag(item) {
 			console.log("delete tag");
 			console.log(item);
-			this.apiClient.deleteTag(this.subjectIri, item, this.artifactIri);
+			await this.apiClient.deleteTag(this.subjectIri, item, this.artifactIri);
 			this.$emit('update');
 		}, 
 		
