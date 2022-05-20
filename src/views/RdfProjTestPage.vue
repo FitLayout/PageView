@@ -11,7 +11,8 @@
             <!-- !!!!!!!!!!! -->
 
             <!-- any component from rdf project, for example: -->
-            <NamespacesMaintenance />
+            <!--<NamespacesMaintenance />-->
+			<MainComponent />
         </div>
     </div>
   </div>
