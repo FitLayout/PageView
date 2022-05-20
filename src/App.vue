@@ -101,6 +101,13 @@ body {
 	background-color: var(--indigo-700);
 }
 
+/* Very important!!
+  Solves flickering and freezing of tooltips in Google Chrome,
+  which caused freezing of the whole browser.
+*/
+.p-tooltip {
+	pointer-events: none;
+}
 
 #app {
 	font-family: var(--font-family);
