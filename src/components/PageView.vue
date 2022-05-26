@@ -20,6 +20,7 @@
 								<DataTable :value="tableModel" v-if="tableModel"
 									class="p-datatable-sm"
 									v-model:selection="selectedTableRow"
+									data-key="_iri"
 									selectionMode="single"
 									@rowSelect="tableRowSelected">
 									<Column>
