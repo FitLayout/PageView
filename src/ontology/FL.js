@@ -47,7 +47,42 @@ const FL = {
 	 * http://fitlayout.github.io/ontology/fitlayout.owl#hasParentArtifact
 	 * Assigns a parent artifact to another artifact.
 	 */
-	hasParentArtifact: NAMESPACE + 'hasParentArtifact'
+	hasParentArtifact: NAMESPACE + 'hasParentArtifact',
+
+	/**
+	 * param
+	 * http://fitlayout.github.io/ontology/fitlayout.owl#param
+	 * Service parameter value definition.
+	 */
+	param: NAMESPACE + 'param',
+
+	/**
+	 * paramName
+	 * http://fitlayout.github.io/ontology/fitlayout.owl#paramName
+	 * Parameter name
+	 */
+	paramName: NAMESPACE + 'paramName',
+
+	/**
+	 * paramValue
+	 * http://fitlayout.github.io/ontology/fitlayout.owl#paramValue
+	 * Parameter value.
+	 */
+	paramValue: NAMESPACE + 'paramValue',
+
+	/**
+	 * service
+	 * http://fitlayout.github.io/ontology/fitlayout.owl#service
+	 * A service ID definition
+	 */
+	service: NAMESPACE + 'service',
+
+	/**
+	 * Tagger
+	 * http://fitlayout.github.io/ontology/fitlayout.owl#Tagger
+	 * A tagger that is able to assign tags to content rectangles.
+	 */
+	Tagger: NAMESPACE + 'Tagger'
 
 }
 

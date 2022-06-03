@@ -141,6 +141,13 @@ const SEGM = {
 	Tag: NAMESPACE + 'Tag',
 
 	/**
+	 * tagger
+	 * http://fitlayout.github.io/ontology/segmentation.owl#tagger
+	 * Assigns a tagger to a tag
+	 */
+	tagger: NAMESPACE + 'tagger',
+
+	/**
 	 * tagSupport
 	 * http://fitlayout.github.io/ontology/segmentation.owl#tagSupport
 	 */

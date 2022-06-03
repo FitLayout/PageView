@@ -100,6 +100,15 @@ class TagCreator extends ObjectCreator {
 		this.addMapping({
 			name: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#name', type: 'string' },
 			type: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#type', type: 'string' },
+			tagger: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#tagger', type: 'object<http://fitlayout.github.io/ontology/fitlayout.owl#Tagger>[]' },
+		});
+	}
+}
+
+class TaggerCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
 		});
 	}
 }
@@ -234,6 +243,7 @@ class TextChunkCreator extends RectAreaCreator {
 			belongsToChunkSet: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#ChunkSet>' },
 			text: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#text', type: 'string' },
 			hasSourceBox: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourceBox', type: 'object<http://fitlayout.github.io/ontology/render.owl#Box>' },
+			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
 		});
 	}
 }
@@ -247,6 +257,7 @@ const registry = {
 	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea': new LogicalAreaCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#RectArea': new RectAreaCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#Tag': new TagCreator(),
+	'http://fitlayout.github.io/ontology/fitlayout.owl#Tagger': new TaggerCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#Area': new AreaCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#AreaTree': new AreaTreeCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Box': new BoxCreator(),
