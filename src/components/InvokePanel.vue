@@ -176,7 +176,11 @@ export default {
 
 			try {
 				const iri = await this.apiClient.createArtifact(this.key, this.params, srcIri);
-				this.$emit('created', iri);
+				if (iri) {
+					this.$emit('created', iri);
+				} else {
+					this.$emit('created', srcIri);
+				}
 				this.error = null;
 			} catch (e) {
 				this.error = e.message;
