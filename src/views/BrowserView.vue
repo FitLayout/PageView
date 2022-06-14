@@ -16,7 +16,7 @@
 		</div>
 		<!-- Service panels -->
 		<div class="panel-row">
-			<InvokePanel id="r" :target="pageType" 
+			<InvokePanel id="r" :source="'ANY'" :target="pageType" 
 				:currentArtifact="currentArtifact" action="Render"
 				class="serv-panel panel-render" :class="panelClass('render')"
 				v-on:created="artifactCreated"></InvokePanel>
@@ -32,7 +32,7 @@
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-text" :class="panelClass('text')"
 				v-on:created="artifactCreated"></InvokePanel>
-			<InvokePanel id="rr" :target="connectionSetType"
+			<InvokePanel id="rr" :source="'ANY'" :target="'NONE'"
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-rels" :class="panelClass('rels')"
 				v-on:created="artifactCreated"></InvokePanel>

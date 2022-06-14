@@ -20,7 +20,14 @@
 								<div class="option-descr">{{opt.option.description}}</div>
 							</div>
 						</template>
-						<template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
+						<template #value="opt">
+							<div  v-if="selection && opt && opt.value && selection[opt.value]">
+								{{selection[opt.value].name}} ({{selection[opt.value].id}})
+							</div>
+							<div v-else>
+								---
+							</div>
+						</template>
 					</Dropdown>
 				</div>
 				<Button class="inl" v-on:click="invoke" :label="action" />
@@ -59,8 +66,8 @@ export default {
 	inject: ['apiClient'],
 	props: {
 		id: null,
-		source: null,
-		target: null,
+		source: null, // use <iri> or 'ANY' or 'NONE'
+		target: null, // use <iri> or 'ANY' or 'NONE'
 		action: null,
 		grouped: null, 
 		currentArtifact: null
@@ -101,8 +108,8 @@ export default {
 				this.selList = [];
 				let sel = {};
 				for (let serv of this.services) {
-					if (serv.produces === this.target
-							&& (!this.source || serv.consumes === this.source)) {
+					if ((this.target === 'ANY' || (this.target === 'NONE' && !serv.produces) || (serv.produces === this.target))
+							&& (this.source === 'ANY' || (this.source === 'NONE' && !serv.consumes) || (serv.consumes === this.source))) {
 						sel[serv.id] = serv;
 						this.selList.push(serv);
 						if (this.key == null) {
