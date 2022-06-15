@@ -1,15 +1,15 @@
 <template>
 	<span class="value-info" v-if="valueType">
-		<span v-if="valueType==='literal'">{{literalValue}}</span>
+		<span v-if="valueType==='literal'" v-tooltip.bottom="literalTooltip">{{literalValue}}</span>
 		<span v-if="valueType==='color'">{{literalValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
 			<Iri :iri="data.v.value" :active="active" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
-		<span v-if="valueType==='rectangle'" title="rectangle[x1, y1, x2, y2]">{{displayValue}}</span>
+		<span v-if="valueType==='rectangle'" v-tooltip.bottom="'rectangle[x1, y1, x2, y2]'">{{displayValue}}</span>
 		<span v-if="valueType==='attribute'">{{displayValue}}</span>
 		<span v-if="valueType==='border'">{{displayValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
-		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip="displayTooltip">{{displayValue}}</span>
+		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip.bottom="displayTooltip">{{displayValue}}</span>
 	</span>
 </template>
 
@@ -63,10 +63,18 @@ export default {
 		literalValue() {
 			let val = this.data.v.value.toString();
 			//limit the displayed length
-			if (val.length > 512) {
-				val = val.substring(0, 512) + '...'; 
+			if (val.length > 50) {
+				val = val.substring(0, 50) + '...'; 
 			}
 			return val;
+		},
+		literalTooltip() {
+			let s = '';
+			if (this.data.v.datatype) {
+				const dec = new IriDecoder();
+				s = '(' + dec.encodeIri(this.data.v.datatype) + ') ';
+			}
+			return s + this.data.v.value.toString(); 
 		}
 	},
 	created () {

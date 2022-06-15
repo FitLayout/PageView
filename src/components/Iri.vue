@@ -1,8 +1,8 @@
 <template>
 	<a class="iri-link" v-if="active" @click="clicked">
-		<span class="iri font-monospace" :title="iri">{{ shortForm }}</span>
+		<span class="iri font-monospace" v-tooltip.bottom="iri">{{ shortForm }}</span>
 	</a>
-	<span class="iri font-monospace" v-if="!active" :title="iri">{{ shortForm }}</span>
+	<span class="iri font-monospace" v-if="!active" v-tooltip.bottom="iri">{{ shortForm }}</span>
 </template>
 
 <script>
