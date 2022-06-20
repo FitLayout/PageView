@@ -9,7 +9,7 @@
 		<span v-if="valueType==='rectangle'" v-tooltip.bottom="'rectangle[x1, y1, x2, y2]'">{{displayValue}}</span>
 		<span v-if="valueType==='attribute'">{{displayValue}}</span>
 		<span v-if="valueType==='border'">{{displayValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
-		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip.bottom="displayTooltip">{{displayValue}}</span>
+		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip.bottom="displayTooltip" @click="exploreTag">{{displayValue}}</span>
 	</span>
 </template>
 
@@ -152,7 +152,7 @@ export default {
 					}
 					else
 					{
-						console.log('Unknown type' + this.iri);
+						console.log('Unknown type ' + this.iri);
 						console.log(descr);
 					}
 				});
@@ -191,6 +191,9 @@ export default {
 		},
 		showIri(iri) {
 			this.$emit('show-iri', iri);
+		},
+		exploreTag() {
+			this.showIri(this.iri);
 		}
 	}
 }
