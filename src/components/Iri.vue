@@ -14,6 +14,7 @@ export default {
 		iri: null,
 		active: null
 	},
+	emits: ['show-iri'],
 	data () {
 		return {
 			shortForm: null
@@ -32,7 +33,8 @@ export default {
 		},
 
 		clicked() {
-			this.$router.push({name: 'show', params: { iri: this.iri}});
+			//this.$router.push({name: 'show', params: { iri: this.iri}});
+			this.$emit('show-iri', this.iri);
 		}
 	}
 }

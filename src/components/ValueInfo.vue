@@ -3,7 +3,7 @@
 		<span v-if="valueType==='literal'" v-tooltip.bottom="literalTooltip">{{literalValue}}</span>
 		<span v-if="valueType==='color'">{{literalValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
-			<Iri :iri="data.v.value" :active="active" />
+			<Iri :iri="data.v.value" :active="active" @show-iri="showIri" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 		</span>
 		<span v-if="valueType==='rectangle'" v-tooltip.bottom="'rectangle[x1, y1, x2, y2]'">{{displayValue}}</span>
@@ -36,8 +36,10 @@ export default {
 		Iri
 	},
 	inject: ['apiClient'],
+	emits: ['show-iri'],
 	props: {
 		data: null,
+		activeIris: null //force active IRIs
 	},
 	data () {
 		return {
@@ -94,6 +96,9 @@ export default {
 				});
 			} else {
 				this.detectLiteralType();
+			}
+			if (this.activeIris) {
+				this.active = true; //force active IRIs
 			}
 		},
 		detectLiteralType() {
@@ -183,6 +188,9 @@ export default {
 			else if (knownTypes[this.typeIri]) {
 				this.active = true;
 			}
+		},
+		showIri(iri) {
+			this.$emit('show-iri', iri);
 		}
 	}
 }

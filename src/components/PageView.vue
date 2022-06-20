@@ -55,7 +55,7 @@
 											</Column>
 											<Column header="Value" filterField="v.value">
 												<template #body="rowdata">
-													<ValueInfo :data="rowdata.data" />
+													<ValueInfo :data="rowdata.data" @show-iri="showIri" />
 												</template>
 												<template #filter="{filterModel,filterCallback}">
 													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
@@ -75,7 +75,7 @@
 											showGridlines>
 											<Column header="Subject" filterField="v.value">
 												<template #body="rowdata">
-													<ValueInfo :data="rowdata.data" />
+													<ValueInfo :data="rowdata.data" @show-iri="showIri" />
 												</template>
 												<template #filter="{filterModel,filterCallback}">
 													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
@@ -516,6 +516,10 @@ export default {
 		updateTreeView() {
 			this.fetchData(true);
 		},
+
+		showIri(iri) {
+			this.$router.push({name: 'show', params: { iri: iri }});
+		} 
 
 	}
 }

@@ -4,6 +4,7 @@ import RepositoryView from "../views/RepositoryView.vue";
 import RepositoryContentView from "../views/RepositoryContentView.vue";
 import PageDetailView from "../views/PageDetailView.vue";
 import BrowserView from "../views/BrowserView.vue";
+import ExploreView from "../views/ExploreView.vue";
 import AdminView from "../views/AdminView.vue";
 import AdminRepos from "../views/AdminRepos.vue";
 
@@ -28,7 +29,12 @@ const router = createRouter({
 					name: 'page',
 					path: 'page/:iri',
 					component: PageDetailView
-				}
+				},
+				{
+					name: 'explore',
+					path: 'explore/:iri',
+					component: ExploreView
+				},
 			]
 		},
 		{
