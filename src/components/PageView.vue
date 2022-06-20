@@ -35,6 +35,8 @@
 					<SplitterPanel>
 						<div class="selected-info" v-if="subjectIri">
 							Subject: <Iri :iri="subjectIri" />
+							<i class="pi pi-share-alt" v-tooltip="'Show in RDF explorer'" 
+								style="margin-left: 0.5em; cursor: pointer" @click="exploreSubject" />
 						</div>
 						<TabView v-model:activeIndex="activeTab">
 							<TabPanel header="Description">
@@ -531,6 +533,10 @@ export default {
 		showExt(iri) {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			window.open(route.href, '_blank');
+		},
+
+		exploreSubject() {
+			this.showExt(this.subjectIri);
 		} 
 
 	}
