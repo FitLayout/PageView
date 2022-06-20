@@ -21,6 +21,10 @@
 			<LinkButton label="Open in Browser" icon="pi pi-globe" 
 				:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }}"
 				target="_blank" />
+
+			<h2>Page model</h2>
+			<SubjectInfo v-if="iri" :iri="iri" :activeIris="true" @show-iri="showIri" style="max-width: 75em" />
+
 		</div>
 	</div>
 </template>
@@ -30,6 +34,8 @@ import ProgressSpinner from 'primevue/progressspinner';
 
 import LinkButton from '@/components/LinkButton.vue';
 import Iri from '@/components/Iri.vue';
+import SubjectInfo from '@/components/SubjectInfo.vue';
+
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
 import IriDecoder from '@/common/iridecoder.js';
@@ -40,7 +46,8 @@ export default {
 	components: {
 		ProgressSpinner,
 		LinkButton,
-		Iri
+		Iri,
+		SubjectInfo
 	},
 	inject: ['apiClient', 'userInfo', 'repoInfo'],
 	data() {
@@ -85,7 +92,12 @@ export default {
 			} catch (e) {
 				this.pngImage = null;
 			}
-		}
+		},
+
+		showIri(iri) {
+			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
+			window.open(route.href, '_blank');
+		},
 
 	}
 }
