@@ -5,12 +5,17 @@
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
 			<Iri :iri="data.v.value" :active="active" @show-iri="showIri" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
+			<i v-if="showExt && extIcon" v-tooltip="extTooltip" class="i-action" :class="extIcon" 
+				style="cursor: pointer" @click="showExternal" />
 		</span>
 		<span v-if="valueType==='rectangle'" v-tooltip.bottom="'rectangle[x1, y1, x2, y2]'">{{displayValue}}</span>
 		<span v-if="valueType==='attribute'">{{displayValue}}</span>
 		<span v-if="valueType==='border'">{{displayValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
-		<span v-if="valueType==='tag'" class="tag badge" :style="displayStyle" v-tooltip.bottom="displayTooltip" 
-			style="cursor: pointer" @click="exploreTag">{{displayValue}}</span>
+		<span v-if="valueType==='tag'">
+			<span class="tag badge" :style="displayStyle" v-tooltip.bottom="displayTooltip">{{displayValue}}</span>
+			<i v-if="structIcon" class="i-action" :class="structIcon" 
+				style="cursor: pointer" @click="showStruct" />
+		</span>
 	</span>
 </template>
 
@@ -37,16 +42,21 @@ export default {
 		Iri
 	},
 	inject: ['apiClient'],
-	emits: ['show-iri'],
+	emits: ['show-iri', 'show-ext', 'show-struct'],
 	props: {
 		data: null,
-		activeIris: null //force active IRIs
+		activeIris: null, //force active IRIs
+		extIcon: null, //icon for opening a structural browser
+		extTooltip: null,
+		structIcon: null, //icon for structure values
+		extAll: null //show ext icon always
 	},
 	data () {
 		return {
 			valueType: null,
 			iri: null,
 			active: false,
+			showExt: false,
 			typeIri: null,
 			displayValue: null,
 			displayStyle: null,
@@ -77,7 +87,12 @@ export default {
 				const dec = new IriDecoder();
 				s = '(' + dec.encodeIri(this.data.v.datatype) + ') ';
 			}
-			return s + this.data.v.value.toString(); 
+			let val = s + this.data.v.value.toString(); 
+			//limit the displayed length
+			if (val.length > 500) {
+				val = val.substring(0, 500) + '...'; 
+			}
+			return val;
 		}
 	},
 	created () {
@@ -89,17 +104,19 @@ export default {
 	methods: {
 		update() {
 			this.valueType = this.data.v.type;
+			this.showExt = this.active = false;
 			if (this.valueType === 'uri') {
 				this.iri = this.data.v.value;
 				this.apiClient.getTypeByIRI(this.iri).then(typeIri => { 
 					this.typeIri = typeIri;
 					this.updateType();
+					this.showExt = this.active || this.extAll;
+					if (this.activeIris) {
+						this.active = true; //force active IRIs
+					}
 				});
 			} else {
 				this.detectLiteralType();
-			}
-			if (this.activeIris) {
-				this.active = true; //force active IRIs
 			}
 		},
 		detectLiteralType() {
@@ -193,8 +210,11 @@ export default {
 		showIri(iri) {
 			this.$emit('show-iri', iri);
 		},
-		exploreTag() {
-			this.showIri(this.iri);
+		showExternal(iri) {
+			this.$emit('show-ext', this.iri);
+		},
+		showStruct() {
+			this.$emit('show-struct', this.iri);
 		}
 	}
 }
@@ -216,5 +236,8 @@ export default {
 	vertical-align: text-top;
 	margin-left: 0.3em;
 	cursor: default;
+}
+.value-info .i-action {
+	margin-left: 0.5em;
 }
 </style>

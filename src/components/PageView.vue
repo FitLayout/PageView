@@ -55,7 +55,11 @@
 											</Column>
 											<Column header="Value" filterField="v.value">
 												<template #body="rowdata">
-													<ValueInfo :data="rowdata.data" @show-iri="showIri" />
+													<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer" 
+														:extAll="true" structIcon="pi pi-share-alt"
+														@show-iri="showIri"
+														@show-ext="showExt"
+														@show-struct="showExt" />
 												</template>
 												<template #filter="{filterModel,filterCallback}">
 													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
@@ -75,7 +79,10 @@
 											showGridlines>
 											<Column header="Subject" filterField="v.value">
 												<template #body="rowdata">
-													<ValueInfo :data="rowdata.data" @show-iri="showIri" />
+													<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer"
+														:extAll="true" 
+														@show-iri="showIri"
+														@show-ext="showExt" />
 												</template>
 												<template #filter="{filterModel,filterCallback}">
 													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
@@ -519,6 +526,11 @@ export default {
 
 		showIri(iri) {
 			this.$router.push({name: 'show', params: { iri: iri }});
+		}, 
+
+		showExt(iri) {
+			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
+			window.open(route.href, '_blank');
 		} 
 
 	}

@@ -15,7 +15,10 @@
 			</Column>
 			<Column header="Value" filterField="v.value">
 				<template #body="rowdata">
-					<ValueInfo :data="rowdata.data" :activeIris="activeIris" @show-iri="showIri" />
+					<ValueInfo :data="rowdata.data" :activeIris="activeIris" 
+						extIcon="pi pi-globe" extTooltip="Show in Browser"
+						structIcon="pi pi-share-alt" 
+						@show-iri="showIri"	@show-ext="showExt" @show-struct="showIri" />
 				</template>
 				<template #filter="{filterModel,filterCallback}">
 					<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
@@ -83,6 +86,11 @@ export default {
 
 		showIri(iri) {
 			this.$emit('show-iri', iri);
+		},
+
+		showExt(iri) {
+			let route = this.$router.resolve({name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }});
+			window.open(route.href, '_blank');
 		}
 	}
 }
