@@ -43,6 +43,7 @@ export default {
 		}
 	},
 	watch: {
+		'$route.params.iri': 'update'
 	},
 	methods: {
 		update() {
