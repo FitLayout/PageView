@@ -21,6 +21,10 @@
 			<LinkButton label="Open in Browser" icon="pi pi-globe" 
 				:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }}"
 				target="_blank" />
+			<LinkButton label="Open in RDF explorer" icon="pi pi-share-alt"
+				style="margin-left: 0.2em" class="p-button-warning" 
+				:to="{name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }}"
+				target="_blank" />
 
 			<h2>Page model</h2>
 			<SubjectInfo v-if="iri" :iri="iri" :activeIris="true" @show-iri="showIri" style="max-width: 75em" />
