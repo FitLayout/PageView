@@ -60,6 +60,7 @@ class LogicalAreaCreator extends ObjectCreator {
 		super();
 		this.addMapping({
 			containsArea: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsArea', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>[]' },
+			belongsToLogicalTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToLogicalTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalAreaTree>[]' },
 			text: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#text', type: 'string' },
 			isSubordinateTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isSubordinateTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>' },
 			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
@@ -207,6 +208,8 @@ class LogicalAreaTreeCreator extends ArtifactCreator {
 		super();
 		this.addMapping({
 			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
+			// Inverse collection for LogicalArea.belongsToLogicalTree.
+			logicalAreas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToLogicalTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>[]', inverse: true },
 		});
 	}
 }
@@ -230,6 +233,7 @@ class TextChunkCreator extends RectAreaCreator {
 	constructor() {
 		super();
 		this.addMapping({
+			tagSupport: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#tagSupport', type: 'object' },
 			hasSourceArea: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourceArea', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>' },
 			belongsToChunkSet: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#ChunkSet>' },
 			text: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#text', type: 'string' },
