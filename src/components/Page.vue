@@ -75,10 +75,10 @@ export default {
 			if (this.$refs.boxes !== undefined) { // the rendering area is ready
 				this.$refs.boxes.innerHTML = ''; // clear old boxes
 				this.boxIndex = {};
-				const isPage = (this.rectangles === this.page.rectAreas); // are we drawing the page only?
+				const isPage = (this.rectangles === this.page.boxes); // are we drawing the page only?
 				if (this.page !== null && !this.dataurl) { // no screenshot is shown - we should draw the contents
 					//console.log('DRAWING base ' + isPage);
-					this.renderBoxes(this.page.rectAreas, this.$refs.boxes, true, isPage); // always use the boxes
+					this.renderBoxes(this.page.boxes, this.$refs.boxes, true, isPage); // always use the boxes
 				}
 				if ((!isPage || this.dataurl) && this.rectangles != null) { //not a page or used a screenshot, add the active rectangles separately
 					//console.log('DRAWING overlay');

@@ -39,7 +39,7 @@ export default class ObjectResolver {
 				artifact: page,
 				pageIri: iri,
 				page: page,
-				rectangles: page.rectAreas
+				rectangles: page.boxes
 			}
 		} else if (type === SEGM.AreaTree) {
 			const atree = await this.getAreaTree(iri, currentStatus);
@@ -80,7 +80,7 @@ export default class ObjectResolver {
 				artifact: page,
 				pageIri: page._iri,
 				page: page,
-				rectangles: page.rectAreas
+				rectangles: page.boxes
 			}
 		} else if (type === SEGM.Area) {
 			const atreeIri = await this.client.getSubjectValue(iri, SEGM.belongsTo);
@@ -133,7 +133,7 @@ export default class ObjectResolver {
 			console.log('RELOADING page');
 			currentStatus.reloadArtifact = false; // artifact reloaded, put the force reload flag down
 			const page = await this.client.fetchArtifact(iri);
-			this.client.sortBoxes(page.rectAreas);
+			this.client.sortBoxes(page.boxes);
 			return page;
 		}
 	}

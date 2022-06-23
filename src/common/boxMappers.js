@@ -73,7 +73,6 @@ class RectAreaCreator extends ObjectCreator {
 	constructor() {
 		super();
 		this.addMapping({
-			belongsTo: { name: 'http://fitlayout.github.io/ontology/render.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/render.owl#Page>' },
 			fontStyle: { name: 'http://fitlayout.github.io/ontology/render.owl#fontStyle', type: 'float' },
 			backgroundSeparated: { name: 'http://fitlayout.github.io/ontology/render.owl#backgroundSeparated', type: 'boolean[]' },
 			backgroundColor: { name: 'http://fitlayout.github.io/ontology/render.owl#backgroundColor', type: 'string' },
@@ -147,18 +146,19 @@ class BoxCreator extends RectAreaCreator {
 	constructor() {
 		super();
 		this.addMapping({
-			visible: { name: 'http://fitlayout.github.io/ontology/render.owl#visible', type: 'boolean' },
+			belongsTo: { name: 'http://fitlayout.github.io/ontology/render.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/render.owl#Page>' },
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/render.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/render.owl#ContainerBox>' },
+			contentBounds: { name: 'http://fitlayout.github.io/ontology/render.owl#contentBounds', type: 'object<http://fitlayout.github.io/ontology/render.owl#Bounds>' },
+			text: { name: 'http://fitlayout.github.io/ontology/render.owl#text', type: 'string' },
+			fontFamily: { name: 'http://fitlayout.github.io/ontology/render.owl#fontFamily', type: 'string' },
+			sourceXPath: { name: 'http://fitlayout.github.io/ontology/render.owl#sourceXPath', type: 'string' },
+			visible: { name: 'http://fitlayout.github.io/ontology/render.owl#visible', type: 'boolean' },
 			visualBounds: { name: 'http://fitlayout.github.io/ontology/render.owl#visualBounds', type: 'object<http://fitlayout.github.io/ontology/render.owl#Bounds>' },
 			displayType: { name: 'http://fitlayout.github.io/ontology/render.owl#displayType', type: 'string' },
 			hasAttribute: { name: 'http://fitlayout.github.io/ontology/render.owl#hasAttribute', type: 'object<http://fitlayout.github.io/ontology/render.owl#Attribute>[]' },
-			contentBounds: { name: 'http://fitlayout.github.io/ontology/render.owl#contentBounds', type: 'object<http://fitlayout.github.io/ontology/render.owl#Bounds>' },
-			text: { name: 'http://fitlayout.github.io/ontology/render.owl#text', type: 'string' },
 			htmlTagName: { name: 'http://fitlayout.github.io/ontology/render.owl#htmlTagName', type: 'string' },
-			fontFamily: { name: 'http://fitlayout.github.io/ontology/render.owl#fontFamily', type: 'string' },
 			containsObject: { name: 'http://fitlayout.github.io/ontology/render.owl#containsObject', type: 'object<http://fitlayout.github.io/ontology/render.owl#ContentObject>[]' },
 			color: { name: 'http://fitlayout.github.io/ontology/render.owl#color', type: 'string' },
-			sourceXPath: { name: 'http://fitlayout.github.io/ontology/render.owl#sourceXPath', type: 'string' },
 		});
 	}
 }
@@ -170,15 +170,6 @@ class ChunkSetCreator extends ArtifactCreator {
 			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			// Inverse collection for TextChunk.belongsToChunkSet.
 			textChunks: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#TextChunk>[]', inverse: true },
-		});
-	}
-}
-
-class ConnectionSetCreator extends ArtifactCreator {
-	constructor() {
-		super();
-		this.addMapping({
-			hasSource: { name: 'http://fitlayout.github.io/ontology/render.owl#hasSource', type: 'object<http://fitlayout.github.io/ontology/fitlayout.owl#Artifact>' },
 		});
 	}
 }
@@ -229,8 +220,8 @@ class PageCreator extends ArtifactCreator {
 			sourceUrl: { name: 'http://fitlayout.github.io/ontology/render.owl#sourceUrl', type: 'string' },
 			height: { name: 'http://fitlayout.github.io/ontology/render.owl#height', type: 'int' },
 			title: { name: 'http://fitlayout.github.io/ontology/render.owl#title', type: 'string' },
-			// Inverse collection for RectArea.belongsTo.
-			rectAreas: { name: 'http://fitlayout.github.io/ontology/render.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/render.owl#RectArea>[]', inverse: true },
+			// Inverse collection for Box.belongsTo.
+			boxes: { name: 'http://fitlayout.github.io/ontology/render.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/render.owl#Box>[]', inverse: true },
 		});
 	}
 }
@@ -262,7 +253,6 @@ const registry = {
 	'http://fitlayout.github.io/ontology/segmentation.owl#AreaTree': new AreaTreeCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Box': new BoxCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#ChunkSet': new ChunkSetCreator(),
-	'http://fitlayout.github.io/ontology/render.owl#ConnectionSet': new ConnectionSetCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContainerBox': new ContainerBoxCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#ContentBox': new ContentBoxCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Image': new ImageCreator(),
