@@ -5,7 +5,8 @@
 				v-on:toggle-focus="toggleFocus"
 				v-on:select-artifact="selectArtifact"
 				v-on:delete-artifact="deleteArtifact"></ArtInfo>
-			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri" 
+			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri"
+				v-if="art._iri === currentIri" 
 				v-on:select-artifact="selectArtifact"
 				v-on:delete-artifact="deleteArtifact"></ArtTree>
 		</li>
