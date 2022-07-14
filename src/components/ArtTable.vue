@@ -1,6 +1,8 @@
 <template>
 	<div class="art-table">
 		<ConfirmDialog group="confirmDeleteArtifact"></ConfirmDialog>
+		<div v-if="loading">Loading artifacts...</div>
+		<div v-if="error">{{error}}</div>
 		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true" sortMode="single" sortField="timestamp" :sortOrder="-1">
 			<Column header="Created" field="timestamp" :expander="true" :sortable="true" headerStyle="width: 15em">
 				<template #body="slotProps">
