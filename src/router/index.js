@@ -32,7 +32,7 @@ const router = createRouter({
 				},
 				{
 					name: 'explore',
-					path: 'explore/:iri',
+					path: 'explore/:iri?',
 					component: ExploreView
 				},
 			]

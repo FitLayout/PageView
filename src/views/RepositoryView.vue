@@ -40,6 +40,7 @@ export default {
 			repoInfo: null,
 
 			menuItems: [
+				{label: 'Explore', to: {name: 'explore'}}
 			]
 		}
 	},

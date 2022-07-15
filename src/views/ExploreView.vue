@@ -1,14 +1,16 @@
 <template>
 	<div class="explore-view">
-		<div class="subj-selection" v-if="iri">
-			Subject: <InputText v-if="destIri" type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
+		<div class="subj-selection">
+			Subject: <InputText type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
+			<Button class="p-ml-2" label="Explore" @click="changeIri()" />
 		</div>
-		<SubjectInfo :iri="iri" :activeIris="true" @show-iri="showIri" />
+		<SubjectInfo v-if="iri" :iri="iri" :activeIris="true" @show-iri="showIri" />
 	</div>
 </template>
 
 <script>
 import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
 
 import Iri from '@/components/Iri.vue';
 import SubjectInfo from '@/components/SubjectInfo.vue';
@@ -19,6 +21,7 @@ import IriDecoder from '@/common/iridecoder.js';
 export default {
 	name: 'ExploreView',
 	components: {
+		Button,
 		InputText,
 		Iri,
 		SubjectInfo
@@ -47,8 +50,12 @@ export default {
 	},
 	methods: {
 		update() {
-			let dec = new IriDecoder();
-			this.destIri = dec.encodeIri(this.iri);
+			if (this.iri) {
+				let dec = new IriDecoder();
+				this.destIri = dec.encodeIri(this.iri);
+			} else {
+				this.destIri = '';
+			}
 		},
 
 		showIri(iri) {
