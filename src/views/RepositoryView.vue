@@ -40,6 +40,8 @@ export default {
 			repoInfo: null,
 
 			menuItems: [
+				{label: 'Browser', to: {name: 'browser'}},
+				{label: 'Query', to: {name: 'query'}},
 				{label: 'Explore', to: {name: 'explore'}}
 			]
 		}

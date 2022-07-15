@@ -5,6 +5,7 @@ import RepositoryContentView from "../views/RepositoryContentView.vue";
 import PageDetailView from "../views/PageDetailView.vue";
 import BrowserView from "../views/BrowserView.vue";
 import ExploreView from "../views/ExploreView.vue";
+import QueryView from "../views/QueryView.vue";
 import AdminView from "../views/AdminView.vue";
 import AdminRepos from "../views/AdminRepos.vue";
 
@@ -34,6 +35,11 @@ const router = createRouter({
 					name: 'explore',
 					path: 'explore/:iri?',
 					component: ExploreView
+				},
+				{
+					name: 'query',
+					path: 'query',
+					component: QueryView
 				},
 			]
 		},

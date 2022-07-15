@@ -134,12 +134,12 @@ export default {
 				// guess by contents
 				this.apiClient.getSubjectDescriptionObj(this.iri).then(descr => {
 					// attributes
-					if (this.data.p.value === BOX.hasAttribute) {
+					if (this.data.p && this.data.p.value === BOX.hasAttribute) {
 						this.valueType = 'attribute';
 						this.displayValue = descr[RDFS.LABEL][0].value + '="' + descr[RDF.VALUE][0].value + '"';
 					}
 					// undeclared tags - unknown name
-					else if (this.data.p.value === SEGM.hasTag) {
+					else if (this.data.p && this.data.p.value === SEGM.hasTag) {
 						this.valueType = 'tag';
 						let name = inferTagName(this.iri);
 						//this.displayValue = descr[SEGM.hasName][0].value;
@@ -147,7 +147,7 @@ export default {
 						this.displayStyle = 'background-color:' + stringColor(name);
 						this.displayTooltip = this.iri;
 					}
-					else if (this.data.p.value === SEGM.tagSupport) {
+					else if (this.data.p && this.data.p.value === SEGM.tagSupport) {
 						this.valueType = 'tag';
 						this.displayValue = descr[SEGM.hasTag][0].value + ':' + descr[SEGM.support][0].value;
 						this.apiClient.getSubjectDescriptionObj(descr[SEGM.hasTag][0].value).then(tagDescr => {

@@ -13,6 +13,10 @@ export class ApiClient {
 	currentRepo = 'default';
 	onNotAuthorized = null;
 
+	repositoryRoot() {
+		return SERVER_ROOT + '/r/' + this.currentRepo;
+	}
+
 	artifactEndpoint() {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/artifact';
 	}
