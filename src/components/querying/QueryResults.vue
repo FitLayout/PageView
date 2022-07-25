@@ -1,6 +1,6 @@
 <template>
 
-<div v-else-if="this.result.data[2] != 'clear'">
+<div v-if="this.result.data[2] != 'clear'">
     <div v-if="result.data[2] != 'ask' && result.data[2] != 'update'">
         <DataTable :value="rawValues" responsiveLayout="scroll" 
           :paginator="true" :rows="10"
