@@ -7,14 +7,14 @@
 			Please bookmark this link if you want to access this repository later
 			(e.g. from another device or browser).</span>
 		</p>
-		<p v-if="repoInfo.readOnly"><strong>This is a read-only repository.</strong> All write operations such as creating new
+		<p v-if="isReadOnly"><strong>This is a read-only repository.</strong> All write operations such as creating new
 		artifacts will lead to an error. Feel free to create a new repository of your own for experiments.</p> 
 
 		<LinkButton label="Open in Browser" icon="pi pi-globe" 
 			:to="{name: 'browser', params: { repoId: this.$route.params.repoId }}"
 			target="_blank" />
 		
-		<div class="render-panel">
+		<div class="render-panel" v-if="!isReadOnly">
 			<h2>Render new page</h2>
 			<div class="p-fluid p-formgrid p-grid">
 				<div class="p-field p-col-12">
@@ -105,6 +105,9 @@ export default {
 		}
 	},
 	computed: {
+		isReadOnly() {
+			return this.repoInfo.value && this.repoInfo.value.readOnly;
+		}
 	},
 	watch: {
 	},
@@ -112,6 +115,7 @@ export default {
 		this.loading = false;
 		console.log('R');
 		console.log(this.repoInfo);
+		console.log(this.repoInfo.value);
 	},
 	methods: {
 
