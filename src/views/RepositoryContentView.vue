@@ -7,6 +7,8 @@
 			Please bookmark this link if you want to access this repository later
 			(e.g. from another device or browser).</span>
 		</p>
+		<p v-if="repoInfo.readOnly"><strong>This is a read-only repository.</strong> All write operations such as creating new
+		artifacts will lead to an error. Feel free to create a new repository of your own for experiments.</p> 
 
 		<LinkButton label="Open in Browser" icon="pi pi-globe" 
 			:to="{name: 'browser', params: { repoId: this.$route.params.repoId }}"

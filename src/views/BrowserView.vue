@@ -5,7 +5,7 @@
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
 				<template #end>
-					<span class="repo-info">Repository: <b>{{repoName}}</b></span>
+					<span class="repo-info">Repository: <b>{{repoName}}</b><span v-if="repoInfo.readOnly">[read-only]</span></span>
 					<Button icon="pi pi-sign-out" 
 							class="p-button-rounded p-button-text" 
 							v-tooltip.bottom="'Close browser'" 
