@@ -109,6 +109,8 @@ class TaggerCreator extends ObjectCreator {
 	constructor() {
 		super();
 		this.addMapping({
+			param: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#param', type: 'object' },
+			service: { name: 'http://fitlayout.github.io/ontology/fitlayout.owl#service', type: 'string[]' },
 		});
 	}
 }
@@ -168,6 +170,7 @@ class ChunkSetCreator extends ArtifactCreator {
 	constructor() {
 		super();
 		this.addMapping({
+			hasSourcePage: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourcePage', type: 'object<http://fitlayout.github.io/ontology/render.owl#Page>' },
 			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			// Inverse collection for TextChunk.belongsToChunkSet.
 			textChunks: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#TextChunk>[]', inverse: true },
@@ -207,6 +210,7 @@ class LogicalAreaTreeCreator extends ArtifactCreator {
 	constructor() {
 		super();
 		this.addMapping({
+			hasSourcePage: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourcePage', type: 'object<http://fitlayout.github.io/ontology/render.owl#Page>' },
 			hasAreaTree: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			// Inverse collection for LogicalArea.belongsToLogicalTree.
 			logicalAreas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToLogicalTree', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>[]', inverse: true },
