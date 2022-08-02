@@ -6,7 +6,6 @@
 				v-on:select-artifact="selectArtifact"
 				v-on:delete-artifact="deleteArtifact"></ArtInfo>
 			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri"
-				v-if="art._iri === currentIri" 
 				v-on:select-artifact="selectArtifact"
 				v-on:delete-artifact="deleteArtifact"></ArtTree>
 		</li>
@@ -53,6 +52,7 @@ export default {
 							}
 						} else {
 							ret.push(art); // no focus - push all
+							console.log('no focus ' + this.focus + ' ' + this.currentIri);
 						}
 					} else if (this.root !== undefined && art.hasParentArtifact !== undefined && art.hasParentArtifact._iri === this.root) {
 						// derived artifacts
@@ -66,6 +66,9 @@ export default {
 		},
 		itemFocused() {
 			return this.focus && this.currentIri;
+		},
+		isSubtree() {
+			return this.root != null;
 		}
 	},
 	methods: {
@@ -94,6 +97,20 @@ export default {
 				}
 			}
 			return ret;
+		},
+		isAncestorOrSelf(iri, parent) {
+			if (this.parents) {
+				let cur = iri;
+				while (cur !== undefined) {
+					if (cur === parent) {
+						return true;
+					}
+					cur = this.parents[cur];
+				}
+				return false;
+			} else {
+				return false;
+			}
 		},
 		toggleFocus() {
 			this.focus = !this.focus;

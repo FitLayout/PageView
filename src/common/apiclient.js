@@ -280,6 +280,26 @@ export class ApiClient {
 		return pageModel.getAllObjects();
 	}
 
+	async fetchArtifactInfoForPage(pageIri) {
+		const url = this.artifactEndpoint() + '?page=' + encodeURIComponent(pageIri);
+		let pageModel = new BoxModel();
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers({
+				'Accept': 'text/turtle'
+			})
+		})
+
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+
+		await pageModel.parse(await response.text());
+		return pageModel.getAllObjects();
+	}
+
 	async createArtifact(serviceId, params, srcIri) {
 		const url = this.artifactEndpoint() + '/create';
 		const payload = {

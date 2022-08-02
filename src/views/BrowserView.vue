@@ -5,7 +5,7 @@
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
 				<template #start><span class="logo">FitLayout</span></template>
 				<template #end>
-					<span class="repo-info">Repository: <b>{{repoName}}</b><span v-if="repoInfo.readOnly">[read-only]</span></span>
+					<span class="repo-info">Repository: <b>{{repoName}}</b><span v-if="repoReadOnly">[read-only]</span></span>
 					<Button icon="pi pi-sign-out" 
 							class="p-button-rounded p-button-text" 
 							v-tooltip.bottom="'Close browser'" 
@@ -46,7 +46,7 @@
 				<Button class="p-button-sm" v-if="visibleLeft" icon="pi pi-arrow-left" @click="visibleLeft = false" />
 				<div class="sidebar-scroll">
 					<div class="sidebar-cont">
-						<ArtTree :artifacts="artifacts" :currentIri="currentArtifactIri"
+						<ArtTree :artifacts="artifacts" :currentIri="treeSelectedIri"
 							v-on:select-artifact="selectArtifact"
 							v-on:delete-artifact="deleteArtifact">
 						</ArtTree>
@@ -110,6 +110,7 @@ export default {
 			artifacts: null,
 			currentArtifact: null,
 			currentArtifactIri: null,
+			currentPageIri: null,
 			selectionStatus: null,
 			visibleLeft: true,
 
@@ -131,6 +132,13 @@ export default {
 		iri() {
 			return this.$route.params.iri;
 		},
+		treeSelectedIri() {
+			if (this.currentArtifactIri) {
+				return this.currentArtifactIri; //obtained by resolving
+			} else {
+				return this.$route.params.iri; //nothing obtained yet; use the URL-specified iri 
+			}
+		},
 		repoId() {
 			return this.$route.params.repoId;
 		},
@@ -140,7 +148,10 @@ export default {
 			} else {
 				return this.$route.params.repoId;
 			}
-		}
+		},
+		repoReadOnly() {
+			return this.repoInfo && this.repoInfo.readOnly;
+		} 
 	},
 	watch: {
 		'pageStatus': 'update'
@@ -208,18 +219,20 @@ export default {
 		},
 
 		async fetchArtifacts() {
-			this.error = null;
-			this.loading = true;
-			this.userInfo = await this.apiClient.getUserInfo();
-			
-			try {
-				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
-				this.loading = false;
-				RepositoryData.addID(this.$route.params.repoId); // add the repository to the list of known repositories
-			} catch (error) {
-				this.error = error.message;
-				this.loading = false;
-				console.error('Error while fetching artifact info!', error);
+			if (this.currentPageIri) {
+				this.error = null;
+				this.loading = true;
+				this.userInfo = await this.apiClient.getUserInfo();
+				
+				try {
+					this.artifacts = await this.apiClient.fetchArtifactInfoForPage(this.currentPageIri);
+					this.loading = false;
+					RepositoryData.addID(this.$route.params.repoId); // add the repository to the list of known repositories
+				} catch (error) {
+					this.error = error.message;
+					this.loading = false;
+					console.error('Error while fetching artifact info!', error);
+				}
 			}
 		},
 
@@ -228,6 +241,17 @@ export default {
 			this.currentArtifact = status.artifact;
 			if (status.artifact) {
 				this.currentArtifactIri = status.artifact._iri;
+				// check if the source page has changed in order to reload the artifact list
+				let newPageIri = status.artifact._iri;
+				if (status.artifact.hasSourcePage) {
+					newPageIri = status.artifact.hasSourcePage._iri;
+				}
+				if (newPageIri !== this.currentPageIri) {
+					this.currentPageIri = newPageIri;
+					console.log('pageIRI ' + this.currentPageIri);
+					console.log(status.artifact);
+					this.fetchArtifacts();
+				}
 			}
 		},
 
