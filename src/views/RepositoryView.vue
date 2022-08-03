@@ -3,7 +3,7 @@
 		<!-- Repository menu -->
 		<div class="menu-row">
 			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
-				<template #start><span class="logo">FitLayout</span></template>
+				<template #start><router-link to="/"><span class="logo">FitLayout</span></router-link></template>
 				<template #end>
 					<span class="repo-info">Repository: <b>{{repoId}}</b></span>
 					<Button icon="pi pi-sign-out" 
