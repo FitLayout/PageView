@@ -3,7 +3,7 @@
 
 	<h1>Repository administration</h1>
 	<div class="user-list">
-		<DataTable :value="repos" editMode="row" dataKey="username" v-model:editingRows="editingRows"
+		<DataTable :value="repos" editMode="row" dataKey="id" v-model:editingRows="editingRows"
                 @rowEditInit="onRowEditInit" @rowEditSave="onRowEditSave" @rowEditCancel="onRowEditCancel" responsiveLayout="scroll">
 			<Column field="id" header="ID">
 				<template #body="slotProps">
