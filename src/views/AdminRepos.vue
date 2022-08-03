@@ -21,6 +21,14 @@
 					<InputText v-model="slotProps.data[slotProps.column.props.field]" autofocus />
 				</template>			
 			</Column>
+			<Column field="readOnly" header="R/O">
+				<template #body="slotProps">
+					<span v-if="slotProps.data[slotProps.column.props.field]"><strong>yes</strong></span>
+				</template>
+				<template #editor="slotProps">
+					<Checkbox v-model="slotProps.data[slotProps.column.props.field]" :binary="true" />
+				</template>			
+			</Column>
 			<Column field="createdOn" header="Created" :sortable="true"></Column>
 			<Column field="accessedOn" header="Accessed" :sortable="true"></Column>
 			<Column :rowEditor="true" style="width: 10%; min-width:8rem" bodyStyle="text-align:center"></Column>			
