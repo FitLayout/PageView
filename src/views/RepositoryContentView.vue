@@ -10,10 +10,6 @@
 		<p v-if="isReadOnly"><strong>This is a read-only repository.</strong> All write operations such as creating new
 		artifacts will lead to an error. Feel free to create a new repository of your own for experiments.</p> 
 
-		<LinkButton label="Open in Browser" icon="pi pi-globe" 
-			:to="{name: 'browser', params: { repoId: this.$route.params.repoId }}"
-			target="_blank" />
-		
 		<div class="render-panel" v-if="!isReadOnly">
 			<h2>Render new page</h2>
 			<div class="p-fluid p-formgrid p-grid">
@@ -73,7 +69,6 @@ import Message from 'primevue/message';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 
-import LinkButton from '@/components/LinkButton.vue';
 import ArtTable from '@/components/ArtTable.vue';
 import ContextTable from '@/components/ContextTable.vue';
 import BOX from '@/ontology/BOX.js';
@@ -90,7 +85,6 @@ export default {
 		InputNumber,
 		ProgressSpinner,
 		Message,
-		LinkButton,
 		TabView,
 		TabPanel
 	},
