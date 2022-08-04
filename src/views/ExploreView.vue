@@ -1,19 +1,23 @@
 <template>
 	<div class="explore-view">
 		<div class="subj-selection">
-			Subject: <InputText type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
+			<Dropdown v-model="selMode" :options="modes" /> 
+			<InputText type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
 			<Button class="p-ml-2" label="Explore" @click="changeIri()" />
 		</div>
-		<SubjectInfo v-if="iri" :iri="iri" :activeIris="true" @show-iri="showIri" />
+		<SubjectInfo v-if="iri && selMode === 'Subject'" :iri="iri" :activeIris="true" @show-iri="showIri" />
+		<SubjectReferences v-if="iri && selMode === 'Object'" :iri="iri" :activeIris="true" @show-iri="showIri" />
 	</div>
 </template>
 
 <script>
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import Dropdown from 'primevue/dropdown';
 
 import Iri from '@/components/Iri.vue';
 import SubjectInfo from '@/components/SubjectInfo.vue';
+import SubjectReferences from '@/components/SubjectReferences.vue';
 
 import IriDecoder from '@/common/iridecoder.js';
 
@@ -23,15 +27,20 @@ export default {
 	components: {
 		Button,
 		InputText,
+		Dropdown,
 		Iri,
-		SubjectInfo
+		SubjectInfo,
+		SubjectReferences
 	},
 	props: {
 	},
 	inject: ['apiClient'],
 	data () {
 		return {
-			destIri: null
+			destIri: null,
+			selMode: 'Subject',
+			modes: [ 'Subject', 'Object' ]
+			//modes: [ { label: 'Subject', value: 'subject' }, { label: 'Object', value: 'object' } ]
 		}
 	},
 	created () {
@@ -59,6 +68,7 @@ export default {
 		},
 
 		showIri(iri) {
+			this.selMode = 'Subject';
 			this.$router.push({name: 'explore', params: { repoId: this.repoId, iri: iri }});
 		},
 
