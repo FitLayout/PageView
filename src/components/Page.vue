@@ -199,7 +199,6 @@ export default {
 				style += ';' + this.borderStyle(box.hasLeftBorder, 'left');
 			}
 			if (box.containsObject && box.containsObject.length > 0) {
-				console.log(box.containsObject);
 				for (let i = 0; i < box.containsObject.length; i++) {
 					if (box.containsObject[i].imageData) {
 						el.appendChild(this.createImage(box.containsObject[i]));
