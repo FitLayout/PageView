@@ -198,10 +198,11 @@ export default {
 			if (box.hasLeftBorder) {
 				style += ';' + this.borderStyle(box.hasLeftBorder, 'left');
 			}
-			if (box.containsImage && box.containsImage.length > 0) {
-				for (let i = 0; i < box.containsImage.length; i++) {
-					if (box.containsImage[i].imageData) {
-						el.appendChild(this.createImage(box.containsImage[i]));
+			if (box.containsObject && box.containsObject.length > 0) {
+				console.log(box.containsObject);
+				for (let i = 0; i < box.containsObject.length; i++) {
+					if (box.containsObject[i].imageData) {
+						el.appendChild(this.createImage(box.containsObject[i]));
 					}
 				}
 			}
