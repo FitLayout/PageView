@@ -46,7 +46,7 @@
 				<Button class="p-button-sm" v-if="visibleLeft" icon="pi pi-arrow-left" @click="visibleLeft = false" />
 				<div class="sidebar-scroll">
 					<div class="sidebar-cont">
-						<ArtTree :currentIri="treeSelectedIri"
+						<ArtTree ref="artTree" :currentIri="treeSelectedIri"
 							v-on:select-artifact="selectArtifact"
 							v-on:delete-artifact="deleteArtifact">
 						</ArtTree>
@@ -203,6 +203,7 @@ export default {
 						console.error('Couldnt delete artifact!', error);
 					}
 					this.fetchArtifacts();
+					this.$refs.artTree.fetchArtifacts();
 					// if the deleted artifact was selected try to select another one
 					if (this.currentArtifactIri === iri) {
 						if (this.currentArtifact.hasParentArtifact) {
@@ -257,6 +258,7 @@ export default {
 
 		artifactCreated(iri) {
 			this.fetchArtifacts();
+			this.$refs.artTree.fetchArtifacts();
 			this.selectArtifact(iri);
 		},
 

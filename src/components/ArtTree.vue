@@ -170,10 +170,12 @@ export default {
 		expandSubtreeWithIri(iri) {
 			// find the parent
 			let cur = this.artifactIndex[iri];
-			while (cur.parent) {
+			while (cur && cur.parent) {
 				cur = this.artifactIndex[cur.parent];
 			}
-			this.expandSubtree(cur);
+			if (cur) {
+				this.expandSubtree(cur);
+			}
 		},
 
 		/**
