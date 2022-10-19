@@ -46,7 +46,7 @@
 				<Button class="p-button-sm" v-if="visibleLeft" icon="pi pi-arrow-left" @click="visibleLeft = false" />
 				<div class="sidebar-scroll">
 					<div class="sidebar-cont">
-						<ArtTree :artifacts="artifacts" :currentIri="treeSelectedIri"
+						<ArtTree :currentIri="treeSelectedIri"
 							v-on:select-artifact="selectArtifact"
 							v-on:delete-artifact="deleteArtifact">
 						</ArtTree>
@@ -304,7 +304,6 @@ export default {
 .sidebar {
 	flex: 0 0 auto;
 	position: relative;
-	padding-left: 1em;
 	width: 22em;
 	transition: all 0.3s;
 }
