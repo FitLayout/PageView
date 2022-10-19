@@ -148,7 +148,11 @@ export default {
 		},
 
 		toggleFocus() {
-			this.$emit('toggle-focus');
+			if (this.focus) {
+				this.$emit('toggle-focus', null);
+			} else {
+				this.$emit('toggle-focus', this.artifact);
+			}
 		}
 		
 	}

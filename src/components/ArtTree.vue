@@ -11,9 +11,10 @@
 					<div class="art-container" 
 							:id="(slotProps.node.data._iri === currentIri) ? 'artifact-selected':''"
 							:class="(slotProps.node.data._iri === currentIri) ? 'selected':''">
-						<ArtInfo :artifact="slotProps.node.data"
+						<ArtInfo :artifact="slotProps.node.data" :focus="focusedArt != null"
 							@selectArtifact="selectArtifact"
-							@deleteArtifact="deleteArtifact" />
+							@deleteArtifact="deleteArtifact"
+							@toggleFocus="toggleFocus" />
 					</div>
 				</template>
 			</Column>
@@ -54,8 +55,10 @@ export default {
 			apiClient: this.$root.apiClient,
 			artifacts: null,
 			artifactIndex: null,
-			nodes: null,
-			expandedKeys: {}
+			nodes: null, // nodes after filtering (if applied)
+			allNodes: null, // all nodes
+			expandedKeys: {},
+			focusedArt: null
 		}
 	},
 	computed: {
@@ -77,7 +80,8 @@ export default {
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				this.loading = false;
-				this.nodes = this.computeNodes(this.artifacts);
+				this.allNodes = this.computeNodes(this.artifacts);
+				this.applyFilter();
 				this.expandSubtreeWithIri(this.currentIri);
 				this.scrollToView();
 			} catch (error) {
@@ -96,6 +100,7 @@ export default {
 				index[art._iri] = newart;
 				list.push(newart);
 			}
+			this.artifactIndex = index;
 			// build the tree
 			let root = [];
 			for (let nart of list) {
@@ -113,8 +118,22 @@ export default {
 					}
 				}
 			}
-			this.artifactIndex = index;
 			return root;
+		},
+
+		applyFilter() {
+			// filter the tree if a page was focused
+			if (this.focusedArt) {
+				let filtered = [];
+				for (let node of this.allNodes) {
+					if (node.key === this.focusedArt._iri) {
+						filtered.push(node);
+					}
+				}
+				this.nodes = filtered;
+			} else {
+				this.nodes = this.allNodes;
+			}
 		},
 
 		computeArtifactNode(art) {
@@ -146,7 +165,6 @@ export default {
 		},
 		
 		iriChanged() {
-			console.log('EXPAND ' + this.currentIri);
 			this.expandSubtreeWithIri(this.currentIri);
 			this.scrollToView();
 		},
@@ -161,6 +179,12 @@ export default {
 
 		deleteArtifact(iri) {
 			this.$emit('delete-artifact', iri);
+		},
+
+		toggleFocus(art) {
+			this.focusedArt = art;
+			this.applyFilter();
+			this.scrollToView();
 		},
 
 		/**
@@ -202,11 +226,6 @@ export default {
 					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
 				}
 			});
-		},
-
-		rowClass(data) {
-			console.log(data);
-			return "row";
 		}
 
 	}
