@@ -52,6 +52,7 @@ export default {
 		return {
 			error: null,
 			loading: false,
+			started: false,
 			apiClient: this.$root.apiClient,
 			artifacts: null,
 			artifactIndex: null,
@@ -69,6 +70,7 @@ export default {
 	created () {
 		this.apiClient = this.$root.apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
+		this.started = true;
 		this.fetchArtifacts();
 	},
 	methods: {
@@ -81,6 +83,16 @@ export default {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				this.loading = false;
 				this.allNodes = this.computeNodes(this.artifacts);
+
+				// focus on current page by default after startup
+				if (this.started && this.currentIri) {
+					let root = this.findRootForIri(this.currentIri);
+					if (root) {
+						this.focusedArt = root.data;
+					}
+					this.started = false;
+				}
+
 				this.applyFilter();
 				this.expandSubtreeWithIri(this.currentIri);
 				this.scrollToView();
@@ -155,15 +167,6 @@ export default {
 			return ret;
 		},
 
-		formatDate(dateString) {
-			const date = new Date(dateString);
-			const options = {
-				year: 'numeric', month: 'numeric', day: 'numeric',
-				hour: 'numeric', minute: 'numeric', second: 'numeric'
-			};
-            return new Intl.DateTimeFormat('default', options).format(date);
-		},
-		
 		iriChanged() {
 			this.expandSubtreeWithIri(this.currentIri);
 			this.scrollToView();
@@ -193,10 +196,7 @@ export default {
 		 */
 		expandSubtreeWithIri(iri) {
 			// find the parent
-			let cur = this.artifactIndex[iri];
-			while (cur && cur.parent) {
-				cur = this.artifactIndex[cur.parent];
-			}
+			let cur = this.findRootForIri(iri);
 			if (cur) {
 				this.expandSubtree(cur);
 			}
@@ -213,6 +213,14 @@ export default {
 					this.expandSubtree(child);
 				}
 			}
+		},
+
+		findRootForIri(iri) {
+			let cur = this.artifactIndex[iri];
+			while (cur && cur.parent) {
+				cur = this.artifactIndex[cur.parent];
+			}
+			return cur;
 		},
 
 		collapseAll() {
