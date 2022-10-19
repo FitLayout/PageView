@@ -78,7 +78,7 @@ export default {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				this.loading = false;
 				this.nodes = this.computeNodes(this.artifacts);
-				this.expandSubtree(this.currentIri);
+				this.expandSubtreeWithIri(this.currentIri);
 				this.scrollToView();
 			} catch (error) {
 				this.error = error.message;
@@ -147,7 +147,7 @@ export default {
 		
 		iriChanged() {
 			console.log('EXPAND ' + this.currentIri);
-			this.expandSubtree(this.currentIri);
+			this.expandSubtreeWithIri(this.currentIri);
 			this.scrollToView();
 		},
 
@@ -163,15 +163,28 @@ export default {
 			this.$emit('delete-artifact', iri);
 		},
 
-		expandSubtree(iri) {
-			this.expandedKeys[iri] = true;
+		/**
+		 * Expands the entire subtree that contains the artifact with the given iri.
+		 * @param {*} iri 
+		 */
+		expandSubtreeWithIri(iri) {
+			// find the parent
 			let cur = this.artifactIndex[iri];
-			while (cur) {
-				this.expandedKeys[cur.key] = true;
-				if (cur.parent) {
-					cur = this.artifactIndex[cur.parent];
-				} else {
-					cur = null;
+			while (cur.parent) {
+				cur = this.artifactIndex[cur.parent];
+			}
+			this.expandSubtree(cur);
+		},
+
+		/**
+		 * Expands the subtree with the given root node.
+		 * @param {*} root 
+		 */
+		expandSubtree(root) {
+			this.expandedKeys[root.key] = true;
+			if (root.children) {
+				for (let child of root.children) {
+					this.expandSubtree(child);
 				}
 			}
 		},
