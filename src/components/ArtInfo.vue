@@ -31,6 +31,7 @@
 	background-color: var(--surface-b);
 	border-radius: 5px;
 	border: 1px solid var(--surface-400);
+	word-wrap: break-word;
 	/*box-shadow: 0 6px 6px -6px black;*/
 }
 .artifact .icons {

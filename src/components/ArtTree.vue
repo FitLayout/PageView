@@ -2,11 +2,15 @@
 	<div class="art-tree">
 		<div v-if="loading">Loading artifacts...</div>
 		<div v-if="error">{{error}}</div>
-		<TreeTable :value="nodes" v-if="nodes" :autoLayout="true" :expandedKeys="expandedKeys"
-				sortMode="single" sortField="timestamp" :sortOrder="-1">
+		<TreeTable :value="nodes" v-if="nodes"
+				:autoLayout="true" :expandedKeys="expandedKeys" selection-mode="single"
+				:indentation="1.5" sortMode="single" sortField="timestamp" :sortOrder="-1"
+				@node-select="onNodeSelect">
 			<Column header="Artifacts" :expander="true" :sortable="true">
 				<template #body="slotProps">
-					<div class="art-container" :class="(slotProps.node.data._iri === currentIri) ? 'selected':''">
+					<div class="art-container" 
+							:id="(slotProps.node.data._iri === currentIri) ? 'artifact-selected':''"
+							:class="(slotProps.node.data._iri === currentIri) ? 'selected':''">
 						<ArtInfo :artifact="slotProps.node.data"
 							@selectArtifact="selectArtifact"
 							@deleteArtifact="deleteArtifact" />
@@ -75,6 +79,7 @@ export default {
 				this.loading = false;
 				this.nodes = this.computeNodes(this.artifacts);
 				this.expandSubtree(this.currentIri);
+				this.scrollToView();
 			} catch (error) {
 				this.error = error.message;
 				this.loading = false;
@@ -143,6 +148,11 @@ export default {
 		iriChanged() {
 			console.log('EXPAND ' + this.currentIri);
 			this.expandSubtree(this.currentIri);
+			this.scrollToView();
+		},
+
+		onNodeSelect(node) {
+			this.selectArtifact(node.key);
 		},
 
 		selectArtifact(iri) {
@@ -154,13 +164,9 @@ export default {
 		},
 
 		expandSubtree(iri) {
-			console.log('EXPAND');
 			this.expandedKeys[iri] = true;
-			console.log(this.nodes);
 			let cur = this.artifactIndex[iri];
 			while (cur) {
-				console.log('CUR');
-				console.log(cur);
 				this.expandedKeys[cur.key] = true;
 				if (cur.parent) {
 					cur = this.artifactIndex[cur.parent];
@@ -172,6 +178,20 @@ export default {
 
 		collapseAll() {
 			this.expandedKeys = {};
+		},
+
+		scrollToView() {
+			this.$nextTick(function() {
+				let elem = document.getElementById('artifact-selected');
+				if (elem) {
+					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+				}
+			});
+		},
+
+		rowClass(data) {
+			console.log(data);
+			return "row";
 		}
 
 	}
