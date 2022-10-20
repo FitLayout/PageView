@@ -90,8 +90,8 @@ export default {
 					if (root) {
 						this.focusedArt = root.data;
 					}
-					this.started = false;
 				}
+				this.started = false;
 
 				this.applyFilter();
 				this.expandSubtreeWithIri(this.currentIri);
@@ -142,7 +142,14 @@ export default {
 						filtered.push(node);
 					}
 				}
-				this.nodes = filtered;
+				if (filtered.length > 0) {
+					this.nodes = filtered;
+				} else {
+					// empty list after filtering - something went wrong
+					// cancel the filter and use the entire list
+					this.focusedArt = null;
+					this.nodes = this.allNodes;
+				}
 			} else {
 				this.nodes = this.allNodes;
 			}
