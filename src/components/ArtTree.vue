@@ -6,7 +6,7 @@
 				:autoLayout="true" :expandedKeys="expandedKeys" selection-mode="single"
 				:indentation="1.5" sortMode="single" sortField="timestamp" :sortOrder="-1"
 				@node-select="onNodeSelect">
-			<Column header="Artifacts" :expander="true" :sortable="true">
+			<Column header="Artifacts" :expander="true" :sortable="true" sortField="timestamp">
 				<template #body="slotProps">
 					<div class="art-container" 
 							:id="(slotProps.node.data._iri === currentIri) ? 'artifact-selected':''"
