@@ -202,11 +202,15 @@ export default {
 		 * @param {*} iri 
 		 */
 		expandSubtreeWithIri(iri) {
-			// find the parent
-			let cur = this.findRootForIri(iri);
+			// expand to the parent
+			this.expandToRootFrom(iri);
+			// expand current subtree
+			let cur = this.artifactIndex[iri];
 			if (cur) {
 				this.expandSubtree(cur);
 			}
+			// refresh the tree state
+			this.expandedKeys = {...this.expandedKeys};
 		},
 
 		/**
@@ -220,6 +224,22 @@ export default {
 					this.expandSubtree(child);
 				}
 			}
+		},
+
+		/**
+		 * Expands the tree nodes from a given IRI node to the root.
+		 * @param {*} iri 
+		 */
+		expandToRootFrom(iri) {
+			let cur = this.artifactIndex[iri];
+			while (cur && cur.parent) {
+				this.expandedKeys[cur.key] = true;
+				cur = this.artifactIndex[cur.parent];
+			}
+			if (cur) {
+				this.expandedKeys[cur.key] = true;
+			}
+			return cur;
 		},
 
 		findRootForIri(iri) {
