@@ -1,7 +1,9 @@
 import {Model as BoxModel} from '../common/boxMappers.js';
 
 const develMode = (window.location.port === '3000'); //development server detection
-const flhost = develMode ? 'http://localhost:8080' : ('https://' + window.location.host);  
+const localMode = (window.location.hostname === 'localhost'); //local mode (http allowed)
+const protocol = localMode ? location.protocol : 'https:'; //force https for non-local mode
+const flhost = develMode ? 'http://localhost:8080' : (protocol + '//' + window.location.host);
 
 const SERVER_ROOT = flhost + '/api';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
