@@ -58,8 +58,6 @@ import Iri from '@/components/Iri.vue';
 
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
-import {Model as BoxModel} from '@/common/boxMappers.js';
-import {ApiClient} from '@/common/apiclient.js';
 import IriDecoder from '@/common/iridecoder.js';
 
 export default {

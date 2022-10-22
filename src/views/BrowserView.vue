@@ -46,13 +46,10 @@
 				<Button class="p-button-sm" v-if="visibleLeft" icon="pi pi-arrow-left" @click="visibleLeft = false" />
 				<div class="sidebar-scroll">
 					<div class="sidebar-cont">
-						<ArtTree :artifacts="artifacts" :currentIri="treeSelectedIri"
+						<ArtTree ref="artTree" :currentIri="treeSelectedIri"
 							v-on:select-artifact="selectArtifact"
 							v-on:delete-artifact="deleteArtifact">
 						</ArtTree>
-						<div class="empty-page p-col-12 p-d-flex p-ai-center p-jc-center h-100" v-if="!artifacts || artifacts.length === 0">
-							<p class="flex-fill p-text-center p-text-secondary">No artifacts</p>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -107,7 +104,6 @@ export default {
 			chunkSetType: SEGM.ChunkSet,
 			connectionSetType: BOX.ConnectionSet,
 			mode: 'render',
-			artifacts: null,
 			currentArtifact: null,
 			currentArtifactIri: null,
 			currentPageIri: null,
@@ -162,7 +158,6 @@ export default {
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
 			this.repoInfo = info;
 		});
-		this.fetchArtifacts();
 	},
 	methods: {
 		selectMode(mode, index) {
@@ -202,7 +197,7 @@ export default {
 					} catch (error) {
 						console.error('Couldnt delete artifact!', error);
 					}
-					this.fetchArtifacts();
+					this.$refs.artTree.fetchArtifacts();
 					// if the deleted artifact was selected try to select another one
 					if (this.currentArtifactIri === iri) {
 						if (this.currentArtifact.hasParentArtifact) {
@@ -216,24 +211,6 @@ export default {
                 reject: () => {
                 }
             });
-		},
-
-		async fetchArtifacts() {
-			if (this.currentPageIri) {
-				this.error = null;
-				this.loading = true;
-				this.userInfo = await this.apiClient.getUserInfo();
-				
-				try {
-					this.artifacts = await this.apiClient.fetchArtifactInfoForPage(this.currentPageIri);
-					this.loading = false;
-					RepositoryData.addID(this.$route.params.repoId); // add the repository to the list of known repositories
-				} catch (error) {
-					this.error = error.message;
-					this.loading = false;
-					console.error('Error while fetching artifact info!', error);
-				}
-			}
 		},
 
 		update(status) {
@@ -250,13 +227,13 @@ export default {
 					this.currentPageIri = newPageIri;
 					console.log('pageIRI ' + this.currentPageIri);
 					console.log(status.artifact);
-					this.fetchArtifacts();
+					this.$refs.artTree.fetchArtifacts();
 				}
 			}
 		},
 
 		artifactCreated(iri) {
-			this.fetchArtifacts();
+			this.$refs.artTree.fetchArtifacts();
 			this.selectArtifact(iri);
 		},
 
@@ -304,7 +281,6 @@ export default {
 .sidebar {
 	flex: 0 0 auto;
 	position: relative;
-	padding-left: 1em;
 	width: 22em;
 	transition: all 0.3s;
 }

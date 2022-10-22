@@ -5,7 +5,7 @@
 		</div>
 		<p>
 			<strong class="badge">{{ typeName }}</strong>&nbsp;
-			<Iri :iri="iri"></Iri>
+			<Iri :iri="artifact._iri"></Iri>
 			<span v-if="isRoot">
 				<i class="pi pi-eye" v-tooltip="'Focus on this page only'" v-if="!focus" @click="toggleFocus"></i>
 				<i class="pi pi-eye focused" v-tooltip="'Page focused, click to cancel focus'" v-if="focus" @click="toggleFocus"></i>
@@ -26,11 +26,12 @@
 
 <style>
 .artifact {
-	margin: 1em 0;
+	margin: 0.5em 0;
 	padding: 0.5em 1em;
 	background-color: var(--surface-b);
 	border-radius: 5px;
 	border: 1px solid var(--surface-400);
+	word-wrap: break-word;
 	/*box-shadow: 0 6px 6px -6px black;*/
 }
 .artifact .icons {
@@ -92,7 +93,6 @@
 import Iri from './Iri.vue';
 import BOX from '@/ontology/BOX.js';
 import SEGM from '@/ontology/SEGM.js';
-import IriDecoder from '@/common/iridecoder.js';
 
 export default {
 	name: 'ArtInfo',
@@ -101,33 +101,25 @@ export default {
 	},
 	inject: ['apiClient'],
 	props: {
-		iri: null,
+		artifact: null,
 		focus: null
 	},
 	data () {
 		return {
-			artifact: null,
 			typeName: null,
 			typeClass: null,
 			isRoot: null
 		}
 	},
-	created () {
-		this.reload();
+	computed: {
+		iri() {
+			return this.artifact._iri;
+		}
 	},
-	watch: {
-		iri: 'reload'
+	created () {
+		this.update();
 	},
 	methods: {
-		async reload() {
-			try {
-				this.artifact = await this.apiClient.fetchArtifactInfo(this.iri);
-			} catch (error) {
-				console.error('Couldnt fetch artifact!', error);
-			}
-			this.update();
-		},
-
 		update() {
 			//console.log(this.artifact);
 			this.isRoot = (this.artifact.hasParentArtifact === undefined);
@@ -156,7 +148,11 @@ export default {
 		},
 
 		toggleFocus() {
-			this.$emit('toggle-focus');
+			if (this.focus) {
+				this.$emit('toggle-focus', null);
+			} else {
+				this.$emit('toggle-focus', this.artifact);
+			}
 		}
 		
 	}

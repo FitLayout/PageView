@@ -91,14 +91,32 @@ export default class RDFModel {
 		}
 	}
 
+	/**
+	 * Infers the concrete type of an object. This is used to concretize
+	 * particular subtypes of a generic object. The basic implementation
+	 * tries to use the rdf:type property for determining the type. Subclasses
+	 * may re-implement this to add other mechanisms such as considering
+	 * other properties.
+	 * @param {*} iri the object IRI
+	 * @param {*} baseType the base type given by the owning property domain/range.
+	 */
+	inferObjectType(iri, baseType) {
+		let type = this.getType(iri); //try to use rdf:type
+		if (!type) {
+			type = baseType; //no type defined, use the base type
+		}
+		return type;
+	}
+
 	createObject(iri, type) {
 		if (this.objects[iri] === undefined) {
-			const creator = this.creators[type];
+			const finalType = this.inferObjectType(iri, type);
+			const creator = this.creators[finalType];
 			const resource = this.loader.resources[iri];
 			if (creator !== undefined && resource !== undefined) {
 				let obj = {};
 				obj['_iri'] = iri;
-				obj['_type'] = type;
+				obj['_type'] = finalType;
 				this.objects[iri] = obj;
 				creator.create(resource, this, obj);
 			} 

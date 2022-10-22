@@ -1,135 +1,283 @@
 <template>
-	<ul class="artlist">
-		<li v-for="art in children" :key="art._iri" :class="(art._iri === currentIri) ? 'selected':''">
-			<ArtInfo :iri="art._iri" :focus="itemFocused"
-				v-on:toggle-focus="toggleFocus"
-				v-on:select-artifact="selectArtifact"
-				v-on:delete-artifact="deleteArtifact"></ArtInfo>
-			<ArtTree :artifacts="artifacts" :currentIri="currentIri" :root="art._iri"
-				v-on:select-artifact="selectArtifact"
-				v-on:delete-artifact="deleteArtifact"></ArtTree>
-		</li>
-	</ul>
+	<div class="art-tree">
+		<div v-if="loading">Loading artifacts...</div>
+		<div v-if="error">{{error}}</div>
+		<TreeTable :value="nodes" v-if="nodes"
+				:autoLayout="true" :expandedKeys="expandedKeys" selection-mode="single"
+				:indentation="1.5" sortMode="single" sortField="timestamp" :sortOrder="-1"
+				@node-select="onNodeSelect">
+			<Column header="Artifacts" :expander="true" :sortable="true" sortField="timestamp">
+				<template #body="slotProps">
+					<div class="art-container" 
+							:id="(slotProps.node.data._iri === currentIri) ? 'artifact-selected':''"
+							:class="(slotProps.node.data._iri === currentIri) ? 'selected':''">
+						<ArtInfo :artifact="slotProps.node.data" :focus="focusedArt != null"
+							@selectArtifact="selectArtifact"
+							@deleteArtifact="deleteArtifact"
+							@toggleFocus="toggleFocus" />
+					</div>
+				</template>
+			</Column>
+		</TreeTable>
+	</div>
 </template>
 
 <script>
-import Page from './Page.vue';
-import ArtInfo from './ArtInfo.vue';
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import {Model as BoxModel} from '@/common/boxMappers.js';
-import {ApiClient} from '@/common/apiclient.js';
+import TreeTable from 'primevue/treetable';
+import Column from 'primevue/column';
+import SplitButton from 'primevue/splitbutton';
+import Button from 'primevue/button';
+
+import TypeBadge from '@/components/TypeBadge.vue';
+import LinkButton from '@/components/LinkButton.vue';
+import Iri from '@/components/Iri.vue';
+import ArtInfo from '@/components/ArtInfo.vue';
 
 export default {
 	name: 'ArtTree',
 	components: {
-		Page,
-		ArtInfo
+		TreeTable,
+		Column,
+		SplitButton,
+		Button,
+		ArtInfo,
+		TypeBadge,
+		LinkButton,
+		Iri
 	},
 	props: {
-		artifacts: null,
 		currentIri: null,
-		root: null
 	},
 	data () {
 		return {
-			focus: true,
-			parents: null
+			error: null,
+			loading: false,
+			started: false,
+			apiClient: this.$root.apiClient,
+			artifacts: null,
+			artifactIndex: null,
+			nodes: null, // nodes after filtering (if applied)
+			allNodes: null, // all nodes
+			expandedKeys: {},
+			focusedArt: null
 		}
 	},
 	computed: {
-		children() {
-			if (this.artifacts) {
-				let ret = [];
-				for (let art of this.artifacts) {
-					if (this.root === undefined && art.hasParentArtifact === undefined) {
-						// root artifacts
-						if (this.focus && this.currentIri) {
-							this.indexParents();
-							const rootIri = this.findRootIri(this.currentIri);
-							if (art._iri === rootIri) { //allow only root artifact for the current selection  
-								ret.push(art);
-							}
-						} else {
-							ret.push(art); // no focus - push all
-							console.log('no focus ' + this.focus + ' ' + this.currentIri);
-						}
-					} else if (this.root !== undefined && art.hasParentArtifact !== undefined && art.hasParentArtifact._iri === this.root) {
-						// derived artifacts
-						ret.push(art);
-					} 
-				}
-				return ret;
-			} else {
-				return null;
-			}
-		},
-		itemFocused() {
-			return this.focus && this.currentIri;
-		},
-		isSubtree() {
-			return this.root != null;
-		}
+	},
+	watch: {
+		'currentIri': 'iriChanged'
+	},
+	created () {
+		this.apiClient = this.$root.apiClient;
+		this.apiClient.currentRepo = this.$route.params.repoId;
+		this.started = true;
+		this.fetchArtifacts();
 	},
 	methods: {
-		selectArtifact(iri) {
-			this.$emit('select-artifact', iri);
-		},
-		deleteArtifact(iri) {
-			this.$emit('delete-artifact', iri);
-		},
-		indexParents() {
-			this.parents = {};
-			for (let art of this.artifacts) {
-				if (art.hasParentArtifact !== undefined) {
-					this.parents[art._iri] = art.hasParentArtifact._iri;
+
+		async fetchArtifacts() {
+			this.error = null;
+			this.loading = true;
+			
+			try {
+				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
+				this.loading = false;
+				this.allNodes = this.computeNodes(this.artifacts);
+
+				// focus on current page by default after startup
+				if (this.started && this.currentIri) {
+					let root = this.findRootForIri(this.currentIri);
+					if (root) {
+						this.focusedArt = root.data;
+					}
 				}
+				this.started = false;
+
+				this.applyFilter();
+				this.expandSubtreeWithIri(this.currentIri);
+				this.scrollToView();
+			} catch (error) {
+				this.error = error.message;
+				this.loading = false;
+				console.error('Error while fetching artifact info!', error);
 			}
 		},
-		findRootIri(iri) {
-			let ret = iri;
-			let change = true;
-			while (change) {
-				if (this.parents[ret] !== undefined) {
-					ret = this.parents[ret];
+
+		computeNodes(artifacts) {
+			// build an index of artifacts
+			let list = [];
+			let index = {};
+			for (let art of artifacts) {
+				let newart = this.computeArtifactNode(art);
+				index[art._iri] = newart;
+				list.push(newart);
+			}
+			this.artifactIndex = index;
+			// build the tree
+			let root = [];
+			for (let nart of list) {
+				if (nart.parent === undefined) {
+					root.push(nart);
 				} else {
-					change = false;
+					let part = index[nart.parent];
+					if (part === undefined) {
+						console.warn('Artifact ' + nart.key + ' has parent ' + nart.parent
+						+ ' but there is no such artifact available.');
+						// console.log(nart);
+						root.push(nart);
+					} else {
+						part.children.push(nart);
+					}
 				}
+			}
+			return root;
+		},
+
+		applyFilter() {
+			// filter the tree if a page was focused
+			if (this.focusedArt) {
+				let filtered = [];
+				for (let node of this.allNodes) {
+					if (node.key === this.focusedArt._iri) {
+						filtered.push(node);
+					}
+				}
+				if (filtered.length > 0) {
+					this.nodes = filtered;
+				} else {
+					// empty list after filtering - something went wrong
+					// cancel the filter and use the entire list
+					this.focusedArt = null;
+					this.nodes = this.allNodes;
+				}
+			} else {
+				this.nodes = this.allNodes;
+			}
+		},
+
+		computeArtifactNode(art) {
+			const ret = {
+				key: art._iri,
+				data: {
+					... art,
+					id: art._iri,
+					timestamp: (new Date(art.createdOn)).getTime(),
+				},
+				children: []
+			};
+			if (art.hasParentArtifact !== undefined) {
+				ret.parent = art.hasParentArtifact._iri;
+			}
+			if (art.sourceUrl !== undefined) {
+				ret.data.url = art.sourceUrl;
 			}
 			return ret;
 		},
-		isAncestorOrSelf(iri, parent) {
-			if (this.parents) {
-				let cur = iri;
-				while (cur !== undefined) {
-					if (cur === parent) {
-						return true;
-					}
-					cur = this.parents[cur];
+
+		iriChanged() {
+			this.expandSubtreeWithIri(this.currentIri);
+			this.scrollToView();
+		},
+
+		onNodeSelect(node) {
+			this.selectArtifact(node.key);
+		},
+
+		selectArtifact(iri) {
+			this.$emit('select-artifact', iri);
+		},
+
+		deleteArtifact(iri) {
+			this.$emit('delete-artifact', iri);
+		},
+
+		toggleFocus(art) {
+			this.focusedArt = art;
+			this.applyFilter();
+			this.scrollToView();
+		},
+
+		/**
+		 * Expands the entire subtree that contains the artifact with the given iri.
+		 * @param {*} iri 
+		 */
+		expandSubtreeWithIri(iri) {
+			// expand to the parent
+			this.expandToRootFrom(iri);
+			// expand current subtree
+			let cur = this.artifactIndex[iri];
+			if (cur) {
+				this.expandSubtree(cur);
+			}
+			// refresh the tree state
+			this.expandedKeys = {...this.expandedKeys};
+		},
+
+		/**
+		 * Expands the subtree with the given root node.
+		 * @param {*} root 
+		 */
+		expandSubtree(root) {
+			this.expandedKeys[root.key] = true;
+			if (root.children) {
+				for (let child of root.children) {
+					this.expandSubtree(child);
 				}
-				return false;
-			} else {
-				return false;
 			}
 		},
-		toggleFocus() {
-			this.focus = !this.focus;
+
+		/**
+		 * Expands the tree nodes from a given IRI node to the root.
+		 * @param {*} iri 
+		 */
+		expandToRootFrom(iri) {
+			let cur = this.artifactIndex[iri];
+			while (cur && cur.parent) {
+				this.expandedKeys[cur.key] = true;
+				cur = this.artifactIndex[cur.parent];
+			}
+			if (cur) {
+				this.expandedKeys[cur.key] = true;
+			}
+			return cur;
+		},
+
+		findRootForIri(iri) {
+			let cur = this.artifactIndex[iri];
+			while (cur && cur.parent) {
+				cur = this.artifactIndex[cur.parent];
+			}
+			return cur;
+		},
+
+		collapseAll() {
+			this.expandedKeys = {};
+		},
+
+		scrollToView() {
+			this.$nextTick(function() {
+				let elem = document.getElementById('artifact-selected');
+				if (elem) {
+					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+				}
+			});
 		}
+
 	}
 }
 </script>
 
 <style>
-.artlist {
-	margin: 0;
-	padding: 0;
+.art-tree {
+	white-space: nowrap;
 }
-.artlist li {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
+.art-tree .art-container {
+	display: inline-block;
+	vertical-align: middle;
+	white-space: normal;
+	width: 15em;
 }
-.artlist li ul {
-	margin-left: 2em;
+.art-tree .p-treetable .p-treetable-tbody > tr > td {
+	padding: 0;
 }
 </style>
