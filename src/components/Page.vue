@@ -242,6 +242,9 @@ export default {
 				let newElem = this.boxIndex[this.selectedRect._iri];
 				if (newElem) {
 					newElem.classList.add('focus');
+					if (newElem.scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
+						newElem.scrollIntoViewIfNeeded();
+					}
 				}
 			}
 			this.lastSelectedRect = this.selectedRect;
