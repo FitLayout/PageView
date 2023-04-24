@@ -1,5 +1,5 @@
 import {RdfObjectLoader} from "rdf-object";
-const N3 = require('n3');
+import {Parser} from "n3";
 
 export default class RDFModel {
 
@@ -39,7 +39,7 @@ export default class RDFModel {
 	
 	parse(text) {
 		return new Promise(resolve => {
-			const parser = new N3.Parser();
+			const parser = new Parser();
 			let quads = [];
 			let errors = [];
 			this.boxIRIs = [];

@@ -20,10 +20,10 @@
             <Column v-for="(col,i) in columns" :field="col" :header="col" :key="i" :filterField="`${col}f`">
               <template #body="slotProps">
                   <!-- {{slotProps.data[col].val}} -->
-				  <ValueInfo :data="getValInfo(slotProps.data[col])" :activeIris="true" 
-						extIcon="pi pi-globe" extTooltip="Show in Browser"
-						structIcon="pi pi-share-alt" 
-						@show-iri="showIri"	@show-ext="showExt" @show-struct="showIri" />
+                <ValueInfo :data="getValInfo(slotProps.data[col])" :activeIris="true" 
+                  extIcon="pi pi-globe" extTooltip="Show in Browser"
+                  structIcon="pi pi-share-alt" 
+                  @show-iri="showIri"	@show-ext="showExt" @show-struct="showIri" />
               </template>
               <template #filter="{filterModel,filterCallback}">
                   <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by ${filterModel.matchMode}`" v-tooltip.top.focus="'Hit enter key to filter'"/>
@@ -58,8 +58,8 @@ import InputText from 'primevue/inputtext';
 import ValueInfo from '../ValueInfo.vue';
 
 import {FilterMatchMode,FilterOperator} from 'primevue/api';
-// N3 parser
-const N3 = require('n3');
+
+import {Parser} from "n3";
 
 export default {
     name: 'QueryResults',
@@ -69,8 +69,8 @@ export default {
       Column,
       Button,
       InputText,
-	  FilterMatchMode,
-	  ValueInfo
+      FilterMatchMode,
+      ValueInfo
     },
     data() {
         return {
@@ -90,7 +90,7 @@ export default {
           // the query was typ of ASK (boolean result)
           askRes: undefined,
           // parser for N3 construct queries 
-          n3Parser: new N3.Parser({ format: 'N-Triples' })
+          n3Parser: new Parser({ format: 'N-Triples' })
         }
     },
     mounted() {
