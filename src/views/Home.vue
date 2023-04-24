@@ -38,10 +38,10 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
-import UserAvatar from '@/components/UserAvatar.vue';
-import RepositoryList from '@/components/RepositoryList.vue';
+import UserAvatar from '../components/UserAvatar.vue';
+import RepositoryList from '../components/RepositoryList.vue';
 
-import {RepositoryData} from '@/common/repositorydata.js';
+import {RepositoryData} from '../common/repositorydata.js';
 
 export default {
 	name: 'home',

@@ -21,8 +21,8 @@
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 
-import UserAvatar from '@/components/UserAvatar.vue';
-import {RepositoryData} from '@/common/repositorydata.js';
+import UserAvatar from '../components/UserAvatar.vue';
+import {RepositoryData} from '../common/repositorydata.js';
 import { computed } from 'vue';
 
 export default {

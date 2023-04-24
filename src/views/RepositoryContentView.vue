@@ -69,11 +69,11 @@ import Message from 'primevue/message';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 
-import ArtTable from '@/components/ArtTable.vue';
-import ContextTable from '@/components/ContextTable.vue';
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import IriDecoder from '@/common/iridecoder.js';
+import ArtTable from '../components/ArtTable.vue';
+import ContextTable from '../components/ContextTable.vue';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
+import IriDecoder from '../common/iridecoder.js';
 
 export default {
 	name: 'RepositoryContentView',

@@ -71,14 +71,14 @@ import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 
-import UserAvatar from '@/components/UserAvatar.vue';
-import InvokePanel from '@/components/InvokePanel.vue';
-import PageView from '@/components/PageView.vue';
-import ArtTree from '@/components/ArtTree.vue';
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import IriDecoder from '@/common/iridecoder.js';
-import {RepositoryData} from '@/common/repositorydata.js';
+import UserAvatar from '../components/UserAvatar.vue';
+import InvokePanel from '../components/InvokePanel.vue';
+import PageView from '../components/PageView.vue';
+import ArtTree from '../components/ArtTree.vue';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
+import IriDecoder from '../common/iridecoder.js';
+import {RepositoryData} from '../common/repositorydata.js';
 
 export default {
 	name: 'BrowserView',

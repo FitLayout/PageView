@@ -28,10 +28,10 @@ import Column from 'primevue/column';
 import SplitButton from 'primevue/splitbutton';
 import Button from 'primevue/button';
 
-import TypeBadge from '@/components/TypeBadge.vue';
-import LinkButton from '@/components/LinkButton.vue';
-import Iri from '@/components/Iri.vue';
-import ArtInfo from '@/components/ArtInfo.vue';
+import TypeBadge from '../components/TypeBadge.vue';
+import LinkButton from '../components/LinkButton.vue';
+import Iri from '../components/Iri.vue';
+import ArtInfo from '../components/ArtInfo.vue';
 
 export default {
 	name: 'ArtTree',

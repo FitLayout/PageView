@@ -64,7 +64,7 @@ import InlineMessage from 'primevue/inlinemessage';
 
 import {FilterMatchMode,FilterOperator} from 'primevue/api';
 
-import IriDecoder from '@/common/iridecoder.js';
+import IriDecoder from '../common/iridecoder.js';
 
 export default {
 	name: 'ContextTable',

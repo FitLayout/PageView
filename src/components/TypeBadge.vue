@@ -8,8 +8,8 @@
 </style>
 
 <script>
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
 
 export default {
 	name: 'TypeBadge',

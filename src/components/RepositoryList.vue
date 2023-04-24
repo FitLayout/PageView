@@ -90,7 +90,7 @@ import OverlayPanel from 'primevue/overlaypanel';
 import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
-import LinkButton from '@/components/LinkButton.vue';
+import LinkButton from '../components/LinkButton.vue';
 
 export default {
 	name: 'RepositoryList',

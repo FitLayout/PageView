@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {stringColor, stringsGradient, inferTagName} from '@/common/utils.js';
+import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
 
 export default {
 	name: 'Page',

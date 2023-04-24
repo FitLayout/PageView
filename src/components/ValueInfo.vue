@@ -21,12 +21,12 @@
 
 <script>
 import Iri from './Iri.vue';
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import RDF from '@/ontology/RDF.js';
-import RDFS from '@/ontology/RDFS.js';
-import IriDecoder from '@/common/iridecoder.js';
-import {stringColor,inferTagName} from '@/common/utils.js';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
+import RDF from '../ontology/RDF.js';
+import RDFS from '../ontology/RDFS.js';
+import IriDecoder from '../common/iridecoder.js';
+import {stringColor,inferTagName} from '../common/utils.js';
 
 const knownTypes = {};
 knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }

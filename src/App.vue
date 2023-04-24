@@ -1,12 +1,12 @@
 <template>
     <div id="app" class="">
-	    <router-view></router-view>
+		<router-view></router-view>
     </div>
 </template>
 
 <script>
-import {ApiClient} from '@/common/apiclient.js';
-import {RdfUtil} from '@/common/rdfutil.js';
+import {ApiClient} from './common/apiclient.js';
+import {RdfUtil} from './common/rdfutil.js';
 
 export default {
     name: 'app',

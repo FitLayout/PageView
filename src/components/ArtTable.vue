@@ -52,13 +52,13 @@ import SplitButton from 'primevue/splitbutton';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 
-import TypeBadge from '@/components/TypeBadge.vue';
-import LinkButton from '@/components/LinkButton.vue';
-import Iri from '@/components/Iri.vue';
+import TypeBadge from '../components/TypeBadge.vue';
+import LinkButton from '../components/LinkButton.vue';
+import Iri from '../components/Iri.vue';
 
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import IriDecoder from '@/common/iridecoder.js';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
+import IriDecoder from '../common/iridecoder.js';
 
 export default {
 	name: 'ArtTable',

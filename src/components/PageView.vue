@@ -194,13 +194,13 @@ import ValueInfo from './ValueInfo.vue';
 import AnnotationPanel from './AnnotationPanel.vue';
 import Selection from './Selection.vue'
 
-import RDFS from '@/ontology/RDFS.js';
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import FL from '@/ontology/FL.js';
-import {Model as BoxModel} from '@/common/boxMappers.js';
-import ObjectResolver from '@/common/resolver.js';
-import TreeModel from '@/common/treemodel.js';
+import RDFS from '../ontology/RDFS.js';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
+import FL from '../ontology/FL.js';
+import {Model as BoxModel} from '../common/boxMappers.js';
+import ObjectResolver from '../common/resolver.js';
+import TreeModel from '../common/treemodel.js';
 
 import {FilterMatchMode,FilterOperator} from 'primevue/api';
 

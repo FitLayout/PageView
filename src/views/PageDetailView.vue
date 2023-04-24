@@ -36,14 +36,14 @@
 <script>
 import ProgressSpinner from 'primevue/progressspinner';
 
-import LinkButton from '@/components/LinkButton.vue';
-import Iri from '@/components/Iri.vue';
-import SubjectInfo from '@/components/SubjectInfo.vue';
+import LinkButton from '../components/LinkButton.vue';
+import Iri from '../components/Iri.vue';
+import SubjectInfo from '../components/SubjectInfo.vue';
 
-import BOX from '@/ontology/BOX.js';
-import SEGM from '@/ontology/SEGM.js';
-import IriDecoder from '@/common/iridecoder.js';
-import {RepositoryData} from '@/common/repositorydata.js';
+import BOX from '../ontology/BOX.js';
+import SEGM from '../ontology/SEGM.js';
+import IriDecoder from '../common/iridecoder.js';
+import {RepositoryData} from '../common/repositorydata.js';
 
 export default {
 	name: 'PageDetailView',

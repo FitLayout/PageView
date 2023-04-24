@@ -55,7 +55,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
-import ValueInfo from '@/components/ValueInfo.vue';
+import ValueInfo from '../ValueInfo.vue';
 
 import {FilterMatchMode,FilterOperator} from 'primevue/api';
 // N3 parser

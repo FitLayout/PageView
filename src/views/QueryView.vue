@@ -13,12 +13,12 @@
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 
-import Iri from '@/components/Iri.vue';
-import SubjectInfo from '@/components/SubjectInfo.vue';
-import RdfEditor from '@/components/querying/RdfEditor';
-import QueryResults from "@/components/querying/QueryResults.vue"
+import Iri from '../components/Iri.vue';
+import SubjectInfo from '../components/SubjectInfo.vue';
+import RdfEditor from '../components/querying/RdfEditor.vue';
+import QueryResults from "../components/querying/QueryResults.vue"
 
-import IriDecoder from '@/common/iridecoder.js';
+import IriDecoder from '../common/iridecoder.js';
 
 
 export default {

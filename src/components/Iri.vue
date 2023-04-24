@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import IriDecoder from '@/common/iridecoder.js';
+import IriDecoder from '../common/iridecoder.js';
 
 export default {
 	name: 'Iri',

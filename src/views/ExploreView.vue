@@ -15,11 +15,11 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 
-import Iri from '@/components/Iri.vue';
-import SubjectInfo from '@/components/SubjectInfo.vue';
-import SubjectReferences from '@/components/SubjectReferences.vue';
+import Iri from '../components/Iri.vue';
+import SubjectInfo from '../components/SubjectInfo.vue';
+import SubjectReferences from '../components/SubjectReferences.vue';
 
-import IriDecoder from '@/common/iridecoder.js';
+import IriDecoder from '../common/iridecoder.js';
 
 
 export default {
