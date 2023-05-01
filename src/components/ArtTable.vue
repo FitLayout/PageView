@@ -243,10 +243,10 @@ export default {
 		exportArtifact(art, mime, ext) {
 			this.apiClient.exportArtifact(art.data.id, mime, function(blob) {
 				const link = document.createElement('a');
-        		link.href = URL.createObjectURL(blob);
-        		link.download = 'export' + ext;
-        		link.click();
-        		URL.revokeObjectURL(link.href);
+				link.href = URL.createObjectURL(blob);
+				link.download = 'export' + ext;
+				link.click();
+				URL.revokeObjectURL(link.href);
 			});
 		},
 

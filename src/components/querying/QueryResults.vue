@@ -52,12 +52,11 @@
 <script>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 
 import ValueInfo from '../ValueInfo.vue';
 
-import {FilterMatchMode,FilterOperator} from 'primevue/api';
+import {FilterMatchMode} from 'primevue/api';
 
 import {Parser} from "n3";
 
@@ -67,15 +66,13 @@ export default {
     components:{
       DataTable,
       Column,
-      Button,
       InputText,
-      FilterMatchMode,
       ValueInfo
     },
     data() {
         return {
-		  // raw values
-		  rawValues: [],
+          // raw values
+          rawValues: [],
           // data for the rows in the table
           computedResult: [],
           // name of columns in the table
@@ -97,9 +94,9 @@ export default {
       this.processResponse(); 
     },
     methods: {
-	  getValInfo(data) {
-		  return { v: data }; //transforms data to the form expected by ValueInfo component
-	  },
+      getValInfo(data) {
+        return { v: data }; //transforms data to the form expected by ValueInfo component
+      },
 
       // function activating resource exploration component
       exploreResource(resource){
@@ -188,12 +185,12 @@ export default {
         })
         // loop processing response and transforming it to row data  
         res.results.bindings.forEach((element) => {
-		  let answers = {};
-		  let rawRow = {};
+          let answers = {};
+          let rawRow = {};
           // process one row data
           this.columns.forEach((item) => {
             if(element[item]){
-			  rawRow[item] = element[item];
+              rawRow[item] = element[item];
 
               // for column data store : value(with prefix), tooltip(with full URI), type(literal/uri/...)
               let word = {'val': element[item].value, 'tol': element[item].value, 'type': element[item].type};
@@ -215,13 +212,13 @@ export default {
 
             }
           })
-		  // store row data
-		  this.rawValues.push(rawRow);
+          // store row data
+          this.rawValues.push(rawRow);
           this.computedResult.push(answers);
         })
-	  },
-	  
-  		showIri(iri) {
+      },
+
+      showIri(iri) {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			window.open(route.href, '_blank');
 		},

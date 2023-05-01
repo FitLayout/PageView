@@ -127,28 +127,28 @@
 					{{ error }}
 					</div>
 					<div class="tools" v-if="!loading && !error">
-						<div class="p-fluid p-formgrid p-grid">
-							<div class="p-field p-col">
+						<div class="p-fluid formgrid grid">
+							<div class="field col">
 								<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
 								<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
 							</div>
-							<div class="p-field p-col">
+							<div class="field col">
 								<label for="screen" class="form-label">Screenshot</label>
 								<InputSwitch id="screen" v-model="screenshot" />
 							</div>
-							<div class="p-field p-col">
+							<div class="field col">
 								<label for="outlines" class="form-label">Show outlines</label>
 								<InputSwitch id="outlines" v-model="outlines" title="Show area bounds" />
 							</div>
-							<div class="p-field p-col">
+							<div class="field col">
 								<label for="selection" class="form-label">Selection</label>
 								<InputSwitch id="selection" v-model="rectSelection" title="Selection mode" />
 							</div>
-							<div class="p-field p-col">
+							<div class="field col">
 								<label for="showTags" class="form-label">Show tags</label>
 								<InputSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
 							</div>
-							<div class="p-field p-col">
+							<div class="field col">
 								<label for="dragSelection" class="form-label">Drag select</label>
 								<InputSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
 							</div>
@@ -178,7 +178,6 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
-import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputSwitch from 'primevue/inputswitch';
 import Tree from 'primevue/tree';
@@ -195,14 +194,12 @@ import AnnotationPanel from './AnnotationPanel.vue';
 import Selection from './Selection.vue'
 
 import RDFS from '../ontology/RDFS.js';
-import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import FL from '../ontology/FL.js';
-import {Model as BoxModel} from '../common/boxMappers.js';
 import ObjectResolver from '../common/resolver.js';
 import TreeModel from '../common/treemodel.js';
 
-import {FilterMatchMode,FilterOperator} from 'primevue/api';
+import {FilterMatchMode} from 'primevue/api';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
 
@@ -213,7 +210,6 @@ export default {
 		SplitterPanel,
 		ProgressBar,
 		Slider,
-		Button,
 		InputText,
 		InputSwitch,
 		Tree,
@@ -278,7 +274,7 @@ export default {
 				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
                 'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
             },
-			    
+   
 		}
 	},
 	created () {
@@ -566,19 +562,19 @@ export default {
 	height: 65px;
 	box-sizing: border-box;
 }
-.col-page .tools .p-field {
+.col-page .tools .field {
 	text-align: center;
 	padding: 0 0.3em;
 	margin-bottom: 0.1em;
 }
-.col-page .tools .p-field label {
+.col-page .tools .field label {
 	display: block;
 }
-.tools .p-field > label, .tools .p-field > .p-component {
+.tools .field > label, .tools .field > .p-component {
 	margin-left: auto;
 	margin-right: auto;
 }
-.col-page .tools .p-field > .p-component {
+.col-page .tools .field > .p-component {
 	margin-bottom: 0;
 }
 .page-contents {

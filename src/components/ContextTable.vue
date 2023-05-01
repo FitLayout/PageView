@@ -2,7 +2,7 @@
 	<div class="context-table">
 		<ConfirmDialog group="confirmContext"></ConfirmDialog>
 		<Dialog header="Edit context" v-model:visible="displayEditor"
-		      :maximizable=true :modal=true >
+				:maximizable=true :modal=true >
 			<p class="context-editor-iri">
 				<label for="editIri">Context IRI</label>
 				<InputText id="editIri" v-model="editIri" />
@@ -10,11 +10,11 @@
 			<Textarea v-model="editorText" rows="30" cols="100" />
 			<template #footer>
 				<InlineMessage v-if="editorError">{{editorError}}</InlineMessage>
-		        <Button label="Cancel" icon="pi pi-times" class="p-button-text"
-			        @click="closeEditor()" />
+				<Button label="Cancel" icon="pi pi-times" class="p-button-text"
+					@click="closeEditor()" />
                 <Button label="Save" icon="pi pi-check" autofocus
 					@click="saveEditor()" />
-	        </template>
+			</template>
 		</Dialog>		
 		<DataTable :value="contexts" v-model:filters="filters" filterDisplay="row">
 			<template #header>
@@ -62,7 +62,7 @@ import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
 import InlineMessage from 'primevue/inlinemessage';
 
-import {FilterMatchMode,FilterOperator} from 'primevue/api';
+import {FilterMatchMode} from 'primevue/api';
 
 import IriDecoder from '../common/iridecoder.js';
 
@@ -177,10 +177,10 @@ export default {
 		exportContext(iri, mime, ext) {
 			this.apiClient.exportContext(iri, mime, function(blob) {
 				const link = document.createElement('a');
-        		link.href = URL.createObjectURL(blob);
-        		link.download = 'export' + ext;
-        		link.click();
-        		URL.revokeObjectURL(link.href);
+				link.href = URL.createObjectURL(blob);
+				link.download = 'export' + ext;
+				link.click();
+				URL.revokeObjectURL(link.href);
 			});
 		},
 

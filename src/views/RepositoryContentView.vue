@@ -12,22 +12,22 @@
 
 		<div class="render-panel" v-if="!isReadOnly">
 			<h2>Render new page</h2>
-			<div class="p-fluid p-formgrid p-grid">
-				<div class="p-field p-col-12">
+			<div class="p-fluid formgrid grid">
+				<div class="field col-12">
 					<label for="url">URL</label>
-					<InputText id="url" type="text" placeholder="http://" v-model="renderUrl" />
+					<InputText id="url" class="w-full" type="text" placeholder="http://" v-model="renderUrl" />
 				</div>
-				<div class="p-field p-col-3">
+				<div class="field col-4">
 					<label for="width">Page width</label>
-					<InputNumber id="width" type="decimal" v-model="renderWidth" showButtons :min="10" :max="10000" :step="10" />
+					<InputNumber id="width" class="w-full" type="decimal" v-model="renderWidth" showButtons :min="10" :max="10000" :step="10" />
 				</div>
-				<div class="p-field p-col-3">
+				<div class="field col-4">
 					<label for="height">Height</label>
-					<InputNumber id="height" type="decimal" v-model="renderHeight" showButtons :min="10" :max="10000" :step="10" />
+					<InputNumber id="height" class="w-full" type="decimal" v-model="renderHeight" showButtons :min="10" :max="10000" :step="10" />
 				</div>
-				<div class="p-field p-col-12">
-					<Button @click="renderPage()" class="p-jc-center" :disabled="loading">
-						<span class="p-text-bold">Render</span>
+				<div class="field col-12">
+					<Button @click="renderPage()" class="justify-content-center w-full" :disabled="loading">
+						<span class="font-bold">Render</span>
 						<ProgressSpinner v-if="loading" style="width:1.5em;height:1.5em;margin:0" />
 					</Button>
 				</div>
@@ -71,9 +71,6 @@ import TabPanel from 'primevue/tabpanel';
 
 import ArtTable from '../components/ArtTable.vue';
 import ContextTable from '../components/ContextTable.vue';
-import BOX from '../ontology/BOX.js';
-import SEGM from '../ontology/SEGM.js';
-import IriDecoder from '../common/iridecoder.js';
 
 export default {
 	name: 'RepositoryContentView',

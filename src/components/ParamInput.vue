@@ -1,27 +1,27 @@
 <template>
 	<div :class="paramClass" class="param-field">
-		<div v-if="descr.type=='string'" class="p-field">
+		<div v-if="descr.type=='string'" class="field">
 			<label :for="inputId" >{{descr.name}}</label>
 			<InputText type="text" :id="inputId" :placeholder="descr.name"
 				:minlength="descr.minLength" :data-maxlength="descr.maxLength"
 				v-bind:modelValue="modelValue" 
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
-		<div v-if="descr.type=='int'" class="p-field">
+		<div v-if="descr.type=='int'" class="field">
 			<label :for="inputId" >{{descr.name}}</label>
 			<InputNumber mode="decimal" showButtons :id="inputId"
 				:min="descr.minValue" :max="descr.maxValue"
 				v-bind:modelValue="modelValue" 
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
-		<div v-if="descr.type=='float'" class="p-field">
+		<div v-if="descr.type=='float'" class="field">
 			<label :for="inputId" >{{descr.name}}</label>
 			<InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"
 				:min="descr.minValue" :max="descr.maxValue" :step="0.2"
 				v-bind:modelValue="modelValue" 
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
-		<div v-if="descr.type=='boolean'" class="p-field-checkbox">
+		<div v-if="descr.type=='boolean'" class="field-checkbox">
 			<Checkbox :binary="true" :id="inputId"
 				v-bind:modelValue="modelValue" 
 				@update:modelValue="$emit('update:modelValue', $event)" />

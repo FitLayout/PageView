@@ -67,8 +67,6 @@ import ValueInfo from './ValueInfo.vue';
 import Iri from './Iri.vue';
 
 import RDFS from '../ontology/RDFS.js';
-import BOX from '../ontology/BOX.js';
-import SEGM from '../ontology/SEGM.js';
 
 export default {
 	name: 'AnnotationPanel',
@@ -153,11 +151,11 @@ export default {
 		},
 
 		toggleTag(event) {
-    		this.$refs.addTagPanel.toggle(event);
+			this.$refs.addTagPanel.toggle(event);
 		}, 
 
 		toggleAnnot(event) {
-    		this.$refs.addAnnotationPanel.toggle(event);
+			this.$refs.addAnnotationPanel.toggle(event);
 		}, 
 
 		//compare if item is annotation or tag to be rendered
@@ -179,7 +177,7 @@ export default {
 		//TODO FUNCTIONS
 		//open overlay panel for editation of annotation
 		editToggleAnnot(event,item) {
-    		this.$refs.editAnnotationPanel.toggle(event);
+			this.$refs.editAnnotationPanel.toggle(event);
 			this.selectedAnnotForEdit = item; //pass value of selected annotation
 			this.labelEditText = item.value[0]; // open overlay with actual value of annotation
 		},  
@@ -284,7 +282,7 @@ export default {
 
 .annotation-item-buttons {
 	width: 15% !important;
-    	float: left !important;
+	float: left !important;
 }
 
 #annotation-item-layout {

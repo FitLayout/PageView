@@ -10,24 +10,12 @@
 </template>
 
 <script>
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
-
-import Iri from '../components/Iri.vue';
-import SubjectInfo from '../components/SubjectInfo.vue';
 import RdfEditor from '../components/querying/RdfEditor.vue';
 import QueryResults from "../components/querying/QueryResults.vue"
-
-import IriDecoder from '../common/iridecoder.js';
-
 
 export default {
 	name: 'QueryView',
 	components: {
-		Button,
-		InputText,
-		Iri,
-		SubjectInfo,
 		RdfEditor,
 		QueryResults
 	},
@@ -61,7 +49,7 @@ export default {
 		resultsHandler(r) {
 			this.queryResult = r;
 			console.log(r);
-    	},
+		},
 
 	}
 }

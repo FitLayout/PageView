@@ -11,7 +11,7 @@
 							v-tooltip.bottom="'Close repository'" 
 							@click="quit()" />&nbsp;
 					<UserAvatar :userInfo="userInfo" v-tooltip.bottom="userInfo ? ('User: ' + userInfo.userId) : 'User'" />
-            	</template>
+				</template>
 			</Menubar>
 		</div>
 		<router-view></router-view>

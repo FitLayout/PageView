@@ -15,7 +15,6 @@
 
 <script>
 import Button from 'primevue/button';
-import OverlayPanel from 'primevue/overlaypanel';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 
@@ -30,7 +29,6 @@ export default {
 
 	components: {
 		Button,
-		OverlayPanel,
 		Dropdown,
 		InputText
 	},
@@ -93,7 +91,7 @@ export default {
 			this.startX = event.clientX;
 			this.startY = event.clientY;
 			this.startBorderX = event.offsetX; 
-    			this.startBorderY = event.offsetY; 
+			this.startBorderY = event.offsetY; 
 			let divStyle = 'position:absolute;' + 'z-index:2;' + 'top:'+ this.startY + 'px;' + 'left:'+ this.startX +'px;' + 'height:0px;' + 'width:0px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
 			this.selectDiv.setAttribute('style', divStyle);
 
@@ -126,9 +124,9 @@ export default {
 
 			//calculate on mouse up position
 			this.endX = event.clientX;
-                	this.endY = event.clientY;
+					this.endY = event.clientY;
 			this.endBorderX = event.offsetX;
-                	this.endBorderY = event.offsetY;	
+					this.endBorderY = event.offsetY;	
 			
 			//positions for comparing
 			this.topBorderDiv = this.endBorderY;

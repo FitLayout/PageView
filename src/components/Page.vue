@@ -104,11 +104,11 @@ export default {
 				el.srcBox = box;
 				if (active) {
 					el.setAttribute('class', 'box a');
-				    el.setAttribute('id', 'fl-abox-' + box.documentOrder);
-				    this.boxIndex[box._iri] = el;
+					el.setAttribute('id', 'fl-abox-' + box.documentOrder);
+					this.boxIndex[box._iri] = el;
 				} else {
 					el.setAttribute('class', 'box');
-				    el.setAttribute('id', 'fl-box-' + box.documentOrder);
+					el.setAttribute('id', 'fl-box-' + box.documentOrder);
 				}
 				el.style.left = box.bounds.positionX + 'px';
 				el.style.top = box.bounds.positionY + 'px';

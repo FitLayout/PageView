@@ -11,7 +11,7 @@
 							v-tooltip.bottom="'Close browser'" 
 							@click="quit()" />&nbsp;
 					<UserAvatar :userInfo="userInfo" v-tooltip.bottom="userInfo ? ('User: ' + userInfo.userId) : 'User'" />
-            	</template>
+				</template>
 			</Menubar>
 		</div>
 		<!-- Service panels -->
@@ -65,9 +65,6 @@
 
 <script>
 import Menubar from 'primevue/menubar';
-import Splitter from 'primevue/splitter';
-import SplitterPanel from 'primevue/splitterpanel';
-import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 
@@ -78,15 +75,11 @@ import ArtTree from '../components/ArtTree.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import IriDecoder from '../common/iridecoder.js';
-import {RepositoryData} from '../common/repositorydata.js';
 
 export default {
 	name: 'BrowserView',
 	components: {
 		Menubar,
-		Splitter,
-		SplitterPanel,
-		Sidebar,
 		Button,
 		ConfirmDialog,
 		UserAvatar,

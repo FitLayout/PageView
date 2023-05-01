@@ -7,5 +7,9 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest'
+  },
+  'rules': {
+    'vue/no-reserved-component-names': 'off',
+    'vue/multi-word-component-names': 'off'
   }
 }

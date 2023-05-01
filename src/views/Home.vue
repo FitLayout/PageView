@@ -6,7 +6,7 @@
 				<template #start><router-link to="/"><span class="logo">FitLayout</span></router-link></template>
 				<template #end>
 					<UserAvatar :userInfo="userInfo" />
-            	</template>
+				</template>
 			</Menubar>
 		</div>
 
@@ -33,10 +33,6 @@
 
 <script>
 import Menubar from 'primevue/menubar';
-import Card from 'primevue/card';
-import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
-import InlineMessage from 'primevue/inlinemessage';
 
 import UserAvatar from '../components/UserAvatar.vue';
 import RepositoryList from '../components/RepositoryList.vue';

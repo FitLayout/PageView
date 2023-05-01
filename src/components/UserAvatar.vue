@@ -1,6 +1,6 @@
 <template>
 	<span class="user-avatar">
-       	<Button icon="pi pi-user" class="p-button-rounded p-button-info" @click="toggle" />
+		<Button icon="pi pi-user" class="p-button-rounded p-button-info" @click="toggle" />
 		<Menu ref="menu" :model="items" :popup="true" />
 	</span>
 </template>
@@ -79,7 +79,7 @@ export default {
 			}
 		},
 		toggle(event) {
-    		this.$refs.menu.toggle(event);
+			this.$refs.menu.toggle(event);
 		},
 		isAdmin() {
 			return this.userInfo && this.userInfo.roles && this.userInfo.roles.includes('admin');

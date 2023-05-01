@@ -22,7 +22,7 @@
 							@click="toggleShare" />
 						<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 							<div class="p-fluid">
-								<div class="p-field">
+								<div class="field">
 									<label for="fieldId">Shareable link</label>
 									<InputText id="fieldId" type="text" :value="getRepoUrl(repo.id)" readonly="true" />
 								</div>
@@ -42,11 +42,11 @@
 
 				<OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 					<div class="p-fluid">
-						<div class="p-field">
+						<div class="field">
 							<label for="repo-descr">Name</label>
 							<InputText id="repo-descr" type="text" placeholder="Enter the repository name" v-model="newDescr" ref="inputDescr" />
 						</div>
-						<div class="p-field" v-if="anonymous">
+						<div class="field" v-if="anonymous">
 							<label for="repo-email">E-mail</label>
 							<InputText id="repo-email" type="text" placeholder="Your e-mail" v-model="newEmail" />
 							<small id="repo-email-help">Your e-mail is optional. If provided, we will be able to e-mail you the links to your repositories.</small>
@@ -68,7 +68,7 @@
 				</OverlayPanel>
 				<OverlayPanel ref="opRemind" appendTo="body" :showCloseIcon="true" id="op_remind" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 					<div class="p-fluid">
-						<div class="p-field">
+						<div class="field">
 							<label for="remind-email">Your e-mail</label>
 							<InputText id="remind-email" type="email" placeholder="Your e-mail" v-model="remindEmail" />
 							<small id="repo-email-help">We will e-mail you the links to all repositories associated with the given e-mail (if any).</small>

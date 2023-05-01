@@ -36,9 +36,7 @@ import InputText from 'primevue/inputtext';
 import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
 
-import {FilterMatchMode,FilterOperator} from 'primevue/api';
-
-const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
+import {FilterMatchMode} from 'primevue/api';
 
 export default {
 	name: 'SubjectReferences',

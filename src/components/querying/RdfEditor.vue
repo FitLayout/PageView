@@ -1,7 +1,7 @@
 <template>
   <Toast />
 
-  <div class="p-col text_left">
+  <div class="col text_left">
     <h2>SPARQL Query</h2>
   </div>
   <table class="common_bgc editor_table">
@@ -28,13 +28,13 @@
       </td>
     </tr>
   </table>
-  <div class="p-grid under_editor_space">
-    <div class="p-col-4 p-offset-4">
+  <div class="grid under_editor_space">
+    <div class="col-4 col-offset-4">
       <Button @click="queryData" label="Execute" class="p-button-sm" 
       v-tooltip.bottom="'Execute the query'"/>
 
     </div>
-    <div class="p-col-4">
+    <div class="col-4">
       <InputText id="name" v-model="queryName" type="text" class="p-inputtext-sm" placeholder="Save query as ..."/>
       <Button label="Save" @click="saveQueryToLocalStorage" class="p-button-sm p-button-secondary save_button_margin"
         v-tooltip.bottom="'Save new or edited query'"/>
@@ -64,7 +64,6 @@
   import Button from 'primevue/button';
   import Tooltip from 'primevue/tooltip';
   import Toast from 'primevue/toast';
-  import Textarea from 'primevue/textarea';
   import InputText from 'primevue/inputtext';
 
   // Sparql parser to validate query
@@ -76,7 +75,6 @@
       PrismEditor,
       Button,
       Toast,
-      Textarea,
       InputText
     },
 	inject: ['apiClient'],
@@ -192,12 +190,12 @@
       async queryData(){
 
         // connect prefixes with query body
-		let queryText = this.code;
-		//console.log('code ' + this.code);
+        let queryText = this.code;
+        //console.log('code ' + this.code);
 
         this.prefixTextDeclarations.forEach(element => {
-		  queryText = element.code + queryText;
-		  //console.log('add ' + element.code);
+          queryText = element.code + queryText;
+          //console.log('add ' + element.code);
         });
 
         // syntax validation
@@ -271,7 +269,7 @@
       validateQuery(code,parser){
         try {
           // syntax validation by parser
-          let parsed = parser.parse(code);
+          parser.parse(code);
           this.valid = true;
           this.errorText = ' ';
         } catch (error) {
@@ -504,6 +502,6 @@
   }
 
   .editor_table tr.minimal {
-	  height: 0;
+    height: 0;
   }
 </style>

@@ -1,7 +1,7 @@
 <template>
 	<div class="service-panel card">
-			<div class="service p-formgroup-inline">
-				<div class="p-field inl">
+			<div class="service formgroup-inline">
+				<div class="field inl">
 					<label :for="inputId" class="inl"><strong>Service</strong></label>
 					<Dropdown v-model="key" v-if="grouped" :options="groupList" optionLabel="name" optionValue="id"
 						optionGroupLabel="label" optionGroupChildren="items">
@@ -43,8 +43,6 @@
 
 <script>
 import Dropdown from 'primevue/dropdown';
-import Panel from 'primevue/panel';
-import Card from 'primevue/card';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import InlineMessage from 'primevue/inlinemessage';
@@ -55,8 +53,6 @@ import ParamPanel from './ParamPanel.vue';
 export default {
 	name: 'InvokePanel',
 	components: {
-		Panel,
-		Card,
 		Dropdown,
 		Button,
 		ProgressSpinner,
@@ -235,10 +231,10 @@ export default {
 </script>
 
 <style>
-.service-panel .p-field {
+.service-panel .field {
 	margin-bottom: 0.5em;
 }
-.service-panel .p-field > label {
+.service-panel .field > label {
 	margin-bottom: 0.1em;
 }
 .service .inl {
