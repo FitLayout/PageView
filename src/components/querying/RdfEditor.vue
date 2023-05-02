@@ -216,19 +216,19 @@
         }
 
 
-        let answerToQuery;
+        let queryResponse;
         if(this.valid && this.queryType !== "empty"){
           // emit that the fetching of data started, so show spinner
           this.$emit('loadingResult', true);
-          let sendQueryToUrl = this.apiClient.repositoryRoot();
+          let queryUrl = this.apiClient.repositoryRoot();
           // change the URL end based on the type of query
           if(this.queryType == "update"){
-            sendQueryToUrl = sendQueryToUrl + '/repository/updateQuery';
+            queryUrl = queryUrl + '/repository/updateQuery';
           } else {
-            sendQueryToUrl = sendQueryToUrl + '/repository/query';
+            queryUrl = queryUrl + '/repository/query';
           }
 
-          answerToQuery = await fetch(sendQueryToUrl, {
+          queryResponse = await fetch(queryUrl, {
             method: 'POST',
             headers: {
               'Content-Type':'application/sparql-query'
@@ -248,12 +248,12 @@
           this.$emit('loadingResult', false);
 
           // emit answer if everything was OK and data was found
-          if((this.queryType == "ask" && 'boolean' in answerToQuery) || 
-            (this.queryType == "select" && answerToQuery.results.bindings.length > 0) ||
-            (this.queryType == "construct" &&  answerToQuery.length > 0) ||
-            (this.queryType == "update" && 'status' in answerToQuery)) 
+          if((this.queryType == "ask" && 'boolean' in queryResponse) || 
+            (this.queryType == "select" && queryResponse.results.bindings.length > 0) ||
+            (this.queryType == "construct" &&  queryResponse.length > 0) ||
+            (this.queryType == "update" && 'status' in queryResponse)) 
           {
-            let data = [answerToQuery, this.prefixNsTuples, this.queryType];
+            let data = [queryResponse, this.prefixNsTuples, this.queryType];
             this.$emit('resultReturn', {data});
           } else {
             // no data found for the query
@@ -309,14 +309,15 @@
           return i;
       },
 
-      // controlling if server response contains error
+      // checking if server response contains error
       async errorHandler(res){
         if(!res.ok){
           // something went wrong on server (status like: 4xx or 5xx, ...)
-          this.$toast.add({severity:'error', summary: 'Error', detail:"Error happened during execution!", life: 3000});
+          this.$toast.add({severity:'error', summary: 'Error', detail:"Error occurred during execution", life: 3000});
+          return null;
         } else {
 
-          this.$toast.add({severity:'success', summary: 'Success Message', detail:'Query was successfully executed!', life: 3000});
+          this.$toast.add({severity:'success', summary: 'Success Message', detail:'Query was successfully executed', life: 3000});
           if(this.queryType != "construct"){
             return await res.json();
           } else {
@@ -479,9 +480,9 @@
   }
 
   .editor_table{
-    width:100%; 
+    width: 100%;
     border: 2px solid black; 
-    min-height:20vh;
+    min-height: 20vh;
   }
 
   .hidden_tr{
@@ -492,9 +493,13 @@
     color:red;
   }
 
-  .under_editor_space{
+  .under_editor_space {
     text-align:center;
     margin-top:5px !important;
+  }
+
+  .editor_table, .under_editor_space {
+    max-width: 80em; /* make space for error tooltips */
   }
 
   .save_button_margin{
