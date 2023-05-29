@@ -36,10 +36,21 @@
     </div>
     <div class="col-4">
       <InputText id="name" v-model="queryName" type="text" class="p-inputtext-sm" placeholder="Save query as ..."/>
-      <Button label="Save" @click="saveQueryToLocalStorage" class="p-button-sm p-button-secondary save_button_margin"
+      <Button label="Save" @click="saveQuery" class="p-button-sm p-button-secondary save_button_margin"
         v-tooltip.bottom="'Save new or edited query'"/>
+        <Button label="Saved queries" @click="savedQueriesShown = true" class="p-button-sm p-button-success ml-2"
+        v-tooltip.bottom="'Show saved queries'"/>
     </div>
   </div>
+
+  <Dialog v-model:visible="savedQueriesShown" modal header="Saved queries" :style="{ width: '50vw' }">
+    <QueryList @select-query="selectQuery" @use-query="useQuery" />
+    <template #footer>
+        <Button label="Cancel" icon="pi pi-times" @click="savedQueriesShown = false" text />
+        <Button label="Select" icon="pi pi-check" @click="loadQuery" :disabled="!selectedQuery" autofocus />
+    </template>
+  </Dialog> 
+
 </template>
 
 <script>
@@ -65,6 +76,9 @@
   import Tooltip from 'primevue/tooltip';
   import Toast from 'primevue/toast';
   import InputText from 'primevue/inputtext';
+  import Dialog from 'primevue/dialog';
+
+  import QueryList from './QueryList.vue';
 
   // Sparql parser to validate query
   import Sparqljs from 'sparqljs';
@@ -75,7 +89,9 @@
       PrismEditor,
       Button,
       Toast,
-      InputText
+      InputText,
+      Dialog,
+      QueryList
     },
 	inject: ['apiClient'],
     emits: ['resultReturn','loadingResult'],
@@ -107,8 +123,9 @@
       queryType: "select",
       // name of the query to be saved
       queryName: "",
-      // local storage array for storing queries
-      storedQueries: []
+      
+      savedQueriesShown: false,
+      selectedQuery: null
     }),
     mounted() {
       // initial query off all namespaces from the repository
@@ -396,7 +413,7 @@
       },
 
       // save user specified query to local storage
-      saveQueryToLocalStorage(){
+      saveQuery(){
 
         if(this.queryName.length > 0 && this.code.length > 0){
           const findIdx = this.storedQueries.findIndex(item => item.name == this.queryName);
@@ -426,6 +443,25 @@
 
         }
       },
+
+      selectQuery(q) {
+        this.selectedQuery = q;
+      },
+
+      useQuery(q) {
+        this.selectedQuery = q;
+        this.loadQuery();
+      },
+
+      loadQuery() {
+        if (this.selectedQuery) {
+          this.code = this.selectedQuery.queryString;
+          this.queryName = this.selectedQuery.title;
+        }
+        this.savedQueriesShown = false;
+      }
+
+
     },
   };
 </script>
