@@ -93,7 +93,7 @@
       Dialog,
       QueryList
     },
-	inject: ['apiClient'],
+    inject: ['apiClient'],
     emits: ['resultReturn','loadingResult'],
     directives: {
       'tooltip': Tooltip
@@ -413,32 +413,23 @@
       },
 
       // save user specified query to local storage
-      saveQuery(){
-
-        if(this.queryName.length > 0 && this.code.length > 0){
-          const findIdx = this.storedQueries.findIndex(item => item.name == this.queryName);
-          if(findIdx >= 0){
-            // the query is already stored -> update body
-            this.storedQueries[findIdx].body = this.code;              
-          } else {
-            // new query to store
-            const query = {name: this.queryName, body: this.code};
-            this.storedQueries.push(query);
-          } 
-
-          const parsed = JSON.stringify(this.storedQueries);
-          localStorage.setItem('storedQueries', parsed);
-
-          this.$toast.add({severity:'success', summary: 'Success Message', detail:`Query "${this.queryName}" was successfully saved!`, life: 3000});
+      async saveQuery() {
+        if (this.queryName.length > 0 && this.code.length > 0) {
+          try {
+            await this.apiClient.saveQuery({title: this.queryName, queryString: this.code});
+            this.$toast.add({severity:'success', summary: 'Success', detail:`Query "${this.queryName}" was successfully saved!`, life: 3000});
+          } catch (e) {
+            this.$toast.add({severity:'error', summary: 'Error', detail: e.message, life: 5000});
+          }
         } else {
           if(this.queryName.length == 0){
             // no name for the query was given
-            this.$toast.add({severity:'error', summary: 'Error Message', detail:'Pleas specify name for the query!', life: 5000});
+            this.$toast.add({severity:'error', summary: 'Error', detail:'Pleas specify name for the query!', life: 5000});
           }
 
           if(this.code.length == 0){
             // no name for the query was given
-            this.$toast.add({severity:'error', summary: 'Error Message', detail:'Pleas specify the query!', life: 5000});
+            this.$toast.add({severity:'error', summary: 'Error', detail:'Pleas specify the query!', life: 5000});
           }
 
         }

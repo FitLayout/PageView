@@ -769,4 +769,28 @@ export class ApiClient {
 		}		
 	}
 
+	async saveQuery(data) {
+		const url = this.queriesEndpoint();
+		try {
+			let response = await fetch(url, {
+				method: 'POST',
+				headers: this.headers({
+					'Content-Type': 'application/json'
+				}),
+				body: JSON.stringify(data)
+			});
+
+			this.checkAuth(response);
+			const rdata = await response.json();
+			if (!response.ok) {
+				throw new Error(rdata.message);
+			}
+
+			return rdata;
+
+		} catch (e) {
+			throw new Error(e);
+		}
+	}
+
 }
