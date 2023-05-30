@@ -793,4 +793,19 @@ export class ApiClient {
 		}
 	}
 
+	async deleteQuery(queryId) {
+		const url = this.queriesEndpoint() + '/' + queryId;
+		let response = await fetch(url, {
+			method: 'DELETE',
+			headers: this.headers()
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		const data = await response.json();
+		return data.status == 'ok';
+	}
+
 }
