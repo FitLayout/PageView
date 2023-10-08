@@ -84,4 +84,8 @@ export default {
 .p-boolean label {
 	margin-right: 0.5em;
 }
+.param-field .field > label {
+	word-break: break-all;
+	overflow-wrap: anywhere;
+}
 </style>
