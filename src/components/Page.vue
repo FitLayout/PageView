@@ -85,6 +85,8 @@ export default {
 					this.renderBoxes(this.rectangles, this.$refs.boxes, false, true);
 				}
 			}
+			// highlight the selected rect if any
+			this.highlightSelectedRect();
 		},
 
 		/**
@@ -232,22 +234,24 @@ export default {
 		},
 
 		highlightSelectedRect() {
-			if (this.lastSelectedRect) {
-				let lastElem = this.boxIndex[this.lastSelectedRect._iri];
-				if (lastElem) {
-					lastElem.classList.remove('focus');
-				}
-			}
-			if (this.selectedRect) {
-				let newElem = this.boxIndex[this.selectedRect._iri];
-				if (newElem) {
-					newElem.classList.add('focus');
-					if (newElem.scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
-						newElem.scrollIntoViewIfNeeded();
+			if (this.boxIndex) { // only when the page has been already rendered
+				if (this.lastSelectedRect) {
+					let lastElem = this.boxIndex[this.lastSelectedRect._iri];
+					if (lastElem) {
+						lastElem.classList.remove('focus');
 					}
 				}
+				if (this.selectedRect) {
+					let newElem = this.boxIndex[this.selectedRect._iri];
+					if (newElem) {
+						newElem.classList.add('focus');
+						if (newElem.scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
+							newElem.scrollIntoViewIfNeeded();
+						}
+					}
+				}
+				this.lastSelectedRect = this.selectedRect;
 			}
-			this.lastSelectedRect = this.selectedRect;
 		}
 	}
 }
