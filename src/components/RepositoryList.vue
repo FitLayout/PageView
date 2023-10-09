@@ -19,18 +19,18 @@
 						<LinkButton label="Browser" icon="pi pi-globe" style="margin-left: 0.5em"
 							:to="{name: 'browser', params: { repoId: repo.id }}" />
 						<Button label="Share" icon="pi pi-share-alt" style="margin-left: 0.5em" class="p-button-success"
-							@click="toggleShare" />
-						<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
-							<div class="p-fluid">
-								<div class="field">
-									<label for="fieldId">Shareable link</label>
-									<InputText id="fieldId" type="text" :value="getRepoUrl(repo.id)" readonly="true" />
-								</div>
-							</div>
-						</OverlayPanel>
+							@click="(ev) => toggleShare(ev, repo.id)" />
 					</td>
 				</tr>
 			</table>
+			<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+				<div class="p-fluid">
+					<div class="field">
+						<label for="fieldId">Shareable link</label>
+						<InputText id="fieldId" type="text" :value="sharedUrl" readonly="true" />
+					</div>
+				</div>
+			</OverlayPanel>
 			<p v-if="!(repositoryList && repositoryList.length > 0)">
 				You have not used any repositories recently. Please start with creating a new repository.
 			</p>
@@ -117,6 +117,7 @@ export default {
 			newDescr: '',
 			newEmail: '',
 			error: null,
+			sharedUrl: '',
 
 			remindEmail: '',
 			remindError: null,
@@ -160,7 +161,8 @@ export default {
 			this.$refs.opMissing.toggle(event);
 			this.$refs.opRemind.toggle(event);
 		},
-		toggleShare(event) {
+		toggleShare(event, repoId) {
+			this.sharedUrl = this.getRepoUrl(repoId);
 			this.$refs.opsh.toggle(event);
 		},
 		openRepo(id) {
