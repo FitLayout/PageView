@@ -26,7 +26,7 @@ import SEGM from '../ontology/SEGM.js';
 import RDF from '../ontology/RDF.js';
 import RDFS from '../ontology/RDFS.js';
 import IriDecoder from '../common/iridecoder.js';
-import {stringColor,inferTagName} from '../common/utils.js';
+import {stringColor, inferTagName, inferTagType} from '../common/utils.js';
 
 const knownTypes = {};
 knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
@@ -142,8 +142,9 @@ export default {
 					else if (this.data.p && this.data.p.value === SEGM.hasTag) {
 						this.valueType = 'tag';
 						let name = inferTagName(this.iri);
+						let ttype = inferTagType(this.iri) || 'x';
 						//this.displayValue = descr[SEGM.hasName][0].value;
-						this.displayValue = 'x:' + name;
+						this.displayValue = ttype + ':' + name;
 						this.displayStyle = 'background-color:' + stringColor(name);
 						this.displayTooltip = this.iri;
 					}
@@ -151,8 +152,10 @@ export default {
 						this.valueType = 'tag';
 						this.displayValue = descr[SEGM.hasTag][0].value + ':' + descr[SEGM.support][0].value;
 						this.apiClient.getSubjectDescriptionObj(descr[SEGM.hasTag][0].value).then(tagDescr => {
-							this.displayValue = tagDescr[SEGM.name][0].value + ':' + descr[SEGM.support][0].value;
-							this.displayStyle = 'background-color:' + stringColor(tagDescr[SEGM.name][0].value);
+							if (tagDescr[SEGM.name]) {
+								this.displayValue = tagDescr[SEGM.name][0].value + ':' + descr[SEGM.support][0].value;
+								this.displayStyle = 'background-color:' + stringColor(tagDescr[SEGM.name][0].value);
+							}
 						});
 					}
 					// rectangles

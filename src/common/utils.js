@@ -38,6 +38,29 @@ export function stringsGradient(cnames) {
 }
 
 /**
+ * Infers a tag type from an IRI.
+ * 
+ * @param {} iri the IRI to analyze
+ */
+export function inferTagType(iri) {
+	let name = iri;
+	let isep = name.lastIndexOf('/');
+	if (isep > 0 && isep + 1 < name.length) {
+		name = name.substring(isep + 1);
+	}
+	isep = name.indexOf('--');
+	if (isep > 0) {
+		let type = name.substring(0, isep);
+		if (type.startsWith('tag-')) {
+			type = type.substring(4);
+		}
+		return type;
+	} else {
+		return null;
+	}
+}
+
+/**
  * Infers a tag name from an IRI.
  * 
  * @param {} iri the IRI to analyze
