@@ -55,8 +55,8 @@
 			</div>
 
 			<PageView :subjectIri="iri" v-if="iri" v-on:status-update="update" />
-			<div class="empty-page p-col-12 p-d-flex p-ai-center p-jc-center h-100" v-if="!iri">
-				<p class="flex-fill p-text-center p-text-secondary">No page selected</p>
+			<div class="empty-page w-12 flex align-items-center justify-content-center h-100" v-if="!iri">
+				<p class="text-center p-text-secondary">No page selected</p>
 			</div>
 
 		</div>
