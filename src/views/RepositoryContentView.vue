@@ -1,9 +1,9 @@
 <template>
 	<div class="repository-view-main">
-		<h1>Repository: {{repoTitle.value}}</h1>
+		<h1>Repository: {{repoTitle}}</h1>
 		<p>
-			<a :href="repoLink.value">{{repoLink.value}}</a>
-			<span v-if="userInfo && userInfo.value && userInfo.value.anonymous"><br/>
+			<a :href="repoLink">{{repoLink}}</a>
+			<span v-if="userInfo && userInfo.anonymous"><br/>
 			Please bookmark this link if you want to access this repository later
 			(e.g. from another device or browser).</span>
 		</p>
@@ -100,7 +100,7 @@ export default {
 	},
 	computed: {
 		isReadOnly() {
-			return this.repoInfo.value && this.repoInfo.value.readOnly;
+			return this.repoInfo && this.repoInfo.readOnly;
 		},
 		
 	},
@@ -110,7 +110,6 @@ export default {
 		this.loading = false;
 		console.log('R');
 		console.log(this.repoInfo);
-		console.log(this.repoInfo.value);
 	},
 	methods: {
 
