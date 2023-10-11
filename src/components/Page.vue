@@ -236,21 +236,44 @@ export default {
 		highlightSelectedRect() {
 			if (this.boxIndex) { // only when the page has been already rendered
 				if (this.lastSelectedRect) {
-					let lastElem = this.boxIndex[this.lastSelectedRect._iri];
-					if (lastElem) {
-						lastElem.classList.remove('focus');
-					}
+					this.unhighlightBoxIri(this.lastSelectedRect._iri, 'focus');
 				}
 				if (this.selectedRect) {
-					let newElem = this.boxIndex[this.selectedRect._iri];
-					if (newElem) {
-						newElem.classList.add('focus');
-						if (newElem.scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
-							newElem.scrollIntoViewIfNeeded();
-						}
-					}
+					this.highlightBoxIri(this.selectedRect._iri, 'focus');
+					this.scrollToBoxIri(this.selectedRect._iri);
 				}
 				this.lastSelectedRect = this.selectedRect;
+			}
+		},
+
+		highlightHoveredIri(iri) {
+			this.highlightBoxIri(iri, 'hovered');
+		},
+
+		unhighlightHoveredIri(iri) {
+			this.unhighlightBoxIri(iri, 'hovered');
+		},
+
+		scrollToBoxIri(iri) {
+			const elem = this.boxIndex[iri];
+			if (elem) {
+				if (elem.scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
+					elem.scrollIntoViewIfNeeded();
+				}
+			}
+		},
+
+		highlightBoxIri(iri, cls) {
+			const elem = this.boxIndex[iri];
+			if (elem) {
+				elem.classList.add(cls);
+			}
+		},
+
+		unhighlightBoxIri(iri, cls) {
+			const elem = this.boxIndex[iri];
+			if (elem) {
+				elem.classList.remove(cls);
 			}
 		}
 	}
@@ -281,6 +304,10 @@ export default {
 .page-view .box.focus {
 	outline: 2px solid var(--primary-color) !important;
 	background-color: rgba(255, 200, 200, 0.3);
+}
+.page-view .box.hovered {
+	outline: 2px solid red !important;
+	background-color: rgba(255, 100, 100, 0.3);
 }
 .page-view .box.selected {
 	outline: 1px solid red;

@@ -3,7 +3,10 @@
 		<span v-if="valueType==='literal'" v-tooltip.bottom="literalTooltip">{{literalValue}}</span>
 		<span v-if="valueType==='color'">{{literalValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
-			<Iri :iri="data.v.value" :active="active" @show-iri="showIri" />
+			<Iri :iri="data.v.value" :active="active" 
+				@show-iri="showIri"
+				@hover-iri="hoverIri"
+				@leave-iri="leaveIri" />
 			<span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
 			<i v-if="showExt && extIcon" v-tooltip="extTooltip" class="i-action" :class="extIcon" 
 				style="cursor: pointer" @click="showExternal" />
@@ -42,7 +45,7 @@ export default {
 		Iri
 	},
 	inject: ['apiClient'],
-	emits: ['show-iri', 'show-ext', 'show-struct'],
+	emits: ['show-iri', 'hover-iri', 'leave-iri', 'show-ext', 'show-struct'],
 	props: {
 		data: null,
 		activeIris: null, //force active IRIs
@@ -213,7 +216,13 @@ export default {
 		showIri(iri) {
 			this.$emit('show-iri', iri);
 		},
-		showExternal(iri) {
+		hoverIri(iri) {
+			this.$emit('hover-iri', iri);
+		},
+		leaveIri(iri) {
+			this.$emit('leave-iri', iri);
+		},
+		showExternal() {
 			this.$emit('show-ext', this.iri);
 		},
 		showStruct() {

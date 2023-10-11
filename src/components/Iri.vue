@@ -1,5 +1,5 @@
 <template>
-	<a class="iri-link" v-if="active" @click="clicked">
+	<a class="iri-link" v-if="active" @click="clicked" @mouseover="hoverIri" @mouseout="leaveIri">
 		<span class="iri font-monospace" v-tooltip.bottom="iri">{{ shortForm }}</span>
 	</a>
 	<span class="iri font-monospace" v-if="!active" v-tooltip.bottom="iri">{{ shortForm }}</span>
@@ -14,7 +14,7 @@ export default {
 		iri: null,
 		active: null
 	},
-	emits: ['show-iri'],
+	emits: ['show-iri', 'hover-iri', 'leave-iri'],
 	data () {
 		return {
 			shortForm: null
@@ -33,8 +33,15 @@ export default {
 		},
 
 		clicked() {
-			//this.$router.push({name: 'show', params: { iri: this.iri}});
 			this.$emit('show-iri', this.iri);
+		},
+
+		hoverIri() {
+			this.$emit('hover-iri', this.iri);
+		},
+
+		leaveIri() {
+			this.$emit('leave-iri', this.iri);
 		}
 	}
 }

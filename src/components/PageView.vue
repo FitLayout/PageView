@@ -60,6 +60,8 @@
 													<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer" 
 														:extAll="true" structIcon="pi pi-share-alt"
 														@show-iri="showIri"
+														@hover-iri="hoverIri"
+														@leave-iri="leaveIri"
 														@show-ext="showExt"
 														@show-struct="showExt" />
 												</template>
@@ -84,6 +86,8 @@
 													<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer"
 														:extAll="true" 
 														@show-iri="showIri"
+														@hover-iri="hoverIri"
+														@leave-iri="leaveIri"
 														@show-ext="showExt" />
 												</template>
 												<template #filter="{filterModel,filterCallback}">
@@ -155,7 +159,7 @@
 						</div>
 					</div>
 					<div class="page-contents">
-						<Page :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
+						<Page ref="page" :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
 							:screenshot="screenshot"
 							:outlines="outlines"
 							:rectSelection="rectSelection"
@@ -529,6 +533,20 @@ export default {
 		showExt(iri) {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			window.open(route.href, '_blank');
+		},
+
+		hoverIri(iri) {
+			const page = this.$refs['page'];
+			if (page) {
+				page.highlightHoveredIri(iri);
+			}
+		},
+
+		leaveIri(iri) {
+			const page = this.$refs['page'];
+			if (page) {
+				page.unhighlightHoveredIri(iri);
+			}
 		},
 
 		exploreSubject() {
