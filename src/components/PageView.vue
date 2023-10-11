@@ -153,6 +153,10 @@
 								<InputSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
 							</div>
 							<div class="field col">
+								<label for="showRelations" class="form-label">Show relations</label>
+								<InputSwitch id="showRelations" v-model="showRelations" />
+							</div>
+							<div class="field col">
 								<label for="dragSelection" class="form-label">Drag select</label>
 								<InputSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
 							</div>
@@ -167,6 +171,7 @@
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
 							<Selection v-if="dragSelection" :pageRectAreas="rectangles" @update="updateTreeView"></Selection>
+							<RelationsDisplay v-if="showRelations" :pageRectAreas="rectangles" />
 						</Page>
 					</div>
 				</div>
@@ -196,6 +201,7 @@ import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
 import AnnotationPanel from './AnnotationPanel.vue';
 import Selection from './Selection.vue'
+import RelationsDisplay from './RelationsDisplay.vue';
 
 import RDFS from '../ontology/RDFS.js';
 import SEGM from '../ontology/SEGM.js';
@@ -226,7 +232,8 @@ export default {
 		Iri,
 		ValueInfo,
 		AnnotationPanel,
-		Selection
+		Selection,
+		RelationsDisplay
 	},
 	inject: ['apiClient'],
 	props: {
@@ -243,6 +250,7 @@ export default {
 			outlines: false,
 			rectSelection: false,
 			showTags: true,
+			showRelations: false,
 			dragSelection: false,
 
 			// Annotations to show
