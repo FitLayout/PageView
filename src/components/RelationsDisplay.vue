@@ -15,11 +15,13 @@
 <script>
 import Dropdown from 'primevue/dropdown';
 import IriDecoder from '../common/iridecoder.js';
+import SEGM from '../ontology/SEGM.js';
 
 export default {
 	name: 'RelationsDisplay',
 	props: {
 		pageRectAreas: null,
+        artifactModel: null
 	},
 	inject:['apiClient'],
 	components: {
@@ -47,13 +49,15 @@ export default {
 	},
 	methods: {
 		async fetchRelations() {
-            const query = //TODO the rect type (segm:Area) should be configurable or detected (e.g. text chunks)
+            const artifactIri = this.artifactModel._iri;
+            const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
+            const query =
                 `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
                 SELECT DISTINCT ?p WHERE {
-                    ?a ?p ?b .
-                    ?a rdf:type segm:Area .
-                    ?b rdf:type segm:Area
+                    ?a <${belongsRel}> <${artifactIri}> .
+                    ?b <${belongsRel}> <${artifactIri}> .
+                    ?a ?p ?b
                 }`;
             let resp = await this.apiClient.selectQuery(query);
             let dec = new IriDecoder();
@@ -140,9 +144,13 @@ export default {
 
         async fetchConnections() {
             if (this.selectedRelation) {
+                const artifactIri = this.artifactModel._iri;
+                const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
                 const query = `PREFIX r: <http://fitlayout.github.io/resource/>
                     SELECT DISTINCT ?a ?b WHERE {
-                    ?a <${this.selectedRelation}> ?b
+                        ?a <${belongsRel}> <${artifactIri}> .
+                        ?b <${belongsRel}> <${artifactIri}> .
+                        ?a <${this.selectedRelation}> ?b
                     }`;
                 let resp = await this.apiClient.selectQuery(query);
                 let rels = [];
