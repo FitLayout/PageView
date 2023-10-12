@@ -2,7 +2,9 @@
 	<div class="relations-display">
         <div class="floatRow">				
             <div class="floatBlock">
-                <Dropdown v-model="selectedRelation" :options="relations" optionLabel="name" optionValue="iri" placeholder="Select relation" :show-clear="true"></Dropdown>
+                <Dropdown v-model="selectedRelation" :options="relations" optionLabel="name" optionValue="iri" 
+                    placeholder="Select relation" :show-clear="true"
+                    @change="updateRelation"></Dropdown>
             </div>
         </div>
         <svg ref="relcanvas" xmlns="http://www.w3.org/2000/svg" :width="canvasWidth" :height="canvasHeight">
@@ -25,18 +27,23 @@ export default {
 	},
 	data () {
 		return {
-            relations: [],
+            relations: [], // considered relations
             selectedRelation: null,
+            areaIndex: {}, // index of all areas
+            areaRects: {}, // index of svg rects generated for the highlighted areas
+            connections: [],
             canvasWidth: 0,
             canvasHeight: 0
 		}
 	},
-	mounted () {
-		this.fetchRelations();
-        this.drawAreas();
+    async created() {
+		await this.fetchRelations();
+    },
+	async mounted () {
+        await this.update();
 	},
 	watch: {
-		'pageRectAreas': 'drawAreas'
+		'pageRectAreas': 'update'
 	},
 	methods: {
 		async fetchRelations() {
@@ -61,24 +68,123 @@ export default {
             this.relations = rels;
 		},
 
-        drawAreas() {
-            let maxw = 0;
-            let maxh = 0;
+        async updateRelation() {
+            await this.update();
+        },
+
+        clear() {
+            let parent = this.$refs['relcanvas'];
+            while (parent.firstChild) {
+                parent.removeChild(parent.firstChild);
+            }
+        },
+
+        async update() {
+            this.buildAreaIndex();
+            this.areaRects = {};
+            this.clear();
+            this.connections = await this.fetchConnections();
+            this.drawConnections();
+        },
+
+        buildAreaIndex() {
+            let index = {};
             if (this.pageRectAreas) {
                 for (let area of this.pageRectAreas) {
-                    let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                    rect.setAttribute('x', area.bounds.positionX);
-                    rect.setAttribute('y', area.bounds.positionY);
-                    rect.setAttribute('width', area.bounds.width);
-                    rect.setAttribute('height', area.bounds.height);
-                    //rect.setAttribute('style', 'stroke:#00ff00; fill: none;');
-                    this.$refs['relcanvas'].appendChild(rect);
+                    index[area._iri] = area;
+                }
+            }
+            this.areaIndex = index;
+        },
+        
+        drawAreaByIri(iri) {
+            let area = this.areaIndex[iri];
+            if (area) {
+                let rect = this.areaRects[iri];
+                if (!rect) {
+                    rect = this.drawArea(area);
+                    this.areaRects[iri] = rect;
+                }
+                return rect;
+            } else {
+                return null;
+            }
+        },
 
-                    if (area.bounds.positionX + area.bounds.width > maxw) {
-                        maxw = area.bounds.positionX + area.bounds.width;
+        drawArea(area) {
+            let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', area.bounds.positionX);
+            rect.setAttribute('y', area.bounds.positionY);
+            rect.setAttribute('width', area.bounds.width);
+            rect.setAttribute('height', area.bounds.height);
+            this.$refs['relcanvas'].appendChild(rect);
+            return rect;
+        },
+
+        drawConnection(a1, a2) {
+            const b1 = a1.bounds;
+            const b2 = a2.bounds;
+            const x1 = b1.positionX + (b1.width / 2);
+            const y1 = b1.positionY + (b1.height / 2);
+            const x2 = b2.positionX + (b2.width / 2);
+            const y2 = b2.positionY + (b2.height / 2);
+
+            let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            this.$refs['relcanvas'].appendChild(line);
+            return line;
+        },
+
+        async fetchConnections() {
+            if (this.selectedRelation) {
+                const query = `PREFIX r: <http://fitlayout.github.io/resource/>
+                    SELECT DISTINCT ?a ?b WHERE {
+                    ?a <${this.selectedRelation}> ?b
+                    }`;
+                let resp = await this.apiClient.selectQuery(query);
+                let rels = [];
+                if (resp && resp.results && resp.results.bindings) {
+                    for (let binding of resp.results.bindings) {
+                        const a1 = binding.a.value;
+                        const a2 = binding.b.value;
+                        rels.push({a1, a2});
                     }
-                    if (area.bounds.positionY + area.bounds.height > maxh) {
-                        maxh = area.bounds.positionY + area.bounds.height;
+                }
+                return rels;
+            } else {
+                return [];
+            }
+        },
+
+        drawConnections()
+        {
+            let maxw = 0;
+            let maxh = 0;
+            if (this.connections) {
+                for (let rel of this.connections) {
+                    const iri1 = rel.a1;
+                    const iri2 = rel.a2;
+                    const a1 = this.areaIndex[iri1];
+                    const a2 = this.areaIndex[iri2];
+
+                    this.drawAreaByIri(iri1);
+                    this.drawAreaByIri(iri2);
+                    this.drawConnection(a1, a2);
+
+                    if (a1.bounds.positionX + a1.bounds.width > maxw) {
+                        maxw = a1.bounds.positionX + a1.bounds.width;
+                    }
+                    if (a1.bounds.positionY + a1.bounds.height > maxh) {
+                        maxh = a1.bounds.positionY + a1.bounds.height;
+                    }
+                    if (a2.bounds.positionX + a2.bounds.width > maxw) {
+                        maxw = a2.bounds.positionX + a2.bounds.width;
+                    }
+                    if (a2.bounds.positionY + a2.bounds.height > maxh) {
+                        maxh = a2.bounds.positionY + a2.bounds.height;
                     }
                 }
             }
@@ -121,5 +227,11 @@ export default {
 }
 .relations-display > svg rect:hover {
     stroke: red;
+}
+.relations-display > svg line {
+    stroke: #00ff00;
+    stroke-width: 1px;
+    fill: none;
+    cursor: pointer;
 }
 </style>
