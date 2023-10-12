@@ -119,6 +119,24 @@ export class ApiClient {
 		return data;
 	}
 
+	async selectQuery(query) {
+		const url = this.repositoryEndpoint() + '/query';
+		let response = await fetch(url, {
+			method: 'POST',
+			headers: this.headers({
+				'Content-Type': 'application/sparql-query'
+			}),
+			body: query
+		});
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(error);
+		}
+		const data = await response.json();
+		return data;
+	}
+
 	async updateQuery(query) {
 		const url = this.repositoryEndpoint() + '/updateQuery';
 		let response = await fetch(url, {
