@@ -171,7 +171,7 @@
 							:selectedRect="selectedRect"
 							@rect-selected="pageRectSelected">
 							<Selection v-if="dragSelection" :pageRectAreas="rectangles" @update="updateTreeView"></Selection>
-							<RelationsDisplay v-if="showRelations" :artifactModel="artifactModel" :pageRectAreas="rectangles" />
+							<RelationsDisplay v-if="showRelations" :artifactModel="artifactModel" :selectedRect="selectedRect" :pageRectAreas="rectangles" />
 						</Page>
 					</div>
 				</div>

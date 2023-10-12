@@ -21,7 +21,8 @@ export default {
 	name: 'RelationsDisplay',
 	props: {
 		pageRectAreas: null,
-        artifactModel: null
+        artifactModel: null,
+        selectedRect: null
 	},
 	inject:['apiClient'],
 	components: {
@@ -45,7 +46,9 @@ export default {
         await this.update();
 	},
 	watch: {
-		'pageRectAreas': 'update'
+        'pageRectAreas': 'update',
+        'artifactModel': 'update',
+        'selectedRect': 'redraw'
 	},
 	methods: {
 		async fetchRelations() {
@@ -88,6 +91,12 @@ export default {
             this.areaRects = {};
             this.clear();
             this.connections = await this.fetchConnections();
+            this.drawConnections();
+        },
+
+        async redraw() {
+            this.areaRects = {};
+            this.clear();
             this.drawConnections();
         },
 
@@ -169,6 +178,7 @@ export default {
 
         drawConnections()
         {
+            console.log(this.selectedRect);
             let maxw = 0;
             let maxh = 0;
             if (this.connections) {
@@ -180,7 +190,10 @@ export default {
 
                     this.drawAreaByIri(iri1);
                     this.drawAreaByIri(iri2);
-                    this.drawConnection(a1, a2);
+
+                    if (!this.selectedRect || iri2 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
+                        this.drawConnection(a1, a2);
+                    }
 
                     if (a1.bounds.positionX + a1.bounds.width > maxw) {
                         maxw = a1.bounds.positionX + a1.bounds.width;
