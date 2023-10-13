@@ -120,7 +120,7 @@ export class ApiClient {
 	}
 
 	async selectQuery(query) {
-		const url = this.repositoryEndpoint() + '/query';
+		const url = this.repositoryEndpoint() + '/selectQuery';
 		let response = await fetch(url, {
 			method: 'POST',
 			headers: this.headers({
