@@ -9,6 +9,10 @@ const SERVER_ROOT = flhost + '/api';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
+// SELECT response size limit (in rows) sent to the endpoint. 
+// Note that the server also has a maximal allowed limit that cannot be exceeded.
+const QUERY_LIMIT = 2048; 
+
 
 export class ApiClient {
 
@@ -119,8 +123,9 @@ export class ApiClient {
 		return data;
 	}
 
-	async selectQuery(query) {
-		const url = this.repositoryEndpoint() + '/selectQuery';
+	async selectQuery(query, limit) {
+		const qlimit = (limit === undefined) ? QUERY_LIMIT : limit
+		const url = this.repositoryEndpoint() + '/selectQuery?limit=' + qlimit;
 		let response = await fetch(url, {
 			method: 'POST',
 			headers: this.headers({
