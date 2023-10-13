@@ -24,7 +24,8 @@ export default {
         artifactModel: null,
         selectedRect: null
 	},
-	inject:['apiClient'],
+	inject: ['apiClient'],
+    emits: ['area-click'],
 	components: {
         Dropdown
 	},
@@ -100,6 +101,10 @@ export default {
             this.drawConnections();
         },
 
+        areaClicked(area) {
+            this.$emit('area-click', area);
+        },
+
         buildAreaIndex() {
             let index = {};
             if (this.pageRectAreas) {
@@ -130,6 +135,12 @@ export default {
             rect.setAttribute('y', area.bounds.positionY);
             rect.setAttribute('width', area.bounds.width);
             rect.setAttribute('height', area.bounds.height);
+
+            let thisObj = this;
+            rect.onclick = () => {
+                thisObj.areaClicked(area);
+            }
+
             this.$refs['relcanvas'].appendChild(rect);
             return rect;
         },
