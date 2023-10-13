@@ -58,6 +58,15 @@
 					<ContextTable />
 				</div>
 			</TabPanel>
+			<TabPanel>
+				<template #header>
+					<i class="pi pi-fw pi-cog"></i>
+					<span>Configuration</span>
+				</template>
+				<div class="context-view">
+					<RepositoryConfig />
+				</div>
+			</TabPanel>
 		</TabView>
 
 	</div>
@@ -74,6 +83,7 @@ import TabPanel from 'primevue/tabpanel';
 
 import ArtTable from '../components/ArtTable.vue';
 import ContextTable from '../components/ContextTable.vue';
+import RepositoryConfig from '../components/RepositoryConfig.vue';
 
 export default {
 	name: 'RepositoryContentView',
@@ -86,7 +96,8 @@ export default {
 		ProgressSpinner,
 		Message,
 		TabView,
-		TabPanel
+		TabPanel,
+		RepositoryConfig
 	},
 	inject: ['apiClient', 'userInfo', 'repoInfo', 'repoTitle', 'repoLink'],
 	data() {

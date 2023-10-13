@@ -750,6 +750,8 @@ export class ApiClient {
 		return data;
 	}
 
+	//================================================================================
+
 	async getTags() {
 		const url = this.tagsEndpoint();
 		try {
@@ -829,6 +831,27 @@ export class ApiClient {
 		}
 		const data = await response.json();
 		return data.status == 'ok';
+	}
+
+	async getNamespaces() {
+		const url = this.repositoryEndpoint() + '/namespaces';
+		try {
+			let response = await fetch(url, {
+				method: 'GET',
+				headers: this.headers()
+			});
+
+			this.checkAuth(response);
+			if (!response.ok) {
+				let data = await response.json();
+				throw new Error(data.message);
+			}
+
+			const data = await response.json();
+			return data;
+		} catch (e) {
+			throw new Error(e);
+		}		
 	}
 
 }
