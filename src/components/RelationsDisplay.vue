@@ -36,6 +36,7 @@ export default {
             areaIndex: {}, // index of all areas
             areaRects: {}, // index of svg rects generated for the highlighted areas
             connections: [],
+            connectionTriples: [], // triples of the generated area-connection-area SVG boxes
             canvasWidth: 0,
             canvasHeight: 0
 		}
@@ -105,6 +106,34 @@ export default {
             this.$emit('area-click', area);
         },
 
+        elementHovered(el) {
+            if (el.triples) {
+                for (let triple of el.triples) {
+                    this.highlightElement(triple.r1);
+                    this.highlightElement(triple.con);
+                    this.highlightElement(triple.r2);
+                }
+            }
+        },
+
+        elementLeft(el) {
+            if (el.triples) {
+                for (let triple of el.triples) {
+                    this.unhighlightElement(triple.r1);
+                    this.unhighlightElement(triple.con);
+                    this.unhighlightElement(triple.r2);
+                }
+            }
+        },
+
+        highlightElement(el) { 
+            el.classList.add('hovered');
+        },
+
+        unhighlightElement(el) { 
+            el.classList.remove('hovered');
+        },
+
         buildAreaIndex() {
             let index = {};
             if (this.pageRectAreas) {
@@ -135,11 +164,18 @@ export default {
             rect.setAttribute('y', area.bounds.positionY);
             rect.setAttribute('width', area.bounds.width);
             rect.setAttribute('height', area.bounds.height);
+            rect.triples = []; // for saving related triples of boxes
 
             let thisObj = this;
             rect.onclick = () => {
                 thisObj.areaClicked(area);
-            }
+            };
+            rect.onmouseover = () => {
+                thisObj.elementHovered(rect);
+            };
+            rect.onmouseout = () => {
+                thisObj.elementLeft(rect);
+            };
 
             this.$refs['relcanvas'].appendChild(rect);
             return rect;
@@ -158,6 +194,16 @@ export default {
             line.setAttribute('y1', y1);
             line.setAttribute('x2', x2);
             line.setAttribute('y2', y2);
+            line.triples = [];  // for saving related triples of boxes
+
+            let thisObj = this;
+            line.onmouseover = () => {
+                thisObj.elementHovered(line);
+            };
+            line.onmouseout = () => {
+                thisObj.elementLeft(line);
+            };
+
             this.$refs['relcanvas'].appendChild(line);
             return line;
         },
@@ -189,9 +235,9 @@ export default {
 
         drawConnections()
         {
-            console.log(this.selectedRect);
             let maxw = 0;
             let maxh = 0;
+            this.connectionTriples = [];
             if (this.connections) {
                 for (let rel of this.connections) {
                     const iri1 = rel.a1;
@@ -199,11 +245,16 @@ export default {
                     const a1 = this.areaIndex[iri1];
                     const a2 = this.areaIndex[iri2];
 
-                    this.drawAreaByIri(iri1);
-                    this.drawAreaByIri(iri2);
+                    const r1 = this.drawAreaByIri(iri1);
+                    const r2 = this.drawAreaByIri(iri2);
 
                     if (!this.selectedRect || iri2 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
-                        this.drawConnection(a1, a2);
+                        const con = this.drawConnection(a1, a2);
+                        const triple = {r1, con, r2};
+                        this.connectionTriples.push(triple);
+                        r1.triples.push(triple);
+                        r2.triples.push(triple);
+                        con.triples.push(triple);
                     }
 
                     if (a1.bounds.positionX + a1.bounds.width > maxw) {
@@ -259,6 +310,9 @@ export default {
 }
 .relations-display > svg rect:hover {
     stroke: red;
+}
+.relations-display > svg rect.hovered, .relations-display > svg line.hovered {
+    stroke: #e4002b;
 }
 .relations-display > svg line {
     stroke: #00ff00;
