@@ -94,6 +94,24 @@ class RectAreaCreator extends ObjectCreator {
 	}
 }
 
+class RelationDescriptionCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+			hasRelatedRect: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasRelatedRect', type: 'object' },
+			hasRelationType: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasRelationType', type: 'object' },
+		});
+	}
+}
+
+class SavedQueryCreator extends ObjectCreator {
+	constructor() {
+		super();
+		this.addMapping({
+		});
+	}
+}
+
 class TagCreator extends ObjectCreator {
 	constructor() {
 		super();
@@ -123,6 +141,7 @@ class AreaCreator extends RectAreaCreator {
 			containsBox: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsBox', type: 'object<http://fitlayout.github.io/ontology/render.owl#Box>[]' },
 			belongsTo: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsTo', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#AreaTree>' },
 			isChildOf: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isChildOf', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>' },
+			isInRelation: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isInRelation', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#RelationDescription>[]' },
 			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
 			// Inverse collection for LogicalArea.containsArea.
 			logicalAreas: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#containsArea', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea>[]', inverse: true },
@@ -241,6 +260,7 @@ class TextChunkCreator extends RectAreaCreator {
 			hasSourceArea: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourceArea', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Area>' },
 			belongsToChunkSet: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#ChunkSet>' },
 			text: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#text', type: 'string' },
+			isInRelation: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#isInRelation', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#RelationDescription>[]' },
 			hasSourceBox: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasSourceBox', type: 'object<http://fitlayout.github.io/ontology/render.owl#Box>' },
 			hasTag: { name: 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag', type: 'object<http://fitlayout.github.io/ontology/segmentation.owl#Tag>[]' },
 		});
@@ -255,6 +275,8 @@ const registry = {
 	'http://fitlayout.github.io/ontology/render.owl#ContentObject': new ContentObjectCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#LogicalArea': new LogicalAreaCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#RectArea': new RectAreaCreator(),
+	'http://fitlayout.github.io/ontology/segmentation.owl#RelationDescription': new RelationDescriptionCreator(),
+	'http://fitlayout.github.io/ontology/fitlayout.owl#SavedQuery': new SavedQueryCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#Tag': new TagCreator(),
 	'http://fitlayout.github.io/ontology/fitlayout.owl#Tagger': new TaggerCreator(),
 	'http://fitlayout.github.io/ontology/segmentation.owl#Area': new AreaCreator(),
