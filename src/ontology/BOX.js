@@ -38,7 +38,7 @@ const BOX = {
 	/**
 	 * belongsTo
 	 * http://fitlayout.github.io/ontology/render.owl#belongsTo
-	 * Assigns an owning page to a rectangle
+	 * Assigns an owning page to a box
 	 */
 	belongsTo: NAMESPACE + 'belongsTo',
 
@@ -92,13 +92,6 @@ const BOX = {
 	 * Foreground color (#rrggbb)
 	 */
 	color: NAMESPACE + 'color',
-
-	/**
-	 * ConnectionSet
-	 * http://fitlayout.github.io/ontology/render.owl#ConnectionSet
-	 * A set of named area connections.
-	 */
-	ConnectionSet: NAMESPACE + 'ConnectionSet',
 
 	/**
 	 * ContainerBox
@@ -215,13 +208,6 @@ const BOX = {
 	 * http://fitlayout.github.io/ontology/render.owl#hasRightBorder
 	 */
 	hasRightBorder: NAMESPACE + 'hasRightBorder',
-
-	/**
-	 * hasSource
-	 * http://fitlayout.github.io/ontology/render.owl#hasSource
-	 * Assigns a source artifact to a connection set.
-	 */
-	hasSource: NAMESPACE + 'hasSource',
 
 	/**
 	 * hasTopBorder

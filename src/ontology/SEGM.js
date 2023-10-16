@@ -1,7 +1,7 @@
 const NAMESPACE = 'http://fitlayout.github.io/ontology/segmentation.owl#';
 
 /**
- * Document Visual Area Ontology.
+ * Visual Area Ontology.
  * <p>
  * Document visual area (segmentation) ontology..
  * <p>
@@ -33,14 +33,23 @@ const SEGM = {
 	/**
 	 * belongsTo
 	 * http://fitlayout.github.io/ontology/segmentation.owl#belongsTo
+	 * Assigns an AreaTree to an Area.
 	 */
 	belongsTo: NAMESPACE + 'belongsTo',
 
 	/**
 	 * belongsToChunkSet
 	 * http://fitlayout.github.io/ontology/segmentation.owl#belongsToChunkSet
+	 * Assigns a ChunkSet to a TextChunk.
 	 */
 	belongsToChunkSet: NAMESPACE + 'belongsToChunkSet',
+
+	/**
+	 * belongsToLogicalTree
+	 * http://fitlayout.github.io/ontology/segmentation.owl#belongsToLogicalTree
+	 * Assigns the owning LogicalAreaTree to a LogicalArea.
+	 */
+	belongsToLogicalTree: NAMESPACE + 'belongsToLogicalTree',
 
 	/**
 	 * ChunkSet
@@ -66,6 +75,20 @@ const SEGM = {
 	 * http://fitlayout.github.io/ontology/segmentation.owl#hasAreaTree
 	 */
 	hasAreaTree: NAMESPACE + 'hasAreaTree',
+
+	/**
+	 * hasRelatedRect
+	 * http://fitlayout.github.io/ontology/segmentation.owl#hasRelatedRect
+	 * Defines a related Area or TextChunk for a relation description
+	 */
+	hasRelatedRect: NAMESPACE + 'hasRelatedRect',
+
+	/**
+	 * hasRelationType
+	 * http://fitlayout.github.io/ontology/segmentation.owl#hasRelationType
+	 * Assigns a relation type to a relation description
+	 */
+	hasRelationType: NAMESPACE + 'hasRelationType',
 
 	/**
 	 * hasSourceArea
@@ -96,6 +119,14 @@ const SEGM = {
 	 * http://fitlayout.github.io/ontology/segmentation.owl#isChildOf
 	 */
 	isChildOf: NAMESPACE + 'isChildOf',
+
+	/**
+	 * isInRelation
+	 * http://fitlayout.github.io/ontology/segmentation.owl#isInRelation
+	 * Assigns an Area or TextChunk a description of a relation with another
+	 * Area or TextChunk
+	 */
+	isInRelation: NAMESPACE + 'isInRelation',
 
 	/**
 	 * isSubordinateTo
@@ -129,6 +160,13 @@ const SEGM = {
 	name: NAMESPACE + 'name',
 
 	/**
+	 * RelationDescription
+	 * http://fitlayout.github.io/ontology/segmentation.owl#RelationDescription
+	 * Describes a relation between two Areas or TextChunks
+	 */
+	RelationDescription: NAMESPACE + 'RelationDescription',
+
+	/**
 	 * support
 	 * http://fitlayout.github.io/ontology/segmentation.owl#support
 	 */
@@ -150,6 +188,7 @@ const SEGM = {
 	/**
 	 * tagSupport
 	 * http://fitlayout.github.io/ontology/segmentation.owl#tagSupport
+	 * Assigns a node that refers to a tag and the assigned support.
 	 */
 	tagSupport: NAMESPACE + 'tagSupport',
 

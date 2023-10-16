@@ -52,7 +52,7 @@ const FL = {
 	/**
 	 * param
 	 * http://fitlayout.github.io/ontology/fitlayout.owl#param
-	 * Service parameter value definition.
+	 * Service parameter name and value definition.
 	 */
 	param: NAMESPACE + 'param',
 
@@ -69,6 +69,13 @@ const FL = {
 	 * Parameter value.
 	 */
 	paramValue: NAMESPACE + 'paramValue',
+
+	/**
+	 * SavedQuery
+	 * http://fitlayout.github.io/ontology/fitlayout.owl#SavedQuery
+	 * A saved SPARQL query
+	 */
+	SavedQuery: NAMESPACE + 'SavedQuery',
 
 	/**
 	 * service
