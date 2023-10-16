@@ -19,6 +19,20 @@
 			<i v-if="structIcon" class="i-action" :class="structIcon" 
 				style="cursor: pointer" @click="showStruct" />
 		</span>
+		<span v-if="valueType==='relation'" class="uri-value" :class='typeInfo.type'>
+			<Iri :iri="displayValue.relIri" :active="false" 
+				@show-iri="showIri"
+				@hover-iri="hoverIri"
+				@leave-iri="leaveIri" />
+			<span class="ml-2">&nbsp;</span>
+			<Iri :iri="displayValue.targetIri" :active="true" 
+				@show-iri="showIri"
+				@hover-iri="hoverIri"
+				@leave-iri="leaveIri" />
+			<span class="ml-2">{{ displayValue.weight }}</span>
+			<i v-if="showExt && extIcon" v-tooltip="extTooltip" class="i-action" :class="extIcon" 
+				style="cursor: pointer" @click="showExternal" />
+		</span>
 	</span>
 </template>
 
@@ -160,6 +174,19 @@ export default {
 								this.displayStyle = 'background-color:' + stringColor(tagDescr[SEGM.name][0].value);
 							}
 						});
+					}
+					// relation descriptions
+					else if (this.data.p && this.data.p.value === SEGM.isInRelation) {
+						this.valueType = 'relation';
+						this.displayValue = {
+							relIri: descr[SEGM.hasRelationType][0].value,
+							targetIri: descr[SEGM.hasRelatedRect][0].value,
+							weight: descr[SEGM.support][0].value
+						};
+					}
+					// inverse relation descriptions
+					else if (this.data.p && this.data.p.value === SEGM.hasRelatedRect) {
+						// leave without formatting for now
 					}
 					// rectangles
 					else if (descr[BOX.positionX] && descr[BOX.positionY]
