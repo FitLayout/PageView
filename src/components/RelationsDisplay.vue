@@ -180,7 +180,7 @@ export default {
             return rect;
         },
 
-        drawConnection(a1, a2) {
+        drawConnection(a1, a2, rel) {
             const b1 = a1.bounds;
             const b2 = a2.bounds;
             const x1 = b1.positionX + (b1.width / 2);
@@ -203,6 +203,10 @@ export default {
                 thisObj.elementLeft(line);
             };
 
+            let title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+            title.appendChild(document.createTextNode('w=' + rel.w));
+            line.appendChild(title);
+
             this.$refs['relcanvas'].appendChild(line);
             return line;
         },
@@ -212,11 +216,12 @@ export default {
                 const artifactIri = this.artifactModel._iri;
                 const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
                 const query = `PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
-                    SELECT DISTINCT ?a ?b WHERE {
+                    SELECT DISTINCT ?a ?b ?w WHERE {
                         ?a <${belongsRel}> <${artifactIri}> .
                         ?a segm:isInRelation ?rel .
                         ?rel segm:hasRelationType <${this.selectedRelation}> .
-                        ?rel segm:hasRelatedRect ?b
+                        ?rel segm:hasRelatedRect ?b .
+                        ?rel segm:support ?w
                     }`;
                 let resp = await this.apiClient.selectQuery(query);
                 let rels = [];
@@ -224,7 +229,8 @@ export default {
                     for (let binding of resp.results.bindings) {
                         const a1 = binding.a.value;
                         const a2 = binding.b.value;
-                        rels.push({a1, a2});
+                        const w = binding.w.value;
+                        rels.push({a1, a2, w});
                     }
                 }
                 return rels;
@@ -249,7 +255,7 @@ export default {
                     const r2 = this.drawAreaByIri(iri2);
 
                     if (!this.selectedRect || iri2 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
-                        const con = this.drawConnection(a1, a2);
+                        const con = this.drawConnection(a1, a2, rel);
                         const triple = {r1, con, r2};
                         this.connectionTriples.push(triple);
                         r1.triples.push(triple);
