@@ -57,12 +57,11 @@ export default {
             const artifactIri = this.artifactModel._iri;
             const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
             const query =
-                `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
+                `PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
                 SELECT DISTINCT ?p WHERE {
                     ?a <${belongsRel}> <${artifactIri}> .
-                    ?b <${belongsRel}> <${artifactIri}> .
-                    ?a ?p ?b
+                    ?a segm:isInRelation ?d .
+                    ?d segm:hasRelationType ?p
                 }`;
             let resp = await this.apiClient.selectQuery(query);
             let dec = new IriDecoder();
@@ -212,11 +211,12 @@ export default {
             if (this.selectedRelation) {
                 const artifactIri = this.artifactModel._iri;
                 const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
-                const query = `PREFIX r: <http://fitlayout.github.io/resource/>
+                const query = `PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
                     SELECT DISTINCT ?a ?b WHERE {
                         ?a <${belongsRel}> <${artifactIri}> .
-                        ?b <${belongsRel}> <${artifactIri}> .
-                        ?a <${this.selectedRelation}> ?b
+                        ?a segm:isInRelation ?rel .
+                        ?rel segm:hasRelationType <${this.selectedRelation}> .
+                        ?rel segm:hasRelatedRect ?b
                     }`;
                 let resp = await this.apiClient.selectQuery(query);
                 let rels = [];
