@@ -309,7 +309,7 @@ export default {
 		 * @param {boolean} forceReload force reloading the entire artifact (e.g. all areas)
 		 */
 		async fetchData(forceReload) {
-			console.log('UPDATE ' + this.subjectIri)
+			//console.log('UPDATE ' + this.subjectIri)
 			if (!this.subjectIri) {
 				return;
 			}
@@ -323,17 +323,17 @@ export default {
 			const client = this.apiClient;
 			try {
 				let resolver = new ObjectResolver(client);
-				console.log('RESOLVING');
+				//console.log('RESOLVING');
 				let deps = await this.resolveArtifact(resolver, this.subjectIri);
 
-				console.log(deps);
+				//console.log(deps);
 				if (deps.type !== 'unknown') {
 					if (forceReload || deps.artifactIri !== this.status.artifactIri) {
-						console.log('SET artifact')
+						//console.log('SET artifact')
 						this.artifactModel = deps.artifact;
 						this.rectangles = deps.rectangles;
 						if (deps.pageIri !== this.status.pageIri) {
-							console.log('SET page')
+							//console.log('SET page')
 							this.pageModel = deps.page;
 						}
 						//update trees for the new artifact

@@ -218,8 +218,6 @@ export default {
 				}
 				if (newPageIri !== this.currentPageIri) {
 					this.currentPageIri = newPageIri;
-					console.log('pageIRI ' + this.currentPageIri);
-					console.log(status.artifact);
 					this.$refs.artTree.fetchArtifacts();
 				}
 			}

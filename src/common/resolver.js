@@ -27,7 +27,7 @@ export default class ObjectResolver {
 		const descrData = await this.client.getSubjectDescription(iri);
 		const descr = descrData.results.bindings;
 		// get the dependent objects based on the type
-		console.log('TYPE ' + type);
+		//console.log('TYPE ' + type);
 		let ret = {}; 
 		if (type === BOX.Page) {
 			const page = await this.getPage(iri, currentStatus);

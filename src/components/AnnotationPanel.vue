@@ -111,8 +111,6 @@ export default {
 			if (this.selectedTag == null)
 				return;
 			
-			console.log('Adding a tag!');
-
 			var tagDesc = null;
 			for (var tag of this.tags) {
 				if (tag['iri'] == this.selectedTag) {
@@ -135,7 +133,6 @@ export default {
 			if (this.selectedLabelType == null || this.labelText == null) {
 				return;
 			}
-			console.log('Adding a label! ' + this.selectedLabelType + this.labelText);
 
 			let descType = this.labelTypes[this.selectedLabelType].property;
 			/*if (this.labelTypes[0]['id'] == this.selectedLabelType)
@@ -161,14 +158,11 @@ export default {
 		//compare if item is annotation or tag to be rendered
 		compareAnnotationOrTag(item) {
 			let itemIri = item.iri;
-			//console.log(itemIri);
 			let splitIri = itemIri.split('#');
 			let hasTagIri = splitIri[splitIri.length - 1];
-			if (hasTagIri == "hasTag"){
-				console.log("has tag")
+			if (hasTagIri == "hasTag") {
 				return false;
 			} else {
-				console.log("has annotation")
 				return true;
 			}
 			
@@ -183,9 +177,6 @@ export default {
 		},  
 		//edit annotation
 		async editAnnot(item) {
-			console.log("edit annotation");
-			console.log(item.iri);
-			console.log(this.labelEditText);
 			await this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
 			await this.apiClient.addValue(this.subjectIri, item.iri, this.labelEditText, this.artifactIri);
 			this.$refs.editAnnotationPanel.hide();
@@ -193,15 +184,11 @@ export default {
 		}, 
 		//delete annotation
 		async deleteAnnot(item) {
-			console.log("delete annotation");
-			console.log(item.iri);
 			await this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
 			this.$emit('update');
 		}, 
 		//delete tag
 		async deleteTag(item) {
-			console.log("delete tag");
-			console.log(item);
 			await this.apiClient.deleteTag(this.subjectIri, item, this.artifactIri);
 			this.$emit('update');
 		}, 

@@ -116,7 +116,6 @@ export default {
 				this.selection = sel;
 				if (this.grouped) {
 					this.groupList = this.createGroups(this.selList);
-					console.log(this.groupList);
 				}
 
 			} catch (error) {
