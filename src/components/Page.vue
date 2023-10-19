@@ -224,7 +224,6 @@ export default {
 		},
 
 		selectBox(box) {
-			console.log('emit');
 			this.$emit('rect-selected', box);
 		},
 

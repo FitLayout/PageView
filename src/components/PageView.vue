@@ -339,10 +339,12 @@ export default {
 						//update trees for the new artifact
 						this.initTree();
 						if (deps.rectangleType === 'box') {
-							this.treeModel = (new TreeModel()).createForBoxes(deps.rectangles);
+							const model = (new TreeModel()).createForBoxes(deps.rectangles);
+							this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
 							this.tableModel = null;
 						} else if (deps.rectangleType === 'area') {
-							this.treeModel = (new TreeModel()).createForAreas(deps.rectangles);
+							const model = (new TreeModel()).createForAreas(deps.rectangles);
+							this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
 							this.tableModel = null;
 						} else if (deps.rectangleType === 'textChunk') {
 							this.tableModel = this.createChunksModel(deps.rectangles);
@@ -473,7 +475,7 @@ export default {
 		},
 		
 		expandForBox(box) {
-			let boxNode = this.findTreeNode(this.treeModel.root, box.documentOrder);
+			let boxNode = this.findTreeNode(this.treeModel[0], box.documentOrder);
 			while (boxNode) {
 				this.expandedTreeKeys[boxNode.key] = true;
 				boxNode = boxNode.parent;
