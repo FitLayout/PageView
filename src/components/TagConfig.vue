@@ -3,12 +3,14 @@
 		<h2>Tagger-assigned tags</h2>
 		<div class="tag-cards">
 			<TagCard v-for="tag in assignedTags" :tag="tag" v-bind:key="tag.iri" />
+			<p v-if="assignedTags.length == 0">No tags found</p>
 		</div>
 
 		<h2>All declared tags</h2>
 		<DataTable :value="tags" tableStyle="min-width: 50rem" class="p-datatable-small"
 			v-model:filters="filters" filterDisplay="row"
 			scrollable scrollHeight="30em">
+			<template #empty> No tags found. </template>
 			<Column field="iri" header="IRI" sortable>
 				<template #body="{ data }">
 					<span class="tag badge" :style="tagDisplayStyle(data)" v-tooltip.bottom="data.iri">{{ data.type }}:{{ data.name }}</span>

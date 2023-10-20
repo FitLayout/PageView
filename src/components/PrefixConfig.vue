@@ -3,6 +3,7 @@
 		<h2 class="mt-6">Prefixes</h2>
 		<DataTable :value="namespaces" tableStyle="min-width: 50rem" class="p-datatable-small"
 			scrollable scrollHeight="30em">
+			<template #empty> No prefixes defined. </template>
 			<Column field="prefix" header="Prefix" sortable></Column>
 			<Column field="namespace" header="Namespace" sortable></Column>
 		</DataTable>
