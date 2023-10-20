@@ -60,11 +60,20 @@
 			</TabPanel>
 			<TabPanel>
 				<template #header>
-					<i class="pi pi-fw pi-cog"></i>
-					<span>Configuration</span>
+					<i class="pi pi-fw pi-tags"></i>
+					<span>Tags</span>
 				</template>
 				<div class="context-view">
-					<RepositoryConfig />
+					<TagConfig />
+				</div>
+			</TabPanel>
+			<TabPanel>
+				<template #header>
+					<i class="pi pi-fw pi-star"></i>
+					<span>Prefixes</span>
+				</template>
+				<div class="context-view">
+					<PrefixConfig />
 				</div>
 			</TabPanel>
 		</TabView>
@@ -83,7 +92,8 @@ import TabPanel from 'primevue/tabpanel';
 
 import ArtTable from '../components/ArtTable.vue';
 import ContextTable from '../components/ContextTable.vue';
-import RepositoryConfig from '../components/RepositoryConfig.vue';
+import TagConfig from '../components/TagConfig.vue';
+import PrefixConfig from '../components/PrefixConfig.vue';
 
 export default {
 	name: 'RepositoryContentView',
@@ -97,7 +107,8 @@ export default {
 		Message,
 		TabView,
 		TabPanel,
-		RepositoryConfig
+		TagConfig,
+		PrefixConfig
 	},
 	inject: ['apiClient', 'userInfo', 'repoInfo', 'repoTitle', 'repoLink'],
 	data() {

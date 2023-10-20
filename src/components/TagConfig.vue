@@ -1,5 +1,5 @@
 <template>
-	<div class="repository-config">
+	<div class="tag-config">
 		<h2>Tagger-assigned tags</h2>
 		<div class="tag-cards">
 			<TagCard v-for="tag in assignedTags" :tag="tag" v-bind:key="tag.iri" />
@@ -37,13 +37,6 @@
                 </template>
 			</Column>
 		</DataTable>
-
-		<h2 class="mt-6">Prefixes</h2>
-		<DataTable :value="namespaces" tableStyle="min-width: 50rem" class="p-datatable-small"
-			scrollable scrollHeight="30em">
-			<Column field="prefix" header="Prefix" sortable></Column>
-			<Column field="namespace" header="Namespace" sortable></Column>
-		</DataTable>
 	</div>
 </template>
 
@@ -60,7 +53,7 @@ import {stringColor} from '../common/utils.js';
 
 
 export default {
-	name: 'RepositoryConfig',
+	name: 'TagConfig',
 	inject: ['apiClient'],
 	props: {
 	},
@@ -73,7 +66,6 @@ export default {
 	},
 	data () {
 		return {
-			namespaces: [],
 			tags: [],
 			assignedTags: [],
 			filters: {
@@ -89,18 +81,8 @@ export default {
 	mounted () {
 		this.fetchAssignedTags();
 		this.fetchTags();
-		this.fetchNamespaces();
 	},
 	methods: {
-		async fetchNamespaces() {
-			let ns = [];
-			let data = await this.apiClient.getNamespaces();
-			for (let bind of data.results.bindings) {
-				ns.push({prefix: bind.prefix.value, namespace: bind.namespace.value});
-			}
-			this.namespaces = ns;
-		},
-
 		async fetchTags() {
 			const data = await this.apiClient.getTags();
 			this.tags = data;
@@ -148,7 +130,7 @@ export default {
 .tag-cards {
 	overflow: hidden;
 }
-.repository-config .badge {
+.tag-config .badge {
 	font-size: 100%;
 }
 </style>

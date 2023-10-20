@@ -66,6 +66,6 @@ export default {
 .tag-card .p-card .p-card-title {
 	font-size: 100%;
 	font-weight: normal;
-	line-height: 1.5;
+	line-height: 1.8;
 }
 </style>
