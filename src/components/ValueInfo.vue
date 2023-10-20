@@ -2,6 +2,9 @@
 	<span class="value-info" v-if="valueType">
 		<span v-if="valueType==='literal'" v-tooltip.bottom="literalTooltip">{{literalValue}}</span>
 		<span v-if="valueType==='color'">{{literalValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
+		<span v-if="valueType==='bnode'">
+			<a class="iri-link iri font-monospace" v-tooltip.bottom="displayTooltip" @click="() => { showIri(iri); }">{{displayValue}}</a>
+		</span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
 			<Iri :iri="data.v.value" :active="active" 
 				@show-iri="showIri"
@@ -132,6 +135,10 @@ export default {
 						this.active = true; //force active IRIs
 					}
 				});
+			} else if (this.valueType === 'bnode') {
+				this.iri = this.data.v.value;
+				this.displayValue = this.iri;
+				this.displayTooltip = 'Blank node';
 			} else {
 				this.detectLiteralType();
 			}
