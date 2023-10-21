@@ -130,8 +130,6 @@ export default {
 	},
 	created () {
 		this.loading = false;
-		console.log('R');
-		console.log(this.repoInfo);
 	},
 	methods: {
 

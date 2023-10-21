@@ -93,12 +93,14 @@ export default {
 		async fetchAssignedTags() {
 			const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 				PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
-				SELECT ?tag ?name ?type ?tagger ?context WHERE {
+				PREFIX fl: <http://fitlayout.github.io/ontology/fitlayout.owl#>
+				SELECT ?tag ?name ?type ?tagger ?service ?context WHERE {
  				 	GRAPH ?context { 
 						?tag rdf:type segm:Tag . 
 						?tag segm:name ?name .
 						?tag segm:type ?type .
-						?tag segm:tagger ?tagger 
+						?tag segm:tagger ?tagger .
+						OPTIONAL { ?tagger fl:service ?service }
 					} 
 				}`;
 			let resp = await this.apiClient.selectQuery(query);
@@ -110,7 +112,8 @@ export default {
                     const type = binding.type.value;
 					const tagger = binding.tagger.value;
 					const context = binding.context.value;
-                    tags.push({iri, name, type, tagger, context});
+					const service = binding.service ? binding.service.value : null;
+                    tags.push({iri, name, type, tagger, service, context});
                 }
             }
 			this.assignedTags = tags;
