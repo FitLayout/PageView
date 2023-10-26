@@ -85,6 +85,12 @@ export default {
             while (parent.firstChild) {
                 parent.removeChild(parent.firstChild);
             }
+            // store the SVG root element for drawing
+            this.svgRoot = parent; // not listed in component data; vue shouldn't care about this
+            // create a defs element inside SVG to store shared rectangle definitions
+            // https://stackoverflow.com/questions/11404391/invert-svg-clip-show-only-outside-path?rq=3
+            this.svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            this.svgRoot.appendChild(this.svgDefs);
         },
 
         async update() {
@@ -143,6 +149,11 @@ export default {
             this.areaIndex = index;
         },
         
+        // Generates an area ID (for generated rectangles)
+        areaId(area) {
+            return 'ra' + area.documentOrder; // TODO is document order unique?
+        },
+
         drawAreaByIri(iri) {
             let area = this.areaIndex[iri];
             if (area) {
@@ -158,11 +169,18 @@ export default {
         },
 
         drawArea(area) {
-            let rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            rect.setAttribute('x', area.bounds.positionX);
-            rect.setAttribute('y', area.bounds.positionY);
-            rect.setAttribute('width', area.bounds.width);
-            rect.setAttribute('height', area.bounds.height);
+            // create a rect definition and store it in SVG defs
+            let drect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            drect.setAttribute('x', area.bounds.positionX);
+            drect.setAttribute('y', area.bounds.positionY);
+            drect.setAttribute('width', area.bounds.width);
+            drect.setAttribute('height', area.bounds.height);
+            drect.setAttribute('id', this.areaId(area));
+            this.svgDefs.appendChild(drect);
+
+            // use the rectangle and draw it
+            let rect = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+            rect.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(area));
             rect.triples = []; // for saving related triples of boxes
 
             let thisObj = this;
@@ -176,7 +194,7 @@ export default {
                 thisObj.elementLeft(rect);
             };
 
-            this.$refs['relcanvas'].appendChild(rect);
+            this.svgRoot.appendChild(rect);
             return rect;
         },
 
@@ -207,7 +225,7 @@ export default {
             title.appendChild(document.createTextNode('w=' + rel.w));
             line.appendChild(title);
 
-            this.$refs['relcanvas'].appendChild(line);
+            this.svgRoot.appendChild(line);
             return line;
         },
 
@@ -308,16 +326,19 @@ export default {
     bottom: 0;
     pointer-events: all;
 }
-.relations-display > svg rect {
-    stroke: #00ff00;
+.relations-display > svg rect { /* rectangles in defs that are later used using 'use' */
+    stroke: inherit; /* inherit the color from the 'use' element */
     stroke-width: 1px;
     fill: none;
+}
+.relations-display > svg use {
+    stroke: #00ff00;
     cursor: pointer;
 }
-.relations-display > svg rect:hover {
+.relations-display > svg use:hover {
     stroke: red;
 }
-.relations-display > svg rect.hovered, .relations-display > svg line.hovered {
+.relations-display > svg use.hovered, .relations-display > svg line.hovered {
     stroke: #e4002b;
 }
 .relations-display > svg line {
