@@ -254,7 +254,7 @@ export default {
                     const r1 = this.drawAreaByIri(iri1);
                     const r2 = this.drawAreaByIri(iri2);
 
-                    if (!this.selectedRect || iri2 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
+                    if (!this.selectedRect || iri1 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
                         const con = this.drawConnection(a1, a2, rel);
                         const triple = {r1, con, r2};
                         this.connectionTriples.push(triple);
