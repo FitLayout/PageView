@@ -85,27 +85,31 @@ export default {
             while (parent.firstChild) {
                 parent.removeChild(parent.firstChild);
             }
-            // store the SVG root element for drawing
-            this.svgRoot = parent; // not listed in component data; vue shouldn't care about this
+
+            // The following properties are not listed in component data; vue shouldn't care about them
+            this.svgRoot = parent; 
             // create a defs element inside SVG to store shared rectangle definitions
             // https://stackoverflow.com/questions/11404391/invert-svg-clip-show-only-outside-path?rq=3
             this.svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
             this.svgRoot.appendChild(this.svgDefs);
+
             this.maskCnt = 0;
+            this.areaBoxes = []; // generated area box elements
+            this.masks = []; // generated mask elements
+            this.lineBoxes = []; // generated line elements
         },
 
         async update() {
             this.buildAreaIndex();
-            this.areaRects = {};
-            this.clear();
             this.connections = await this.fetchConnections();
-            this.drawConnections();
+            this.redraw();
         },
 
         async redraw() {
             this.areaRects = {};
             this.clear();
             this.drawConnections();
+            this.updateDom();
         },
 
         areaClicked(area) {
@@ -194,8 +198,9 @@ export default {
             rect.onmouseout = () => {
                 thisObj.elementLeft(rect);
             };
+            rect.documentOrder = area.documentOrder; // for further sorting
 
-            this.svgRoot.appendChild(rect);
+            this.areaBoxes.push(rect);
             return rect;
         },
 
@@ -227,7 +232,7 @@ export default {
             muse2.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(a2));
             muse2.setAttribute('class', 'fblack');
             mask.appendChild(muse2);
-            this.svgRoot.appendChild(mask);
+            this.masks.push(mask);
 
             // create the line and mask it
             let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
@@ -250,7 +255,7 @@ export default {
             title.appendChild(document.createTextNode('w=' + rel.w));
             line.appendChild(title);
 
-            this.svgRoot.appendChild(line);
+            this.lineBoxes.push(line);
             return line;
         },
 
@@ -322,6 +327,25 @@ export default {
             }
             this.canvasWidth = maxw;
             this.canvasHeight = maxh;
+        },
+
+        updateDom() {
+            // sort area boxes by orderId
+            //   to make them properly selectable
+            this.areaBoxes.sort((a, b) => {
+                return a.documentOrder - b.documentOrder;
+            });
+            // insert area boxes
+            for (let abox of this.areaBoxes) {
+                this.svgRoot.appendChild(abox);
+            }
+            // insert masks and lines
+            for (let mask of this.masks) {
+                this.svgRoot.appendChild(mask);
+            }
+            for (let line of this.lineBoxes) {
+                this.svgRoot.appendChild(line);
+            }
         }
 	}
 }
