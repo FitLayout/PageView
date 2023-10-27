@@ -91,6 +91,7 @@ export default {
             // https://stackoverflow.com/questions/11404391/invert-svg-clip-show-only-outside-path?rq=3
             this.svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
             this.svgRoot.appendChild(this.svgDefs);
+            this.maskCnt = 0;
         },
 
         async update() {
@@ -206,11 +207,35 @@ export default {
             const x2 = b2.positionX + (b2.width / 2);
             const y2 = b2.positionY + (b2.height / 2);
 
+            // create a mask for the boxes
+            const relId = 'm' + (++this.maskCnt);
+            let mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+            mask.setAttribute('id', relId);
+            mask.setAttribute('maskUnits', 'userSpaceOnUse');
+            let mbgrect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            mbgrect.setAttribute('x', '0');
+            mbgrect.setAttribute('y', '0');
+            mbgrect.setAttribute('width', '100%');
+            mbgrect.setAttribute('height', '100%');
+            mbgrect.setAttribute('class', 'fwhite');
+            mask.appendChild(mbgrect);
+            let muse1 = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+            muse1.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(a1));
+            muse1.setAttribute('class', 'fblack');
+            mask.appendChild(muse1);
+            let muse2 = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+            muse2.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(a2));
+            muse2.setAttribute('class', 'fblack');
+            mask.appendChild(muse2);
+            this.svgRoot.appendChild(mask);
+
+            // create the line and mask it
             let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', x1);
             line.setAttribute('y1', y1);
             line.setAttribute('x2', x2);
             line.setAttribute('y2', y2);
+            line.setAttribute('mask', `url(#${relId})`);
             line.triples = [];  // for saving related triples of boxes
 
             let thisObj = this;
@@ -329,11 +354,20 @@ export default {
 .relations-display > svg rect { /* rectangles in defs that are later used using 'use' */
     stroke: inherit; /* inherit the color from the 'use' element */
     stroke-width: 1px;
-    fill: none;
+    fill: inherit;
 }
 .relations-display > svg use {
     stroke: #00ff00;
     cursor: pointer;
+    fill: none;
+}
+.relations-display > svg use.fwhite, .relations-display > svg rect.fwhite {
+    stroke: none;
+    fill: white;
+}
+.relations-display > svg use.fblack {
+    stroke: none;
+    fill: black;
 }
 .relations-display > svg use:hover {
     stroke: red;
