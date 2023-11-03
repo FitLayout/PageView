@@ -5,6 +5,7 @@
 			<InputText type="text" :id="inputId" :placeholder="descr.name"
 				:minlength="descr.minLength" :data-maxlength="descr.maxLength"
 				v-bind:modelValue="modelValue" 
+				v-tooltip="paramDescription"
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
 		<div v-if="descr.type=='int'" class="field">
@@ -12,6 +13,7 @@
 			<InputNumber mode="decimal" showButtons :id="inputId"
 				:min="descr.minValue" :max="descr.maxValue"
 				v-bind:modelValue="modelValue" 
+				v-tooltip="paramDescription"
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
 		<div v-if="descr.type=='float'" class="field">
@@ -19,13 +21,15 @@
 			<InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"
 				:min="descr.minValue" :max="descr.maxValue" :step="0.2"
 				v-bind:modelValue="modelValue" 
+				v-tooltip="paramDescription"
 				@update:modelValue="$emit('update:modelValue', $event)" />
 		</div>
 		<div v-if="descr.type=='boolean'" class="field-checkbox">
 			<Checkbox :binary="true" :id="inputId"
 				v-bind:modelValue="modelValue" 
+				v-tooltip="paramDescription"
 				@update:modelValue="$emit('update:modelValue', $event)" />
-			<label :for="inputId" class="form-check-label">{{descr.name}}</label>
+			<label :for="inputId" class="form-check-label" v-tooltip="paramDescription">{{descr.name}}</label>
 		</div>
 	</div>
 </template>
@@ -57,6 +61,9 @@ export default {
 		},
 		paramClass() {
 			return 'p-' + this.descr.type;
+		},
+		paramDescription() {
+			return this.descr.description || '';
 		}
 	},
 	created () {
