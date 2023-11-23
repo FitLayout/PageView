@@ -29,16 +29,9 @@
 						</tr>
 						<tr>
 							<td>
-								<div v-if="!!compareAnnotationOrTag(item)">
+								<div v-if="!!isAnnotation(item)">
 									<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
 										<Button class="p-button-annot" icon="pi pi-pencil" iconPos="right" v-tooltip="'Edit annotation'" v-on:click="editToggleAnnot($event,item)" />
-										<OverlayPanel ref="editAnnotationPanel">
-											<div class="annotationType">
-												<h4>Edit annotation</h4>									
-												<InputText class="descInput" type="text" v-model="labelEditText" placeholder="Short description" />
-												<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="editAnnot(selectedAnnotForEdit)" />
-											</div>
-										</OverlayPanel>
 										<Button class="p-button-annot" icon="pi pi-trash" iconPos="right" v-tooltip="'Delete annotation'" v-on:click="deleteAnnot(item)" />
 										<ValueInfo :data="row" />	
 									</span>
@@ -53,6 +46,13 @@
 						</tr>
 					</table>
 				</div>
+				<OverlayPanel ref="editAnnotationPanel">
+					<div class="annotationType">
+						<h4>Edit annotation</h4>									
+						<InputText class="descInput" type="text" v-model="labelEditText" placeholder="Short description" />
+						<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="editAnnot(selectedAnnotForEdit)" />
+					</div>
+				</OverlayPanel>
 			</div>
 		</div>
 	</div>
@@ -155,17 +155,16 @@ export default {
 			this.$refs.addAnnotationPanel.toggle(event);
 		}, 
 
-		//compare if item is annotation or tag to be rendered
-		compareAnnotationOrTag(item) {
+		// decide if item is annotation or tag to be rendered
+		isAnnotation(item) {
 			let itemIri = item.iri;
 			let splitIri = itemIri.split('#');
 			let hasTagIri = splitIri[splitIri.length - 1];
-			if (hasTagIri == "hasTag") {
+			if (hasTagIri === "hasTag") {
 				return false;
 			} else {
 				return true;
 			}
-			
 		},
 
 		//TODO FUNCTIONS
