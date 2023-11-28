@@ -123,25 +123,32 @@ export default {
 	},
 	methods: {
 		update() {
-			this.valueType = this.data.v.type;
-			this.showExt = this.active = false;
-			if (this.valueType === 'uri') {
-				this.iri = this.data.v.value;
-				this.apiClient.getTypeByIRI(this.iri).then(typeIri => { 
-					this.typeIri = typeIri;
-					this.updateType();
-					this.showExt = this.active || this.extAll;
-					if (this.activeIris) {
-						this.active = true; //force active IRIs
-					}
-				});
-			} else if (this.valueType === 'bnode') {
-				this.iri = this.data.v.value;
-				this.displayValue = this.iri;
-				this.displayTooltip = 'Blank node';
+			if (this.data && this.data.v) {
+				this.valueType = this.data.v.type;
+				this.showExt = this.active = false;
+				if (this.valueType === 'uri') {
+					this.iri = this.data.v.value;
+					this.apiClient.getTypeByIRI(this.iri).then(typeIri => { 
+						this.typeIri = typeIri;
+						this.updateType();
+						this.showExt = this.active || this.extAll;
+						if (this.activeIris) {
+							this.active = true; //force active IRIs
+						}
+					});
+				} else if (this.valueType === 'bnode') {
+					this.iri = this.data.v.value;
+					this.displayValue = this.iri;
+					this.displayTooltip = 'Blank node';
+				} else {
+					this.detectLiteralType();
+				}
 			} else {
-				this.detectLiteralType();
-			}
+				this.valueType = null;
+				this.typeIri = null;
+                this.displayValue = null;
+                this.displayTooltip = null;
+            }
 		},
 		detectLiteralType() {
 			let val = this.data.v.value.toString().trim();
