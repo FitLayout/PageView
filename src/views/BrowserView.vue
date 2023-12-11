@@ -32,7 +32,7 @@
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-text" :class="panelClass('text')"
 				v-on:created="artifactCreated"></InvokePanel>
-			<InvokePanel id="rr" :source="'ANY'" :target="'NONE'"
+			<InvokePanel id="rr" :source="'ANY'" :target="'NONE'" :grouped="true"
 				:currentArtifact="currentArtifact" action="Process" 
 				class="serv-panel panel-rels" :class="panelClass('rels')"
 				v-on:created="artifactCreated"></InvokePanel>
@@ -108,7 +108,7 @@ export default {
 				{ label: 'Segmentation', class: 'normal', command: () => {this.selectMode('segm', 1);} },
 				{ label: 'Postprocess', class: 'normal', command: () => {this.selectMode('post', 2);} },
 				{ label: 'Text', class: 'normal', command: () => {this.selectMode('text', 3);} },
-				{ label: 'Relations', class: 'normal', command: () => {this.selectMode('rels', 4);} },
+				{ label: 'Enhance', class: 'normal', command: () => {this.selectMode('rels', 4);} },
 			]
 		}
 	},
