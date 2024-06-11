@@ -311,7 +311,10 @@
       // function to remove error icon placeholder divs from document 
       deleteDivs(){
         for (let index = 1; index <= this.newRowsCount-this.oldRowsCount+1; index++) {
-          document.getElementById(index).remove();  
+          const el = document.getElementById(index);
+          if (el) {
+            el.parentNode.removeChild(el);
+          }
         }
       },
 
