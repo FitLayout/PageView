@@ -157,8 +157,9 @@ export default {
 
 		async invoke() {
 			this.saveParams();
-			console.log('invoke');
-			console.log(this.selection[this.key]);
+			//console.log('invoke');
+			//console.log(this.params);
+			//console.log(this.selection[this.key]);
 			this.loading = true;
 
 			let srcArtifact = null;
@@ -167,7 +168,7 @@ export default {
 				srcArtifact = this.findParentOfType(srcType);
 			}
 			const srcIri = srcArtifact ? srcArtifact._iri : null;
-			console.log(srcArtifact);
+			//console.log(srcArtifact);
 
 			try {
 				const iri = await this.apiClient.createArtifact(this.key, this.params, srcIri);
@@ -195,13 +196,26 @@ export default {
 
 		async restoreParams() {
 			if (this.key) {
+				// get the defaults (they may have been changed)
+				let params = await this.apiClient.getServiceParams(this.key);
 				const str = localStorage.getItem('params-' + this.key);
-				if (str === null) { //not yet in local storage, use defaults from server
-					this.params = await this.apiClient.getServiceParams(this.key);
+				if (str === null) {
+					// not yet in local storage, save the defaults
 					this.saveParams();
 				} else {
-					this.params = JSON.parse(str);
+					// load the saved params and update the values
+					const newparams = JSON.parse(str);
+					for (let key in newparams) {
+                        params[key] = newparams[key];
+                    }
 				}
+				// update the param values, do not replace the entire object if it was already passed to the sub-components
+				if (!this.params) {
+					this.params = {};
+                }
+				for (let key in params) {
+                    this.params[key] = params[key];
+                }
 			}
 		},
 
