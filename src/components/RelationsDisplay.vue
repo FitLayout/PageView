@@ -2,9 +2,9 @@
 	<div class="relations-display">
         <div class="floatRow">				
             <div class="floatBlock">
-                <Dropdown v-model="selectedRelation" :options="relations" optionLabel="name" optionValue="iri" 
+                <MultiSelect v-model="selectedRelations" :options="relations" optionLabel="name" optionValue="iri" 
                     placeholder="Select relation" :show-clear="true"
-                    @change="updateRelation"></Dropdown>
+                    @change="updateRelation"></MultiSelect>
             </div>
         </div>
         <svg ref="relcanvas" xmlns="http://www.w3.org/2000/svg" :width="canvasWidth" :height="canvasHeight">
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import Dropdown from 'primevue/dropdown';
+import MultiSelect from 'primevue/multiselect';
 import IriDecoder from '../common/iridecoder.js';
 import SEGM from '../ontology/SEGM.js';
 
@@ -27,12 +27,12 @@ export default {
 	inject: ['apiClient'],
     emits: ['area-click'],
 	components: {
-        Dropdown
+        MultiSelect
 	},
 	data () {
 		return {
             relations: [], // considered relations
-            selectedRelation: null,
+            selectedRelations: null,
             areaIndex: {}, // index of all areas
             areaRects: {}, // index of svg rects generated for the highlighted areas
             connections: [],
@@ -43,6 +43,10 @@ export default {
 	},
     async created() {
 		await this.fetchRelations();
+        if (this.relations.length > 0) {
+            this.selectedRelations = [ this.relations[0].iri ]; // select the first relation as default
+            await this.update();
+        }
     },
 	async mounted () {
         await this.update();
@@ -251,8 +255,10 @@ export default {
                 thisObj.elementLeft(line);
             };
 
+            let dec = new IriDecoder();
+            let reltype = dec.encodeIri(rel.type);
             let title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-            title.appendChild(document.createTextNode('w=' + rel.w));
+            title.appendChild(document.createTextNode(reltype + '; w=' + rel.w));
             line.appendChild(title);
 
             this.lineBoxes.push(line);
@@ -260,31 +266,41 @@ export default {
         },
 
         async fetchConnections() {
-            if (this.selectedRelation) {
-                const artifactIri = this.artifactModel._iri;
-                const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
-                const query = `PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
-                    SELECT DISTINCT ?a ?b ?w WHERE {
-                        ?a <${belongsRel}> <${artifactIri}> .
-                        ?a segm:isInRelation ?rel .
-                        ?rel segm:hasRelationType <${this.selectedRelation}> .
-                        ?rel segm:hasRelatedRect ?b .
-                        ?rel segm:support ?w
-                    }`;
-                let resp = await this.apiClient.selectQuery(query);
+            if (this.selectedRelations) {
                 let rels = [];
-                if (resp && resp.results && resp.results.bindings) {
-                    for (let binding of resp.results.bindings) {
-                        const a1 = binding.a.value;
-                        const a2 = binding.b.value;
-                        const w = binding.w.value;
-                        rels.push({a1, a2, w});
-                    }
+                for (let relType of this.selectedRelations) {
+                    let relsForRelType = await this.fetchSingleRelation(relType);
+                    rels = rels.concat(relsForRelType);
                 }
+                console.log(rels);
                 return rels;
             } else {
                 return [];
             }
+        },
+
+        async fetchSingleRelation(relType) {
+            const artifactIri = this.artifactModel._iri;
+            const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
+            const query = `PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
+                SELECT DISTINCT ?a ?b ?w WHERE {
+                    ?a <${belongsRel}> <${artifactIri}> .
+                    ?a segm:isInRelation ?rel .
+                    ?rel segm:hasRelationType <${relType}> .
+                    ?rel segm:hasRelatedRect ?b .
+                    ?rel segm:support ?w
+                }`;
+            let resp = await this.apiClient.selectQuery(query);
+            let rels = [];
+            if (resp && resp.results && resp.results.bindings) {
+                for (let binding of resp.results.bindings) {
+                    const a1 = binding.a.value;
+                    const a2 = binding.b.value;
+                    const w = binding.w.value;
+                    rels.push({a1, a2, w, type: relType});
+                }
+            }
+            return rels;
         },
 
         drawConnections()
