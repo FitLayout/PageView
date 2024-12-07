@@ -356,16 +356,16 @@ export default {
             this.areaBoxes.sort((a, b) => {
                 return a.documentOrder - b.documentOrder;
             });
-            // insert area boxes
-            for (let abox of this.areaBoxes) {
-                this.svgRoot.appendChild(abox);
-            }
             // insert masks and lines
             for (let mask of this.masks) {
                 this.svgRoot.appendChild(mask);
             }
             for (let line of this.lineBoxes) {
                 this.svgRoot.appendChild(line);
+            }
+            // insert area boxes
+            for (let abox of this.areaBoxes) {
+                this.svgRoot.appendChild(abox);
             }
         },
 
@@ -432,7 +432,6 @@ export default {
 }
 .relations-display > svg rect { /* rectangles in defs that are later used using 'use' */
     stroke: inherit; /* inherit the color from the 'use' element */
-    stroke-width: 1px;
     fill: inherit;
 }
 .relations-display > svg use {
@@ -449,10 +448,12 @@ export default {
     fill: black;
 }
 .relations-display > svg use:hover {
-    stroke: red;
+    stroke: red !important;
+    stroke-width: 3px !important;
 }
 .relations-display > svg use.hovered, .relations-display > svg line.hovered {
-    stroke: #e4002b;
+    stroke: #e4002b !important;
+    stroke-width: 3px;
 }
 .relations-display > svg line {
     stroke: #00ff00;
