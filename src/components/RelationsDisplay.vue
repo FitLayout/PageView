@@ -250,6 +250,7 @@ export default {
             line.setAttribute('x2', x2);
             line.setAttribute('y2', y2);
             line.setAttribute('mask', `url(#${relId})`);
+            line.setAttribute('style', 'stroke:' + this.relationColor(rel.type));
             line.triples = [];  // for saving related triples of boxes
 
             let thisObj = this;
@@ -368,6 +369,20 @@ export default {
             }
         },
 
+        relationColor(relIri) {
+            //let colors = ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#00BCD4', '#FF9800'];
+            //let colors = ['#2196F3', '#FFC107', '#9C27B0', '#00BCD4', '#FF9800', '#795548'];
+            let colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"];
+            let idx = 0;
+            for (let rel of this.relations) {
+                if (rel.iri === relIri) {
+                    return colors[idx % colors.length];
+                }
+                idx++;
+            }
+            return colors[idx % colors.length];
+        },
+
         saveSelectedRelations() {
             window.localStorage.setItem('selectedRelations', JSON.stringify(this.selectedRelations));
         },
@@ -441,7 +456,7 @@ export default {
 }
 .relations-display > svg line {
     stroke: #00ff00;
-    stroke-width: 1px;
+    stroke-width: 2px;
     fill: none;
     cursor: pointer;
 }
