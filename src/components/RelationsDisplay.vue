@@ -17,6 +17,10 @@ import MultiSelect from 'primevue/multiselect';
 import IriDecoder from '../common/iridecoder.js';
 import SEGM from '../ontology/SEGM.js';
 
+// XML namespaces
+const SVG = 'http://www.w3.org/2000/svg';
+const XLINK = 'http://www.w3.org/1999/xlink';
+
 export default {
 	name: 'RelationsDisplay',
 	props: {
@@ -44,7 +48,7 @@ export default {
     async created() {
 		await this.fetchRelations();
         if (this.relations.length > 0) {
-            this.selectedRelations = [ this.relations[0].iri ]; // select the first relation as default
+            this.restoreSelectedRelations();
             await this.update();
         }
     },
@@ -81,6 +85,7 @@ export default {
 		},
 
         async updateRelation() {
+            this.saveSelectedRelations();
             await this.update();
         },
 
@@ -94,7 +99,7 @@ export default {
             this.svgRoot = parent; 
             // create a defs element inside SVG to store shared rectangle definitions
             // https://stackoverflow.com/questions/11404391/invert-svg-clip-show-only-outside-path?rq=3
-            this.svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            this.svgDefs = document.createElementNS(SVG, 'defs');
             this.svgRoot.appendChild(this.svgDefs);
 
             this.maskCnt = 0;
@@ -179,7 +184,7 @@ export default {
 
         drawArea(area) {
             // create a rect definition and store it in SVG defs
-            let drect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            let drect = document.createElementNS(SVG, 'rect');
             drect.setAttribute('x', area.bounds.positionX);
             drect.setAttribute('y', area.bounds.positionY);
             drect.setAttribute('width', area.bounds.width);
@@ -188,8 +193,8 @@ export default {
             this.svgDefs.appendChild(drect);
 
             // use the rectangle and draw it
-            let rect = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-            rect.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(area));
+            let rect = document.createElementNS(SVG, 'use');
+            rect.setAttributeNS(XLINK, 'href', '#' + this.areaId(area));
             rect.triples = []; // for saving related triples of boxes
 
             let thisObj = this;
@@ -218,28 +223,28 @@ export default {
 
             // create a mask for the boxes
             const relId = 'm' + (++this.maskCnt);
-            let mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+            let mask = document.createElementNS(SVG, 'mask');
             mask.setAttribute('id', relId);
             mask.setAttribute('maskUnits', 'userSpaceOnUse');
-            let mbgrect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            let mbgrect = document.createElementNS(SVG, 'rect');
             mbgrect.setAttribute('x', '0');
             mbgrect.setAttribute('y', '0');
             mbgrect.setAttribute('width', '100%');
             mbgrect.setAttribute('height', '100%');
             mbgrect.setAttribute('class', 'fwhite');
             mask.appendChild(mbgrect);
-            let muse1 = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-            muse1.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(a1));
+            let muse1 = document.createElementNS(SVG, 'use');
+            muse1.setAttributeNS(XLINK, 'href', '#' + this.areaId(a1));
             muse1.setAttribute('class', 'fblack');
             mask.appendChild(muse1);
-            let muse2 = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-            muse2.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#' + this.areaId(a2));
+            let muse2 = document.createElementNS(SVG, 'use');
+            muse2.setAttributeNS(XLINK, 'href', '#' + this.areaId(a2));
             muse2.setAttribute('class', 'fblack');
             mask.appendChild(muse2);
             this.masks.push(mask);
 
             // create the line and mask it
-            let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            let line = document.createElementNS(SVG, 'line');
             line.setAttribute('x1', x1);
             line.setAttribute('y1', y1);
             line.setAttribute('x2', x2);
@@ -257,7 +262,7 @@ export default {
 
             let dec = new IriDecoder();
             let reltype = dec.encodeIri(rel.type);
-            let title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+            let title = document.createElementNS(SVG, 'title');
             title.appendChild(document.createTextNode(reltype + '; w=' + rel.w));
             line.appendChild(title);
 
@@ -272,7 +277,6 @@ export default {
                     let relsForRelType = await this.fetchSingleRelation(relType);
                     rels = rels.concat(relsForRelType);
                 }
-                console.log(rels);
                 return rels;
             } else {
                 return [];
@@ -361,6 +365,26 @@ export default {
             }
             for (let line of this.lineBoxes) {
                 this.svgRoot.appendChild(line);
+            }
+        },
+
+        saveSelectedRelations() {
+            window.localStorage.setItem('selectedRelations', JSON.stringify(this.selectedRelations));
+        },
+
+        restoreSelectedRelations() {
+            const storedRelations = window.localStorage.getItem('selectedRelations');
+            if (storedRelations) {
+                let toRestore = JSON.parse(storedRelations);
+                let restored = [];
+                for (let rel of this.relations) {
+                    if (toRestore.includes(rel.iri)) {
+                        restored.push(rel.iri);
+                    }
+                }
+                this.selectedRelations = restored;
+            } else {
+                this.selectedRelations = [ this.relations[0].iri ]; // select the first relation as default
             }
         }
 	}
