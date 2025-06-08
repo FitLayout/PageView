@@ -36,7 +36,7 @@ import InputText from 'primevue/inputtext';
 import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
 
-import {FilterMatchMode} from 'primevue/api';
+import {FilterMatchMode} from '@primevue/core/api';
 
 export default {
 	name: 'SubjectInfo',

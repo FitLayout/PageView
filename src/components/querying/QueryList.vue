@@ -31,7 +31,7 @@ import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import ConfirmDialog from 'primevue/confirmdialog';
 
-import {FilterMatchMode} from 'primevue/api';
+import {FilterMatchMode} from '@primevue/core/api';
 
 export default {
 	name: 'QueryList',

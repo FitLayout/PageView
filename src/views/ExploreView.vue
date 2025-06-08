@@ -1,7 +1,7 @@
 <template>
 	<div class="explore-view">
 		<div class="subj-selection">
-			<Dropdown v-model="selMode" :options="modes" /> 
+			<Select v-model="selMode" :options="modes" /> 
 			<InputText type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
 			<Button class="ml-2" label="Explore" @click="changeIri()" />
 		</div>
@@ -13,7 +13,7 @@
 <script>
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 
 import SubjectInfo from '../components/SubjectInfo.vue';
 import SubjectReferences from '../components/SubjectReferences.vue';
@@ -26,7 +26,7 @@ export default {
 	components: {
 		Button,
 		InputText,
-		Dropdown,
+		Select,
 		SubjectInfo,
 		SubjectReferences
 	},

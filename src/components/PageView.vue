@@ -38,86 +38,92 @@
 							<i class="pi pi-share-alt" v-tooltip="'Show in RDF explorer'" 
 								style="margin-left: 0.5em; cursor: pointer" @click="exploreSubject" />
 						</div>
-						<TabView v-model:activeIndex="activeTab">
-							<TabPanel header="Description">
-								<div class="descr-scroll">
-									<div class="descr-table" v-if="subjectModel">
-										<DataTable :value="subjectModel" class="p-datatable-sm"
-											v-model:filters="dFilters" filterDisplay="row"
-											:resizableColumns="true" columnResizeMode="expand"
-											:scrollable="true" scrollHeight="flex"
-											showGridlines>
-											<Column header="Property" filterField="p.value">
-												<template #body="rowdata">
-													<Iri :iri="rowdata.data.p.value" />
-												</template>
-												<template #filter="{filterModel,filterCallback}">
-													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-												</template>												
-											</Column>
-											<Column header="Value" filterField="v.value">
-												<template #body="rowdata">
-													<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer" 
-														:extAll="true" structIcon="pi pi-share-alt"
-														@show-iri="showIri"
-														@hover-iri="hoverIri"
-														@leave-iri="leaveIri"
-														@show-ext="showExt"
-														@show-struct="showExt" />
-												</template>
-												<template #filter="{filterModel,filterCallback}">
-													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-												</template>												
-											</Column>
-										</DataTable>
-									</div>
-								</div>
-							</TabPanel>
-							<TabPanel header="References">
-								<div class="descr-scroll">
-									<div class="descr-table" v-if="subjectRefs">
-										<DataTable :value="subjectRefs" class="p-datatable-sm" 
-											v-model:filters="rFilters" filterDisplay="row"
-											:resizableColumns="true" columnResizeMode="expand"
-											:scrollable="true" scrollHeight="flex" 
-											showGridlines>
-											<Column header="Subject" filterField="v.value">
-												<template #body="rowdata">
-													<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer"
-														:extAll="true" 
-														@show-iri="showIri"
-														@hover-iri="hoverIri"
-														@leave-iri="leaveIri"
-														@show-ext="showExt" />
-												</template>
-												<template #filter="{filterModel,filterCallback}">
-													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-												</template>												
-											</Column>
-											<Column header="Property" filterField="p.value">
-												<template #body="rowdata">
-													<Iri :iri="rowdata.data.p.value" />
-												</template>
-												<template #filter="{filterModel,filterCallback}">
-													<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-												</template>												
-											</Column>
-										</DataTable>
-									</div>
-								</div>
-							</TabPanel>
-							<TabPanel>
-								<template #header>
+						<Tabs value="0">
+							<TabList>
+        						<Tab value="0">Description</Tab>
+        						<Tab value="1">References</Tab>
+       							<Tab value="2">
 									<span class="p-tabview-title">Annotations</span>
 									<Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
-								</template>
-								<AnnotationPanel
-									@update="fetchData(false)" 
-									:subjectIri="subjectIri" 
-									:artifactIri="status.artifactIri" 
-									:subjectAnnotations="subjectAnnotations" />
-							</TabPanel>
-						</TabView>
+								</Tab>
+    						</TabList>
+							<TabPanels>
+								<TabPanel value="0">
+									<div class="descr-scroll">
+										<div class="descr-table" v-if="subjectModel">
+											<DataTable :value="subjectModel" class="p-datatable-sm"
+												v-model:filters="dFilters" filterDisplay="row"
+												:resizableColumns="true" columnResizeMode="expand"
+												:scrollable="true" scrollHeight="flex"
+												showGridlines>
+												<Column header="Property" filterField="p.value">
+													<template #body="rowdata">
+														<Iri :iri="rowdata.data.p.value" />
+													</template>
+													<template #filter="{filterModel,filterCallback}">
+														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+													</template>												
+												</Column>
+												<Column header="Value" filterField="v.value">
+													<template #body="rowdata">
+														<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer" 
+															:extAll="true" structIcon="pi pi-share-alt"
+															@show-iri="showIri"
+															@hover-iri="hoverIri"
+															@leave-iri="leaveIri"
+															@show-ext="showExt"
+															@show-struct="showExt" />
+													</template>
+													<template #filter="{filterModel,filterCallback}">
+														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+													</template>												
+												</Column>
+											</DataTable>
+										</div>
+									</div>
+								</TabPanel>
+								<TabPanel value="1">
+									<div class="descr-scroll">
+										<div class="descr-table" v-if="subjectRefs">
+											<DataTable :value="subjectRefs" class="p-datatable-sm" 
+												v-model:filters="rFilters" filterDisplay="row"
+												:resizableColumns="true" columnResizeMode="expand"
+												:scrollable="true" scrollHeight="flex" 
+												showGridlines>
+												<Column header="Subject" filterField="v.value">
+													<template #body="rowdata">
+														<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer"
+															:extAll="true" 
+															@show-iri="showIri"
+															@hover-iri="hoverIri"
+															@leave-iri="leaveIri"
+															@show-ext="showExt" />
+													</template>
+													<template #filter="{filterModel,filterCallback}">
+														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+													</template>												
+												</Column>
+												<Column header="Property" filterField="p.value">
+													<template #body="rowdata">
+														<Iri :iri="rowdata.data.p.value" />
+													</template>
+													<template #filter="{filterModel,filterCallback}">
+														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+													</template>												
+												</Column>
+											</DataTable>
+										</div>
+									</div>
+								</TabPanel>
+								<TabPanel value="2">
+									<AnnotationPanel
+										@update="fetchData(false)" 
+										:subjectIri="subjectIri" 
+										:artifactIri="status.artifactIri" 
+										:subjectAnnotations="subjectAnnotations" />
+								</TabPanel>
+							</TabPanels>
+						</Tabs>
 					</SplitterPanel>
 				</Splitter>
 			</SplitterPanel>
@@ -131,34 +137,34 @@
 					{{ error }}
 					</div>
 					<div class="tools" v-if="!loading && !error">
-						<div class="p-fluid formgrid grid">
+						<div class="p-fluid formgrid grid grid-cols-12 gap-4">
 							<div class="field col">
 								<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
 								<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
 							</div>
 							<div class="field col">
 								<label for="screen" class="form-label">Screenshot</label>
-								<InputSwitch id="screen" v-model="screenshot" />
+								<ToggleSwitch id="screen" v-model="screenshot" />
 							</div>
 							<div class="field col">
 								<label for="outlines" class="form-label">Show outlines</label>
-								<InputSwitch id="outlines" v-model="outlines" title="Show area bounds" />
+								<ToggleSwitch id="outlines" v-model="outlines" title="Show area bounds" />
 							</div>
 							<div class="field col">
 								<label for="selection" class="form-label">Selection</label>
-								<InputSwitch id="selection" v-model="rectSelection" title="Selection mode" />
+								<ToggleSwitch id="selection" v-model="rectSelection" title="Selection mode" />
 							</div>
 							<div class="field col">
 								<label for="showTags" class="form-label">Show tags</label>
-								<InputSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
+								<ToggleSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
 							</div>
 							<div class="field col">
 								<label for="showRelations" class="form-label">Show relations</label>
-								<InputSwitch id="showRelations" v-model="showRelations" />
+								<ToggleSwitch id="showRelations" v-model="showRelations" />
 							</div>
 							<div class="field col">
 								<label for="dragSelection" class="form-label">Drag select</label>
-								<InputSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
+								<ToggleSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
 							</div>
 						</div>
 					</div>
@@ -190,13 +196,17 @@ import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import InputText from 'primevue/inputtext';
-import InputSwitch from 'primevue/inputswitch';
+import ToggleSwitch from 'primevue/toggleswitch';
 import Tree from 'primevue/tree';
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Badge from 'primevue/badge';
+
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
 
 import Page from './Page.vue';
 import Iri from './Iri.vue';
@@ -211,7 +221,7 @@ import FL from '../ontology/FL.js';
 import ObjectResolver from '../common/resolver.js';
 import TreeModel from '../common/treemodel.js';
 
-import {FilterMatchMode} from 'primevue/api';
+import {FilterMatchMode} from '@primevue/core/api';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
 
@@ -223,9 +233,12 @@ export default {
 		ProgressBar,
 		Slider,
 		InputText,
-		InputSwitch,
+		ToggleSwitch,
 		Tree,
-		TabView,
+		Tabs,
+		TabList,
+        Tab,
+        TabPanels,
 		TabPanel,
 		DataTable,
 		Column,

@@ -3,7 +3,7 @@
 			<div class="service formgroup-inline">
 				<div class="field inl">
 					<label :for="inputId" class="inl"><strong>Service</strong></label>
-					<Dropdown v-model="key" v-if="grouped" :options="groupList" optionLabel="name" optionValue="id"
+					<Select v-model="key" v-if="grouped" :options="groupList" optionLabel="name" optionValue="id"
 						optionGroupLabel="label" optionGroupChildren="items">
 						<template #option="opt">
 							<div class="option-cont option-cont-grouped">
@@ -12,8 +12,8 @@
 							</div>
 						</template>
 						<template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
-					</Dropdown>
-					<Dropdown v-model="key" v-else :options="selList" optionLabel="name" optionValue="id">
+					</Select>
+					<Select v-model="key" v-else :options="selList" optionLabel="name" optionValue="id">
 						<template #option="opt">
 							<div class="option-cont">
 								{{opt.option.name}} ({{opt.option.id}})
@@ -28,24 +28,24 @@
 								---
 							</div>
 						</template>
-					</Dropdown>
+					</Select>
 				</div>
 				<Button class="inl" v-on:click="invoke" :label="action" />
 				<div v-if="loading" class="loading inl">
 					<ProgressSpinner class="spinner" />
 				</div>
 
-				<InlineMessage v-if="error" class="error" severity="error" v-on:click="error=null">{{error}}</InlineMessage>
+				<Message v-if="error" class="error" severity="error" v-on:click="error=null">{{error}}</Message>
 			</div>
 			<ParamPanel v-if="params" :descr="paramDescr" :values="params"></ParamPanel>
 	</div>
 </template>
 
 <script>
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
-import InlineMessage from 'primevue/inlinemessage';
+import Message from 'primevue/message';
 
 import ParamPanel from './ParamPanel.vue';
 
@@ -53,10 +53,10 @@ import ParamPanel from './ParamPanel.vue';
 export default {
 	name: 'InvokePanel',
 	components: {
-		Dropdown,
+		Select,
 		Button,
 		ProgressSpinner,
-		InlineMessage,
+		Message,
 		ParamPanel
 	},
 	inject: ['apiClient'],

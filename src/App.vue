@@ -38,6 +38,8 @@ export default {
 </script>
 
 <style>
+@import '@/assets/base.css';
+
 html {
 	font-size: 10pt;
 }

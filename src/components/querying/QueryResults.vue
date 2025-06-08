@@ -56,7 +56,7 @@ import InputText from 'primevue/inputtext';
 
 import ValueInfo from '../ValueInfo.vue';
 
-import {FilterMatchMode} from 'primevue/api';
+import {FilterMatchMode} from '@primevue/core/api';
 
 import {Parser} from "n3";
 

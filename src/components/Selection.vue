@@ -6,7 +6,7 @@
 				<div class="floatBlock"><Button id="addIriObjectsToAreaButton" @click="addIriObjectsToArea" label="Add selection"> </Button></div>
 				<div class="floatBlock"><InputText id="addLabelToAreaText" type="text" v-model="labelText" placeholder="Insert Label" /></div>
 				<div class="floatBlock">
-					<Dropdown id="addTagToAreaDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" :show-clear="true"></Dropdown>
+					<Select id="addTagToAreaDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" :show-clear="true"></Select>
 				</div>
 			</div>
 		</div>
@@ -15,7 +15,7 @@
 
 <script>
 import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 
 export default {
@@ -29,7 +29,7 @@ export default {
 
 	components: {
 		Button,
-		Dropdown,
+		Select,
 		InputText
 	},
 

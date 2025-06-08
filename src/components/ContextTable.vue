@@ -9,7 +9,7 @@
 			</p>
 			<Textarea v-model="editorText" rows="30" cols="100" />
 			<template #footer>
-				<InlineMessage v-if="editorError">{{editorError}}</InlineMessage>
+				<Message v-if="editorError">{{editorError}}</Message>
 				<Button label="Cancel" icon="pi pi-times" class="p-button-text"
 					@click="closeEditor()" />
                 <Button label="Save" icon="pi pi-check" autofocus
@@ -60,9 +60,9 @@ import ConfirmDialog from 'primevue/confirmdialog';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
-import InlineMessage from 'primevue/inlinemessage';
+import Message from 'primevue/message';
 
-import {FilterMatchMode} from 'primevue/api';
+import {FilterMatchMode} from '@primevue/core/api';
 
 import IriDecoder from '../common/iridecoder.js';
 
@@ -77,7 +77,7 @@ export default {
 		Dialog,
 		Textarea,
 		InputText,
-		InlineMessage
+		Message
 	},
 	props: {
 	},

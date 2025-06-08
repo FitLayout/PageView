@@ -2,23 +2,23 @@
 	<div class="annotation-panel">
 		<div class="annotationGui">
 			<Button class="p-button-raised" icon="pi pi-tag" iconPos="right" v-tooltip="'Add tag'" v-on:click="toggleTag" />
-			<OverlayPanel ref="addTagPanel">
+			<Popover ref="addTagPanel">
 				<div class="annotationType">
 					<h4>Add tag</h4>
-					<Dropdown class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" />
+					<Select class="annotDropdown" v-model="selectedTag" :options="tags" optionLabel="name" optionValue="iri" placeholder="Select tag" />
 					<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addTag" />
 				</div>
-			</OverlayPanel>
+			</Popover>
 
 			<Button class="p-button-raised" icon="pi pi-comment" iconPos="right" v-tooltip="'Add annotation'" v-on:click="toggleAnnot" />
-			<OverlayPanel ref="addAnnotationPanel">
+			<Popover ref="addAnnotationPanel">
 				<div class="annotationType">
 					<h4>Add annotation</h4>
-					<Dropdown class="annotDropdown" v-model="selectedLabelType" :options="labelTypes" optionLabel="name" optionValue="id" placeholder="Select type" />
+					<Select class="annotDropdown" v-model="selectedLabelType" :options="labelTypes" optionLabel="name" optionValue="id" placeholder="Select type" />
 					<InputText class="descInput" type="text" v-model="labelText" placeholder="Short description" />
 					<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="addLabel" />
 				</div>
-			</OverlayPanel>
+			</Popover>
 		</div>
 		<div class="annot-scroll">
 			<div class="annot-table" v-if="subjectAnnotations">
@@ -46,22 +46,22 @@
 						</tr>
 					</table>
 				</div>
-				<OverlayPanel ref="editAnnotationPanel">
+				<Popover ref="editAnnotationPanel">
 					<div class="annotationType">
 						<h4>Edit annotation</h4>									
 						<InputText class="descInput" type="text" v-model="labelEditText" placeholder="Short description" />
 						<Button class="p-button-raised" icon="pi pi-plus" iconPos="right" v-on:click="editAnnot(selectedAnnotForEdit)" />
 					</div>
-				</OverlayPanel>
+				</Popover>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import OverlayPanel from 'primevue/overlaypanel';
+import Popover from 'primevue/popover';
 import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown';
+import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import ValueInfo from './ValueInfo.vue';
 import Iri from './Iri.vue';
@@ -71,8 +71,8 @@ import RDFS from '../ontology/RDFS.js';
 export default {
 	name: 'AnnotationPanel',
 	components: {
-		OverlayPanel,
-		Dropdown,
+		Popover,
+		Select,
 		Button,
 		InputText,
 		ValueInfo,

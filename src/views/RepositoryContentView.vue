@@ -12,20 +12,20 @@
 
 		<div class="render-panel" v-if="!isReadOnly">
 			<h2>Render new page</h2>
-			<div class="p-fluid formgrid grid">
-				<div class="field col-12">
+			<div class="p-fluid formgrid grid grid-cols-12 gap-4">
+				<div class="field col-span-12">
 					<label for="url">URL</label>
 					<InputText id="url" class="w-full" type="text" placeholder="http://" v-model="renderUrl" />
 				</div>
-				<div class="field col-4">
+				<div class="field col-span-4">
 					<label for="width">Page width</label>
 					<InputNumber id="width" class="w-full" type="decimal" v-model="renderWidth" showButtons :min="10" :max="10000" :step="10" />
 				</div>
-				<div class="field col-4">
+				<div class="field col-span-4">
 					<label for="height">Height</label>
 					<InputNumber id="height" class="w-full" type="decimal" v-model="renderHeight" showButtons :min="10" :max="10000" :step="10" />
 				</div>
-				<div class="field col-12">
+				<div class="field col-span-12">
 					<Button @click="renderPage()" class="justify-content-center w-full" :disabled="loading">
 						<span class="font-bold">Render</span>
 						<ProgressSpinner v-if="loading" style="width:1.5em;height:1.5em;margin:0" />
@@ -39,44 +39,48 @@
 
 		</div>
 
-		<TabView>
-			<TabPanel>
-				<template #header>
+		<Tabs value="0">
+			<TabList>
+				<Tab value="0">
 					<i class="pi pi-fw pi-sitemap"></i>
 					<span>Artifacts</span>
-				</template>
-				<div class="artifact-view">
-					<ArtTable />
-				</div>
-			</TabPanel>
-			<TabPanel>
-				<template #header>
+				</Tab>
+				<Tab value="1">
 					<i class="pi pi-fw pi-database"></i>
 					<span>Contexts</span>
-				</template>
-				<div class="context-view">
-					<ContextTable />
-				</div>
-			</TabPanel>
-			<TabPanel>
-				<template #header>
-					<i class="pi pi-fw pi-tags"></i>
-					<span>Tags</span>
-				</template>
-				<div class="context-view">
-					<TagConfig />
-				</div>
-			</TabPanel>
-			<TabPanel>
-				<template #header>
-					<i class="pi pi-fw pi-star"></i>
-					<span>Prefixes</span>
-				</template>
-				<div class="context-view">
-					<PrefixConfig />
-				</div>
-			</TabPanel>
-		</TabView>
+				</Tab>
+				<Tab value="2">
+                    <i class="pi pi-fw pi-tags"></i>
+                    <span>Tags</span>
+                </Tab>
+				<Tab value="3">
+                    <i class="pi pi-fw pi-star"></i>
+                    <span>Prefixes</span>
+                </Tab>
+			</TabList>
+			<TabPanels>
+				<TabPanel value="0">
+					<div class="artifact-view">
+						<ArtTable />
+					</div>
+				</TabPanel>
+				<TabPanel value="1">
+					<div class="context-view">
+						<ContextTable />
+					</div>
+				</TabPanel>
+				<TabPanel value="2">
+					<div class="context-view">
+						<TagConfig />
+					</div>
+				</TabPanel>
+				<TabPanel value="3">
+					<div class="context-view">
+						<PrefixConfig />
+					</div>
+				</TabPanel>
+			</TabPanels>
+		</Tabs>
 
 	</div>
 </template>
@@ -87,7 +91,10 @@ import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import ProgressSpinner from 'primevue/progressspinner';
 import Message from 'primevue/message';
-import TabView from 'primevue/tabview';
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
 
 import ArtTable from '../components/ArtTable.vue';
@@ -105,8 +112,11 @@ export default {
 		InputNumber,
 		ProgressSpinner,
 		Message,
-		TabView,
-		TabPanel,
+		Tabs,
+        TabList,
+        Tab,
+        TabPanels,
+        TabPanel,
 		TagConfig,
 		PrefixConfig
 	},

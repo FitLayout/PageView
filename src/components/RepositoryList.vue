@@ -23,14 +23,14 @@
 					</td>
 				</tr>
 			</table>
-			<OverlayPanel ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+			<Popover ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 				<div class="p-fluid">
 					<div class="field">
 						<label for="fieldId">Shareable link</label>
 						<InputText id="fieldId" type="text" :value="sharedUrl" readonly="true" />
 					</div>
 				</div>
-			</OverlayPanel>
+			</Popover>
 			<p v-if="!(repositoryList && repositoryList.length > 0)">
 				You have not used any repositories recently. Please start with creating a new repository.
 			</p>
@@ -40,7 +40,7 @@
 			<div v-if="createAvailable">
 				<Button type="button" icon="pi pi-plus" :label="'New repository'" @click="toggleCreate" aria:haspopup="true" aria-controls="overlay_panel" />
 
-				<OverlayPanel ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+				<Popover ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 					<div class="p-fluid">
 						<div class="field">
 							<label for="repo-descr">Name</label>
@@ -52,21 +52,21 @@
 							<small id="repo-email-help">Your e-mail is optional. If provided, we will be able to e-mail you the links to your repositories.</small>
 						</div>
 						<Button type="button" icon="pi pi-check" label="Create" v-on:click="createRepository" />
-						<InlineMessage v-if="error" v-on:click="error = null">{{error}}</InlineMessage>
+						<Message v-if="error" v-on:click="error = null">{{error}}</Message>
 					</div>
-				</OverlayPanel>
+				</Popover>
 			</div>
 
 			<div class="repo-missing">
 				<a href="#" @click="toggleMissing">Missing some repositories?</a>
 
-				<OverlayPanel ref="opMissing" appendTo="body" :showCloseIcon="true" id="op_missing" style="width: 500px" :breakpoints="{'960px': '75vw'}">
+				<Popover ref="opMissing" appendTo="body" :showCloseIcon="true" id="op_missing" style="width: 500px" :breakpoints="{'960px': '75vw'}">
 					<p>If you think there are some repositories missing in the list, we may <a href="#" @click="toggleRemind">e-mail you the links
 					to your repositories</a> associated with your e-mail. 
 					<!-- If you have created your account previously,
 					it may be also a good idea to <a href="/auth/#/login">sign in</a>.--></p>
-				</OverlayPanel>
-				<OverlayPanel ref="opRemind" appendTo="body" :showCloseIcon="true" id="op_remind" style="width: 450px" :breakpoints="{'960px': '75vw'}">
+				</Popover>
+				<Popover ref="opRemind" appendTo="body" :showCloseIcon="true" id="op_remind" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 					<div class="p-fluid">
 						<div class="field">
 							<label for="remind-email">Your e-mail</label>
@@ -74,9 +74,9 @@
 							<small id="repo-email-help">We will e-mail you the links to all repositories associated with the given e-mail (if any).</small>
 						</div>
 						<Button type="button" icon="pi pi-check" label="Send reminder" v-on:click="sendReminder" />
-						<InlineMessage v-if="remindError" :severity="remindSeverity" v-on:click="remindError = null">{{remindError}}</InlineMessage>
+						<Message v-if="remindError" :severity="remindSeverity" v-on:click="remindError = null">{{remindError}}</Message>
 					</div>
-				</OverlayPanel>
+				</Popover>
 			</div>
 
 		</template>
@@ -86,9 +86,9 @@
 <script>
 import Card from 'primevue/card';
 import Button from 'primevue/button';
-import OverlayPanel from 'primevue/overlaypanel';
+import Popover from 'primevue/popover';
 import InputText from 'primevue/inputtext';
-import InlineMessage from 'primevue/inlinemessage';
+import Message from 'primevue/message';
 
 import LinkButton from '../components/LinkButton.vue';
 
@@ -97,9 +97,9 @@ export default {
 	components: {
 		Card,
 		Button,
-		OverlayPanel,
+		Popover,
 		InputText,
-		InlineMessage,
+		Message,
 		LinkButton
 	},
 	props: {
