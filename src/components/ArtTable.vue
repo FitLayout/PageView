@@ -16,8 +16,10 @@
 			</Column>
 			<Column header="Details">
 				<template #body="slotProps">
-					<TypeBadge :typeIri="slotProps.node.data.type" /> <strong>{{slotProps.node.data.title}}</strong><br/>
-					<code v-if="slotProps.node.data.url">{{slotProps.node.data.url}}</code>
+					<div class="art-table-art-details">
+						<TypeBadge :typeIri="slotProps.node.data.type" /> <strong>{{slotProps.node.data.title}}</strong><br/>
+						<code v-if="slotProps.node.data.url">{{slotProps.node.data.url}}</code>
+					</div>
 				</template>
 			</Column>
 			<Column header="Actions">
@@ -31,7 +33,7 @@
 							v-tooltip.top="'Open in Browser'"
 							:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
 							target="_blank" /> 
-						<SplitButton icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.2em"
+						<SplitButton icon="pi pi-download" severity="secondary" style="margin-left: 0.2em"
 							v-tooltip.top="'Export artifact'"
 							@click="exportDefault(slotProps.node)" 
 							:model="createExportMenu(slotProps.node)" />

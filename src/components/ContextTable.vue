@@ -37,7 +37,7 @@
 						<Button icon="pi pi-pencil" class="p-button-default" style="margin-left: 0.2em"
 							v-tooltip.top="'Edit context'"
 							@click="editContext(slotProps.data.iri)" />
-						<SplitButton icon="pi pi-download" class="p-button-secondary" style="margin-left: 0.2em"
+						<SplitButton icon="pi pi-download" severity="secondary" style="margin-left: 0.2em"
 							v-tooltip.top="'Export context'"
 							@click="exportDefault(slotProps.data.iri)" 
 							:model="createExportMenu(slotProps.data.iri)" />

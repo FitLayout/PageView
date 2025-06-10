@@ -43,18 +43,20 @@
 				<Button type="button" icon="pi pi-plus" :label="'New repository'" @click="toggleCreate" aria:haspopup="true" aria-controls="overlay_panel" />
 
 				<Popover ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px': '75vw'}">
-					<div class="p-fluid">
-						<div class="field">
+					<div class="p-fluid formgrid grid grid-cols-12 gap-4">
+						<div class="field col-span-12">
 							<label for="repo-descr">Name</label>
-							<InputText id="repo-descr" type="text" placeholder="Enter the repository name" v-model="newDescr" ref="inputDescr" />
+							<InputText id="repo-descr" type="text" class="p-inputtext p-component w-full" placeholder="Enter the repository name" v-model="newDescr" ref="inputDescr" />
 						</div>
-						<div class="field" v-if="anonymous">
+						<div class="field col-span-12" v-if="anonymous">
 							<label for="repo-email">E-mail</label>
-							<InputText id="repo-email" type="text" placeholder="Your e-mail" v-model="newEmail" />
+							<InputText id="repo-email" type="text" class="p-inputtext p-component w-full" placeholder="Your e-mail" v-model="newEmail" />
 							<small id="repo-email-help">Your e-mail is optional. If provided, we will be able to e-mail you the links to your repositories.</small>
 						</div>
-						<Button type="button" icon="pi pi-check" label="Create" v-on:click="createRepository" />
-						<Message v-if="error" v-on:click="error = null">{{error}}</Message>
+						<div class="field col-span-12">
+							<Button type="button" icon="pi pi-check" label="Create" v-on:click="createRepository" />
+							<Message v-if="error" severity="error" v-on:click="error = null">{{error}}</Message>
+						</div>
 					</div>
 				</Popover>
 			</div>
