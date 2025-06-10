@@ -23,7 +23,7 @@
 			<Column header="Actions">
 				<template #body="slotProps">
 					<div class="repository-actions">
-						<LinkButton icon="pi pi-cog" class="p-button-warning"
+						<LinkButton icon="pi pi-cog" class="p-button-warn"
 							v-tooltip.top="'Details and Actions'"
 							v-if="actionsAvailable(slotProps.node)"
 							:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 

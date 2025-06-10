@@ -22,7 +22,7 @@
 				:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }}"
 				target="_blank" />
 			<LinkButton label="Open in RDF explorer" icon="pi pi-share-alt"
-				style="margin-left: 0.2em" class="p-button-warning" 
+				style="margin-left: 0.2em" class="p-button-warn" 
 				:to="{name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }}"
 				target="_blank" />
 

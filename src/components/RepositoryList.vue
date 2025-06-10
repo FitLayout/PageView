@@ -14,7 +14,7 @@
 						<em v-if="!repo.description">{{repo.id}}</em>
 					</td>
 					<td class="repo-actions">
-						<LinkButton label="Open" icon="pi pi-folder-open" class="p-button-warning"
+						<LinkButton label="Open" icon="pi pi-folder-open" class="p-button-warn"
 							:to="{name: 'repo', params: { repoId: repo.id }}" />
 						<LinkButton label="Browser" icon="pi pi-globe" style="margin-left: 0.5em"
 							:to="{name: 'browser', params: { repoId: repo.id }}" />

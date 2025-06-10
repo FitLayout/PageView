@@ -31,7 +31,7 @@
 						<ProgressSpinner v-if="loading" style="width:1.5em;height:1.5em;margin:0" />
 					</Button>
 				</div>
-				<div class="col-12">
+				<div class="col-span-12">
 					<div class="text-center">Use the <router-link :to="{name: 'browser', params: {repoId: $route.params.repoId}}" target="_blank">repository browser</router-link> for advanced rendering options</div>
 				</div>
 			</div>
