@@ -49,7 +49,7 @@ export default {
 
 <style>
 .iri-link {
-	color: var(--blue-500);
+	color: var(--p-blue-500);
 	text-decoration: none;
 	cursor: pointer;
 }

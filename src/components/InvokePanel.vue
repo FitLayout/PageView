@@ -277,7 +277,7 @@ export default {
 }
 .option-cont {
 	padding-left: 0.5em;
-	border-left: 1px solid var(--text-color-secondary)
+	border-left: 1px solid var(--p-text-color-secondary)
 }
 .option-cont.option-cont-grouped {
 	margin-left: 0.5em;

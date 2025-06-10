@@ -24,26 +24,28 @@
 			<div class="annot-table" v-if="subjectAnnotations">
 				<div class="annotation-item" v-for="item in subjectAnnotations" :key="item.iri">
 					<table id="annotation-item-layout">
-						<tr>
-							<td><div class="annotation-item-iri"><Iri :iri="item.iri" /></div></td>
-						</tr>
-						<tr>
-							<td>
-								<div v-if="!!isAnnotation(item)">
-									<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
-										<Button class="p-button-annot" icon="pi pi-pencil" iconPos="right" v-tooltip="'Edit annotation'" v-on:click="editToggleAnnot($event,item)" />
-										<Button class="p-button-annot" icon="pi pi-trash" iconPos="right" v-tooltip="'Delete annotation'" v-on:click="deleteAnnot(item)" />
-										<ValueInfo :data="row" />	
-									</span>
-								</div>
-								<div v-else>
-									<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
-										<Button class="p-button-annot" icon="pi pi-trash" iconPos="right" v-tooltip="'Delete tag'" v-on:click="deleteTag(row.v.value)" />
-										<ValueInfo :data="row" />	
-									</span>
-								</div>
-							</td>
-						</tr>
+						<tbody>
+							<tr>
+								<td><div class="annotation-item-iri"><Iri :iri="item.iri" /></div></td>
+							</tr>
+							<tr>
+								<td>
+									<div v-if="!!isAnnotation(item)">
+										<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
+											<Button class="p-button-annot" icon="pi pi-pencil" iconPos="right" v-tooltip="'Edit annotation'" v-on:click="editToggleAnnot($event,item)" />
+											<Button class="p-button-annot" icon="pi pi-trash" iconPos="right" v-tooltip="'Delete annotation'" v-on:click="deleteAnnot(item)" />
+											<ValueInfo :data="row" />	
+										</span>
+									</div>
+									<div v-else>
+										<span class="annotation-item-value" v-for="row in item.row" :key="row.v.value">
+											<Button class="p-button-annot" icon="pi pi-trash" iconPos="right" v-tooltip="'Delete tag'" v-on:click="deleteTag(row.v.value)" />
+											<ValueInfo :data="row" />	
+										</span>
+									</div>
+								</td>
+							</tr>
+						</tbody>
 					</table>
 				</div>
 				<Popover ref="editAnnotationPanel">
@@ -248,7 +250,7 @@ export default {
 }
 .annotation-item-iri {
 	font-weight: bold;
-	color: var(--primary-color);
+	color: var(--p-primary-color);
 	margin-bottom: 0.5em;
 	width:80%;
 	margin-right:2%;

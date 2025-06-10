@@ -28,9 +28,9 @@
 .artifact {
 	margin: 0.5em 0;
 	padding: 0.5em 1em;
-	background-color: var(--surface-b);
+	background-color: var(--p-surface-100);
 	border-radius: 5px;
-	border: 1px solid var(--surface-400);
+	border: 1px solid var(--p-surface-400);
 	word-wrap: break-word;
 	/*box-shadow: 0 6px 6px -6px black;*/
 }
@@ -43,12 +43,12 @@
 	font-size: 120%;
 }
 .artifact .pi-eye {
-	color: var(--primary-color);
+	color: var(--p-primary-color);
 	padding: 3px;
 }
 .artifact .pi-eye.focused {
-	background-color: var(--primary-color);
-	color: var(--primary-color-text);
+	background-color: var(--p-primary-color);
+	color: var(--p-primary-color-text);
 	font-weight: bold;
 }
 .artifact .pi-trash:hover {
@@ -59,7 +59,7 @@
 	font-size: 0;
 }
 .selected > .artifact {
-	border: 2px solid var(--primary-color);
+	border: 2px solid var(--p-primary-color);
 	/*box-shadow: 0 2px 6px -6px black;*/
 }
 .selected > .artifact .ainfo {

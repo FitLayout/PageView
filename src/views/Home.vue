@@ -116,17 +116,17 @@ export default {
 }
 .logo {
 	padding: 0.5em 1em;
-	color: var(--text-color);
-	background: var(--surface-d);
+	color: var(--p-text-color);
+	background: var(--p-surface-300);
 	display: inline-block;
 	border-radius: 5px;
 	font-weight: bold;
 }
 #mainmenu .selected .p-menuitem-link {
-	background-color: var(--primary-color);
+	background-color: var(--p-primary-color);
 }
 #mainmenu .selected .p-menuitem-link .p-menuitem-text {
-	color: var(--primary-color-text);
+	color: var(--p-primary-color-text);
 }
 .jumbotron {
 	margin: 10em 0 15em 0;
@@ -139,7 +139,7 @@ export default {
 	text-decoration: none;
 }
 .repo-list td {
-	border: 1px solid var(--surface-d);
+	border: 1px solid var(--p-surface-300);
 	padding: 1em 1em;
 }
 .repo-list .repo-id {

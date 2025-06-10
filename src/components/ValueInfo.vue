@@ -284,7 +284,7 @@ export default {
 	cursor: default;
 }
 .value-info .color-box {
-	border: 1px solid var(--text-color);
+	border: 1px solid var(--p-text-color);
 	font-size: 80%;
 	vertical-align: text-top;
 	margin-left: 0.3em;

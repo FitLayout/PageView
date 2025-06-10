@@ -70,7 +70,7 @@ body {
 }
 
 .p-inputtext.ok.p-component {
-    border-color: var(--green-500);
+    border-color: var(--p-green-500);
 }
 
 .badge {
@@ -80,27 +80,27 @@ body {
 }
 .boxtree .badge {
 	color: white;
-	background-color: var(--green-500);
+	background-color: var(--p-green-500);
 }
 .box .badge {
 	color: white;
-	background-color: var(--cyan-500);
+	background-color: var(--p-cyan-500);
 }
 .areatree .badge {
 	color: black;
-	background-color: var(--yellow-500);
+	background-color: var(--p-yellow-500);
 }
 .area .badge {
 	color: black;
-	background-color: var(--yellow-700);
+	background-color: var(--p-yellow-700);
 }
 .chunkset .badge {
 	color: black;
-	background-color: var(--indigo-200);
+	background-color: var(--p-indigo-200);
 }
 .textchunk .badge {
 	color: white;
-	background-color: var(--indigo-700);
+	background-color: var(--p-indigo-700);
 }
 
 /* Very important!!
@@ -112,8 +112,7 @@ body {
 }
 
 #app {
-	font-family: var(--font-family);
-	color: var(--text-color);
-	background-color: var(--surface-a);
+	color: var(--p-text-color);
+	background-color: var(--p-surface-50);
 }
 </style>

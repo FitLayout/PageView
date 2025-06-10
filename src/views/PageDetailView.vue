@@ -11,11 +11,13 @@
 
 			<h1>{{pageTitle}}</h1>
 			<table class="info">
-				<tr><th>Source URL</th><td>{{page.sourceUrl}}</td></tr>
-				<tr><th>Size</th><td>{{page.width}} x {{page.height}} px</td></tr>
-				<tr><th>Rendered on</th><td>{{page.createdOn}}</td></tr>
-				<tr><th>Renderer</th><td>{{page.creator}}</td></tr>
-				<tr><th>Renderer params</th><td>{{page.creatorParams}}</td></tr>
+				<tbody>
+					<tr><th>Source URL</th><td>{{page.sourceUrl}}</td></tr>
+					<tr><th>Size</th><td>{{page.width}} x {{page.height}} px</td></tr>
+					<tr><th>Rendered on</th><td>{{page.createdOn}}</td></tr>
+					<tr><th>Renderer</th><td>{{page.creator}}</td></tr>
+					<tr><th>Renderer params</th><td>{{page.creatorParams}}</td></tr>
+				</tbody>
 			</table>
 
 			<LinkButton label="Open in Browser" icon="pi pi-globe" 

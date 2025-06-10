@@ -5,28 +5,30 @@
     <h2>SPARQL Query</h2>
   </div>
   <table class="common_bgc editor_table">
-    <tr class="minimal">
-      <th class="text_left padding_set" v-if="htmlCode.length">
-        Namespaces:
-      </th>
-    </tr>  
-    <tr v-for="(n,j) in htmlCode" :key="j" class="minimal">
-      <!-- tds representing namespaces with prefixes -->
-      <td class="text_left width_95 padding_set font_style" :id="`td-${j}`"></td>
-    </tr>
-
-    <tr>
-      <td class="width_95">
-        <prism-editor class="my-editor" v-model="code" :highlight="highlighter" line-numbers></prism-editor>
-      </td>
-      <td>
-        <tr v-for="i in newRowsCount" :key="i" :id="i-oldRowsCount+1" class="hidden_tr">
-          <td v-tooltip.right="errorText" class="">
-            <i class="pi pi-times-circle red_text"></i>
-          </td>
-        </tr>
-      </td>
-    </tr>
+	<tbody>
+	    <tr class="minimal">
+	      <th class="text_left padding_set" v-if="htmlCode.length">
+	        Namespaces:
+	      </th>
+	    </tr>  
+	    <tr v-for="(n,j) in htmlCode" :key="j" class="minimal">
+	      <!-- tds representing namespaces with prefixes -->
+	      <td class="text_left width_95 padding_set font_style" :id="`td-${j}`"></td>
+	    </tr>
+	
+	    <tr>
+	      <td class="width_95">
+	        <prism-editor class="my-editor" v-model="code" :highlight="highlighter" line-numbers></prism-editor>
+	      </td>
+	      <td>
+	        <tr v-for="i in newRowsCount" :key="i" :id="i-oldRowsCount+1" class="hidden_tr">
+	          <td v-tooltip.right="errorText" class="">
+	            <i class="pi pi-times-circle red_text"></i>
+	          </td>
+	        </tr>
+	      </td>
+	    </tr>
+	</tbody>
   </table>
   <div class="grid under_editor_space">
     <div class="col-4 col-offset-4">

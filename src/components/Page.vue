@@ -301,7 +301,7 @@ export default {
 	position: absolute;
 }
 .page-view .box.focus {
-	outline: 2px solid var(--primary-color) !important;
+	outline: 2px solid var(--p-primary-color) !important;
 	background-color: rgba(255, 200, 200, 0.3);
 }
 .page-view .box.hovered {

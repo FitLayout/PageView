@@ -8,20 +8,22 @@
 		</template>
 		<template #content>
 			<table class="repo-list" v-if="repositoryList && repositoryList.length > 0">
-				<tr v-for="repo in repositoryList" :key="repo.id">
-					<td class="repo-id">
-						<span v-if="repo.description">{{repo.description}}</span>
-						<em v-if="!repo.description">{{repo.id}}</em>
-					</td>
-					<td class="repo-actions">
-						<LinkButton label="Open" icon="pi pi-folder-open" class="p-button-warn"
-							:to="{name: 'repo', params: { repoId: repo.id }}" />
-						<LinkButton label="Browser" icon="pi pi-globe" style="margin-left: 0.5em"
-							:to="{name: 'browser', params: { repoId: repo.id }}" />
-						<Button label="Share" icon="pi pi-share-alt" style="margin-left: 0.5em" class="p-button-success"
-							@click="(ev) => toggleShare(ev, repo.id)" />
-					</td>
-				</tr>
+				<tbody>
+					<tr v-for="repo in repositoryList" :key="repo.id">
+						<td class="repo-id">
+							<span v-if="repo.description">{{repo.description}}</span>
+							<em v-if="!repo.description">{{repo.id}}</em>
+						</td>
+						<td class="repo-actions">
+							<LinkButton label="Open" icon="pi pi-folder-open" class="p-button-warn"
+								:to="{name: 'repo', params: { repoId: repo.id }}" />
+							<LinkButton label="Browser" icon="pi pi-globe" style="margin-left: 0.5em"
+								:to="{name: 'browser', params: { repoId: repo.id }}" />
+							<Button label="Share" icon="pi pi-share-alt" style="margin-left: 0.5em" class="p-button-success"
+								@click="(ev) => toggleShare(ev, repo.id)" />
+						</td>
+					</tr>
+				</tbody>
 			</table>
 			<Popover ref="opsh" appendTo="body" :showCloseIcon="true" id="overlay_sh" style="width: 450px" :breakpoints="{'960px': '75vw'}">
 				<div class="p-fluid">
@@ -182,7 +184,7 @@ export default {
 
 <style>
 .repo-list td {
-	border: 1px solid var(--surface-d);
+	border: 1px solid var(--p-surface-300);
 	padding: 1em 1em;
 }
 .repo-list .repo-id {

@@ -599,7 +599,7 @@ export default {
 }
 .col-page .tools {
 	margin-top: 0;
-	background-color: var(--surface-b);
+	background-color: var(--p-surface-100);
 	padding: 0.3rem 0;
 	font-size: 90%;
 	height: 65px;
