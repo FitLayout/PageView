@@ -660,20 +660,20 @@ export default {
 	font-weight: bold;
 	height: 2em;
 }
-.splitter-row .p-tabview {
+.splitter-row .p-tabs {
 	height: calc(100% - 2em);
 }
-.splitter-row .p-tabview .p-tabview-nav {
+.splitter-row .p-tabs .p-tablist {
 	height: 2em;
 }
-.splitter-row .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+.splitter-row .p-tabs .p-tablist .p-tab {
 	padding: 0.2em 1em 0.2em 1em;
 }
-.splitter-row .p-tabview .p-tabview-panels {
+.splitter-row .p-tabs .p-tabpanels {
 	height: calc(100% - 2em);
 	padding: 0;
 }
-.splitter-row .p-tabview .p-tabview-panel {
+.splitter-row .p-tabs .p-tabpanel {
 	height: 100%;
 }
 .descr-scroll {
@@ -699,14 +699,14 @@ export default {
 th.p-filter-column .p-inputtext {
 	padding: 0.25em 0.5em;
 }
-.splitter-row .p-tabview .p-tabview-nav li .p-tabview-nav-link .p-badge {
+.splitter-row .p-tabs .p-tablist li .p-tabview-nav-link .p-badge {
 	min-width: 1.5em;
 	height: 1.5em;
 	line-height: 1.5em;
 	margin-top: -0.5em;
 	margin-left: 0.5em;
 }
-.splitter-row .p-tabview .p-tabview-panel {
+.splitter-row .p-tabs .p-tabpanel {
 	position: relative; /* because of annotationGui inside */
 }
 input.p-inputtext.p-component.descInput {

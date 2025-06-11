@@ -30,6 +30,23 @@ body {
     --p-menubar-background: var(--p-content-hover-background);
 }
 
+/* Color scheme */
+html:root {
+    /* make warn buttons yellow */
+    --p-button-warn-background: var(--p-yellow-400);
+    --p-button-warn-border-color: var(--p-yellow-400);
+    --p-button-warn-hover-background: var(--p-yellow-500);
+    --p-button-warn-hover-border-color: var(--p-yellow-500);
+    --p-button-warn-color: black;
+    --p-button-warn-hover-color: black;
+    --p-button-warn-active-color: black;
+    /* make secondary buttons darker */
+    --p-button-secondary-background: var(--p-slate-300);
+    --p-button-secondary-border-color: var(--p-slate-300);
+    --p-button-secondary-hover-background: var(--p-slate-400);
+    --p-button-secondary-hover-border-color: var(--p-slate-400);
+}
+
 /* Some default element style, currently not used (we use the browser defaults) */
 /*h1, h2, h3, h4 {
 	font-weight: bold;
