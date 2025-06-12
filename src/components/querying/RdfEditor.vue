@@ -30,17 +30,15 @@
 	    </tr>
 	</tbody>
   </table>
-  <div class="grid under_editor_space">
-    <div class="col-4 col-offset-4">
-      <Button @click="queryData" label="Execute" class="p-button-sm" 
-      v-tooltip.bottom="'Execute the query'"/>
-
+  <div class="grid grid-cols-12 gap-4 under_editor_space">
+    <div class="col-start-4 col-span-3">
+      <Button @click="queryData" label="Execute" class="w-full" v-tooltip.bottom="'Execute the query'"/>
     </div>
-    <div class="col-4">
-      <InputText id="name" v-model="queryName" type="text" class="p-inputtext-sm" placeholder="Save query as ..."/>
-      <Button label="Save" @click="saveQuery" class="p-button-sm p-button-secondary save_button_margin"
+    <div class="col-start-8 col-span-5">
+      <InputText id="name" v-model="queryName" type="text" placeholder="Save query as ..."/>
+      <Button label="Save" @click="saveQuery" class="p-button-secondary save_button_margin"
         v-tooltip.bottom="'Save new or edited query'"/>
-        <Button label="Saved queries" @click="savedQueriesShown = true" class="p-button-sm p-button-success ml-2"
+      <Button label="Saved queries" @click="savedQueriesShown = true" class="p-button-success ml-2"
         v-tooltip.bottom="'Show saved queries'"/>
     </div>
   </div>
@@ -526,8 +524,8 @@
   }
 
   .under_editor_space {
-    text-align:center;
-    margin-top:5px !important;
+    text-align: center;
+    padding: 1.5em 0;
   }
 
   .editor_table, .under_editor_space {
