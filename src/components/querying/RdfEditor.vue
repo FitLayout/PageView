@@ -20,13 +20,6 @@
 	      <td class="width_95">
 	        <prism-editor class="my-editor" v-model="code" :highlight="highlighter" line-numbers></prism-editor>
 	      </td>
-	      <td>
-	        <tr v-for="i in newRowsCount" :key="i" :id="i-oldRowsCount+1" class="hidden_tr">
-	          <td v-tooltip.right="errorText" class="">
-	            <i class="pi pi-times-circle red_text"></i>
-	          </td>
-	        </tr>
-	      </td>
 	    </tr>
 	</tbody>
   </table>
@@ -107,12 +100,6 @@
       valid: false,
       // array containing all prefix and namespace tuples
       prefixNsTuples: [],
-      // number of rows in the query
-      newRowsCount: 0,
-      // number of rows in query before its change
-      oldRowsCount: 1,
-      // text of the error found during syntax check
-      errorText: ' ',
       // parser used for query validation
       parser: new Sparqljs.Parser(),
       // already added prefixes
@@ -153,30 +140,27 @@
     methods: {
       // creating syntax highlighted version of the query
       highlighter(code) {
-        // user written query in editor changed
-        if(this.newRowsCount != 0) {
-          // delete not needed rows used for showing the error 
-          this.deleteDivs();
-          // set the new row counts
-          this.oldRowsCount = this.newRowsCount+1; // old 6 new 5
-        } 
-
         // creation of prefix declarations 
         this.searchPrefixesToComplete(code);
-
         // visualize prefix declarations in the editor by setting the HTML content
         this.setPrefixDeclarationsTdInnerHtml();
-        
-        // count the user written text rows
-        code.split("\n").forEach(_ => {
-          this.newRowsCount++;
-        })
-
         // 
         // languages.<insert language> to return html with markup 
         let highlightedCode = highlight(code, languages.sparql); 
-
         return highlightedCode;
+      },
+
+      showError(lineNo, errorText) {
+          let lines = document.querySelectorAll('.prism-editor-wrapper .prism-editor__line-number'); // list of line numbers
+          for (let i = 0; i < lines.length; i++) {
+            if (i === lineNo - 1) {
+              lines[i].classList.add('error-line'); // adding error line class
+              lines[i].title = errorText; // setting error text to the line number
+            } else {
+              lines[i].classList.remove('error-line'); // removing error line class
+              lines[i].title = ''; // removing error text from the line number
+            }
+          }
       },
 
       // fetching all namespaces present in the repository
@@ -283,37 +267,28 @@
       },
 
       // validation of the query typed in by the user 
-      validateQuery(code,parser){
+      validateQuery(code, parser) {
         try {
           // syntax validation by parser
+          console.log(code);
           parser.parse(code);
           this.valid = true;
-          this.errorText = ' ';
+          this.showError(-1, '');
         } catch (error) {
           // parsing the number of the line on which the error is
           // from the error.message 
-          this.errorText = error.message;
-          const nthIndxOfSpace = this.nthIndex(this.errorText,' ',4) + 1;
-          const indxOfColon = this.errorText.indexOf(':');
-          const rowNumWithError = this.errorText.substring(nthIndxOfSpace,indxOfColon); 
-
+          let errorText = error.message;
+          const nthIndxOfSpace = this.nthIndex(errorText,' ',4) + 1;
+          const indxOfColon = errorText.indexOf(':');
+          const rowNumWithError = errorText.substring(nthIndxOfSpace, indxOfColon); 
+          console.log('rowNumWithError' + rowNumWithError + " [[" + errorText);
           // handling if in the error.message the line number is not specified
           if(!isNaN(rowNumWithError)){
             // line number is present
-            document.getElementById(rowNumWithError).style.visibility = "visible";
+            this.showError(parseInt(rowNumWithError), errorText);
             this.$toast.add({severity:'error', summary: 'Error Message', detail:'Query contains error!', life: 3000});
           } else {
-            this.$toast.add({severity:'error', summary: 'Error Message', detail:'Query contains error: '+this.errorText});
-          }
-        }
-      },
-
-      // function to remove error icon placeholder divs from document 
-      deleteDivs(){
-        for (let index = 1; index <= this.newRowsCount-this.oldRowsCount+1; index++) {
-          const el = document.getElementById(index);
-          if (el) {
-            el.parentNode.removeChild(el);
+            this.$toast.add({severity:'error', summary: 'Error Message', detail:'Query contains error: '+errorText});
           }
         }
       },
@@ -519,8 +494,14 @@
     visibility: hidden;
   }
 
-  .red_text{
+  .red_text {
     color:red;
+  }
+
+  .error-line {
+    background-color: var(--p-button-danger-background);
+    color: var(--p-button-danger-color) !important;
+    font-weight: bold;
   }
 
   .under_editor_space {
