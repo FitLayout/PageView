@@ -43,7 +43,7 @@
 				<Button type="button" icon="pi pi-plus" :label="'New repository'" @click="toggleCreate" aria:haspopup="true" aria-controls="overlay_panel" />
 
 				<Popover ref="op" appendTo="body" :showCloseIcon="true" id="overlay_panel" style="width: 450px" :breakpoints="{'960px': '75vw'}">
-					<div class="p-fluid formgrid grid grid-cols-12 gap-4">
+					<div class="formgrid grid grid-cols-12 gap-4">
 						<div class="field col-span-12">
 							<label for="repo-descr">Name</label>
 							<InputText id="repo-descr" type="text" class="p-inputtext p-component w-full" placeholder="Enter the repository name" v-model="newDescr" ref="inputDescr" />
@@ -71,10 +71,10 @@
 					it may be also a good idea to <a href="/auth/#/login">sign in</a>.--></p>
 				</Popover>
 				<Popover ref="opRemind" appendTo="body" :showCloseIcon="true" id="op_remind" style="width: 450px" :breakpoints="{'960px': '75vw'}">
-					<div class="p-fluid">
+					<div class="formgroup-inline">
 						<div class="field">
 							<label for="remind-email">Your e-mail</label>
-							<InputText id="remind-email" type="email" placeholder="Your e-mail" v-model="remindEmail" />
+							<InputText id="remind-email" type="email" placeholder="Your e-mail" v-model="remindEmail" /><br/>
 							<small id="repo-email-help">We will e-mail you the links to all repositories associated with the given e-mail (if any).</small>
 						</div>
 						<Button type="button" icon="pi pi-check" label="Send reminder" v-on:click="sendReminder" />

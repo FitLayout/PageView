@@ -95,10 +95,6 @@ ul {
     margin-right: 1rem;
 }
 
-.field {
-    margin-bottom: 1rem;
-}
-
 .formgroup-inline .field>label, .formgroup-inline .field-checkbox>label, .formgroup-inline .field-radiobutton>label {
     margin-right: .5rem;
     margin-bottom: 0;
