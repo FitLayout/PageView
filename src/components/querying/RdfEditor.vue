@@ -36,6 +36,12 @@
     </div>
   </div>
 
+  <Popover ref="errorPopover">
+    <div class="syntax-error-message">
+      {{ errorText }}
+    </div>
+  </Popover>
+
   <Dialog v-model:visible="savedQueriesShown" modal header="Saved queries" :style="{ width: '50vw' }">
     <QueryList @select-query="selectQuery" @use-query="useQuery" />
     <template #footer>
@@ -75,6 +81,7 @@
 
   // Sparql parser to validate query
   import Sparqljs from 'sparqljs';
+import { Popover } from 'primevue';
 
   export default {
     name: 'RdfEditor',
@@ -83,6 +90,7 @@
       Button,
       Toast,
       InputText,
+      Popover,
       Dialog,
       QueryList
     },
@@ -98,6 +106,8 @@
       code: "",
       // if the syntax is valid
       valid: false,
+      // error message when query is not valid
+      errorText: "",
       // array containing all prefix and namespace tuples
       prefixNsTuples: [],
       // parser used for query validation
@@ -155,12 +165,23 @@
           for (let i = 0; i < lines.length; i++) {
             if (i === lineNo - 1) {
               lines[i].classList.add('error-line'); // adding error line class
-              lines[i].title = errorText; // setting error text to the line number
+              lines[i].addEventListener('mouseover', this.showErrorPopover);
+              lines[i].addEventListener('mouseout', this.hideErrorPopover);
             } else {
               lines[i].classList.remove('error-line'); // removing error line class
-              lines[i].title = ''; // removing error text from the line number
+              lines[i].removeEventListener('mouseover', this.showErrorPopover);
+              lines[i].removeEventListener('mouseout', this.hideErrorPopover);
             }
           }
+          this.errorText = errorText; // showing error message
+      },
+
+      showErrorPopover(event) {
+        this.$refs.errorPopover.show(event);
+      },
+
+      hideErrorPopover() {
+        this.$refs.errorPopover.hide();
       },
 
       // fetching all namespaces present in the repository
@@ -270,7 +291,6 @@
       validateQuery(code, parser) {
         try {
           // syntax validation by parser
-          console.log(code);
           parser.parse(code);
           this.valid = true;
           this.showError(-1, '');
@@ -502,6 +522,12 @@
     background-color: var(--p-button-danger-background);
     color: var(--p-button-danger-color) !important;
     font-weight: bold;
+  }
+
+  .syntax-error-message {
+    white-space: pre-wrap;
+    font-family: monospace;
+    max-width: 50em;
   }
 
   .under_editor_space {
