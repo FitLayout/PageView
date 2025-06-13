@@ -252,7 +252,6 @@ export default {
 }
 .menu-row .repo-info {
 	font-size: 80%;
-	vertical-align: 50%;
 }
 .panel-row {
 	padding: 0.5em 1em 0 1em;
