@@ -2,7 +2,7 @@
 	<div :class="paramClass" class="param-field">
 		<div v-if="descr.type=='string'" class="field">
 			<label :for="inputId" >{{descr.name}}</label>
-			<InputText type="text" :id="inputId" :placeholder="descr.name"
+			<InputText type="text" :id="inputId" :placeholder="descr.name"  class="w-full"
 				:minlength="descr.minLength" :data-maxlength="descr.maxLength"
 				v-bind:modelValue="modelValue" 
 				v-tooltip="paramDescription"
@@ -10,7 +10,7 @@
 		</div>
 		<div v-if="descr.type=='int'" class="field">
 			<label :for="inputId" >{{descr.name}}</label>
-			<InputNumber mode="decimal" showButtons :id="inputId"
+			<InputNumber mode="decimal" showButtons :id="inputId" class="w-full"
 				:min="descr.minValue" :max="descr.maxValue"
 				v-bind:modelValue="modelValue" 
 				v-tooltip="paramDescription"
@@ -18,7 +18,7 @@
 		</div>
 		<div v-if="descr.type=='float'" class="field">
 			<label :for="inputId" >{{descr.name}}</label>
-			<InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"
+			<InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"  class="w-full"
 				:min="descr.minValue" :max="descr.maxValue" :step="0.2"
 				v-bind:modelValue="modelValue" 
 				v-tooltip="paramDescription"
@@ -77,7 +77,7 @@ export default {
 
 <style>
 .p-int, .p-float, .p-boolean, .p-string {
-	display: inline-block;
+	flex: 0 0 auto;
 	vertical-align: bottom;
 }
 .p-string {

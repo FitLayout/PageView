@@ -88,7 +88,7 @@ ul {
 .formgroup-inline {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: flex-end;
 }
 
 .formgroup-inline .field, .formgroup-inline .field-checkbox, .formgroup-inline .field-radiobutton {
@@ -98,6 +98,21 @@ ul {
 .formgroup-inline .field>label, .formgroup-inline .field-checkbox>label, .formgroup-inline .field-radiobutton>label {
     margin-right: .5rem;
     margin-bottom: 0;
+}
+
+.formgroup-inline .field-checkbox {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.formgroup-inline .field-checkbox>label {
+    margin-left: .5rem;
+    line-height: 1;
+}
+
+.formgroup-inline .p-inputwrapper.w-full input { /* shrink input fields to the component width */
+	width: 100%;
 }
 
 .formgrid .field>label {

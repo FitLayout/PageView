@@ -1,5 +1,5 @@
 <template>
-	<div class="param-panel p-fluid">
+	<div class="param-panel formgroup-inline">
 		<ParamInput v-for="param in descr" :descr="param" :key="param.name" v-model="curValues[param.name]"></ParamInput>
 	</div>
 </template>
