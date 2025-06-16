@@ -122,11 +122,11 @@ export default {
 	border-radius: 5px;
 	font-weight: bold;
 }
-#mainmenu .selected .p-menuitem-link {
+#mainmenu .selected .p-menubar-item-link {
 	background-color: var(--p-primary-color);
 }
-#mainmenu .selected .p-menuitem-link .p-menuitem-text {
-	color: var(--p-primary-color-text);
+#mainmenu .selected .p-menubar-item-link .p-menubar-item-label {
+	color: var(--p-primary-contrast-color);
 }
 .jumbotron {
 	margin: 10em 0 15em 0;

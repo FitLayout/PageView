@@ -137,32 +137,32 @@
 					{{ error }}
 					</div>
 					<div class="tools" v-if="!loading && !error">
-						<div class="p-fluid formgrid grid grid-cols-12 gap-4">
-							<div class="field col">
+						<div class="formgrid flex flex-row gap-4">
+							<div class="field flex-auto">
 								<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
 								<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
 							</div>
-							<div class="field col">
+							<div class="field">
 								<label for="screen" class="form-label">Screenshot</label>
 								<ToggleSwitch id="screen" v-model="screenshot" />
 							</div>
-							<div class="field col">
+							<div class="field">
 								<label for="outlines" class="form-label">Show outlines</label>
 								<ToggleSwitch id="outlines" v-model="outlines" title="Show area bounds" />
 							</div>
-							<div class="field col">
+							<div class="field">
 								<label for="selection" class="form-label">Selection</label>
 								<ToggleSwitch id="selection" v-model="rectSelection" title="Selection mode" />
 							</div>
-							<div class="field col">
+							<div class="field">
 								<label for="showTags" class="form-label">Show tags</label>
 								<ToggleSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
 							</div>
-							<div class="field col">
+							<div class="field">
 								<label for="showRelations" class="form-label">Show relations</label>
 								<ToggleSwitch id="showRelations" v-model="showRelations" />
 							</div>
-							<div class="field col">
+							<div class="field">
 								<label for="dragSelection" class="form-label">Drag select</label>
 								<ToggleSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
 							</div>
@@ -642,14 +642,14 @@ export default {
 	left: 0;
 	width: 100%;
 }
-.box-tree .p-tree .p-tree-container .p-treenode .p-treenode-content {
+.box-tree .p-tree .p-tree-root .p-tree-node .p-tree-node-content {
 	padding: 0;
 }
-.box-tree .p-tree .p-tree-container .p-treenode .p-treenode-content .p-tree-toggler {
+.box-tree .p-tree .p-tree-root .p-tree-node .p-tree-node-content .p-tree-node-toggle-button {
 	width: 1.5rem;
 	height: 1.5rem;
 }
-.box-tree .p-treenode-label {
+.box-tree .p-tree-node-label {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
