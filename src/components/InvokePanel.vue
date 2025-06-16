@@ -257,6 +257,7 @@ export default {
 }
 .service button.inl {
 	width: auto;
+	margin-bottom: 0.5em;
 }
 .loading {
 	display: inline-block;
