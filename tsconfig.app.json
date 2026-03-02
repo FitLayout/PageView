@@ -7,6 +7,10 @@
 
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    "noImplicitAny": false,
+    "useUnknownInCatchVariables": false,
+    "strictNullChecks": false
   }
 }

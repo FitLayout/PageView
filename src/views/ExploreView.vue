@@ -10,7 +10,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
@@ -21,7 +22,7 @@ import SubjectReferences from '../components/SubjectReferences.vue';
 import IriDecoder from '../common/iridecoder.js';
 
 
-export default {
+export default defineComponent({
 	name: 'ExploreView',
 	components: {
 		Button,
@@ -76,7 +77,7 @@ export default {
 			this.showIri(iri);
 		}
 	}
-}
+})
 </script>
 
 <style>

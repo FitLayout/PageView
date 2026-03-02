@@ -1,23 +1,23 @@
 export default class TreeModel {
 
-	root = null;
+	root: any = null;
 
 	constructor() {
 	}
 
-	createForBoxes(boxlist) {
+	createForBoxes(boxlist: any[]): this {
 		this.root = this.createModel(boxlist, this.createBoxItem);
 		return this;
 	}
 
-	createForAreas(boxlist) {
+	createForAreas(boxlist: any[]): this {
 		this.root = this.createModel(boxlist, this.createAreaItem);
 		return this;
 	}
 
 	//============================================================================
 
-	createModel(boxlist, createItem) {
+	createModel(boxlist: any[], createItem: (box: any) => any): any {
 		let root = null;
 		let rootBox = null;
 		// find the root
@@ -33,7 +33,7 @@ export default class TreeModel {
 		return root;
 	}
 
-	addChildren(curbox, target, boxlist, createItem) {
+	addChildren(curbox: any, target: any, boxlist: any[], createItem: (box: any) => any): void {
 		for (let box of boxlist) {
 			if (box.isChildOf === curbox) {
 				const child = createItem(box);
@@ -42,14 +42,14 @@ export default class TreeModel {
 				this.addChildren(box, child, boxlist, createItem);
 			}
 		}
-	} 
+	}
 
-	createBoxItem(box) {
-		let ret = {};
+	createBoxItem(box: any): any {
+		let ret: any = {};
 		ret.key = box.documentOrder;
 		ret.data = box;
 
-		let label = box.documentOrder;
+		let label: any = box.documentOrder;
 		if (box.text !== undefined) {
 			label = box.text;
 			ret.icon = 'pi pi-fw pi-file';
@@ -64,7 +64,7 @@ export default class TreeModel {
 					}
 					label += ' ' + attr._label + '=' + val;
 				}
-			} 
+			}
 			label += '>';
 			ret.icon = 'pi pi-fw pi-clone';
 		} else {
@@ -76,12 +76,12 @@ export default class TreeModel {
 		return ret;
 	}
 
-	createAreaItem(box) {
-		let ret = {};
+	createAreaItem(box: any): any {
+		let ret: any = {};
 		ret.key = box.documentOrder;
 		ret.data = box;
 
-		let label = box.documentOrder;
+		let label: any = box.documentOrder;
 		if (box._label !== undefined) {
 			label = box._label;
 			ret.icon = 'pi pi-fw pi-file';

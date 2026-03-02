@@ -1,4 +1,7 @@
-import {Model as BoxModel} from '../common/boxMappers.js';
+import {Model as BoxModel} from '../common/boxMappers';
+import IriDecoder from '@/rdf4j-vue-components/src/common/iridecoder';
+import type { ApiClient as RdfApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
+import type { AskQueryResult, ContextDescription, RdfValueBinding, RdfValueSpec, RepositoryInfo, SavedQuery, SelectQueryResult, UpdateQueryResult } from '@/rdf4j-vue-components/src/common/types';
 
 const develMode = (window.location.port === '3000'); //development server detection
 const localMode = (window.location.hostname === 'localhost'); //local mode (http allowed)
@@ -9,50 +12,66 @@ const SERVER_ROOT = flhost + '/api';
 const REPOSITORY_ADMIN_ENDPOINT = SERVER_ROOT + '/repository';
 const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 
-// SELECT response size limit (in rows) sent to the endpoint. 
+// SELECT response size limit (in rows) sent to the endpoint.
 // Note that the server also has a maximal allowed limit that cannot be exceeded.
-const QUERY_LIMIT = 2048; 
+const QUERY_LIMIT = 2048;
 
 
-export class ApiClient {
+export class ApiClient implements RdfApiClient {
 
-	currentRepo = 'default';
-	onNotAuthorized = null;
+	currentRepo: string = 'default';
+	onNotAuthorized: (() => void) | null = null;
 
-	repositoryRoot() {
+	// Properties required by RdfApiClient interface
+	serverUrl: string = SERVER_ROOT;
+	serverLogin: string | null = null;
+
+	private cachedIriDecoder: IriDecoder | null = null;
+
+	repositoryRoot(): string {
 		return SERVER_ROOT + '/r/' + this.currentRepo;
 	}
 
-	artifactEndpoint() {
+	artifactEndpoint(): string {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/artifact';
 	}
 
-	repositoryEndpoint() {
+	repositoryEndpoint(): string {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/repository';
 	}
 
-	serviceEndpoint() {
+	serviceEndpoint(): string {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/service';
 	}
 
-	operatorEndpoint() {
+	operatorEndpoint(): string {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/operator';
 	}
 
-	tagsEndpoint() {
-		return SERVER_ROOT + '/r/' + this.currentRepo + '/tags';		
+	tagsEndpoint(): string {
+		return SERVER_ROOT + '/r/' + this.currentRepo + '/tags';
 	}
 
-	queriesEndpoint() {
+	queriesEndpoint(): string {
 		return SERVER_ROOT + '/r/' + this.currentRepo + '/query';
 	}
 
-	setRepository(repo) {
+	setServerUrl(url: string): void {
+		this.serverUrl = url;
+	}
+
+	async login(username: string | null, password: string | null): Promise<void> {
+		this.serverLogin = username;
+		// JWT-based auth is used; login is handled separately via getUserInfo()
+	}
+
+	async setRepository(repo: string): Promise<void> {
 		this.currentRepo = repo;
+		this.cachedIriDecoder = null;
 		this.touch(); // async, just for updating the last access time
 	}
 
-	async touch() {
+	async touch(): Promise<void> {
 		const url = this.repositoryEndpoint() + '/touch';
 		await fetch(url, {
 			method: 'GET',
@@ -60,7 +79,7 @@ export class ApiClient {
 		});
 	}
 
-	async forceInitMetadata() {
+	async forceInitMetadata(): Promise<void> {
 		const url = this.repositoryEndpoint() + '/forceInitRepo';
 		await fetch(url, {
 			method: 'GET',
@@ -68,7 +87,7 @@ export class ApiClient {
 		});
 	}
 
-    async getTypeByIRI(iri) {
+    async getTypeByIRI(iri: string): Promise<string> {
 		const url = this.repositoryEndpoint() + '/type/' + encodeURIComponent(iri);
 		let response = await fetch(url, {
 			method: 'GET',
@@ -79,7 +98,7 @@ export class ApiClient {
 		return data.result;
 	}
 
-    async getSubjectDescription(subjectIri) {
+    async getSubjectDescription(subjectIri: string): Promise<SelectQueryResult> {
 		const url = this.repositoryEndpoint() + '/subject/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
@@ -90,7 +109,7 @@ export class ApiClient {
 		return data;
 	}
 
-    async getSubjectDescriptionObj(subjectIri) {
+    async getSubjectDescriptionObj(subjectIri: string): Promise<any> {
 		const url = this.repositoryEndpoint() + '/describe/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
@@ -101,7 +120,7 @@ export class ApiClient {
 		return data.description;
 	}
 
-    async getSubjectReferences(subjectIri) {
+    async getSubjectReferences(subjectIri: string): Promise<SelectQueryResult> {
 		const url = this.repositoryEndpoint() + '/object/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
@@ -112,7 +131,11 @@ export class ApiClient {
 		return data;
 	}
 
-    async getSubjectValue(subjectIri, propertyIri) {
+	async getSubjectMentions(subjectIri: string): Promise<SelectQueryResult> {
+		return this.getSubjectReferences(subjectIri);
+	}
+
+    async getSubjectValue(subjectIri: string, propertyIri: string): Promise<RdfValueSpec> {
 		const url = this.repositoryEndpoint() + '/subject/' + encodeURIComponent(subjectIri) + '/' + encodeURIComponent(propertyIri);
 		let response = await fetch(url, {
 			method: 'GET',
@@ -123,7 +146,7 @@ export class ApiClient {
 		return data;
 	}
 
-	async selectQuery(query, limit) {
+	async selectQuery(query: string, limit?: number): Promise<SelectQueryResult> {
 		const qlimit = (limit === undefined) ? QUERY_LIMIT : limit
 		const url = this.repositoryEndpoint() + '/selectQuery?limit=' + qlimit;
 		let response = await fetch(url, {
@@ -136,13 +159,51 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 		const data = await response.json();
 		return data;
 	}
 
-	async updateQuery(query) {
+	async askQuery(query: string, limit?: number): Promise<AskQueryResult> {
+		const qlimit = (limit === undefined) ? QUERY_LIMIT : limit
+		const url = this.repositoryEndpoint() + '/selectQuery?limit=' + qlimit;
+		let response = await fetch(url, {
+			method: 'POST',
+			headers: this.headers({
+				'Content-Type': 'application/sparql-query'
+			}),
+			body: query
+		});
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
+		const data = await response.json();
+		return data;
+	}
+
+	async constructQuery(query: string, accept: string, limit?: number): Promise<string> {
+		const qlimit = (limit === undefined) ? QUERY_LIMIT : limit
+		const url = this.repositoryEndpoint() + '/selectQuery?limit=' + qlimit;
+		let response = await fetch(url, {
+			method: 'POST',
+			headers: this.headers({
+				'Content-Type': 'application/sparql-query',
+				'Accept': accept
+			}),
+			body: query
+		});
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
+		return await response.text();
+	}
+
+	async updateQuery(query: string): Promise<UpdateQueryResult> {
 		const url = this.repositoryEndpoint() + '/updateQuery';
 		let response = await fetch(url, {
 			method: 'POST',
@@ -154,12 +215,12 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
-		return true;
+		return { success: true };
 	}
 
-	async getContexts() {
+	async getContexts(): Promise<ContextDescription[]> {
 		const url = this.repositoryEndpoint() + '/contexts';
 		let response = await fetch(url, {
 			method: 'GET',
@@ -168,17 +229,17 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 		const resp = await response.json();
-		let ret = [];
+		let ret: ContextDescription[] = [];
 		for (let bind of resp.results.bindings) {
 			ret.push({ iri: bind.contextID.value });
 		}
 		return ret;
 	}
 
-	async exportContext(contextIri, mime, thenFunction) {
+	async exportContext(contextIri: string, mime: string, thenFunction: (blob: Blob) => void): Promise<void> {
 		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent('<' + contextIri + '>');
 		let response = await fetch(url, {
 			method: 'GET',
@@ -189,12 +250,12 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 		response.blob().then(thenFunction);
 	}
 
-	async replaceContext(contextIri, mime, data) {
+	async replaceContext(contextIri: string, mime: string, data: string): Promise<void> {
 		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent('<' + contextIri + '>');
 		let response = await fetch(url, {
 			method: 'PUT',
@@ -205,12 +266,12 @@ export class ApiClient {
 		})
 		this.checkAuth(response);
 		if (!response.ok) {
-			let data = await response.json();
-			throw new Error(data.message);
+			let rdata = await response.json();
+			throw new Error(rdata.message);
 		}
 	}
 
-	async deleteContext(contextIri) {
+	async deleteContext(contextIri: string): Promise<boolean> {
 		const url = this.repositoryEndpoint() + '/statements?context=' + encodeURIComponent('<' + contextIri + '>');
 		let response = await fetch(url, {
 			method: 'DELETE',
@@ -219,77 +280,77 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 		const data = await response.json();
 		return data.status == 'ok';
 	}
 
-	async fetchArtifact(artifactIri) {
-			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
-			let pageModel = new BoxModel();
-			let response = await fetch(url, {
-				method: 'GET',
-				headers: this.headers({
-					'Accept': 'text/turtle'
-				})
+	async fetchArtifact(artifactIri: string): Promise<any> {
+		const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
+		let pageModel = new BoxModel();
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers({
+				'Accept': 'text/turtle'
 			})
+		})
 
-			this.checkAuth(response);
-			if (!response.ok) {
-				let error = response.status;
-				throw new Error(error);
-			}
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
 
-			await pageModel.parse(await response.text());
-			const type = pageModel.getType(artifactIri);
-			const artifact = pageModel.getObject(artifactIri, type);
+		await pageModel.parse(await response.text());
+		const type = pageModel.getType(artifactIri);
+		const artifact = pageModel.getObject(artifactIri, type!);
 
-			return artifact;
+		return artifact;
 	}
 
-	async fetchArtifactInfo(artifactIri) {
-			const url = this.artifactEndpoint() + '/info/' + encodeURIComponent(artifactIri);
-			let pageModel = new BoxModel();
-			let response = await fetch(url, {
-				method: 'GET',
-				headers: this.headers({
-					'Accept': 'text/turtle'
-				})
+	async fetchArtifactInfo(artifactIri: string): Promise<any> {
+		const url = this.artifactEndpoint() + '/info/' + encodeURIComponent(artifactIri);
+		let pageModel = new BoxModel();
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers({
+				'Accept': 'text/turtle'
 			})
+		})
 
-			this.checkAuth(response);
-			if (!response.ok) {
-				let error = response.status;
-				throw new Error(error);
-			}
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
 
-			await pageModel.parse(await response.text());
-			const type = pageModel.getType(artifactIri);
-			const artifact = pageModel.getObject(artifactIri, type);
+		await pageModel.parse(await response.text());
+		const type = pageModel.getType(artifactIri);
+		const artifact = pageModel.getObject(artifactIri, type!);
 
-			return artifact;
+		return artifact;
 	}
 
-	async exportArtifact(artifactIri, mime, thenFunction) {
-			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
-			let response = await fetch(url, {
-				method: 'GET',
-				headers: this.headers({
-					'Accept': mime
-				})
+	async exportArtifact(artifactIri: string, mime: string, thenFunction: (blob: Blob) => void): Promise<void> {
+		const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers({
+				'Accept': mime
 			})
+		})
 
-			this.checkAuth(response);
-			if (!response.ok) {
-				let error = response.status;
-				throw new Error(error);
-			}
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
 
-			response.blob().then(thenFunction);
+		response.blob().then(thenFunction);
 	}
 
-	async fetchArtifactInfoAll() {
+	async fetchArtifactInfoAll(): Promise<any[]> {
 		const url = this.artifactEndpoint();
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
@@ -302,14 +363,14 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 
 		await pageModel.parse(await response.text());
 		return pageModel.getAllObjects();
 	}
 
-	async fetchArtifactInfoForPage(pageIri) {
+	async fetchArtifactInfoForPage(pageIri: string): Promise<any[]> {
 		const url = this.artifactEndpoint() + '?page=' + encodeURIComponent(pageIri);
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
@@ -322,16 +383,16 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 
 		await pageModel.parse(await response.text());
 		return pageModel.getAllObjects();
 	}
 
-	async createArtifact(serviceId, params, srcIri) {
+	async createArtifact(serviceId: string, params: object, srcIri: string | null): Promise<string> {
 		const url = this.artifactEndpoint() + '/create';
-		const payload = {
+		const payload: any = {
 			serviceId: serviceId,
 			params: params
 		};
@@ -356,44 +417,44 @@ export class ApiClient {
 			const data = await response.json();
 			return data.result;
 
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async deleteArtifact(artifactIri) {
-			const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
-			let response = await fetch(url, {
-				method: 'DELETE',
-				headers: this.headers()
-			})
-			this.checkAuth(response);
-			if (!response.ok) {
-				let error = response.status;
-				throw new Error(error);
-			}
-			const data = await response.json();
-			return data.status == 'ok';
+	async deleteArtifact(artifactIri: string): Promise<boolean> {
+		const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
+		let response = await fetch(url, {
+			method: 'DELETE',
+			headers: this.headers()
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
+		const data = await response.json();
+		return data.status == 'ok';
 	}
 
-	async refreshArtifact(artifactIri) {
-			const url = this.artifactEndpoint() + '/refresh/' + encodeURIComponent(artifactIri);
-			let response = await fetch(url, {
-				method: 'GET',
-				headers: this.headers()
-			})
-			this.checkAuth(response);
-			if (!response.ok) {
-				let error = response.status;
-				throw new Error(error);
-			}
-			const data = await response.json();
-			return data.status == 'ok';
+	async refreshArtifact(artifactIri: string): Promise<boolean> {
+		const url = this.artifactEndpoint() + '/refresh/' + encodeURIComponent(artifactIri);
+		let response = await fetch(url, {
+			method: 'GET',
+			headers: this.headers()
+		})
+		this.checkAuth(response);
+		if (!response.ok) {
+			let error = response.status;
+			throw new Error(String(error));
+		}
+		const data = await response.json();
+		return data.status == 'ok';
 	}
 
 	//================================================================================
 
-	async addValue(subjectIri, predicateIri, value, artifactIri) {
+	async addValue(subjectIri: string, predicateIri: string, value: any, artifactIri: string): Promise<void> {
 		const url = this.repositoryEndpoint() + '/add/';
 		const payload = {
 			s: subjectIri,
@@ -416,12 +477,12 @@ export class ApiClient {
 				throw new Error(data.message);
 			}
 
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async deleteValue(subjectIri, predicateIri, artifactIri) {
+	async deleteValue(subjectIri: string, predicateIri: string, artifactIri: string): Promise<boolean> {
 		const url = this.repositoryEndpoint()
 			+ '/statements?context=' + encodeURIComponent('<' + artifactIri + '>')
 			+ '&subj=' + encodeURIComponent('<' + subjectIri + '>')
@@ -433,13 +494,13 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 		const data = await response.json();
 		return data.status == 'ok';
 	}
 
-	async addTag(subjectIri, tagIri, artifactIri) {
+	async addTag(subjectIri: string, tagIri: string, artifactIri: string): Promise<void> {
 		const url = this.repositoryEndpoint() + '/add/';
 		const payload = {
 			s: subjectIri,
@@ -462,12 +523,12 @@ export class ApiClient {
 				throw new Error(data.message);
 			}
 
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async deleteTag(subjectIri, tagIri, artifactIri) {
+	async deleteTag(subjectIri: string, tagIri: string, artifactIri: string): Promise<boolean> {
 		const predicateIri = 'http://fitlayout.github.io/ontology/segmentation.owl#hasTag';
 		const url = this.repositoryEndpoint()
 			+ '/statements?context=' + encodeURIComponent('<' + artifactIri + '>')
@@ -481,7 +542,7 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
 		const data = await response.json();
 		return data.status == 'ok';
@@ -489,7 +550,7 @@ export class ApiClient {
 
 	//================================================================================
 
-	async getStorageStatus() {
+	async getStorageStatus(): Promise<any> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/status';
 		try {
 			let response = await fetch(url, {
@@ -505,12 +566,12 @@ export class ApiClient {
 
 			const data = await response.json();
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
 	}
 
-	async listRepositories() {
+	async listRepositories(): Promise<RepositoryInfo[]> {
 		const url = REPOSITORY_ADMIN_ENDPOINT;
 		try {
 			let response = await fetch(url, {
@@ -525,13 +586,13 @@ export class ApiClient {
 			}
 
 			const data = await response.json();
-			return data;
-		} catch (e) {
+			return data as RepositoryInfo[];
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
 	}
 
-	async listAllRepositories() {
+	async listAllRepositories(): Promise<any[]> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/all';
 		try {
 			let response = await fetch(url, {
@@ -547,12 +608,12 @@ export class ApiClient {
 
 			const data = await response.json();
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
 	}
 
-	async getRepositoryInfo(id) {
+	async getRepositoryInfo(id: string): Promise<any> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
 		try {
 			let response = await fetch(url, {
@@ -568,24 +629,18 @@ export class ApiClient {
 
 			const data = await response.json();
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
 	}
 
-	/**
-	 * 
-	 * @param {*} ids a collection of IDs
-	 * @param {*} onError a function that is called when some id cannot be fetched
-	 */
-	async getRepositoryInfos(ids, onError) {
-		let ret = [];
+	async getRepositoryInfos(ids: string[], onError?: (id: string, e: any) => void): Promise<any[]> {
+		let ret: any[] = [];
 		for (const id of ids) {
 			try {
 				const info = await this.getRepositoryInfo(id);
 				ret.push(info);
 			} catch (e) {
-				//console.error(e);
 				if (typeof onError === 'function') {
 					onError(id, e);
 				}
@@ -594,7 +649,7 @@ export class ApiClient {
 		return ret;
 	}
 
-	async createRepository(data) {
+	async createRepository(data: object): Promise<any> {
 		const url = REPOSITORY_ADMIN_ENDPOINT;
 		try {
 			let response = await fetch(url, {
@@ -613,12 +668,12 @@ export class ApiClient {
 
 			return rdata;
 
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async updateRepositoryInfo(id, data) {
+	async updateRepositoryInfo(id: string, data: object): Promise<any> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
 		try {
 			let response = await fetch(url, {
@@ -637,12 +692,12 @@ export class ApiClient {
 
 			return rdata;
 
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async sendReminder(email) {
+	async sendReminder(email: string): Promise<any> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/remind/' + encodeURIComponent(email);
 		try {
 			let response = await fetch(url, {
@@ -658,7 +713,7 @@ export class ApiClient {
 			}
 
 			return rdata.result;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
@@ -667,9 +722,8 @@ export class ApiClient {
 
 	/**
 	 * Sorts elements in the list based on their documentOrder property.
-	 * @param {*} list 
 	 */
-	sortBoxes(list) {
+	sortBoxes(list: any[]): void {
 		list.sort((a, b) => {
 			if (a.documentOrder < b.documentOrder) {
 				return -1;
@@ -683,7 +737,7 @@ export class ApiClient {
 
 	//================================================================================
 
-	async fetchArtifactServices() {
+	async fetchArtifactServices(): Promise<any> {
 		const url = this.serviceEndpoint();
 		let response = await fetch(url, {
 			method: 'GET',
@@ -694,7 +748,7 @@ export class ApiClient {
 		return data;
 	}
 
-	async getServiceParams(serviceId) {
+	async getServiceParams(serviceId: string): Promise<any> {
 		const url = this.serviceEndpoint() + '/config?' + new URLSearchParams({'id': serviceId});
 		let response = await fetch(url, {
 			method: 'GET',
@@ -707,15 +761,15 @@ export class ApiClient {
 
 	//================================================================================
 
-	hasToken() {
+	hasToken(): boolean {
 		return (localStorage.getItem('jwt') !== null);
 	}
 
-	logout() {
+	logout(): void {
 		localStorage.removeItem('jwt');
 	}
 
-	checkAuth(response) {
+	checkAuth(response: Response): boolean {
 		if (response.status == 401 || response.status == 403) {
 			if (this.onNotAuthorized) {
 				this.onNotAuthorized();
@@ -726,7 +780,7 @@ export class ApiClient {
 		}
 	}
 
-	headers(headers) {
+	headers(headers?: { [key: string]: string }): { [key: string]: string } {
 		const src = headers ? headers : {};
 		const token = localStorage.getItem('jwt');
 		if (token) {
@@ -739,7 +793,7 @@ export class ApiClient {
 		}
 	}
 
-	async getUserInfo() {
+	async getUserInfo(): Promise<any> {
 		const url = AUTH_ENDPOINT + '/userInfo';
 		let response = await fetch(url, {
 			method: 'GET',
@@ -752,7 +806,22 @@ export class ApiClient {
 
 	//================================================================================
 
-	async getTags() {
+	async getIriDecoder(): Promise<IriDecoder> {
+		if (!this.cachedIriDecoder) {
+			const fitlayoutNamespaces: { [key: string]: string } = {
+				b: 'http://fitlayout.github.io/ontology/render.owl#',
+				a: 'http://fitlayout.github.io/ontology/segmentation.owl#',
+				fl: 'http://fitlayout.github.io/ontology/fitlayout.owl#',
+				r: 'http://fitlayout.github.io/resource/'
+			};
+			this.cachedIriDecoder = new IriDecoder(fitlayoutNamespaces);
+		}
+		return this.cachedIriDecoder;
+	}
+
+	//================================================================================
+
+	async getTags(): Promise<any> {
 		const url = this.tagsEndpoint();
 		try {
 			let response = await fetch(url, {
@@ -768,12 +837,12 @@ export class ApiClient {
 
 			const data = await response.json();
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
 	}
 
-	async getSavedQueries() {
+	async getSavedQueries(): Promise<SavedQuery[]> {
 		const url = this.queriesEndpoint();
 		try {
 			let response = await fetch(url, {
@@ -789,12 +858,12 @@ export class ApiClient {
 
 			const data = await response.json();
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
 	}
 
-	async saveQuery(data) {
+	async saveQuery(data: SavedQuery): Promise<void> {
 		const url = this.queriesEndpoint();
 		try {
 			let response = await fetch(url, {
@@ -811,14 +880,12 @@ export class ApiClient {
 				throw new Error(rdata.message);
 			}
 
-			return rdata;
-
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async deleteQuery(queryId) {
+	async deleteQuery(queryId: number): Promise<void> {
 		const url = this.queriesEndpoint() + '/' + queryId;
 		let response = await fetch(url, {
 			method: 'DELETE',
@@ -827,13 +894,11 @@ export class ApiClient {
 		this.checkAuth(response);
 		if (!response.ok) {
 			let error = response.status;
-			throw new Error(error);
+			throw new Error(String(error));
 		}
-		const data = await response.json();
-		return data.status == 'ok';
 	}
 
-	async getNamespaces() {
+	async getNamespaces(): Promise<SelectQueryResult> {
 		const url = this.repositoryEndpoint() + '/namespaces';
 		try {
 			let response = await fetch(url, {
@@ -849,9 +914,32 @@ export class ApiClient {
 
 			const data = await response.json();
 			return data;
-		} catch (e) {
+		} catch (e: any) {
 			throw new Error(e);
-		}		
+		}
+	}
+
+	toObject(binding: RdfValueBinding): object {
+		const obj: { [k: string]: any } = {};
+		for (let prop in binding) {
+			let bind = binding[prop];
+			let val;
+			if (bind.datatype && bind.datatype === 'http://www.w3.org/2001/XMLSchema#boolean') {
+				val = (bind.value === 'true');
+			} else if (bind.datatype && bind.datatype === 'http://www.w3.org/2001/XMLSchema#integer') {
+				val = parseInt(bind.value);
+			} else if (bind.datatype && bind.datatype === 'http://www.w3.org/2001/XMLSchema#decimal') {
+				val = parseFloat(bind.value);
+			} else {
+				val = bind.value;
+			}
+			obj[prop] = val;
+		}
+		return obj;
+	}
+
+	toObjectArray(bindings: RdfValueBinding[]): object[] {
+		return bindings.map(binding => this.toObject(binding));
 	}
 
 }

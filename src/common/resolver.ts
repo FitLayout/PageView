@@ -3,32 +3,27 @@ import SEGM from '../ontology/SEGM.js';
 
 
 /**
- * Resolves the object IRI types and fetches the corresponging pages
- * and other atrifacts.
+ * Resolves the object IRI types and fetches the corresponding pages
+ * and other artifacts.
  */
 export default class ObjectResolver {
 
-	client = null;
+	client: any;
 
-	constructor(apiClient) {
+	constructor(apiClient: any) {
 		this.client = apiClient;
 	}
-	
+
 	/**
 	 * Identifies the type of object identified by the given iri and
 	 * loads the remaining artifacts necessary for displaying the object.
-	 * If some of the artifacts are already present in current status,
-	 * they are not loaded again.
-	 * @param {*} iri 
 	 */
-	async resolveObjectIRI(iri, currentStatus) {
+	async resolveObjectIRI(iri: string, currentStatus: any): Promise<any> {
 		const type = await this.client.getTypeByIRI(iri);
 		// get the general description
 		const descrData = await this.client.getSubjectDescription(iri);
 		const descr = descrData.results.bindings;
-		// get the dependent objects based on the type
-		//console.log('TYPE ' + type);
-		let ret = {}; 
+		let ret: any = {};
 		if (type === BOX.Page) {
 			const page = await this.getPage(iri, currentStatus);
 			ret = {
@@ -120,36 +115,36 @@ export default class ObjectResolver {
 				description: descr,
 				objData: objData,
 				artifactIri: art._iri,
-				artifact: art 
+				artifact: art
 			};
 		}
 		return ret;
 	}
 
-	async getPage(iri, currentStatus) {
+	async getPage(iri: string, currentStatus: any): Promise<any> {
 		if (currentStatus.pageIri === iri && !currentStatus.reloadArtifact) {
 			return currentStatus.page;
 		} else {
 			console.log('RELOADING page');
-			currentStatus.reloadArtifact = false; // artifact reloaded, put the force reload flag down
+			currentStatus.reloadArtifact = false;
 			const page = await this.client.fetchArtifact(iri);
 			this.client.sortBoxes(page.boxes);
 			return page;
 		}
 	}
 
-	async getAreaTree(iri, currentStatus) {
+	async getAreaTree(iri: string, currentStatus: any): Promise<any> {
 		const ret = await this.getArtifact(iri, currentStatus);
 		this.client.sortBoxes(ret.areas);
 		return ret;
 	}
 
-	async getArtifact(iri, currentStatus) {
+	async getArtifact(iri: string, currentStatus: any): Promise<any> {
 		if (currentStatus.artifactIri === iri && !currentStatus.reloadArtifact) {
 			return currentStatus.artifact;
 		} else {
 			console.log('RELOADING atree');
-			currentStatus.reloadArtifact = false; // artifact reloaded, put the force reload flag down
+			currentStatus.reloadArtifact = false;
 			return await this.client.fetchArtifact(iri);
 		}
 	}

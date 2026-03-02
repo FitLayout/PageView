@@ -35,16 +35,17 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import ProgressSpinner from 'primevue/progressspinner';
 
-import LinkButton from '../components/LinkButton.vue';
+import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
 import Iri from '../components/Iri.vue';
 import SubjectInfo from '../components/SubjectInfo.vue';
 
 import BOX from '../ontology/BOX.js';
 
-export default {
+export default defineComponent({
 	name: 'PageDetailView',
 	components: {
 		ProgressSpinner,
@@ -103,7 +104,7 @@ export default {
 		},
 
 	}
-}
+})
 </script>
 
 <style>

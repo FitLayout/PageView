@@ -16,13 +16,14 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Card from 'primevue/card';
 import Iri from './Iri.vue';
 
 import {stringColor} from '../common/utils.js';
 
-export default {
+export default defineComponent({
 	name: 'TagCard',
 	inject: ['apiClient'],
 	props: {
@@ -92,7 +93,7 @@ export default {
 		}
 
 	}
-}
+})
 </script>
 
 <style>

@@ -39,7 +39,8 @@
 	</span>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Iri from './Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
@@ -56,7 +57,7 @@ knownTypes[SEGM.Area] = { name: 'Area', type: 'area' }
 knownTypes[SEGM.ChunkSet] = { name: 'ChunkSet', type: 'chunkset' }
 knownTypes[SEGM.TextChunk] = { name: 'TextChunk', type: 'textchunk' }
 
-export default {
+export default defineComponent({
 	name: 'ValueInfo',
 	components: {
 		Iri
@@ -270,7 +271,7 @@ export default {
 			this.$emit('show-struct', this.iri);
 		}
 	}
-}
+})
 </script>
 
 <style>

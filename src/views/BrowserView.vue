@@ -63,7 +63,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
@@ -74,9 +75,9 @@ import PageView from '../components/PageView.vue';
 import ArtTree from '../components/ArtTree.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
-import IriDecoder from '../common/iridecoder.js';
+import { IriDecoder } from '@/rdf4j-vue-components/src';
 
-export default {
+export default defineComponent({
 	name: 'BrowserView',
 	components: {
 		Menubar,
@@ -89,7 +90,7 @@ export default {
 	},
 	data() {
 		return {
-			apiClient: this.$root.apiClient,
+			apiClient: (this.$root as any).apiClient,
 			repoInfo: null,
 			userInfo: null,
 			pageType: BOX.Page,
@@ -146,7 +147,7 @@ export default {
 		'pageStatus': 'update'
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
+		this.apiClient = (this.$root as any).apiClient;
 		this.apiClient.setRepository(this.$route.params.repoId);
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
 			this.repoInfo = info;
@@ -178,7 +179,7 @@ export default {
 		},
 
 		async deleteArtifact(iri) {
-			let dec = new IriDecoder();
+			let dec = new IriDecoder({});
 			let shortIri = dec.encodeIri(iri);
 			this.$confirm.require({
                 message: 'Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?',
@@ -234,7 +235,7 @@ export default {
 		}
 
 	}
-}
+})
 </script>
 
 <style>

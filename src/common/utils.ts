@@ -1,25 +1,23 @@
 /**
  * Converts a string (class name) to a color.
- * @param {} cname 
  */
-export function stringColor(cname) {
-	
+export function stringColor(cname: string): string {
+
 	if (!cname) {
 		return 'rgba(255,255,255,0.5)';
 	}
 	let s = cname;
-	while (s.length < 6) { 
+	while (s.length < 6) {
 		s = s + s;
 	}
 	let r = s.charCodeAt(0) * s.charCodeAt(1);
 	let g = s.charCodeAt(2) * s.charCodeAt(3);
 	let b = s.charCodeAt(4) * s.charCodeAt(5);
 	let ret = 'rgba(' + (100 + (r % 150)) + ',' + (100 + (g % 150)) + ',' + (100 + (b % 150)) + ',0.5)';
-	//System.out.println(cname + " => " + ret.toString());
 	return ret;
 }
 
-export function stringsGradient(cnames) {
+export function stringsGradient(cnames: string[]): string {
 	if (!cnames || cnames.length == 0) {
 		return '';
 	}
@@ -39,10 +37,8 @@ export function stringsGradient(cnames) {
 
 /**
  * Infers a tag type from an IRI.
- * 
- * @param {} iri the IRI to analyze
  */
-export function inferTagType(iri) {
+export function inferTagType(iri: string): string | null {
 	let name = iri;
 	let isep = name.lastIndexOf('/');
 	if (isep > 0 && isep + 1 < name.length) {
@@ -62,10 +58,8 @@ export function inferTagType(iri) {
 
 /**
  * Infers a tag name from an IRI.
- * 
- * @param {} iri the IRI to analyze
  */
-export function inferTagName(iri) {
+export function inferTagName(iri: string): string {
 	let name = iri;
 	let isep = name.lastIndexOf('/');
 	if (isep > 0 && isep + 1 < name.length) {

@@ -5,10 +5,11 @@
 	<span class="iri font-monospace" v-if="!active" v-tooltip.bottom="iri">{{ shortForm }}</span>
 </template>
 
-<script>
-import IriDecoder from '../common/iridecoder.js';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { IriDecoder } from '@/rdf4j-vue-components/src';
 
-export default {
+export default defineComponent({
 	name: 'Iri',
 	props: {
 		iri: null,
@@ -28,7 +29,7 @@ export default {
 	},
 	methods: {
 		update() {
-			let dec = new IriDecoder();
+			let dec = new IriDecoder({});
 			this.shortForm = dec.encodeIri(this.iri);
 		},
 
@@ -44,7 +45,7 @@ export default {
 			this.$emit('leave-iri', this.iri);
 		}
 	}
-}
+})
 </script>
 
 <style>

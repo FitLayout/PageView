@@ -87,16 +87,17 @@
 	</Card>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Popover from 'primevue/popover';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 
-import LinkButton from '../components/LinkButton.vue';
+import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
 
-export default {
+export default defineComponent({
 	name: 'RepositoryList',
 	components: {
 		Card,
@@ -129,7 +130,7 @@ export default {
 		}
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
+		this.apiClient = (this.$root as any).apiClient;
 		this.newDescr = "Default repository";
 	},
 	methods: {
@@ -181,7 +182,7 @@ export default {
 			return ret;
 		}
 	}
-}
+})
 </script>
 
 <style>

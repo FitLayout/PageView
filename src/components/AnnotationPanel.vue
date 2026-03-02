@@ -60,7 +60,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Popover from 'primevue/popover';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
@@ -70,7 +71,7 @@ import Iri from './Iri.vue';
 
 import RDFS from '../ontology/RDFS.js';
 
-export default {
+export default defineComponent({
 	name: 'AnnotationPanel',
 	components: {
 		Popover,
@@ -80,7 +81,9 @@ export default {
 		ValueInfo,
 		Iri
 	},
-	inject: ['apiClient'],
+	inject: {
+		apiClient: { from: 'apiClient', default: undefined as any }
+	},
 	props: {
 		subjectIri: null,
 		artifactIri: null,
@@ -195,7 +198,7 @@ export default {
 		}, 
 		
 	}
-}
+})
 
 </script>
 

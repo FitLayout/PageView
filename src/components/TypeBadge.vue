@@ -7,11 +7,12 @@
 <style>
 </style>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 
-export default {
+export default defineComponent({
 	name: 'TypeBadge',
 	components: {
 	},
@@ -52,5 +53,5 @@ export default {
 		},
 
 	}
-}
+})
 </script>

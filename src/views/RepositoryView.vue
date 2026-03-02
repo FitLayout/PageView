@@ -31,7 +31,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 
@@ -39,7 +40,7 @@ import UserAvatar from '../components/UserAvatar.vue';
 import {RepositoryData} from '../common/repositorydata.js';
 import { computed } from 'vue';
 
-export default {
+export default defineComponent({
 	name: 'RepositoryView',
 	components: {
 		Menubar,
@@ -111,7 +112,7 @@ export default {
 		}
 
 	}
-}
+})
 </script>
 
 <style>

@@ -5,11 +5,12 @@
 	</span>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 
-export default {
+export default defineComponent({
 	name: 'UserAvatar',
 	components: {
 		Button,
@@ -85,7 +86,7 @@ export default {
 			return this.userInfo && this.userInfo.roles && this.userInfo.roles.includes('admin');
 		}
 	}
-}
+})
 </script>
 
 <style>

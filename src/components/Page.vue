@@ -11,10 +11,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
 
-export default {
+export default defineComponent({
 	name: 'Page',
 	props: {
 		pageModel: null,
@@ -73,7 +74,7 @@ export default {
 			}
 			//console.log(this.$refs);
 			if (this.$refs.boxes !== undefined) { // the rendering area is ready
-				this.$refs.boxes.innerHTML = ''; // clear old boxes
+				(this.$refs.boxes as HTMLElement).innerHTML = ''; // clear old boxes
 				this.boxIndex = {};
 				const isPage = (this.rectangles === this.page.boxes); // are we drawing the page only?
 				if (this.page !== null && !this.dataurl) { // no screenshot is shown - we should draw the contents
@@ -103,7 +104,7 @@ export default {
 			for (let box of boxList) {
 				let el = document.createElement('div');
 				shadow.appendChild(el);
-				el.srcBox = box;
+				(el as any).srcBox = box;
 				if (active) {
 					el.setAttribute('class', 'box a');
 					el.setAttribute('id', 'fl-abox-' + box.documentOrder);
@@ -141,7 +142,7 @@ export default {
 					let thisObj = this;
 					el.onclick = function(event) {
 						if (thisObj.rectSelection) {
-							event.currentTarget.classList.toggle('selected');
+							(event.currentTarget as HTMLElement).classList.toggle('selected');
 						}
 						thisObj.selectBox(box);
 					};
@@ -276,7 +277,7 @@ export default {
 			}
 		}
 	}
-}
+})
 </script>
 <style>
 .page-zoom {

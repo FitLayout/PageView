@@ -1,7 +1,15 @@
 
+export interface PropertyDef {
+	name: string;
+	type: string;
+	inverse?: boolean;
+}
+
+export type PropertyMap = { [key: string]: PropertyDef };
+
 export default class ObjectCreator {
 
-	propertyMap = {};
+	propertyMap: PropertyMap = {};
 
 	constructor() {
 		this.addMapping({
@@ -13,7 +21,7 @@ export default class ObjectCreator {
 		});
 	}
 
-	addMapping(mapping) {
+	addMapping(mapping: PropertyMap): void {
 		for (const iri in mapping) {
 			this.propertyMap[iri] = mapping[iri];
 		}
@@ -22,11 +30,8 @@ export default class ObjectCreator {
 	/**
 	 * Creates an object instance. Takes an initial target object and fills it with
 	 * the properties and their values.
-	 * @param {} resource the RDF resource to create from 
-	 * @param {} model a model for creating nested objects
-	 * @param {} target target object to be filled with properties 
 	 */
-	create(resource, model, target) {
+	create(resource: any, model: any, target: any): any {
 		let ret = target;
 		for (const prop in this.propertyMap) {
 			const def = this.propertyMap[prop];
@@ -43,7 +48,7 @@ export default class ObjectCreator {
 		return ret;
 	}
 
-	getPropertyValue(properties, type, model) {
+	getPropertyValue(properties: any[], type: string, model: any): any {
 		if (type.startsWith('object<')) {
 			type = type.substring(7, type.length);
 			if (type.endsWith('[]')) {
@@ -63,7 +68,7 @@ export default class ObjectCreator {
 		}
 	}
 
-	getSimpleValue(property, type) {
+	getSimpleValue(property: any, type: string): any {
 		const val = property.value;
 		switch (type) {
 			case 'int':
@@ -75,8 +80,8 @@ export default class ObjectCreator {
 		}
 	}
 
-	getValueList(properties, type, model) {
-		let ret = [];
+	getValueList(properties: any[], type: string, model: any): any[] {
+		let ret: any[] = [];
 		for (const property of properties) {
 			const val = this.getPropertyValue([property], type, model);
 			ret.push(val);
@@ -84,13 +89,13 @@ export default class ObjectCreator {
 		return ret;
 	}
 
-	getObject(property, type, model) {
+	getObject(property: any, type: string, model: any): any {
 		const objectIri = property.value;
 		return model.createObject(objectIri, type)
 	}
 
-	getObjectList(properties, type, model) {
-		let ret = [];
+	getObjectList(properties: any[], type: string, model: any): any[] {
+		let ret: any[] = [];
 		let iris = this.getValueList(properties, type, model);
 		for (let iri of iris) {
 			ret.push(model.createObject(iri, type));

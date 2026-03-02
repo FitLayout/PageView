@@ -85,7 +85,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
@@ -98,11 +99,10 @@ import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
 
 import ArtTable from '../components/ArtTable.vue';
-import ContextTable from '../components/ContextTable.vue';
 import TagConfig from '../components/TagConfig.vue';
-import PrefixConfig from '../components/PrefixConfig.vue';
+import { ContextTable, PrefixConfig } from '@/rdf4j-vue-components/src';
 
-export default {
+export default defineComponent({
 	name: 'RepositoryContentView',
 	components: {
 		Button,
@@ -171,7 +171,7 @@ export default {
 		},
 
 	}
-}
+})
 </script>
 
 <style>

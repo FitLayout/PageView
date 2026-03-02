@@ -13,19 +13,22 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 
-export default {
+export default defineComponent({
 	name: 'Selection',
 	
 	props: {
 		pageRectAreas:null,
 	},
 
-	inject:['apiClient'],
+	inject: {
+		apiClient: { from: 'apiClient', default: undefined as any }
+	},
 
 	components: {
 		Button,
@@ -282,7 +285,7 @@ export default {
 			}
 		}
 	}
-}
+})
 </script>
 <style>
 #mouseDragView {

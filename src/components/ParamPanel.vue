@@ -4,10 +4,11 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import ParamInput from './ParamInput.vue';
 
-export default {
+export default defineComponent({
 	name: 'ParamPanel',
 	components: {
 		ParamInput
@@ -34,7 +35,7 @@ export default {
 			this.curValues = this.values;
 		}
 	}
-}
+})
 </script>
 
 <style>

@@ -1,9 +1,9 @@
 
 const STORAGE_KEY_LIST = 'flrepos';
 
-export let RepositoryData = {
+export const RepositoryData = {
 
-	getIDs: function() {
+	getIDs(): string[] {
 		const data = localStorage.getItem(STORAGE_KEY_LIST);
 		if (data) {
 			return JSON.parse(data);
@@ -12,7 +12,7 @@ export let RepositoryData = {
 		}
 	},
 
-	addID: function(id) {
+	addID(id: string): void {
 		let ids = this.getIDs();
 		if (!ids.includes(id)) {
 			ids.push(id);
@@ -20,7 +20,7 @@ export let RepositoryData = {
 		}
 	},
 
-	deleteID: function(id) {
+	deleteID(id: string): void {
 		let ids = this.getIDs();
 		const index = ids.indexOf(id);
 		if (index !== -1) {

@@ -10,43 +10,49 @@ export class RdfUtil {
 		PREFIX box: <http://fitlayout.github.io/ontology/render.owl#>
 		PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
 		`;
-		
+
+	client: any;
 
 	/**
 	 * Creates an instance for a specified API client.
-	 * 
-	 * @param {ApiClient} client 
 	 */
-	constructor(client) {
+	constructor(client: any) {
 		this.client = client;
 	}
 
 	/**
-	 * Creates a new area in the area tree that contains specified child areas. 
-	 * 
-	 * @param {*} artIri artifact IRI 
-	 * @param {*} parentIri IRI of the parent area of the newly created area
-	 * @param {*} childIris array of child area IRIs that will be child nodes of the new area
-	 * @param {*} areaData area property specification: positionX, positionY, width, height, iri, label, tagIris[]
+	 * Creates a new area in the area tree that contains specified child areas.
 	 */
-	async createSuperArea(artIri, parentIri, childIris, areaData) {
+	async createSuperArea(
+		artIri: string,
+		parentIri: string,
+		childIris: string[],
+		areaData: {
+			iri: string;
+			label: string;
+			positionX: number;
+			positionY: number;
+			width: number;
+			height: number;
+			tagIris?: string[];
+		}
+	): Promise<void> {
 
 		let delQuery = this.PREFIXES + `DELETE DATA { GRAPH <${artIri}> { `;
 		for (let childIri of childIris) {
 			delQuery += ` <${childIri}> segm:isChildOf <${parentIri}> . `;
 		}
 		delQuery += '}}';
-		//console.log(delQuery);
 		await this.client.updateQuery(delQuery);
 
-		const rectIri = areaData.iri + '-rect-b'; 
-		let insQuery = this.PREFIXES + `INSERT DATA { GRAPH <${artIri}> { 
+		const rectIri = areaData.iri + '-rect-b';
+		let insQuery = this.PREFIXES + `INSERT DATA { GRAPH <${artIri}> {
 			<${areaData.iri}> rdf:type segm:Area ;
     		segm:belongsTo <${artIri}> ;
     		segm:isChildOf <${parentIri}> ;
     		rdfs:label "${areaData.label}" ;
     		box:bounds <${rectIri}> .
-    
+
 			<${rectIri}> box:height "${areaData.height}"^^xsd:int;
   			box:positionX "${areaData.positionX}"^^xsd:int;
   			box:positionY "${areaData.positionY}"^^xsd:int;
@@ -63,7 +69,6 @@ export class RdfUtil {
 			insQuery += ` <${childIri}> segm:isChildOf <${areaData.iri}> . `;
 		}
 		insQuery += '}}';
-		//console.log(insQuery);
 		await this.client.updateQuery(insQuery);
 	}
 

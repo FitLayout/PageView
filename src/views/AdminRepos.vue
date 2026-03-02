@@ -38,13 +38,14 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 
-export default {
+export default defineComponent({
 	name: 'AdminRepos',
 	components: {
 		DataTable,
@@ -79,7 +80,7 @@ export default {
             this.repos[event.index] = this.originalRows[event.index];
         }
 	}
-}
+})
 </script>
 
 <style>

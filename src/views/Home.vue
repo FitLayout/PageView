@@ -31,7 +31,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Menubar from 'primevue/menubar';
 
 import UserAvatar from '../components/UserAvatar.vue';
@@ -39,7 +40,7 @@ import RepositoryList from '../components/RepositoryList.vue';
 
 import {RepositoryData} from '../common/repositorydata.js';
 
-export default {
+export default defineComponent({
 	name: 'home',
 	components: {
 		Menubar,
@@ -59,7 +60,7 @@ export default {
 		}
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
+		this.apiClient = (this.$root as any).apiClient;
 		this.loadRepositoryInfo();
 	},
 	methods: {
@@ -107,7 +108,7 @@ export default {
 			this.loadRepositoryInfo();
 		}
 	}
-}
+})
 </script>
 
 <style>

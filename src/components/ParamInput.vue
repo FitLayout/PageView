@@ -34,13 +34,14 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Checkbox from 'primevue/checkbox';
 
 
-export default {
+export default defineComponent({
 	name: 'ParamInput',
 	components: {
 		InputText,
@@ -72,7 +73,7 @@ export default {
 	},
 	methods: {
 	}
-}
+})
 </script>
 
 <style>

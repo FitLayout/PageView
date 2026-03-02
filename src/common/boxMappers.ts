@@ -1,6 +1,6 @@
 
-import ObjectCreator from './objectcreator.js';
-import RDFModel from './rdfmodel.js';
+import ObjectCreator from './objectcreator';
+import RDFModel from './rdfmodel';
 
 class ArtifactCreator extends ObjectCreator {
 	constructor() {
@@ -267,7 +267,7 @@ class TextChunkCreator extends RectAreaCreator {
 	}
 }
 
-const registry = {
+const registry: { [type: string]: ObjectCreator } = {
 	'http://fitlayout.github.io/ontology/fitlayout.owl#Artifact': new ArtifactCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Attribute': new AttributeCreator(),
 	'http://fitlayout.github.io/ontology/render.owl#Border': new BorderCreator(),
@@ -294,4 +294,3 @@ const registry = {
 export class Model extends RDFModel {
 	constructor() { super(registry); }
 }
-

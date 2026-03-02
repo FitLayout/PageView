@@ -1,9 +1,12 @@
 import {RdfObjectLoader} from "rdf-object";
 import {Parser} from "n3";
+import ObjectCreator from './objectcreator';
+
+type CreatorRegistry = { [type: string]: ObjectCreator };
 
 export default class RDFModel {
 
-	context = {
+	context: { [prefix: string]: string } = {
 		"rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
 		"rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
 		"xsd" : "http://www.w3.org/2001/XMLSchema#",
@@ -12,17 +15,17 @@ export default class RDFModel {
 		"fl" : "http://fitlayout.github.io/ontology/fitlayout.owl#",
 		"r" : "http://fitlayout.github.io/resource/"
 	}
-	
-	creators = null;
-	loader = null;
-	//inverse properties to watch separately
-	invProperties = [];
-	//target objects of inverse propeties
-	targets = {};
-	//a cache of already created objects
-	objects = {};
 
-	constructor(creators) {
+	creators: CreatorRegistry;
+	loader: any;
+	//inverse properties to watch separately
+	invProperties: { [propIri: string]: string } = {};
+	//target objects of inverse properties
+	targets: { [objectIri: string]: { [propIri: string]: string[] } } = {};
+	//a cache of already created objects
+	objects: { [iri: string]: any } = {};
+
+	constructor(creators: CreatorRegistry) {
 		this.creators = creators;
 		this.loader = new RdfObjectLoader({ context: this.context });
 		//scan for inverse properties
@@ -36,14 +39,12 @@ export default class RDFModel {
 			}
 		}
 	}
-	
-	parse(text) {
+
+	parse(text: string): Promise<void> {
 		return new Promise(resolve => {
 			const parser = new Parser();
-			let quads = [];
-			let errors = [];
-			this.boxIRIs = [];
-			parser.parse(text, (err, quad, prefixes) => {
+			let quads: any[] = [];
+			parser.parse(text, (err: any, quad: any, prefixes: any) => {
 				if (quad) {
 					quads.push(quad);
 					//store the sources of inverse properties
@@ -53,14 +54,13 @@ export default class RDFModel {
 					}
 				} else if (prefixes) {
 					this.loader.importArray(quads).then(() => { resolve() });
-				} else {
-					errors.push(err);
 				}
+				// errors are silently ignored
 			});
 		});
 	}
 
-	addTarget(objectIri, propertyIri, subjectIri) {
+	addTarget(objectIri: string, propertyIri: string, subjectIri: string): void {
 		let target = this.targets[objectIri];
 		if (target === undefined) {
 			target = {};
@@ -74,15 +74,15 @@ export default class RDFModel {
 		property.push(subjectIri);
 	}
 
-	async add(quad) {
+	async add(quad: any): Promise<void> {
 		await this.loader.importArray([quad]);
 	}
 
-	getResources() {
+	getResources(): any {
 		return this.loader.resources;
 	}
 
-	getType(subj) {
+	getType(subj: string): string | undefined {
 		const type = this.loader.resources[subj].property['rdf:type'];
 		if (type && type.value) {
 			return type.value;
@@ -92,15 +92,9 @@ export default class RDFModel {
 	}
 
 	/**
-	 * Infers the concrete type of an object. This is used to concretize
-	 * particular subtypes of a generic object. The basic implementation
-	 * tries to use the rdf:type property for determining the type. Subclasses
-	 * may re-implement this to add other mechanisms such as considering
-	 * other properties.
-	 * @param {*} iri the object IRI
-	 * @param {*} baseType the base type given by the owning property domain/range.
+	 * Infers the concrete type of an object.
 	 */
-	inferObjectType(iri, baseType) {
+	inferObjectType(iri: string, baseType: string): string {
 		let type = this.getType(iri); //try to use rdf:type
 		if (!type) {
 			type = baseType; //no type defined, use the base type
@@ -108,31 +102,31 @@ export default class RDFModel {
 		return type;
 	}
 
-	createObject(iri, type) {
+	createObject(iri: string, type: string): any {
 		if (this.objects[iri] === undefined) {
 			const finalType = this.inferObjectType(iri, type);
 			const creator = this.creators[finalType];
 			const resource = this.loader.resources[iri];
 			if (creator !== undefined && resource !== undefined) {
-				let obj = {};
+				let obj: any = {};
 				obj['_iri'] = iri;
 				obj['_type'] = finalType;
 				this.objects[iri] = obj;
 				creator.create(resource, this, obj);
-			} 
+			}
 		}
 		return this.objects[iri];
 	}
 
-	getObject(iri, type) {
+	getObject(iri: string, type: string): any {
 		return this.createObject(iri, type);
 	}
 
 	/**
 	 * Creates all objects of known types and returns a collection.
 	 */
-	getAllObjects() {
-		let ret = [];
+	getAllObjects(): any[] {
+		let ret: any[] = [];
 		for (let res in this.getResources()) {
 			const rtype = this.getType(res);
 			if (rtype) {
@@ -145,8 +139,8 @@ export default class RDFModel {
 		return ret;
 	}
 
-	createInverseObjects(target, property) {
-		let ret = [];
+	createInverseObjects(target: string, property: string): any[] {
+		let ret: any[] = [];
 		const t = this.targets[target];
 		if (t !== undefined && t[property] !== undefined) {
 			for (const subj of t[property]) {

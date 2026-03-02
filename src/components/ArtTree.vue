@@ -22,13 +22,14 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 
 import ArtInfo from '../components/ArtInfo.vue';
 
-export default {
+export default defineComponent({
 	name: 'ArtTree',
 	components: {
 		TreeTable,
@@ -43,7 +44,7 @@ export default {
 			error: null,
 			loading: false,
 			started: false,
-			apiClient: this.$root.apiClient,
+			apiClient: (this.$root as any).apiClient,
 			artifacts: null,
 			artifactIndex: null,
 			nodes: null, // nodes after filtering (if applied)
@@ -58,7 +59,7 @@ export default {
 		'currentIri': 'iriChanged'
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
+		this.apiClient = (this.$root as any).apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
 		this.started = true;
 		this.fetchArtifacts();
@@ -146,7 +147,7 @@ export default {
 		},
 
 		computeArtifactNode(art) {
-			const ret = {
+			const ret: any = {
 				key: art._iri,
 				data: {
 					... art,
@@ -254,7 +255,7 @@ export default {
 		}
 
 	}
-}
+})
 </script>
 
 <style>

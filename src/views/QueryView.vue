@@ -9,11 +9,11 @@
 	</div>
 </template>
 
-<script>
-import RdfEditor from '../components/querying/RdfEditor.vue';
-import QueryResults from "../components/querying/QueryResults.vue"
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { RdfEditor, QueryResults } from '@/rdf4j-vue-components/src';
 
-export default {
+export default defineComponent({
 	name: 'QueryView',
 	components: {
 		RdfEditor,
@@ -52,7 +52,7 @@ export default {
 		},
 
 	}
-}
+})
 </script>
 
 <style>

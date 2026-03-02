@@ -12,23 +12,26 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import MultiSelect from 'primevue/multiselect';
-import IriDecoder from '../common/iridecoder.js';
+import { IriDecoder } from '@/rdf4j-vue-components/src';
 import SEGM from '../ontology/SEGM.js';
 
 // XML namespaces
 const SVG = 'http://www.w3.org/2000/svg';
 const XLINK = 'http://www.w3.org/1999/xlink';
 
-export default {
+export default defineComponent({
 	name: 'RelationsDisplay',
 	props: {
 		pageRectAreas: null,
         artifactModel: null,
         selectedRect: null
 	},
-	inject: ['apiClient'],
+	inject: {
+		apiClient: { from: 'apiClient', default: undefined as any }
+	},
     emits: ['area-click'],
 	components: {
         MultiSelect
@@ -403,7 +406,7 @@ export default {
             }
         }
 	}
-}
+})
 </script>
 
 <style>

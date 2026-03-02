@@ -190,7 +190,8 @@
 
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
@@ -225,7 +226,7 @@ import {FilterMatchMode} from '@primevue/core/api';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
 
-export default {
+export default defineComponent({
 	name: 'PageView',
 	components: {
 		Splitter,
@@ -250,7 +251,9 @@ export default {
 		Selection,
 		RelationsDisplay
 	},
-	inject: ['apiClient'],
+	inject: {
+		apiClient: { from: 'apiClient', default: undefined as any }
+	},
 	props: {
 		subjectIri: null
 	},
@@ -579,7 +582,7 @@ export default {
 		} 
 
 	}
-}
+})
 </script>
 
 <style>

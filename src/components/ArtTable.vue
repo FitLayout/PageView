@@ -28,10 +28,10 @@
 						<LinkButton icon="pi pi-cog" class="p-button-warn"
 							v-tooltip.top="'Details and Actions'"
 							v-if="actionsAvailable(slotProps.node)"
-							:to="{name: 'page', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" /> 
+							:to="{name: 'page', params: { repoId: (this.$route.params.repoId as string), iri: slotProps.node.data.id}}" /> 
 						<LinkButton icon="pi pi-globe" style="margin-left: 0.2em"
 							v-tooltip.top="'Open in Browser'"
-							:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: slotProps.node.data.id}}" 
+							:to="{name: 'show', params: { repoId: (this.$route.params.repoId as string), iri: slotProps.node.data.id}}" 
 							target="_blank" /> 
 						<SplitButton icon="pi pi-download" severity="secondary" style="margin-left: 0.2em"
 							v-tooltip.top="'Export artifact'"
@@ -47,7 +47,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import SplitButton from 'primevue/splitbutton';
@@ -55,14 +56,14 @@ import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 import TypeBadge from '../components/TypeBadge.vue';
-import LinkButton from '../components/LinkButton.vue';
+import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
 import Iri from '../components/Iri.vue';
 
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
-import IriDecoder from '../common/iridecoder.js';
+import { IriDecoder } from '@/rdf4j-vue-components/src';
 
-export default {
+export default defineComponent({
 	name: 'ArtTable',
 	components: {
 		TreeTable,
@@ -80,7 +81,7 @@ export default {
 		return {
 			error: null,
 			loading: false,
-			apiClient: this.$root.apiClient,
+			apiClient: (this.$root as any).apiClient,
 			artifacts: null,
 			nodes: null
 		}
@@ -90,7 +91,7 @@ export default {
 	watch: {
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
+		this.apiClient = (this.$root as any).apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
 		this.fetchArtifacts();
 	},
@@ -141,7 +142,7 @@ export default {
 		},
 
 		computeArtifactNode(art) {
-			const ret = {
+			const ret: any = {
 				key: art._iri,
 				data: {
 					id: art._iri,
@@ -164,7 +165,7 @@ export default {
 
 		formatDate(dateString) {
 			const date = new Date(dateString);
-			const options = {
+			const options: Intl.DateTimeFormatOptions = {
 				year: 'numeric', month: 'numeric', day: 'numeric',
 				hour: 'numeric', minute: 'numeric', second: 'numeric'
 			};
@@ -253,7 +254,7 @@ export default {
 		},
 
 		deleteArtifact(iri) {
-			let dec = new IriDecoder();
+			let dec = new IriDecoder({});
 			let shortIri = dec.encodeIri(iri);
 			this.$confirm.require({
 				group: 'confirmDeleteArtifact',
@@ -262,7 +263,7 @@ export default {
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => {
 					try {
-						this.artifact = await this.apiClient.deleteArtifact(iri);
+						this.artifacts = await this.apiClient.deleteArtifact(iri);
 					} catch (error) {
 						console.error('Couldnt delete artifact!', error);
 					}
@@ -274,7 +275,7 @@ export default {
 		}
 
 	}
-}
+})
 </script>
 
 <style>

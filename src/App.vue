@@ -4,11 +4,12 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import {ApiClient} from './common/apiclient.js';
 import {RdfUtil} from './common/rdfutil.js';
 
-export default {
+export default defineComponent({
     name: 'app',
 	data() {
 		return {
@@ -34,7 +35,7 @@ export default {
 			window.location.assign('/auth/#/login');
 		}
 	}
-}
+})
 </script>
 
 <style>

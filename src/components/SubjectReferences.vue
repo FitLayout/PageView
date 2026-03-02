@@ -28,7 +28,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -38,7 +39,7 @@ import ValueInfo from './ValueInfo.vue';
 
 import {FilterMatchMode} from '@primevue/core/api';
 
-export default {
+export default defineComponent({
 	name: 'SubjectReferences',
 	components: {
 		InputText,
@@ -91,7 +92,7 @@ export default {
 			window.open(route.href, '_blank');
 		}
 	}
-}
+})
 </script>
 
 <style>

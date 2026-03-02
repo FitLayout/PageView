@@ -89,17 +89,17 @@
 
 </style>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Iri from './Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 
-export default {
+export default defineComponent({
 	name: 'ArtInfo',
 	components: {
 		Iri
 	},
-	inject: ['apiClient'],
 	props: {
 		artifact: null,
 		focus: null
@@ -137,7 +137,7 @@ export default {
 					this.typeClass = 'artifact chunkset';
 					break;
 				default:
-					this.type = 'unknown';
+					this.typeName = 'unknown';
 					this.typeClass = 'artifact unknown';
 					break;
 			}
@@ -156,6 +156,6 @@ export default {
 		}
 		
 	}
-}
+})
 </script>
 

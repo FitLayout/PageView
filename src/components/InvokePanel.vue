@@ -41,7 +41,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
@@ -50,7 +51,7 @@ import Message from 'primevue/message';
 import ParamPanel from './ParamPanel.vue';
 
 
-export default {
+export default defineComponent({
 	name: 'InvokePanel',
 	components: {
 		Select,
@@ -59,7 +60,9 @@ export default {
 		Message,
 		ParamPanel
 	},
-	inject: ['apiClient'],
+	inject: {
+		apiClient: { from: 'apiClient', default: undefined as any }
+	},
 	props: {
 		id: null,
 		source: null, // use <iri> or 'ANY' or 'NONE'
@@ -240,7 +243,7 @@ export default {
 
 
 	}
-}
+})
 </script>
 
 <style>

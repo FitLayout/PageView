@@ -42,7 +42,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -54,7 +55,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import {stringColor} from '../common/utils.js';
 
 
-export default {
+export default defineComponent({
 	name: 'TagConfig',
 	inject: ['apiClient'],
 	props: {
@@ -128,7 +129,7 @@ export default {
 			return 'background-color:' + stringColor(tag.name);
 		}
 	}
-}
+})
 </script>
 
 <style>

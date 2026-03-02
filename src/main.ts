@@ -40,7 +40,7 @@ app.use(PrimeVue, {
         cssLayer: {
             name: 'primevue',
             order: 'theme, base, primevue'
-        }        
+        }
     }
 });
 app.use(ConfirmationService);
