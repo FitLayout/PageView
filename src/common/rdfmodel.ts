@@ -1,9 +1,14 @@
-import {RdfObjectLoader} from "rdf-object";
+import {RdfObjectLoader, Resource} from "rdf-object";
 import {Parser} from "n3";
 import ObjectCreator from './objectcreator';
+import type { RdfObject } from './types';
 
 type CreatorRegistry = { [type: string]: ObjectCreator };
 
+/**
+ * A RDF model that uses RDF-Object and N3 to load and parse RDF data and provides 
+ * an interface for creating and retrieving RDF-backed domain objects.
+ */
 export default class RDFModel {
 
 	context: { [prefix: string]: string } = {
@@ -17,13 +22,13 @@ export default class RDFModel {
 	}
 
 	creators: CreatorRegistry;
-	loader: any;
+	loader: RdfObjectLoader;
 	//inverse properties to watch separately
 	invProperties: { [propIri: string]: string } = {};
 	//target objects of inverse properties
 	targets: { [objectIri: string]: { [propIri: string]: string[] } } = {};
 	//a cache of already created objects
-	objects: { [iri: string]: any } = {};
+	objects: { [iri: string]: RdfObject } = {};
 
 	constructor(creators: CreatorRegistry) {
 		this.creators = creators;
@@ -78,7 +83,7 @@ export default class RDFModel {
 		await this.loader.importArray([quad]);
 	}
 
-	getResources(): any {
+	getResources(): Record<string, Resource> {
 		return this.loader.resources;
 	}
 
@@ -102,15 +107,13 @@ export default class RDFModel {
 		return type;
 	}
 
-	createObject(iri: string, type: string): any {
+	createObject(iri: string, type: string): RdfObject | undefined {
 		if (this.objects[iri] === undefined) {
 			const finalType = this.inferObjectType(iri, type);
 			const creator = this.creators[finalType];
 			const resource = this.loader.resources[iri];
 			if (creator !== undefined && resource !== undefined) {
-				let obj: any = {};
-				obj['_iri'] = iri;
-				obj['_type'] = finalType;
+				const obj: RdfObject = { _iri: iri, _type: finalType };
 				this.objects[iri] = obj;
 				creator.create(resource, this, obj);
 			}
@@ -118,16 +121,16 @@ export default class RDFModel {
 		return this.objects[iri];
 	}
 
-	getObject(iri: string, type: string): any {
+	getObject(iri: string, type: string): RdfObject | undefined {
 		return this.createObject(iri, type);
 	}
 
 	/**
 	 * Creates all objects of known types and returns a collection.
 	 */
-	getAllObjects(): any[] {
-		let ret: any[] = [];
-		for (let res in this.getResources()) {
+	getAllObjects(): RdfObject[] {
+		const ret: RdfObject[] = [];
+		for (const res in this.getResources()) {
 			const rtype = this.getType(res);
 			if (rtype) {
 				const obj = this.getObject(res, rtype);
@@ -139,8 +142,8 @@ export default class RDFModel {
 		return ret;
 	}
 
-	createInverseObjects(target: string, property: string): any[] {
-		let ret: any[] = [];
+	createInverseObjects(target: string, property: string): RdfObject[] {
+		const ret: RdfObject[] = [];
 		const t = this.targets[target];
 		if (t !== undefined && t[property] !== undefined) {
 			for (const subj of t[property]) {

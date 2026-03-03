@@ -1,17 +1,15 @@
 
-export interface PropertyDef {
-	name: string;
-	type: string;
-	inverse?: boolean;
-}
+import { Resource } from 'rdf-object';
+import type { RdfObject, RdfPropertyValue, PropertyMap } from './types';
+import type RDFModel from './rdfmodel';
 
-export type PropertyMap = { [key: string]: PropertyDef };
 
 export default class ObjectCreator {
 
 	propertyMap: PropertyMap = {};
 
 	constructor() {
+		// Common properties for all objects.
 		this.addMapping({
 			_label: { name: 'http://www.w3.org/2000/01/rdf-schema#label', type: 'string' },
 			_value: { name: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#value', type: 'string' },
@@ -21,6 +19,10 @@ export default class ObjectCreator {
 		});
 	}
 
+	/**
+	 * Add a new mapping to the object creator.
+	 * @param mapping The object mapping specification.
+	 */
 	addMapping(mapping: PropertyMap): void {
 		for (const iri in mapping) {
 			this.propertyMap[iri] = mapping[iri];
@@ -31,8 +33,8 @@ export default class ObjectCreator {
 	 * Creates an object instance. Takes an initial target object and fills it with
 	 * the properties and their values.
 	 */
-	create(resource: any, model: any, target: any): any {
-		let ret = target;
+	create(resource: Resource, model: RDFModel, target: RdfObject): RdfObject {
+		const ret = target;
 		for (const prop in this.propertyMap) {
 			const def = this.propertyMap[prop];
 			const type = def.type;
@@ -48,7 +50,7 @@ export default class ObjectCreator {
 		return ret;
 	}
 
-	getPropertyValue(properties: any[], type: string, model: any): any {
+	getPropertyValue(properties: Resource[], type: string, model: RDFModel): RdfPropertyValue | undefined {
 		if (type.startsWith('object<')) {
 			type = type.substring(7, type.length);
 			if (type.endsWith('[]')) {
@@ -68,7 +70,7 @@ export default class ObjectCreator {
 		}
 	}
 
-	getSimpleValue(property: any, type: string): any {
+	getSimpleValue(property: Resource, type: string): string | number {
 		const val = property.value;
 		switch (type) {
 			case 'int':
@@ -80,25 +82,27 @@ export default class ObjectCreator {
 		}
 	}
 
-	getValueList(properties: any[], type: string, model: any): any[] {
-		let ret: any[] = [];
+	getValueList(properties: Resource[], type: string, model: RDFModel): (string | number)[] {
+		const ret: (string | number)[] = [];
 		for (const property of properties) {
-			const val = this.getPropertyValue([property], type, model);
-			ret.push(val);
+			ret.push(this.getPropertyValue([property], type, model) as string | number);
 		}
 		return ret;
 	}
 
-	getObject(property: any, type: string, model: any): any {
+	getObject(property: Resource, type: string, model: RDFModel): RdfObject | undefined {
 		const objectIri = property.value;
-		return model.createObject(objectIri, type)
+		return model.createObject(objectIri, type);
 	}
 
-	getObjectList(properties: any[], type: string, model: any): any[] {
-		let ret: any[] = [];
-		let iris = this.getValueList(properties, type, model);
-		for (let iri of iris) {
-			ret.push(model.createObject(iri, type));
+	getObjectList(properties: Resource[], type: string, model: RDFModel): RdfObject[] {
+		const ret: RdfObject[] = [];
+		const iris = this.getValueList(properties, type, model) as string[];
+		for (const iri of iris) {
+			const obj = model.createObject(iri, type);
+			if (obj) {
+                ret.push(obj);
+            }
 		}
 		return ret;
 	}

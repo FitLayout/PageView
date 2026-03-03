@@ -6,23 +6,28 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import {ApiClient} from './common/apiclient.js';
+import {FLApiClient} from './common/apiclient.js';
 import {RdfUtil} from './common/rdfutil.js';
+
+const flApiClient = new FLApiClient();
 
 export default defineComponent({
     name: 'app',
 	data() {
 		return {
-			apiClient: null,
-			rdfUtil: null
+			apiClient: flApiClient,
+			rdfUtil: new RdfUtil(flApiClient),
 		}
 	},
 	components: {
 	},
+	provide() {
+		return {
+			apiClient: this.apiClient
+        }
+    },
 	created () {
-		this.apiClient = new ApiClient();
 		this.apiClient.onNotAuthorized = this.authFailed;
-		this.rdfUtil = new RdfUtil(this.apiClient);
 		window.rdfutil = this.rdfUtil; //TODO debuging
 	},
 	methods: {

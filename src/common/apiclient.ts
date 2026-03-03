@@ -1,6 +1,6 @@
 import {Model as BoxModel} from '../common/boxMappers';
 import IriDecoder from '@/rdf4j-vue-components/src/common/iridecoder';
-import type { ApiClient as RdfApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
+import type { ApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
 import type { AskQueryResult, ContextDescription, RdfValueBinding, RdfValueSpec, RepositoryInfo, SavedQuery, SelectQueryResult, UpdateQueryResult } from '@/rdf4j-vue-components/src/common/types';
 
 const develMode = (window.location.port === '3000'); //development server detection
@@ -17,7 +17,7 @@ const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 const QUERY_LIMIT = 2048;
 
 
-export class ApiClient implements RdfApiClient {
+export class FLApiClient implements ApiClient {
 
 	currentRepo: string = 'default';
 	onNotAuthorized: (() => void) | null = null;
