@@ -31,12 +31,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject, computed } from 'vue';
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
+import type { MenuItem } from 'primevue/menuitem';
 
 import UserAvatar from '../components/UserAvatar.vue';
-import { computed } from 'vue';
+import type { FLApiClient, UserInfo } from '@/common/apiclient.js';
+
+interface ComponentData {
+	userInfo: UserInfo | null;
+	menuItems: MenuItem[];
+}
 
 export default defineComponent({
 	name: 'AdminView',
@@ -45,9 +51,13 @@ export default defineComponent({
 		Button,
 		UserAvatar,
 	},
-	data() {
+	setup() {
 		return {
-			apiClient: this.$root.apiClient,
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data(): ComponentData {
+		return {
 			userInfo: null,
 
 			menuItems: [
@@ -67,7 +77,6 @@ export default defineComponent({
 	watch: {
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
 		this.fetchUserInfo();
 	},
 	methods: {

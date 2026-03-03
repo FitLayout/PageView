@@ -10,8 +10,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import { RdfEditor, QueryResults } from '@/rdf4j-vue-components/src';
+
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	loading: boolean;
+	queryResult: any;
+}
 
 export default defineComponent({
 	name: 'QueryView',
@@ -21,8 +28,12 @@ export default defineComponent({
 	},
 	props: {
 	},
-	inject: ['apiClient'],
-	data () {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data (): ComponentData {
 		return {
 			loading: false,
 			queryResult: null

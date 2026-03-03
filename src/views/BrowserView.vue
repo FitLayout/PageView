@@ -64,10 +64,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
+import type { MenuItem } from 'primevue/menuitem';
 
 import UserAvatar from '../components/UserAvatar.vue';
 import InvokePanel from '../components/InvokePanel.vue';
@@ -76,6 +77,24 @@ import ArtTree from '../components/ArtTree.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
+import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
+
+interface ComponentData {
+	repoInfo: FLRepositoryInfo | null;
+	userInfo: UserInfo | null;
+	pageType: string;
+	areaTreeType: string;
+	chunkSetType: string;
+	connectionSetType: string;
+	mode: string;
+	currentArtifact: RdfObject | null;
+	currentArtifactIri: string | null;
+	currentPageIri: string | null;
+	selectionStatus: any;
+	visibleLeft: boolean;
+	menuItems: MenuItem[];
+}
 
 export default defineComponent({
 	name: 'BrowserView',
@@ -88,9 +107,13 @@ export default defineComponent({
 		PageView,
 		ArtTree
 	},
-	data() {
+	setup() {
 		return {
-			apiClient: (this.$root as any).apiClient,
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data(): ComponentData {
+		return {
 			repoInfo: null,
 			userInfo: null,
 			pageType: BOX.Page,
@@ -147,7 +170,6 @@ export default defineComponent({
 		'pageStatus': 'update'
 	},
 	created () {
-		this.apiClient = (this.$root as any).apiClient;
 		this.apiClient.setRepository(this.$route.params.repoId);
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
 			this.repoInfo = info;

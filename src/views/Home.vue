@@ -75,7 +75,6 @@ export default defineComponent({
 		}
 	},
 	created () {
-		this.apiClient = (this.$root as any).apiClient;
 		this.loadRepositoryInfo();
 	},
 	methods: {

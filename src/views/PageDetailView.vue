@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import ProgressSpinner from 'primevue/progressspinner';
 
 import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
@@ -44,6 +44,15 @@ import Iri from '../components/Iri.vue';
 import SubjectInfo from '../components/SubjectInfo.vue';
 
 import BOX from '../ontology/BOX.js';
+import type { FLApiClient } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
+
+interface ComponentData {
+	iri: string | null;
+	page: RdfObject | null;
+	pngImage: string | null;
+	loading: boolean;
+}
 
 export default defineComponent({
 	name: 'PageDetailView',
@@ -53,8 +62,12 @@ export default defineComponent({
 		Iri,
 		SubjectInfo
 	},
-	inject: ['apiClient', 'userInfo', 'repoInfo'],
-	data() {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data(): ComponentData {
 		return {
 			iri: null,
 			page: null,

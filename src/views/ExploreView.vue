@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
@@ -19,8 +19,14 @@ import Select from 'primevue/select';
 import SubjectInfo from '../components/SubjectInfo.vue';
 import SubjectReferences from '../components/SubjectReferences.vue';
 
-import IriDecoder from '../common/iridecoder.js';
+import IriDecoder from '@/common/iridecoder';
+import type { FLApiClient } from '@/common/apiclient.ts';
 
+interface ComponentData {
+	destIri: string | null;
+	selMode: string;
+	modes: string[];
+}
 
 export default defineComponent({
 	name: 'ExploreView',
@@ -33,8 +39,12 @@ export default defineComponent({
 	},
 	props: {
 	},
-	inject: ['apiClient'],
-	data () {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data (): ComponentData {
 		return {
 			destIri: null,
 			selMode: 'Subject',

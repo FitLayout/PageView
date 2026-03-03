@@ -32,13 +32,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject, computed } from 'vue';
 import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
+import type { MenuItem } from 'primevue/menuitem';
 
 import UserAvatar from '../components/UserAvatar.vue';
 import {RepositoryData} from '../common/repositorydata.js';
-import { computed } from 'vue';
+import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
+
+interface ComponentData {
+	userInfo: UserInfo | null;
+	repoInfo: FLRepositoryInfo | null;
+	menuItems: MenuItem[];
+}
 
 export default defineComponent({
 	name: 'RepositoryView',
@@ -47,9 +54,13 @@ export default defineComponent({
 		Button,
 		UserAvatar,
 	},
-	data() {
+	setup() {
 		return {
-			apiClient: this.$root.apiClient,
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data(): ComponentData {
+		return {
 			userInfo: null,
 			repoInfo: null,
 
@@ -92,7 +103,6 @@ export default defineComponent({
 	watch: {
 	},
 	created () {
-		this.apiClient = this.$root.apiClient;
 		this.apiClient.setRepository(this.$route.params.repoId);
 		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
 			this.repoInfo = info;

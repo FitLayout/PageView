@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
@@ -101,6 +101,15 @@ import TabPanel from 'primevue/tabpanel';
 import ArtTable from '../components/ArtTable.vue';
 import TagConfig from '../components/TagConfig.vue';
 import { ContextTable, PrefixConfig } from '@/rdf4j-vue-components/src';
+import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
+
+interface ComponentData {
+	renderUrl: string;
+	renderWidth: number;
+	renderHeight: number;
+	loading: boolean;
+	error: string | null;
+}
 
 export default defineComponent({
 	name: 'RepositoryContentView',
@@ -120,8 +129,16 @@ export default defineComponent({
 		TagConfig,
 		PrefixConfig
 	},
-	inject: ['apiClient', 'userInfo', 'repoInfo', 'repoTitle', 'repoLink'],
-	data() {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient,
+			userInfo: inject('userInfo') as UserInfo | null,
+			repoInfo: inject('repoInfo') as FLRepositoryInfo | null,
+			repoTitle: inject('repoTitle') as string,
+			repoLink: inject('repoLink') as string,
+		}
+	},
+	data(): ComponentData {
 		return {
 			renderUrl: '',
 			renderWidth: 1200,

@@ -39,11 +39,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
+
+import type { FLApiClient, FLRepositoryInfo } from '@/common/apiclient.js';
+
+interface ComponentData {
+	repos: FLRepositoryInfo[];
+	editingRows: FLRepositoryInfo[];
+}
 
 export default defineComponent({
 	name: 'AdminRepos',
@@ -53,16 +60,19 @@ export default defineComponent({
 		InputText,
 		Checkbox
 	},
-	data() {
+	setup() {
 		return {
-			apiClient: null,
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data(): ComponentData {
+		return {
 			repos: [],
 			editingRows: []
 		}
 	},
 	originalRows: null,
 	created () {
-		this.apiClient = this.$root.apiClient;
 		this.originalRows = {};
 	},
 	mounted() {
