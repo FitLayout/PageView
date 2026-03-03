@@ -32,13 +32,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Menubar from 'primevue/menubar';
+import type { MenuItem } from 'primevue/menuitem';
 
 import UserAvatar from '../components/UserAvatar.vue';
 import RepositoryList from '../components/RepositoryList.vue';
 
 import {RepositoryData} from '../common/repositorydata.js';
+import type { FLApiClient, StorageStatus, UserInfo } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
+import type { RepositoryInfo } from '@/rdf4j-vue-components/src/index.js';
+
+interface ComponentData {
+    error: string | null;
+    userInfo: UserInfo | null;
+    storageStatus: StorageStatus | null;
+    repositoryList: RepositoryInfo[] | null;
+    menuItems: MenuItem[];
+}
 
 export default defineComponent({
 	name: 'home',
@@ -47,11 +59,14 @@ export default defineComponent({
 		UserAvatar,
 		RepositoryList
 	},
-	//inject: ['apiClient'],
-	data() {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data(): ComponentData {
 		return {
 			error: null,
-			apiClient: null,
 			userInfo: null,
 			storageStatus: null,
 			repositoryList: null,
@@ -72,7 +87,7 @@ export default defineComponent({
 				if (this.userInfo.anonymous) {
 					// anonymous user - no list available. Use local storage for recent repos.
 					const ids = RepositoryData.getIDs();
-					let todelete = [];
+					let todelete: string[] = [];
 					console.log(ids);
 					if (ids && ids.length > 0) {
 						this.repositoryList = await this.apiClient.getRepositoryInfos(ids, function(id, e) {
@@ -92,14 +107,14 @@ export default defineComponent({
 					// non-anonymous user - use the API endpoind for getting the repository list
 					this.repositoryList = await this.apiClient.listRepositories();
 				}
-			} catch (e) {
+			} catch (e: any) {
 				this.error = e.message;
 			}
 			if (this.repositoryList === null) {
 				this.repositoryList = []; //use an empty list when some fetch failed
 			}
 		},
-		async repositoryCreated(rdata) {
+		async repositoryCreated(rdata: RepositoryInfo) {
 			console.log('created');
 			console.log(rdata);
 			if (rdata && rdata.id) {

@@ -2,6 +2,8 @@ import {Model as BoxModel} from '../common/boxMappers';
 import IriDecoder from '@/rdf4j-vue-components/src/common/iridecoder';
 import type { ApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
 import type { AskQueryResult, ContextDescription, RdfValueBinding, RdfValueSpec, RepositoryInfo, SavedQuery, SelectQueryResult, UpdateQueryResult } from '@/rdf4j-vue-components/src/common/types';
+import type RDFModel from './rdfmodel';
+import type { RdfObject } from './types';
 
 const develMode = (window.location.port === '3000'); //development server detection
 const localMode = (window.location.hostname === 'localhost'); //local mode (http allowed)
@@ -16,6 +18,44 @@ const AUTH_ENDPOINT = SERVER_ROOT + '/auth';
 // Note that the server also has a maximal allowed limit that cannot be exceeded.
 const QUERY_LIMIT = 2048;
 
+export interface StorageStatus {
+	createAvailable: boolean,
+	repositories: number,
+	available : number,
+	singleMode: true
+}
+
+export interface UserInfo {
+	expires: string,
+	roles: string[],
+	anonymous: boolean,
+	guest: boolean,
+	userId: string,
+	email: string
+}
+
+export interface FLRepositoryInfo extends RepositoryInfo {
+	owner: string,
+	expires: string,
+	accessedOn: string,
+	description: string,
+	readOnly: boolean,
+	version: string,
+	createdOn: string,
+	email: string
+}
+
+export interface ResultValue {
+	status: string | null,
+	result: object | null,
+}
+
+export interface TagInfo {
+	iri: string,
+	name: string,
+	context: string,
+	type: string
+}
 
 export class FLApiClient implements ApiClient {
 
@@ -60,7 +100,7 @@ export class FLApiClient implements ApiClient {
 		this.serverUrl = url;
 	}
 
-	async login(username: string | null, password: string | null): Promise<void> {
+	async login(username: string, password: string): Promise<void> {
 		this.serverLogin = username;
 		// JWT-based auth is used; login is handled separately via getUserInfo()
 	}
@@ -286,7 +326,7 @@ export class FLApiClient implements ApiClient {
 		return data.status == 'ok';
 	}
 
-	async fetchArtifact(artifactIri: string): Promise<any> {
+	async fetchArtifact(artifactIri: string): Promise<RdfObject | undefined> {
 		const url = this.artifactEndpoint() + '/item/' + encodeURIComponent(artifactIri);
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
@@ -309,7 +349,7 @@ export class FLApiClient implements ApiClient {
 		return artifact;
 	}
 
-	async fetchArtifactInfo(artifactIri: string): Promise<any> {
+	async fetchArtifactInfo(artifactIri: string): Promise<RdfObject | undefined> {
 		const url = this.artifactEndpoint() + '/info/' + encodeURIComponent(artifactIri);
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
@@ -350,7 +390,7 @@ export class FLApiClient implements ApiClient {
 		response.blob().then(thenFunction);
 	}
 
-	async fetchArtifactInfoAll(): Promise<any[]> {
+	async fetchArtifactInfoAll(): Promise<RdfObject[]> {
 		const url = this.artifactEndpoint();
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
@@ -370,7 +410,7 @@ export class FLApiClient implements ApiClient {
 		return pageModel.getAllObjects();
 	}
 
-	async fetchArtifactInfoForPage(pageIri: string): Promise<any[]> {
+	async fetchArtifactInfoForPage(pageIri: string): Promise<RdfObject[]> {
 		const url = this.artifactEndpoint() + '?page=' + encodeURIComponent(pageIri);
 		let pageModel = new BoxModel();
 		let response = await fetch(url, {
@@ -550,7 +590,7 @@ export class FLApiClient implements ApiClient {
 
 	//================================================================================
 
-	async getStorageStatus(): Promise<any> {
+	async getStorageStatus(): Promise<StorageStatus> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/status';
 		try {
 			let response = await fetch(url, {
@@ -565,13 +605,13 @@ export class FLApiClient implements ApiClient {
 			}
 
 			const data = await response.json();
-			return data;
+			return data as StorageStatus;
 		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async listRepositories(): Promise<RepositoryInfo[]> {
+	async listRepositories(): Promise<FLRepositoryInfo[]> {
 		const url = REPOSITORY_ADMIN_ENDPOINT;
 		try {
 			let response = await fetch(url, {
@@ -586,13 +626,13 @@ export class FLApiClient implements ApiClient {
 			}
 
 			const data = await response.json();
-			return data as RepositoryInfo[];
+			return data as FLRepositoryInfo[];
 		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async listAllRepositories(): Promise<any[]> {
+	async listAllRepositories(): Promise<FLRepositoryInfo[]> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/all';
 		try {
 			let response = await fetch(url, {
@@ -607,13 +647,13 @@ export class FLApiClient implements ApiClient {
 			}
 
 			const data = await response.json();
-			return data;
+			return data as FLRepositoryInfo[];
 		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async getRepositoryInfo(id: string): Promise<any> {
+	async getRepositoryInfo(id: string): Promise<FLRepositoryInfo> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
 		try {
 			let response = await fetch(url, {
@@ -628,14 +668,14 @@ export class FLApiClient implements ApiClient {
 			}
 
 			const data = await response.json();
-			return data;
+			return data as FLRepositoryInfo;
 		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async getRepositoryInfos(ids: string[], onError?: (id: string, e: any) => void): Promise<any[]> {
-		let ret: any[] = [];
+	async getRepositoryInfos(ids: string[], onError?: (id: string, e: any) => void): Promise<FLRepositoryInfo[]> {
+		let ret: FLRepositoryInfo[] = [];
 		for (const id of ids) {
 			try {
 				const info = await this.getRepositoryInfo(id);
@@ -649,7 +689,7 @@ export class FLApiClient implements ApiClient {
 		return ret;
 	}
 
-	async createRepository(data: object): Promise<any> {
+	async createRepository(data: object): Promise<FLRepositoryInfo> {
 		const url = REPOSITORY_ADMIN_ENDPOINT;
 		try {
 			let response = await fetch(url, {
@@ -666,14 +706,14 @@ export class FLApiClient implements ApiClient {
 				throw new Error(rdata.message);
 			}
 
-			return rdata;
+			return rdata as FLRepositoryInfo;
 
 		} catch (e: any) {
 			throw new Error(e);
 		}
 	}
 
-	async updateRepositoryInfo(id: string, data: object): Promise<any> {
+	async updateRepositoryInfo(id: string, data: object): Promise<FLRepositoryInfo> {
 		const url = REPOSITORY_ADMIN_ENDPOINT + '/' + encodeURIComponent(id);
 		try {
 			let response = await fetch(url, {
@@ -690,7 +730,7 @@ export class FLApiClient implements ApiClient {
 				throw new Error(rdata.message);
 			}
 
-			return rdata;
+			return rdata as FLRepositoryInfo;
 
 		} catch (e: any) {
 			throw new Error(e);
@@ -793,7 +833,7 @@ export class FLApiClient implements ApiClient {
 		}
 	}
 
-	async getUserInfo(): Promise<any> {
+	async getUserInfo(): Promise<UserInfo> {
 		const url = AUTH_ENDPOINT + '/userInfo';
 		let response = await fetch(url, {
 			method: 'GET',
@@ -801,7 +841,7 @@ export class FLApiClient implements ApiClient {
 		});
 		this.checkAuth(response);
 		const data = await response.json();
-		return data;
+		return data as UserInfo;
 	}
 
 	//================================================================================
@@ -821,7 +861,7 @@ export class FLApiClient implements ApiClient {
 
 	//================================================================================
 
-	async getTags(): Promise<any> {
+	async getTags(): Promise<TagInfo[]> {
 		const url = this.tagsEndpoint();
 		try {
 			let response = await fetch(url, {
@@ -836,7 +876,7 @@ export class FLApiClient implements ApiClient {
 			}
 
 			const data = await response.json();
-			return data;
+			return data as TagInfo[];
 		} catch (e: any) {
 			throw new Error(e);
 		}
