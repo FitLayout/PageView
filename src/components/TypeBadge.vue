@@ -8,19 +8,30 @@
 </style>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
+
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	typeName: string | null;
+	typeClass: string | null;
+}
 
 export default defineComponent({
 	name: 'TypeBadge',
 	components: {
 	},
-	inject: ['apiClient'],
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
 	props: {
 		typeIri: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			typeName: null,
 			typeClass: null

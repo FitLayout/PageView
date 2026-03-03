@@ -10,6 +10,10 @@ import { defineComponent } from 'vue';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
 
+interface ComponentData {
+	items: any[];
+}
+
 export default defineComponent({
 	name: 'UserAvatar',
 	components: {
@@ -19,7 +23,7 @@ export default defineComponent({
 	props: {
 		userInfo: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			items: []
 		}

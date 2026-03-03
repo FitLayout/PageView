@@ -42,14 +42,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import Message from 'primevue/message';
 
 import ParamPanel from './ParamPanel.vue';
+import type { FLApiClient } from '@/common/apiclient.js';
 
+interface ComponentData {
+	loading: boolean;
+	error: string | null;
+	services: any[] | null;
+	selection: Record<string, any> | null;
+	selList: any[] | null;
+	groupList: any[] | null;
+	key: string | null;
+	paramDescr: any;
+	params: Record<string, any> | null;
+}
 
 export default defineComponent({
 	name: 'InvokePanel',
@@ -60,18 +72,20 @@ export default defineComponent({
 		Message,
 		ParamPanel
 	},
-	inject: {
-		apiClient: { from: 'apiClient', default: undefined as any }
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
 	},
 	props: {
 		id: null,
 		source: null, // use <iri> or 'ANY' or 'NONE'
 		target: null, // use <iri> or 'ANY' or 'NONE'
 		action: null,
-		grouped: null, 
+		grouped: null,
 		currentArtifact: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			loading: false,
 			error: null,

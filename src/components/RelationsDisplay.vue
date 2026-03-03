@@ -13,14 +13,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import MultiSelect from 'primevue/multiselect';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
 import SEGM from '../ontology/SEGM.js';
+import type { FLApiClient } from '@/common/apiclient.js';
 
 // XML namespaces
 const SVG = 'http://www.w3.org/2000/svg';
 const XLINK = 'http://www.w3.org/1999/xlink';
+
+interface ComponentData {
+	relations: Array<{name: string; iri: string}>;
+	selectedRelations: string[] | null;
+	areaIndex: Record<string, any>;
+	areaRects: Record<string, any>;
+	connections: any[];
+	connectionTriples: any[];
+	canvasWidth: number;
+	canvasHeight: number;
+}
 
 export default defineComponent({
 	name: 'RelationsDisplay',
@@ -29,14 +41,16 @@ export default defineComponent({
         artifactModel: null,
         selectedRect: null
 	},
-	inject: {
-		apiClient: { from: 'apiClient', default: undefined as any }
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
 	},
     emits: ['area-click'],
 	components: {
         MultiSelect
 	},
-	data () {
+	data (): ComponentData {
 		return {
             relations: [], // considered relations
             selectedRelations: null,

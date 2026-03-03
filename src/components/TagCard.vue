@@ -17,15 +17,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Card from 'primevue/card';
 import Iri from './Iri.vue';
 
 import {stringColor} from '../common/utils.js';
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	type: string | null;
+	name: string | null;
+	params: Array<{name: string; value: string}>;
+}
 
 export default defineComponent({
 	name: 'TagCard',
-	inject: ['apiClient'],
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
 	props: {
 		tag: null
 	},
@@ -33,7 +44,7 @@ export default defineComponent({
 		Card,
 		Iri
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			type: null,
 			name: null,

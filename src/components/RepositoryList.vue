@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Popover from 'primevue/popover';
@@ -96,6 +96,18 @@ import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 
 import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	menuItems: any[];
+	newDescr: string;
+	newEmail: string;
+	error: string | null;
+	sharedUrl: string;
+	remindEmail: string;
+	remindError: string | null;
+	remindSeverity: string;
+}
 
 export default defineComponent({
 	name: 'RepositoryList',
@@ -107,6 +119,11 @@ export default defineComponent({
 		Message,
 		LinkButton
 	},
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
 	props: {
 		repositoryList: {
 			type: Array
@@ -114,10 +131,8 @@ export default defineComponent({
 		createAvailable: null,
 		anonymous: null
 	},
-	data() {
+	data(): ComponentData {
 		return {
-			apiClient: null,
-
 			menuItems: [],
 			newDescr: '',
 			newEmail: '',
@@ -130,7 +145,6 @@ export default defineComponent({
 		}
 	},
 	created () {
-		this.apiClient = (this.$root as any).apiClient;
 		this.newDescr = "Default repository";
 	},
 	methods: {

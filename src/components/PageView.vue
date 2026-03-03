@@ -191,7 +191,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import ProgressBar from 'primevue/progressbar';
@@ -223,8 +223,40 @@ import ObjectResolver from '../common/resolver.js';
 import TreeModel from '../common/treemodel.js';
 
 import {FilterMatchMode} from '@primevue/core/api';
+import type { FLApiClient } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
+
+interface ComponentData {
+	loading: boolean;
+	error: string | null;
+	zoom: number;
+	screenshot: boolean;
+	outlines: boolean;
+	rectSelection: boolean;
+	showTags: boolean;
+	showRelations: boolean;
+	dragSelection: boolean;
+	annotationIRIs: string[];
+	annotationGroupIRIs: string[];
+	status: any;
+	artifactModel: RdfObject | null;
+	pageModel: RdfObject | null;
+	rectangles: RdfObject[] | null;
+	selectedRect: RdfObject | null;
+	activeTab: number;
+	subjectModel: any[] | null;
+	subjectRefs: any[] | null;
+	subjectAnnotations: any[] | null;
+	treeModel: any[] | null;
+	expandedTreeKeys: Record<string, boolean> | null;
+	selectedTreeKey: Record<string, boolean> | null;
+	tableModel: any[] | null;
+	selectedTableRow: any;
+	dFilters: Record<string, any>;
+	rFilters: Record<string, any>;
+}
 
 export default defineComponent({
 	name: 'PageView',
@@ -251,13 +283,15 @@ export default defineComponent({
 		Selection,
 		RelationsDisplay
 	},
-	inject: {
-		apiClient: { from: 'apiClient', default: undefined as any }
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
 	},
 	props: {
 		subjectIri: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 
 			// UI
@@ -274,7 +308,7 @@ export default defineComponent({
 			// Annotations to show
 			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
 			annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
-			
+
 			// Displayed data
 			status: null, //artifact status (currently displayed artifacts)
 			artifactModel: null, //currently displayed artifact model
@@ -285,7 +319,7 @@ export default defineComponent({
 			subjectModel: null, //selected subject model for the Description table
 			subjectRefs: null, //selected subject references for the References table
 			subjectAnnotations: null, //selected subject annotations for the Annotations table
-			
+
 			// Tree
 			treeModel: null,
 			expandedTreeKeys: null,
@@ -299,12 +333,12 @@ export default defineComponent({
 			dFilters: {
                 'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
 				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
-            },			
+            },
 			rFilters: {
 				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
                 'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
             },
-   
+
 		}
 	},
 	created () {

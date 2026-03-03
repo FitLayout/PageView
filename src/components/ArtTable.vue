@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import SplitButton from 'primevue/splitbutton';
@@ -62,6 +62,15 @@ import Iri from '../components/Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
+import type { FLApiClient } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
+
+interface ComponentData {
+	error: string | null;
+	loading: boolean;
+	artifacts: RdfObject[] | null;
+	nodes: any[] | null;
+}
 
 export default defineComponent({
 	name: 'ArtTable',
@@ -77,11 +86,15 @@ export default defineComponent({
 	},
 	props: {
 	},
-	data () {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data (): ComponentData {
 		return {
 			error: null,
 			loading: false,
-			apiClient: (this.$root as any).apiClient,
 			artifacts: null,
 			nodes: null
 		}
@@ -91,7 +104,6 @@ export default defineComponent({
 	watch: {
 	},
 	created () {
-		this.apiClient = (this.$root as any).apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
 		this.fetchArtifacts();
 	},

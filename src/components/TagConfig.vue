@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -53,11 +53,21 @@ import TagCard from './TagCard.vue';
 import { FilterMatchMode } from '@primevue/core/api';
 
 import {stringColor} from '../common/utils.js';
+import type { FLApiClient } from '@/common/apiclient.js';
 
+interface ComponentData {
+	tags: any[];
+	assignedTags: any[];
+	filters: Record<string, any>;
+}
 
 export default defineComponent({
 	name: 'TagConfig',
-	inject: ['apiClient'],
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
 	props: {
 	},
 	components: {
@@ -67,7 +77,7 @@ export default defineComponent({
 		Iri,
 		TagCard
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			tags: [],
 			assignedTags: [],

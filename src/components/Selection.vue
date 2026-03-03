@@ -14,20 +14,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	selectDiv: HTMLElement | null;
+	startX: number;
+	startY: number;
+	moveX: number;
+	moveY: number;
+	endX: number;
+	endY: number;
+	startBorderX: number;
+	startBorderY: number;
+	endBorderX: number;
+	endBorderY: number;
+	borderDiv: HTMLElement | null;
+	topBorderDiv: number;
+	leftBorderDiv: number;
+	bottomBorderDiv: number;
+	rightBorderDiv: number;
+	iriBoxes: any[];
+	newBounds: Record<string, number>;
+	selectedTag: string | null;
+	tags: any[];
+	labelText: string | null;
+}
 
 export default defineComponent({
 	name: 'Selection',
-	
+
 	props: {
 		pageRectAreas:null,
 	},
 
-	inject: {
-		apiClient: { from: 'apiClient', default: undefined as any }
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
 	},
 
 	components: {
@@ -36,7 +63,7 @@ export default defineComponent({
 		InputText
 	},
 
-	data () {
+	data (): ComponentData {
 		return {
 			//used for selecting div----------------------
 			selectDiv: null, // div for selecting
@@ -53,7 +80,7 @@ export default defineComponent({
 			endBorderY: 0, //relative to page view
 
 			borderDiv: null,//div used for selected area
-			
+
 			//positions for comparing and final rendering of border div
 			topBorderDiv: 10000,
 			leftBorderDiv: 10000,

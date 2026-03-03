@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Popover from 'primevue/popover';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
@@ -70,6 +70,17 @@ import ValueInfo from './ValueInfo.vue';
 import Iri from './Iri.vue';
 
 import RDFS from '../ontology/RDFS.js';
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	selectedTag: string | null;
+	tags: any[];
+	selectedLabelType: number | null;
+	labelText: string | null;
+	labelTypes: Array<{id: number; name: string; property: string}>;
+	selectedAnnotForEdit: any;
+	labelEditText: string | null;
+}
 
 export default defineComponent({
 	name: 'AnnotationPanel',
@@ -81,15 +92,17 @@ export default defineComponent({
 		ValueInfo,
 		Iri
 	},
-	inject: {
-		apiClient: { from: 'apiClient', default: undefined as any }
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
 	},
 	props: {
 		subjectIri: null,
 		artifactIri: null,
 		subjectAnnotations: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			// Tags and labels addition
 			selectedTag: null,

@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import Iri from './Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
@@ -48,6 +48,7 @@ import RDF from '../ontology/RDF.js';
 import RDFS from '../ontology/RDFS.js';
 import IriDecoder from '../common/iridecoder.js';
 import {stringColor, inferTagName, inferTagType} from '../common/utils.js';
+import type { FLApiClient } from '@/common/apiclient.js';
 
 const knownTypes = {};
 knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
@@ -57,12 +58,27 @@ knownTypes[SEGM.Area] = { name: 'Area', type: 'area' }
 knownTypes[SEGM.ChunkSet] = { name: 'ChunkSet', type: 'chunkset' }
 knownTypes[SEGM.TextChunk] = { name: 'TextChunk', type: 'textchunk' }
 
+interface ComponentData {
+	valueType: string | null;
+	iri: string | null;
+	active: boolean;
+	showExt: boolean;
+	typeIri: string | null;
+	displayValue: any;
+	displayStyle: string | null;
+	displayTooltip: any;
+}
+
 export default defineComponent({
 	name: 'ValueInfo',
 	components: {
 		Iri
 	},
-	inject: ['apiClient'],
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
 	emits: ['show-iri', 'hover-iri', 'leave-iri', 'show-ext', 'show-struct'],
 	props: {
 		data: null,
@@ -72,7 +88,7 @@ export default defineComponent({
 		structIcon: null, //icon for structure values
 		extAll: null //show ext icon always
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			valueType: null,
 			iri: null,

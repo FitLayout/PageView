@@ -95,6 +95,12 @@ import Iri from './Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 
+interface ComponentData {
+	typeName: string | null;
+	typeClass: string | null;
+	isRoot: boolean | null;
+}
+
 export default defineComponent({
 	name: 'ArtInfo',
 	components: {
@@ -104,7 +110,7 @@ export default defineComponent({
 		artifact: null,
 		focus: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			typeName: null,
 			typeClass: null,

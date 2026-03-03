@@ -23,11 +23,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 
 import ArtInfo from '../components/ArtInfo.vue';
+import type { FLApiClient } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
+
+interface ComponentData {
+	error: string | null;
+	loading: boolean;
+	started: boolean;
+	artifacts: RdfObject[] | null;
+	artifactIndex: Record<string, any> | null;
+	nodes: any[] | null;
+	allNodes: any[] | null;
+	expandedKeys: Record<string, boolean>;
+	focusedArt: RdfObject | null;
+}
 
 export default defineComponent({
 	name: 'ArtTree',
@@ -39,12 +53,16 @@ export default defineComponent({
 	props: {
 		currentIri: null,
 	},
-	data () {
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
+	data (): ComponentData {
 		return {
 			error: null,
 			loading: false,
 			started: false,
-			apiClient: (this.$root as any).apiClient,
 			artifacts: null,
 			artifactIndex: null,
 			nodes: null, // nodes after filtering (if applied)
@@ -59,7 +77,6 @@ export default defineComponent({
 		'currentIri': 'iriChanged'
 	},
 	created () {
-		this.apiClient = (this.$root as any).apiClient;
 		this.apiClient.currentRepo = this.$route.params.repoId;
 		this.started = true;
 		this.fetchArtifacts();

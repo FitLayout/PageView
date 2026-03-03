@@ -9,6 +9,10 @@
 import { defineComponent } from 'vue';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
 
+interface ComponentData {
+	shortForm: string | null;
+}
+
 export default defineComponent({
 	name: 'Iri',
 	props: {
@@ -16,7 +20,7 @@ export default defineComponent({
 		active: null
 	},
 	emits: ['show-iri', 'hover-iri', 'leave-iri'],
-	data () {
+	data (): ComponentData {
 		return {
 			shortForm: null
 		}

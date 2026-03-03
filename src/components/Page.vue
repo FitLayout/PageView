@@ -15,6 +15,15 @@
 import { defineComponent } from 'vue';
 import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
 
+interface ComponentData {
+	page: any;
+	dataurl: string | null;
+	pageStyle: string;
+	zoomStyle: string;
+	boxIndex: Record<string, HTMLElement> | null;
+	lastSelectedRect: any;
+}
+
 export default defineComponent({
 	name: 'Page',
 	props: {
@@ -27,7 +36,7 @@ export default defineComponent({
 		rectSelection: null,
 		showTags: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			page: null,
 			dataurl: null,

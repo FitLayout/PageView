@@ -8,6 +8,10 @@
 import { defineComponent } from 'vue';
 import ParamInput from './ParamInput.vue';
 
+interface ComponentData {
+	curValues: any;
+}
+
 export default defineComponent({
 	name: 'ParamPanel',
 	components: {
@@ -17,7 +21,7 @@ export default defineComponent({
 		descr: null,
 		values: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			curValues: []
 		}

@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, inject } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -38,6 +38,12 @@ import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
 
 import {FilterMatchMode} from '@primevue/core/api';
+import type { FLApiClient } from '@/common/apiclient.js';
+
+interface ComponentData {
+	subjectModel: any[] | null;
+	dFilters: Record<string, any>;
+}
 
 export default defineComponent({
 	name: 'SubjectInfo',
@@ -49,18 +55,22 @@ export default defineComponent({
 		ValueInfo,
 	},
 	emits: ['show-iri'],
-	inject: ['apiClient'],
+	setup() {
+		return {
+			apiClient: inject('apiClient') as FLApiClient
+		}
+	},
 	props: {
 		iri: null,
 		activeIris: null
 	},
-	data () {
+	data (): ComponentData {
 		return {
 			subjectModel: null,
 			dFilters: {
 				'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
 				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
-			}			
+			}
 		}
 	},
 	created () {
