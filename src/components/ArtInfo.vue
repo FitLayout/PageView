@@ -17,7 +17,7 @@
 				<div v-if="typeName === 'Page'">
 					<p class="url">{{ artifact.sourceUrl }}</p>
 				</div>
-				<p class="creator" :title="artifact.creatorParams">{{ artifact.creator }}</p>
+				<p class="creator" :title="creatorParams">{{ artifact.creator }}</p>
 				<p class="createdOn">{{ artifact.createdOn }}</p>
 			</div>
 		</div>
@@ -125,8 +125,15 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		iri() {
+		iri(): string {
 			return this.artifact._iri;
+		},
+		creatorParams(): string | undefined {
+			if (this.artifact && this.artifact.creatorParams) {
+				return this.artifact.creatorParams.toString();
+			} else {
+				return undefined;
+			}
 		}
 	},
 	created () {

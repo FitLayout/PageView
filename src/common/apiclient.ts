@@ -1,5 +1,5 @@
 import {Model as BoxModel} from '../common/boxMappers';
-import IriDecoder from '@/rdf4j-vue-components/src/common/iridecoder';
+import IriDecoder from './iridecoder';
 import type { ApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
 import type { AskQueryResult, ContextDescription, RdfValueBinding, RdfValueSpec, RepositoryInfo, SavedQuery, SelectQueryResult, UpdateQueryResult } from '@/rdf4j-vue-components/src/common/types';
 import type RDFModel from './rdfmodel';

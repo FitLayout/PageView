@@ -3,7 +3,7 @@
 		<span v-if="valueType==='literal'" v-tooltip.bottom="literalTooltip">{{literalValue}}</span>
 		<span v-if="valueType==='color'">{{literalValue}} <span class="color-box" :style="displayStyle">&#x2003;</span></span>
 		<span v-if="valueType==='bnode'">
-			<a class="iri-link iri font-monospace" v-tooltip.bottom="displayTooltip" @click="() => { showIri(iri); }">{{displayValue}}</a>
+			<a class="iri-link iri font-monospace" v-tooltip.bottom="displayTooltip" @click="() => { showIri(iri!); }">{{displayValue}}</a>
 		</span>
 		<span v-if="valueType==='uri'" class="uri-value" :class='typeInfo.type'>
 			<Iri :iri="data.v.value" :active="active" 
@@ -46,18 +46,10 @@ import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import RDF from '../ontology/RDF.js';
 import RDFS from '../ontology/RDFS.js';
-import IriDecoder from '../common/iridecoder.js';
+import IriDecoder from '../common/iridecoder.ts';
 import {stringColor, inferTagName, inferTagType} from '../common/utils.js';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { DisplayValue } from '@/rdf4j-vue-components/src/common/types';
-
-const knownTypes = {};
-knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
-knownTypes[BOX.Box] = { name: 'Box', type: 'box' }
-knownTypes[SEGM.AreaTree] = { name: 'AreaTree', type: 'areatree' }
-knownTypes[SEGM.Area] = { name: 'Area', type: 'area' }
-knownTypes[SEGM.ChunkSet] = { name: 'ChunkSet', type: 'chunkset' }
-knownTypes[SEGM.TextChunk] = { name: 'TextChunk', type: 'textchunk' }
 
 interface ComponentData {
 	valueType: string | null;
@@ -69,6 +61,21 @@ interface ComponentData {
 	displayStyle: string | null;
 	displayTooltip: any;
 }
+
+interface TypeInfo {
+	name: string;
+    type: string;
+}
+
+const knownTypes: {[key: string]: TypeInfo} = {
+    [BOX.Page]: { name: 'BoxTree', type: 'boxtree' },
+    [BOX.Box]: { name: 'Box', type: 'box' },
+    [SEGM.AreaTree]: { name: 'AreaTree', type: 'areatree' },
+    [SEGM.Area]: { name: 'Area', type: 'area' },
+    [SEGM.ChunkSet]: { name: 'ChunkSet', type: 'chunkset' },
+    [SEGM.TextChunk]: { name: 'TextChunk', type: 'textchunk' }
+};
+
 
 export default defineComponent({
 	name: 'ValueInfo',
@@ -120,16 +127,16 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		typeInfo() {
+		typeInfo(): TypeInfo {
 			if (this.typeIri) {
 				let ret = knownTypes[this.typeIri];
 				if (ret) {
 					return ret;
 				}
 			}
-			return { type: 'unknown' };
+			return { type: 'unknown', name: 'Unknown' };
 		},
-		literalValue() {
+		literalValue(): string {
 			let val = this.data.v.value.toString();
 			//limit the displayed length
 			if (val.length > 50) {
@@ -137,7 +144,7 @@ export default defineComponent({
 			}
 			return val;
 		},
-		literalTooltip() {
+		literalTooltip(): string {
 			let s = '';
 			if (this.data.v.datatype) {
 				const dec = new IriDecoder();
@@ -195,6 +202,9 @@ export default defineComponent({
 			}
 		},
 		updateType() {
+			if (!this.iri) {
+				return;
+            }
 			//console.log('TYPE changed: ' + this.typeIri);
 			// undefined type - try to guess
 			if (this.typeIri === 'unknown') {
@@ -208,8 +218,8 @@ export default defineComponent({
 					// undeclared tags - unknown name
 					else if (this.data.p && this.data.p.value === SEGM.hasTag) {
 						this.valueType = 'tag';
-						let name = inferTagName(this.iri);
-						let ttype = inferTagType(this.iri) || 'x';
+						let name = inferTagName(this.iri!);
+						let ttype = inferTagType(this.iri!) || 'x';
 						//this.displayValue = descr[SEGM.hasName][0].value;
 						this.displayValue = ttype + ':' + name;
 						this.displayStyle = 'background-color:' + stringColor(name);
@@ -286,17 +296,17 @@ export default defineComponent({
 				});				
 			}
 			// check known types
-			else if (knownTypes[this.typeIri]) {
+			else if (knownTypes[this.typeIri!]) {
 				this.active = true;
 			}
 		},
-		showIri(iri) {
+		showIri(iri: string) {
 			this.$emit('show-iri', iri);
 		},
-		hoverIri(iri) {
+		hoverIri(iri: string) {
 			this.$emit('hover-iri', iri);
 		},
-		leaveIri(iri) {
+		leaveIri(iri: string) {
 			this.$emit('leave-iri', iri);
 		},
 		showExternal() {
