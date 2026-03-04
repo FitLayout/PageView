@@ -132,120 +132,124 @@ export default defineComponent({
 		 * only the bounds are rendered.
 		 * @param active make the boxes active (hover, clickable)
 		 */
-		renderBoxes(boxList: RdfObject[], target: Element, showContents: boolean, active: boolean): void {
-			//let shadow = target.attachShadow({mode: 'open'});
-			const shadow = target;
-			for (let box of boxList) {
-				let el = document.createElement('div');
-				shadow.appendChild(el);
-				(el as any).srcBox = box;
-				if (active) {
-					el.setAttribute('class', 'box a');
-					el.setAttribute('id', 'fl-abox-' + box.documentOrder);
-					this.boxIndex[box._iri] = el;
-				} else {
-					el.setAttribute('class', 'box');
-					el.setAttribute('id', 'fl-box-' + box.documentOrder);
-				}
-				el.style.left = box.bounds.positionX + 'px';
-				el.style.top = box.bounds.positionY + 'px';
-				el.style.width = box.bounds.width + 'px';
-				el.style.height = box.bounds.height + 'px';
+  renderBoxes(boxList: RdfObject[], target: Element, showContents: boolean, active: boolean): void {
+      //let shadow = target.attachShadow({mode: 'open'});
+      const shadow = target;
+      for (let box of boxList) {
+          if (box.bounds) {
+              let el = document.createElement('div');
+              shadow.appendChild(el);
+              (el as any).srcBox = box;
+              if (active) {
+                  el.setAttribute('class', 'box a');
+                  el.setAttribute('id', 'fl-abox-' + box.documentOrder);
+                  this.boxIndex[box._iri] = el;
+              } else {
+                  el.setAttribute('class', 'box');
+                  el.setAttribute('id', 'fl-box-' + box.documentOrder);
+              }
+              const bounds = box.bounds as RdfObject;
+              el.style.left = bounds.positionX + 'px';
+              el.style.top = bounds.positionY + 'px';
+              el.style.width = bounds.width + 'px';
+              el.style.height = bounds.height + 'px';
 
-				if (showContents) {
-					const cont = this.renderContents(box);
-					el.appendChild(cont);
-				}
+              if (showContents) {
+                  const cont = this.renderContents(box);
+                  el.appendChild(cont);
+              }
 
-				if (active) {
-					// colorize tags if any
-					if (this.showTags && box.hasTag) {
-						if (box.hasTag.length === 1) {
-							let tagName = inferTagName(box.hasTag[0]._iri);
-							el.style.backgroundColor = stringColor(tagName);
-						} else if (box.hasTag.length > 1) {
-							let tagNames = [];
-							for (let i = 0; i < box.hasTag.length; i++) {
-								tagNames.push(inferTagName(box.hasTag[i]._iri));
-							}
-							el.style.backgroundImage = stringsGradient(tagNames);
-						}
-					}
+              if (active) {
+                  // colorize tags if any
+                  if (this.showTags && box.hasTag) {
+                      if (box.hasTag.length === 1) {
+                          let tagName = inferTagName(box.hasTag[0]._iri);
+                          el.style.backgroundColor = stringColor(tagName);
+                      } else if (box.hasTag.length > 1) {
+                          let tagNames = [];
+                          for (let i = 0; i < box.hasTag.length; i++) {
+                              tagNames.push(inferTagName(box.hasTag[i]._iri));
+                          }
+                          el.style.backgroundImage = stringsGradient(tagNames);
+                      }
+                  }
 
-					// onclick
-					let thisObj = this;
-					el.onclick = function(event) {
-						if (thisObj.rectSelection) {
-							(event.currentTarget as HTMLElement).classList.toggle('selected');
-						}
-						thisObj.selectBox(box);
-					};
+                  // onclick
+                  let thisObj = this;
+                  el.onclick = function(event) {
+                      if (thisObj.rectSelection) {
+                          (event.currentTarget as HTMLElement).classList.toggle('selected');
+                      }
+                      thisObj.selectBox(box);
+                  };
 
-					//visual bounds inside
-					let vel = document.createElement('div');
-					vel.setAttribute('class', 'vbox');
-					vel.style.left = (box.visualX - box.positionX) + 'px';
-					vel.style.top = (box.visualY - box.positionY) + 'px';
-					vel.style.width = box.visualWidth + 'px';
-					vel.style.height = box.visualHeight + 'px';
-					el.appendChild(vel);
-				}
-			}
-		},
+                  //visual bounds inside
+                  let vel = document.createElement('div');
+                  vel.setAttribute('class', 'vbox');
+                  vel.style.left = (box.visualX as number - (box.positionX as number)) + 'px';
+                  vel.style.top = (box.visualY as number - (box.positionY as number)) + 'px';
+                  vel.style.width = box.visualWidth + 'px';
+                  vel.style.height = box.visualHeight + 'px';
+                  el.appendChild(vel);
+              }
+          }
+      }
+  },
 
-		renderContents(box: RdfObject): HTMLSpanElement {
-			let el = document.createElement('span');
-			el.setAttribute('class', 'c');
-			if (box.text) {
-				const text = document.createTextNode(box.text);
-				el.appendChild(text);
-			}
-			let style = `font-family:'${box.fontFamily}',sans-serif;font-size:${box.fontSize}px`;
-			if (box.fontWeight >= 0.5) {
-				style += ';font-weight:bold';
-			}
-			if (box.fontStyle >= 0.5) {
-				style += ';font-style:italic';
-			}
-			let decor = '';
-			if (box.underline >= 0.5) {
-				decor += 'underline';
-			}
-			if (box.lineThrough >= 0.5) {
-				decor += ' line-through';
-			}
-			if (decor.length > 0) {
-				style += ';text-decoration:' + decor;
-			}
-			if (box.color) {
-				style += ';color:' + box.color;
-			}
-			if (box.backgroundColor) {
-				style += ';background-color:' + box.backgroundColor;
-			}
-			if (box.hasTopBorder) {
-				style += ';' + this.borderStyle(box.hasTopBorder, 'top');
-			}
-			if (box.hasRightBorder) {
-				style += ';' + this.borderStyle(box.hasRightBorder, 'right');
-			}
-			if (box.hasBottomBorder) {
-				style += ';' + this.borderStyle(box.hasBottomBorder, 'bottom');
-			}
-			if (box.hasLeftBorder) {
-				style += ';' + this.borderStyle(box.hasLeftBorder, 'left');
-			}
-			if (box.containsObject && box.containsObject.length > 0) {
-				for (let i = 0; i < box.containsObject.length; i++) {
-					if (box.containsObject[i].imageData) {
-						el.appendChild(this.createImage(box.containsObject[i]));
-					}
-				}
-			}
-			el.setAttribute('style', style);
+  renderContents(box: RdfObject): HTMLSpanElement {
+      let el = document.createElement('span');
+      el.setAttribute('class', 'c');
+      if (box.text) {
+          const text = document.createTextNode(box.text as string);
+          el.appendChild(text);
+      }
+      let style = `font-family:'${box.fontFamily}',sans-serif;font-size:${box.fontSize}px`;
+      if (box.fontWeight && (box.fontWeight as number) >= 0.5) {
+          style += ';font-weight:bold';
+      }
+      if (box.fontStyle && (box.fontStyle as number) >= 0.5) {
+          style += ';font-style:italic';
+      }
+      let decor = '';
+      if (box.underline && (box.underline as number) >= 0.5) {
+          decor += 'underline';
+      }
+      if (box.lineThrough && (box.lineThrough as number) >= 0.5) {
+          decor += ' line-through';
+      }
+      if (decor.length > 0) {
+          style += ';text-decoration:' + decor;
+      }
+      if (box.color) {
+          style += ';color:' + box.color;
+      }
+      if (box.backgroundColor) {
+          style += ';background-color:' + box.backgroundColor;
+      }
+      if (box.hasTopBorder) {
+          style += ';' + this.borderStyle(box.hasTopBorder as RdfObject, 'top');
+      }
+      if (box.hasRightBorder) {
+          style += ';' + this.borderStyle(box.hasRightBorder as RdfObject, 'right');
+      }
+      if (box.hasBottomBorder) {
+          style += ';' + this.borderStyle(box.hasBottomBorder as RdfObject, 'bottom');
+      }
+      if (box.hasLeftBorder) {
+          style += ';' + this.borderStyle(box.hasLeftBorder as RdfObject, 'left');
+      }
+      if (box.containsObject && (box.containsObject as RdfObject[]).length > 0) {
+          for (let i = 0; i < (box.containsObject as RdfObject[]).length; i++) {
+              const obj = (box.containsObject as RdfObject[])[i];
+              if (obj.imageData) {
+                  el.appendChild(this.createImage(obj));
+              }
+          }
+      }
+      el.setAttribute('style', style);
 
-			return el;
-		},
+      return el;
+  },
 
 		borderStyle(border: RdfObject, side: string): string {
 			return `border-${side}:${border.borderWidth}px ${border.borderStyle} ${border.borderColor}`;

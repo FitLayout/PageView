@@ -9,7 +9,7 @@ export interface RdfObject {
 	_iri: string;
 	_type: string;
 	_label?: string;
-	[key: string]: unknown;
+	[key: string]: RdfPropertyValue | undefined;
 }
 
 /**
