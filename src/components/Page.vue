@@ -1,13 +1,13 @@
 <template>
   <div class="page-zoom" :style="zoomStyle">
-	<div class="page-view" :style="pageStyle">
-		<div v-if="dataurl && screenshot" class="image">
-			<img :src="dataurl" alt="screenshot">
-		</div>
-		<slot></slot>
-		<div :class="boxesClass" ref="boxes">
-		</div>
-	</div>
+    <div class="page-view" :style="pageStyle">
+        <div v-if="dataurl && screenshot" class="image">
+            <img :src="dataurl" alt="screenshot">
+        </div>
+        <slot></slot>
+        <div :class="boxesClass" ref="boxes">
+        </div>
+    </div>
   </div>
 </template>
 
@@ -16,123 +16,156 @@ import { defineComponent, type PropType } from 'vue';
 import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
 import type { RdfObject } from '@/common/types';
 
+interface RdfBounds extends RdfObject {
+    positionX: number;
+    positionY: number;
+    width: number;
+    height: number;
+}
+
+interface RdfBox extends RdfObject {
+    bounds?: RdfBounds;
+    documentOrder: string | number;
+    hasTag?: RdfObject[];
+    positionX: number;
+    positionY: number;
+    visualX: number;
+    visualY: number;
+    visualWidth: number;
+    visualHeight: number;
+    text?: string;
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: number;
+    fontStyle?: number;
+    underline?: number;
+    lineThrough?: number;
+    color?: string;
+    backgroundColor?: string;
+    hasTopBorder?: RdfObject;
+    hasRightBorder?: RdfObject;
+    hasBottomBorder?: RdfObject;
+    hasLeftBorder?: RdfObject;
+    containsObject?: RdfObject[];
+}
+
 interface ComponentData {
-	page: RdfObject | null;
-	dataurl: string | null;
-	pageStyle: string;
-	zoomStyle: string;
-	boxIndex: Record<string, HTMLElement> | null;
-	lastSelectedRect: RdfObject | null;
+    page: RdfObject | null;
+    dataurl: string | null;
+    pageStyle: string;
+    zoomStyle: string;
+    boxIndex: Record<string, HTMLElement> | null;
+    lastSelectedRect: RdfObject | null;
 }
 
 export default defineComponent({
-	name: 'Page',
-	props: {
-		pageModel: {
-			type: Object as PropType<RdfObject | null>,
-			required: true
-		},
-		rectangles: {
-			type: Array as PropType<RdfObject[]>,
-			default: []
-		},
-		selectedRect: {
-			type: Object as PropType<RdfObject | null>,
-			default: null
-		},
-		zoom: {
-			type: Number,
-			required: true
-		},
-		screenshot: {
-			type: Boolean,
-			default: false
-		},
-		outlines: {
-			type: Boolean,
-			default: false
-		},
-		rectSelection: {
-			type: Boolean,
-			default: false
-		},
-		showTags: {
-			type: Boolean,
-			default: false
-		}
-	},
-	data (): ComponentData {
-		return {
-			page: null,
-			dataurl: null,
-			pageStyle: '',
-			zoomStyle: '',
-			boxIndex: null,
-			lastSelectedRect: null
-		}
-	},
-	computed: {
-		boxesClass() {
-			let cls = 'boxes';
-			if (this.outlines) {
-				cls += ' outlines';
-			}
-			return cls;
-		}
-	},
-	created () {
-		this.render();
-	},
-	watch: {
-		pageModel: 'render',
-		screenshot: 'render',
-		rectangles: 'render',
-		rectSelection: 'render',
-		showTags: 'render',
-		zoom: 'updateZoom',
-		selectedRect: 'highlightSelectedRect'
-	},
-	methods: {
-		render(): void {
-			this.page = this.pageModel;
-			// read page size
-			if (this.page !== null) {
-				this.pageStyle = `width:${this.page.width}px;height:${this.page.height}px`;
-			}
-			// decode the screenshot
-			if (this.screenshot && this.page !== null && this.page.pngImage !== undefined) {
-				const imgData = this.page.pngImage;
-				this.dataurl = 'data:image/png;base64,' + imgData;
-			} else {
-				this.dataurl = null;
-			}
-			//console.log(this.$refs);
-			if (this.$refs.boxes !== undefined) { // the rendering area is ready
-				(this.$refs.boxes as HTMLElement).innerHTML = ''; // clear old boxes
-				this.boxIndex = {};
-				const isPage = (this.rectangles === this.page.boxes); // are we drawing the page only?
-				if (this.page !== null && !this.dataurl) { // no screenshot is shown - we should draw the contents
-					//console.log('DRAWING base ' + isPage);
-					this.renderBoxes(this.page.boxes, this.$refs.boxes, true, isPage); // always use the boxes
-				}
-				if ((!isPage || this.dataurl) && this.rectangles != null) { //not a page or used a screenshot, add the active rectangles separately
-					//console.log('DRAWING overlay');
-					this.renderBoxes(this.rectangles, this.$refs.boxes, false, true);
-				}
-			}
-			// highlight the selected rect if any
-			this.highlightSelectedRect();
-		},
+    name: 'Page',
+    props: {
+        pageModel: {
+            type: Object as PropType<RdfObject | null>,
+            required: true
+        },
+        rectangles: {
+            type: Array as PropType<RdfObject[]>,
+            default: []
+        },
+        selectedRect: {
+            type: Object as PropType<RdfObject | null>,
+            default: null
+        },
+        zoom: {
+            type: Number,
+            required: true
+        },
+        screenshot: {
+            type: Boolean,
+            default: false
+        },
+        outlines: {
+            type: Boolean,
+            default: false
+        },
+        rectSelection: {
+            type: Boolean,
+            default: false
+        },
+        showTags: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data (): ComponentData {
+        return {
+            page: null,
+            dataurl: null,
+            pageStyle: '',
+            zoomStyle: '',
+            boxIndex: null,
+            lastSelectedRect: null
+        }
+    },
+    computed: {
+        boxesClass() {
+            let cls = 'boxes';
+            if (this.outlines) {
+                cls += ' outlines';
+            }
+            return cls;
+        }
+    },
+    created () {
+        this.render();
+    },
+    watch: {
+        pageModel: 'render',
+        screenshot: 'render',
+        rectangles: 'render',
+        rectSelection: 'render',
+        showTags: 'render',
+        zoom: 'updateZoom',
+        selectedRect: 'highlightSelectedRect'
+    },
+    methods: {
+        render(): void {
+            this.page = this.pageModel;
+            // read page size
+            if (this.page !== null) {
+                this.pageStyle = `width:${this.page.width}px;height:${this.page.height}px`;
+            }
+            // decode the screenshot
+            if (this.screenshot && this.page !== null && this.page.pngImage !== undefined) {
+                const imgData = this.page.pngImage;
+                this.dataurl = 'data:image/png;base64,' + imgData;
+            } else {
+                this.dataurl = null;
+            }
+            //console.log(this.$refs);
+            if (this.$refs.boxes !== undefined) { // the rendering area is ready
+                (this.$refs.boxes as HTMLElement).innerHTML = ''; // clear old boxes
+                this.boxIndex = {};
+                const isPage = (this.page !== null && this.rectangles === this.page.boxes); // are we drawing the page only?
+                if (this.page !== null && !this.dataurl) { // no screenshot is shown - we should draw the contents
+                    //console.log('DRAWING base ' + isPage);
+                    this.renderBoxes(this.page.boxes as RdfBox[], this.$refs.boxes as Element, true, isPage); // always use the boxes
+                }
+                if ((!isPage || this.dataurl) && this.rectangles != null) { //not a page or used a screenshot, add the active rectangles separately
+                    //console.log('DRAWING overlay');
+                    this.renderBoxes(this.rectangles as RdfBox[], this.$refs.boxes as Element, false, true);
+                }
+            }
+            // highlight the selected rect if any
+            this.highlightSelectedRect();
+        },
 
-		/**
-		 * Creates a DOM representing the boxes or areas.
-		 * @param boxList the list of rectangles (boxes or visual areas)
-		 * @param target the target element to append the DOM to
-		 * @param showContents when set to true, the complete contents are rendered (for boxes only). Otherwise,
-		 * only the bounds are rendered.
-		 * @param active make the boxes active (hover, clickable)
-		 */
-  renderBoxes(boxList: RdfObject[], target: Element, showContents: boolean, active: boolean): void {
+        /**
+         * Creates a DOM representing the boxes or areas.
+         * @param boxList the list of rectangles (boxes or visual areas)
+         * @param target the target element to append the DOM to
+         * @param showContents when set to true, the complete contents are rendered (for boxes only). Otherwise,
+         * only the bounds are rendered.
+         * @param active make the boxes active (hover, clickable)
+         */
+  renderBoxes(boxList: RdfBox[], target: Element, showContents: boolean, active: boolean): void {
       //let shadow = target.attachShadow({mode: 'open'});
       const shadow = target;
       for (let box of boxList) {
@@ -143,12 +176,12 @@ export default defineComponent({
               if (active) {
                   el.setAttribute('class', 'box a');
                   el.setAttribute('id', 'fl-abox-' + box.documentOrder);
-                  this.boxIndex[box._iri] = el;
+                  this.boxIndex![box._iri] = el;
               } else {
                   el.setAttribute('class', 'box');
                   el.setAttribute('id', 'fl-box-' + box.documentOrder);
               }
-              const bounds = box.bounds as RdfObject;
+              const bounds = box.bounds;
               el.style.left = bounds.positionX + 'px';
               el.style.top = bounds.positionY + 'px';
               el.style.width = bounds.width + 'px';
@@ -186,8 +219,8 @@ export default defineComponent({
                   //visual bounds inside
                   let vel = document.createElement('div');
                   vel.setAttribute('class', 'vbox');
-                  vel.style.left = (box.visualX as number - (box.positionX as number)) + 'px';
-                  vel.style.top = (box.visualY as number - (box.positionY as number)) + 'px';
+                  vel.style.left = (box.visualX - box.positionX) + 'px';
+                  vel.style.top = (box.visualY - box.positionY) + 'px';
                   vel.style.width = box.visualWidth + 'px';
                   vel.style.height = box.visualHeight + 'px';
                   el.appendChild(vel);
@@ -196,25 +229,25 @@ export default defineComponent({
       }
   },
 
-  renderContents(box: RdfObject): HTMLSpanElement {
+  renderContents(box: RdfBox): HTMLSpanElement {
       let el = document.createElement('span');
       el.setAttribute('class', 'c');
       if (box.text) {
-          const text = document.createTextNode(box.text as string);
+          const text = document.createTextNode(box.text);
           el.appendChild(text);
       }
       let style = `font-family:'${box.fontFamily}',sans-serif;font-size:${box.fontSize}px`;
-      if (box.fontWeight && (box.fontWeight as number) >= 0.5) {
+      if (box.fontWeight && box.fontWeight >= 0.5) {
           style += ';font-weight:bold';
       }
-      if (box.fontStyle && (box.fontStyle as number) >= 0.5) {
+      if (box.fontStyle && box.fontStyle >= 0.5) {
           style += ';font-style:italic';
       }
       let decor = '';
-      if (box.underline && (box.underline as number) >= 0.5) {
+      if (box.underline && box.underline >= 0.5) {
           decor += 'underline';
       }
-      if (box.lineThrough && (box.lineThrough as number) >= 0.5) {
+      if (box.lineThrough && box.lineThrough >= 0.5) {
           decor += ' line-through';
       }
       if (decor.length > 0) {
@@ -227,20 +260,20 @@ export default defineComponent({
           style += ';background-color:' + box.backgroundColor;
       }
       if (box.hasTopBorder) {
-          style += ';' + this.borderStyle(box.hasTopBorder as RdfObject, 'top');
+          style += ';' + this.borderStyle(box.hasTopBorder, 'top');
       }
       if (box.hasRightBorder) {
-          style += ';' + this.borderStyle(box.hasRightBorder as RdfObject, 'right');
+          style += ';' + this.borderStyle(box.hasRightBorder, 'right');
       }
       if (box.hasBottomBorder) {
-          style += ';' + this.borderStyle(box.hasBottomBorder as RdfObject, 'bottom');
+          style += ';' + this.borderStyle(box.hasBottomBorder, 'bottom');
       }
       if (box.hasLeftBorder) {
-          style += ';' + this.borderStyle(box.hasLeftBorder as RdfObject, 'left');
+          style += ';' + this.borderStyle(box.hasLeftBorder, 'left');
       }
-      if (box.containsObject && (box.containsObject as RdfObject[]).length > 0) {
-          for (let i = 0; i < (box.containsObject as RdfObject[]).length; i++) {
-              const obj = (box.containsObject as RdfObject[])[i];
+      if (box.containsObject && box.containsObject.length > 0) {
+          for (let i = 0; i < box.containsObject.length; i++) {
+              const obj = box.containsObject[i];
               if (obj.imageData) {
                   el.appendChild(this.createImage(obj));
               }
@@ -251,128 +284,128 @@ export default defineComponent({
       return el;
   },
 
-		borderStyle(border: RdfObject, side: string): string {
-			return `border-${side}:${border.borderWidth}px ${border.borderStyle} ${border.borderColor}`;
-		},
+        borderStyle(border: RdfObject, side: string): string {
+            return `border-${side}:${border.borderWidth}px ${border.borderStyle} ${border.borderColor}`;
+        },
 
-		createImage(img: RdfObject): HTMLImageElement {
-			let el = document.createElement('img');
-			el.setAttribute('class', 'c');
-			el.setAttribute('src', 'data:image/png;base64,' + img.imageData);
-			return el;
-		},
+        createImage(img: RdfObject): HTMLImageElement {
+            let el = document.createElement('img');
+            el.setAttribute('class', 'c');
+            el.setAttribute('src', 'data:image/png;base64,' + img.imageData);
+            return el;
+        },
 
-		selectBox(box: RdfObject): void {
-			this.$emit('rect-selected', box);
-		},
+        selectBox(box: RdfObject): void {
+            this.$emit('rect-selected', box);
+        },
 
-		updateZoom(): void {
-			const ratio = this.zoom / 100.0;
-			this.zoomStyle = `transform:scale(${ratio})`;
-		},
+        updateZoom(): void {
+            const ratio = this.zoom / 100.0;
+            this.zoomStyle = `transform:scale(${ratio})`;
+        },
 
-		highlightSelectedRect(): void {
-			if (this.boxIndex) { // only when the page has been already rendered
-				if (this.lastSelectedRect) {
-					this.unhighlightBoxIri(this.lastSelectedRect._iri, 'focus');
-				}
-				if (this.selectedRect) {
-					this.highlightBoxIri(this.selectedRect._iri, 'focus');
-					this.scrollToBoxIri(this.selectedRect._iri);
-				}
-				this.lastSelectedRect = this.selectedRect;
-			}
-		},
+        highlightSelectedRect(): void {
+            if (this.boxIndex) { // only when the page has been already rendered
+                if (this.lastSelectedRect) {
+                    this.unhighlightBoxIri(this.lastSelectedRect._iri, 'focus');
+                }
+                if (this.selectedRect) {
+                    this.highlightBoxIri(this.selectedRect._iri, 'focus');
+                    this.scrollToBoxIri(this.selectedRect._iri);
+                }
+                this.lastSelectedRect = this.selectedRect;
+            }
+        },
 
-		highlightHoveredIri(iri: string): void {
-			this.highlightBoxIri(iri, 'hovered');
-		},
+        highlightHoveredIri(iri: string): void {
+            this.highlightBoxIri(iri, 'hovered');
+        },
 
-		unhighlightHoveredIri(iri: string): void {
-			this.unhighlightBoxIri(iri, 'hovered');
-		},
+        unhighlightHoveredIri(iri: string): void {
+            this.unhighlightBoxIri(iri, 'hovered');
+        },
 
-		scrollToBoxIri(iri: string): void {
-			const elem = this.boxIndex![iri];
-			if (elem) {
-				if ((elem as any).scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
-					(elem as any).scrollIntoViewIfNeeded();
-				}
-			}
-		},
+        scrollToBoxIri(iri: string): void {
+            const elem = this.boxIndex![iri];
+            if (elem) {
+                if ((elem as any).scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
+                    (elem as any).scrollIntoViewIfNeeded();
+                }
+            }
+        },
 
-		highlightBoxIri(iri: string, cls: string): void {
-			const elem = this.boxIndex![iri];
-			if (elem) {
-				elem.classList.add(cls);
-			}
-		},
+        highlightBoxIri(iri: string, cls: string): void {
+            const elem = this.boxIndex![iri];
+            if (elem) {
+                elem.classList.add(cls);
+            }
+        },
 
-		unhighlightBoxIri(iri: string, cls: string): void {
-			const elem = this.boxIndex![iri];
-			if (elem) {
-				elem.classList.remove(cls);
-			}
-		}
-	}
+        unhighlightBoxIri(iri: string, cls: string): void {
+            const elem = this.boxIndex![iri];
+            if (elem) {
+                elem.classList.remove(cls);
+            }
+        }
+    }
 })
 </script>
 <style>
 .page-zoom {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 100%;
-	transform-origin: top left;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transform-origin: top left;
 }
 .page-view {
-	overflow: hidden;
-	position: relative;
+    overflow: hidden;
+    position: relative;
 }
 .page-view .boxes {
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
 }
 .page-view .box, .page-view .vbox {
-	position: absolute;
+    position: absolute;
 }
 .page-view .box.focus {
-	outline: 2px solid var(--p-primary-color) !important;
-	background-color: rgba(255, 200, 200, 0.3);
+    outline: 2px solid var(--p-primary-color) !important;
+    background-color: rgba(255, 200, 200, 0.3);
 }
 .page-view .box.hovered {
-	outline: 2px solid red !important;
-	background-color: rgba(255, 100, 100, 0.3);
+    outline: 2px solid red !important;
+    background-color: rgba(255, 100, 100, 0.3);
 }
 .page-view .box.selected {
-	outline: 1px solid red;
+    outline: 1px solid red;
 }
 .page-view .box.selected .vbox {
-	outline: 1px solid green;
+    outline: 1px solid green;
 }
 .page-view .box.a:hover {
-	/*outline: 1px solid red;*/
-	background-color: rgba(200, 200, 255, 0.3);
+    /*outline: 1px solid red;*/
+    background-color: rgba(200, 200, 255, 0.3);
 }
 .page-view .box.a:hover .vbox {
-	background-color: rgba(255, 200, 255, 0.3);
+    background-color: rgba(255, 200, 255, 0.3);
 }
 .outlines .box {
-	outline: 1px dashed lightgreen;
+    outline: 1px dashed lightgreen;
 }
 .outlines .box.selected {
-	outline: 1px solid red;
+    outline: 1px solid red;
 }
 .page-view .box .c {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	box-sizing: border-box;
-	white-space: pre;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    white-space: pre;
 }
 </style>
