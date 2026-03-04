@@ -56,10 +56,10 @@ export default defineComponent({
         this.update();
     },
     computed: {
-        iri() {
+        iri(): string | string[] {
             return this.$route.params.iri;
         },
-        repoId() {
+        repoId(): string | string[] {
             return this.$route.params.repoId;
         }
     },
@@ -67,23 +67,23 @@ export default defineComponent({
         '$route.params.iri': 'update'
     },
     methods: {
-        update() {
+        update(): void {
             if (this.iri) {
                 let dec = new IriDecoder();
-                this.destIri = dec.encodeIri(this.iri);
+                this.destIri = dec.encodeIri(this.iri as string);
             } else {
                 this.destIri = '';
             }
         },
 
-        showIri(iri) {
+        showIri(iri: string): void {
             this.selMode = 'Subject';
             this.$router.push({name: 'explore', params: { repoId: this.repoId, iri: iri }});
         },
 
-        changeIri() {
+        changeIri(): void {
             let dec = new IriDecoder();
-            let iri = dec.decodeIri(this.destIri);
+            let iri = dec.decodeIri(this.destIri ?? '');
             this.showIri(iri);
         }
     }

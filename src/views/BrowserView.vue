@@ -78,7 +78,7 @@ import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
 import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
-import type { RdfObject } from '@/common/types';
+import type { RdfObject, ResolvedObject } from '@/common/types';
 
 interface ComponentData {
 	repoInfo: FLRepositoryInfo | null;
@@ -91,7 +91,7 @@ interface ComponentData {
 	currentArtifact: RdfObject | null;
 	currentArtifactIri: string | null;
 	currentPageIri: string | null;
-	selectionStatus: any;
+	selectionStatus: ResolvedObject | null;
 	visibleLeft: boolean;
 	menuItems: MenuItem[];
 }
@@ -231,7 +231,7 @@ export default defineComponent({
             });
 		},
 
-		update(status) {
+		update(status: ResolvedObject): void {
 			this.selectionStatus = status;
 			this.currentArtifact = status.artifact;
 			if (status.artifact) {
@@ -239,17 +239,17 @@ export default defineComponent({
 				// check if the source page has changed in order to reload the artifact list
 				let newPageIri = status.artifact._iri;
 				if (status.artifact.hasSourcePage) {
-					newPageIri = status.artifact.hasSourcePage._iri;
+					newPageIri = (status.artifact.hasSourcePage as RdfObject)._iri;
 				}
 				if (newPageIri !== this.currentPageIri) {
 					this.currentPageIri = newPageIri;
-					this.$refs.artTree.fetchArtifacts();
+					(this.$refs.artTree as typeof ArtTree).fetchArtifacts();
 				}
 			}
 		},
 
-		artifactCreated(iri: string) {
-			this.$refs.artTree.fetchArtifacts();
+		artifactCreated(iri: string): void {
+			(this.$refs.artTree as typeof ArtTree).fetchArtifacts();
 			this.selectArtifact(iri);
 		},
 

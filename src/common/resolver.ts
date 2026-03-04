@@ -124,7 +124,7 @@ export default class ObjectResolver {
 	}
 
 	async getPage(iri: string, currentStatus: ResolverStatus): Promise<RdfObject> {
-		if (currentStatus.pageIri === iri && !currentStatus.reloadArtifact) {
+		if (currentStatus.pageIri === iri && !currentStatus.reloadArtifact && currentStatus.page) {
 			return currentStatus.page;
 		} else {
 			console.log('RELOADING page');
@@ -142,7 +142,7 @@ export default class ObjectResolver {
 	}
 
 	async getArtifact(iri: string, currentStatus: ResolverStatus): Promise<RdfObject> {
-		if (currentStatus.artifactIri === iri && !currentStatus.reloadArtifact) {
+		if (currentStatus.artifactIri === iri && !currentStatus.reloadArtifact && currentStatus.artifact) {
 			return currentStatus.artifact;
 		} else {
 			console.log('RELOADING atree');

@@ -119,7 +119,7 @@
 									<AnnotationPanel
 										@update="fetchData(false)" 
 										:subjectIri="subjectIri" 
-										:artifactIri="status.artifactIri" 
+										:artifactIri="status?.artifactIri"
 										:subjectAnnotations="subjectAnnotations" />
 								</TabPanel>
 							</TabPanels>
@@ -223,12 +223,16 @@ import ObjectResolver from '../common/resolver.js';
 import TreeModel from '../common/treemodel.js';
 
 import {FilterMatchMode} from '@primevue/core/api';
+import type { DataTableFilterMeta, DataTableRowSelectEvent } from 'primevue/datatable';
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { AnnotationItem, RdfObject } from '@/common/types';
+import type { AnnotationItem, RdfObject, ResolvedObject } from '@/common/types';
 import type { TreeNode } from 'primevue/treenode';
 import type { RdfValueBinding } from '@/rdf4j-vue-components/src/common/types.js';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
+
+// status starts null, then becomes ResolvedObject (with optional reloadArtifact mutation)
+type PageStatus = (ResolvedObject & { reloadArtifact?: boolean }) | null;
 
 interface ComponentData {
 	loading: boolean;
@@ -242,7 +246,7 @@ interface ComponentData {
 	dragSelection: boolean;
 	annotationIRIs: string[];
 	annotationGroupIRIs: string[];
-	status: any;
+	status: PageStatus;
 	artifactModel: RdfObject | null;
 	pageModel: RdfObject | null;
 	rectangles: RdfObject[];
@@ -254,10 +258,10 @@ interface ComponentData {
 	treeModel: TreeNode[];
 	expandedTreeKeys: TreeExpandedKeys;
 	selectedTreeKey: TreeSelectionKeys;
-	tableModel: any[];
-	selectedTableRow: any;
-	dFilters: Record<string, any>;
-	rFilters: Record<string, any>;
+	tableModel: RdfObject[];
+	selectedTableRow: RdfObject | null;
+	dFilters: DataTableFilterMeta;
+	rFilters: DataTableFilterMeta;
 }
 
 export default defineComponent({
@@ -344,14 +348,13 @@ export default defineComponent({
 		}
 	},
 	created () {
-		this.status = { type: 'unknown' };
 		this.update();
 	},
 	watch: {
 		'subjectIri': 'update'
 	},
 	methods: {
-		update() {
+		update(): void {
 			this.fetchData(false);
 			//this.activeTab = 0; //switch to the Description tab when the iri changes
 		},
@@ -360,16 +363,16 @@ export default defineComponent({
 		 * Reloads the artifact info.
 		 * @param {boolean} forceReload force reloading the entire artifact (e.g. all areas)
 		 */
-		async fetchData(forceReload: boolean) {
+		async fetchData(forceReload: boolean): Promise<void> {
 			//console.log('UPDATE ' + this.subjectIri)
 			if (!this.subjectIri) {
 				return;
 			}
 			this.error = null;
 			this.loading = true;
-			
-			if (forceReload) {
-				this.status.reloadArtifact = true; // force the resolver to reload current artifact 
+
+			if (forceReload && this.status) {
+				this.status.reloadArtifact = true; // force the resolver to reload current artifact
 			}
 
 			const client = this.apiClient;
@@ -380,11 +383,11 @@ export default defineComponent({
 
 				//console.log(deps);
 				if (deps.type !== 'unknown') {
-					if (forceReload || deps.artifactIri !== this.status.artifactIri) {
+					if (forceReload || deps.artifactIri !== this.status?.artifactIri) {
 						//console.log('SET artifact')
 						this.artifactModel = deps.artifact;
 						this.rectangles = deps.rectangles;
-						if (deps.pageIri !== this.status.pageIri) {
+						if (deps.pageIri !== this.status?.pageIri) {
 							//console.log('SET page')
 							this.pageModel = deps.page;
 						}
@@ -440,8 +443,8 @@ export default defineComponent({
 			}
 		},
 
-		async resolveArtifact(resolver: ObjectResolver, iri: string) {
-			let baseDeps = await resolver.resolveObjectIRI(iri, this.status);
+		async resolveArtifact(resolver: ObjectResolver, iri: string): Promise<ResolvedObject> {
+			let baseDeps = await resolver.resolveObjectIRI(iri, this.status ?? {});
 			let deps = baseDeps;
 			let resolved = false;
 			while (!resolved) {
@@ -463,8 +466,8 @@ export default defineComponent({
 		},
 
 		// scans the model and filters out the annotations only
-		getAnnotations(model: RdfValueBinding[]): any[] {
-			let ret: any[] = [];
+		getAnnotations(model: RdfValueBinding[]): AnnotationItem[] {
+			let ret: AnnotationItem[] = [];
 			for (let iri of this.annotationGroupIRIs) {
 				let values = [];
 				let rows = [];
@@ -495,46 +498,47 @@ export default defineComponent({
 			this.$router.push({name: 'show', params: { iri: iri }});
 		},
 
-		pageRectSelected(rect) {
+		pageRectSelected(rect: RdfObject): void {
 			const iri = rect._iri;
 			this.$router.push({name: 'show', params: { iri: iri }});
 		},
 
 		//============== Tree operations =============================
 
-		initTree() {
+		initTree(): void {
 			this.expandedTreeKeys = {};
 			this.expandedTreeKeys["0"] = true;
 			this.selectedTreeKey = {};
 			this.selectedTreeKey["0"] = true;
 		},
 
-		showBoxInTree(box) {
+		showBoxInTree(box: RdfObject | null): void {
+			if (!box) return;
 			this.expandForBox(box);
 			this.selectBox(box);
 			//try to scroll into view
 			this.$nextTick(function() {
-				let elem = document.getElementById('btr-' + box.documentOrder);
+				let elem = document.getElementById('btr-' + (box as RdfObject).documentOrder);
 				if (elem) {
 					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
 				}
 			});
 		},
 
-		selectBox(box) {
+		selectBox(box: RdfObject): void {
 			this.selectedTreeKey = {};
 			this.selectedTreeKey[String(box.documentOrder)] = true;
 		},
-		
-		expandForBox(box) {
-			let boxNode = this.findTreeNode(this.treeModel[0], String(box.documentOrder));
+
+		expandForBox(box: RdfObject): void {
+			let boxNode: TreeNode | null = this.findTreeNode(this.treeModel[0], String(box.documentOrder));
 			while (boxNode) {
-				this.expandedTreeKeys[boxNode.key] = true;
-				boxNode = boxNode.parent;
+				this.expandedTreeKeys[boxNode.key as string] = true;
+				boxNode = boxNode.parent ?? null;
 			}
 		},
 
-		findTreeNode(root, key) {
+		findTreeNode(root: TreeNode, key: string): TreeNode | null {
 			if (root.key === key) {
 				return root;
 			} else if (root.children) {
@@ -551,23 +555,24 @@ export default defineComponent({
 
 		// Table of rectangles
 
-		createChunksModel(rects) {
-			const list = [];
+		createChunksModel(rects: RdfObject[]): RdfObject[] {
+			const list: RdfObject[] = [];
 			for (let rect of rects) {
 				list.push(rect);
 			}
 			return list;
 		},
 
-		tableRowSelected(node) {
-			const iri = node.data._iri;
+		tableRowSelected(node: DataTableRowSelectEvent): void {
+			const iri = (node.data as RdfObject)._iri;
 			this.$router.push({name: 'show', params: { iri: iri }});
 		},
 
-		showBoxInTable(rect) {
+		showBoxInTable(rect: RdfObject | null): void {
 			this.selectedTableRow = rect;
 			this.$nextTick(function() {
-				let elem = document.getElementById('btr-' + rect.documentOrder);
+				if (!rect) return;
+				let elem = document.getElementById('btr-' + (rect as RdfObject).documentOrder);
 				if (elem) {
 					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
 				}
@@ -576,7 +581,7 @@ export default defineComponent({
 
 		// ---
 
-		findRectangleByIri(iri) {
+		findRectangleByIri(iri: string): RdfObject | null {
 			for (let rect of this.rectangles) {
 				if (rect._iri === iri) {
 					return rect;
@@ -586,36 +591,36 @@ export default defineComponent({
 		},
 
 		//refresh tree view after adding selection
-		updateTreeView() {
+		updateTreeView(): void {
 			this.fetchData(true);
 		},
 
-		showIri(iri) {
+		showIri(iri: string): void {
 			this.$router.push({name: 'show', params: { iri: iri }});
-		}, 
+		},
 
-		showExt(iri) {
+		showExt(iri: string): void {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			window.open(route.href, '_blank');
 		},
 
-		hoverIri(iri) {
-			const page = this.$refs['page'];
+		hoverIri(iri: string): void {
+			const page = this.$refs['page'] as any;
 			if (page) {
 				page.highlightHoveredIri(iri);
 			}
 		},
 
-		leaveIri(iri) {
-			const page = this.$refs['page'];
+		leaveIri(iri: string): void {
+			const page = this.$refs['page'] as any;
 			if (page) {
 				page.unhighlightHoveredIri(iri);
 			}
 		},
 
-		exploreSubject() {
-			this.showExt(this.subjectIri);
-		} 
+		exploreSubject(): void {
+			this.showExt(this.subjectIri as string);
+		}
 
 	}
 })

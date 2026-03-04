@@ -38,11 +38,13 @@ import Iri from './Iri.vue';
 import ValueInfo from './ValueInfo.vue';
 
 import {FilterMatchMode} from '@primevue/core/api';
+import type { DataTableFilterMeta } from 'primevue/datatable';
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { DisplayValue } from '@/rdf4j-vue-components/src/common/types';
 
 interface ComponentData {
-	subjectModel: any[] | null;
-	dFilters: Record<string, any>;
+	subjectModel: DisplayValue[] | null;
+	dFilters: DataTableFilterMeta;
 }
 
 export default defineComponent({
@@ -86,10 +88,10 @@ export default defineComponent({
 		iri: 'update'
 	},
 	methods: {
-		async update() {
+		async update(): Promise<void> {
 			if (this.iri) {
 				const data = await this.apiClient.getSubjectDescription(this.iri);
-				this.subjectModel = data.results.bindings;
+				this.subjectModel = data.results.bindings as DisplayValue[];
 				// fill missing values
 				for (let item of this.subjectModel) {
 					if (!item.v) {
@@ -99,11 +101,11 @@ export default defineComponent({
 			}
 		},
 
-		showIri(iri) {
+		showIri(iri: string): void {
 			this.$emit('show-iri', iri);
 		},
 
-		showExt(iri) {
+		showExt(iri: string): void {
 			let route = this.$router.resolve({name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }});
 			window.open(route.href, '_blank');
 		}

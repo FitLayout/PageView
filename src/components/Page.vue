@@ -17,12 +17,12 @@ import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
 import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
-	page: any;
+	page: RdfObject | null;
 	dataurl: string | null;
 	pageStyle: string;
 	zoomStyle: string;
 	boxIndex: Record<string, HTMLElement> | null;
-	lastSelectedRect: any;
+	lastSelectedRect: RdfObject | null;
 }
 
 export default defineComponent({
@@ -93,7 +93,7 @@ export default defineComponent({
 		selectedRect: 'highlightSelectedRect'
 	},
 	methods: {
-		render() {
+		render(): void {
 			this.page = this.pageModel;
 			// read page size
 			if (this.page !== null) {
@@ -132,7 +132,7 @@ export default defineComponent({
 		 * only the bounds are rendered.
 		 * @param active make the boxes active (hover, clickable)
 		 */
-		renderBoxes(boxList, target, showContents, active) {
+		renderBoxes(boxList: RdfObject[], target: Element, showContents: boolean, active: boolean): void {
 			//let shadow = target.attachShadow({mode: 'open'});
 			const shadow = target;
 			for (let box of boxList) {
@@ -193,7 +193,7 @@ export default defineComponent({
 			}
 		},
 
-		renderContents(box) {
+		renderContents(box: RdfObject): HTMLSpanElement {
 			let el = document.createElement('span');
 			el.setAttribute('class', 'c');
 			if (box.text) {
@@ -247,27 +247,27 @@ export default defineComponent({
 			return el;
 		},
 
-		borderStyle(border, side) {
+		borderStyle(border: RdfObject, side: string): string {
 			return `border-${side}:${border.borderWidth}px ${border.borderStyle} ${border.borderColor}`;
 		},
 
-		createImage(img) {
+		createImage(img: RdfObject): HTMLImageElement {
 			let el = document.createElement('img');
 			el.setAttribute('class', 'c');
 			el.setAttribute('src', 'data:image/png;base64,' + img.imageData);
 			return el;
 		},
 
-		selectBox(box) {
+		selectBox(box: RdfObject): void {
 			this.$emit('rect-selected', box);
 		},
 
-		updateZoom() {
+		updateZoom(): void {
 			const ratio = this.zoom / 100.0;
 			this.zoomStyle = `transform:scale(${ratio})`;
 		},
 
-		highlightSelectedRect() {
+		highlightSelectedRect(): void {
 			if (this.boxIndex) { // only when the page has been already rendered
 				if (this.lastSelectedRect) {
 					this.unhighlightBoxIri(this.lastSelectedRect._iri, 'focus');
@@ -280,32 +280,32 @@ export default defineComponent({
 			}
 		},
 
-		highlightHoveredIri(iri) {
+		highlightHoveredIri(iri: string): void {
 			this.highlightBoxIri(iri, 'hovered');
 		},
 
-		unhighlightHoveredIri(iri) {
+		unhighlightHoveredIri(iri: string): void {
 			this.unhighlightBoxIri(iri, 'hovered');
 		},
 
-		scrollToBoxIri(iri) {
-			const elem = this.boxIndex[iri];
+		scrollToBoxIri(iri: string): void {
+			const elem = this.boxIndex![iri];
 			if (elem) {
-				if (elem.scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
-					elem.scrollIntoViewIfNeeded();
+				if ((elem as any).scrollIntoViewIfNeeded) { //scrollIntoViewIfNeeded is non-standard (no Firefox!)
+					(elem as any).scrollIntoViewIfNeeded();
 				}
 			}
 		},
 
-		highlightBoxIri(iri, cls) {
-			const elem = this.boxIndex[iri];
+		highlightBoxIri(iri: string, cls: string): void {
+			const elem = this.boxIndex![iri];
 			if (elem) {
 				elem.classList.add(cls);
 			}
 		},
 
-		unhighlightBoxIri(iri, cls) {
-			const elem = this.boxIndex[iri];
+		unhighlightBoxIri(iri: string, cls: string): void {
+			const elem = this.boxIndex![iri];
 			if (elem) {
 				elem.classList.remove(cls);
 			}

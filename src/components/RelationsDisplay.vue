@@ -24,13 +24,33 @@ import type { RdfObject } from '@/common/types';
 const SVG = 'http://www.w3.org/2000/svg';
 const XLINK = 'http://www.w3.org/1999/xlink';
 
+interface RelationInfo {
+	name: string;
+	iri: string;
+}
+
+interface Connection {
+	a1: string;  // IRI of first area
+	a2: string;  // IRI of second area
+	w: string;   // weight/support value
+	type: string; // relation type IRI
+}
+
+type SvgTripleElement = SVGElement & { triples: ConnectionTriple[]; documentOrder?: number };
+
+interface ConnectionTriple {
+	r1: SvgTripleElement;
+	con: SvgTripleElement;
+	r2: SvgTripleElement;
+}
+
 interface ComponentData {
-	relations: Array<{name: string; iri: string}>;
+	relations: RelationInfo[];
 	selectedRelations: string[] | null;
-	areaIndex: Record<string, any>;
-	areaRects: Record<string, any>;
-	connections: any[];
-	connectionTriples: any[];
+	areaIndex: Record<string, RdfObject>;
+	areaRects: Record<string, SvgTripleElement>;
+	connections: Connection[];
+	connectionTriples: ConnectionTriple[];
 	canvasWidth: number;
 	canvasHeight: number;
 }
@@ -88,7 +108,7 @@ export default defineComponent({
         'selectedRect': 'redraw'
 	},
 	methods: {
-		async fetchRelations() {
+		async fetchRelations(): Promise<void> {
             const artifactIri = this.artifactModel._iri;
             const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
             const query =
@@ -111,48 +131,48 @@ export default defineComponent({
             this.relations = rels;
 		},
 
-        async updateRelation() {
+        async updateRelation(): Promise<void> {
             this.saveSelectedRelations();
             await this.update();
         },
 
-        clear() {
-            let parent = this.$refs['relcanvas'];
+        clear(): void {
+            let parent = this.$refs['relcanvas'] as SVGElement;
             while (parent.firstChild) {
                 parent.removeChild(parent.firstChild);
             }
 
             // The following properties are not listed in component data; vue shouldn't care about them
-            this.svgRoot = parent; 
+            (this as any).svgRoot = parent;
             // create a defs element inside SVG to store shared rectangle definitions
             // https://stackoverflow.com/questions/11404391/invert-svg-clip-show-only-outside-path?rq=3
-            this.svgDefs = document.createElementNS(SVG, 'defs');
-            this.svgRoot.appendChild(this.svgDefs);
+            (this as any).svgDefs = document.createElementNS(SVG, 'defs');
+            (this as any).svgRoot.appendChild((this as any).svgDefs);
 
-            this.maskCnt = 0;
-            this.areaBoxes = []; // generated area box elements
-            this.masks = []; // generated mask elements
-            this.lineBoxes = []; // generated line elements
+            (this as any).maskCnt = 0;
+            (this as any).areaBoxes = []; // generated area box elements
+            (this as any).masks = []; // generated mask elements
+            (this as any).lineBoxes = []; // generated line elements
         },
 
-        async update() {
+        async update(): Promise<void> {
             this.buildAreaIndex();
             this.connections = await this.fetchConnections();
             this.redraw();
         },
 
-        async redraw() {
+        async redraw(): Promise<void> {
             this.areaRects = {};
             this.clear();
             this.drawConnections();
             this.updateDom();
         },
 
-        areaClicked(area) {
+        areaClicked(area: RdfObject): void {
             this.$emit('area-click', area);
         },
 
-        elementHovered(el) {
+        elementHovered(el: SvgTripleElement): void {
             if (el.triples) {
                 for (let triple of el.triples) {
                     this.highlightElement(triple.r1);
@@ -162,7 +182,7 @@ export default defineComponent({
             }
         },
 
-        elementLeft(el) {
+        elementLeft(el: SvgTripleElement): void {
             if (el.triples) {
                 for (let triple of el.triples) {
                     this.unhighlightElement(triple.r1);
@@ -172,16 +192,16 @@ export default defineComponent({
             }
         },
 
-        highlightElement(el) { 
+        highlightElement(el: SVGElement): void {
             el.classList.add('hovered');
         },
 
-        unhighlightElement(el) { 
+        unhighlightElement(el: SVGElement): void {
             el.classList.remove('hovered');
         },
 
-        buildAreaIndex() {
-            let index = {};
+        buildAreaIndex(): void {
+            let index: Record<string, RdfObject> = {};
             if (this.pageRectAreas) {
                 for (let area of this.pageRectAreas) {
                     index[area._iri] = area;
@@ -189,13 +209,13 @@ export default defineComponent({
             }
             this.areaIndex = index;
         },
-        
+
         // Generates an area ID (for generated rectangles)
-        areaId(area) {
+        areaId(area: RdfObject): string {
             return 'ra' + area.documentOrder; // TODO is document order unique?
         },
 
-        drawAreaByIri(iri) {
+        drawAreaByIri(iri: string): SvgTripleElement | null {
             let area = this.areaIndex[iri];
             if (area) {
                 let rect = this.areaRects[iri];
@@ -209,18 +229,19 @@ export default defineComponent({
             }
         },
 
-        drawArea(area) {
+        drawArea(area: RdfObject): SvgTripleElement {
+            const bounds = area.bounds as any;
             // create a rect definition and store it in SVG defs
             let drect = document.createElementNS(SVG, 'rect');
-            drect.setAttribute('x', area.bounds.positionX);
-            drect.setAttribute('y', area.bounds.positionY);
-            drect.setAttribute('width', area.bounds.width);
-            drect.setAttribute('height', area.bounds.height);
+            drect.setAttribute('x', bounds.positionX);
+            drect.setAttribute('y', bounds.positionY);
+            drect.setAttribute('width', bounds.width);
+            drect.setAttribute('height', bounds.height);
             drect.setAttribute('id', this.areaId(area));
-            this.svgDefs.appendChild(drect);
+            (this as any).svgDefs.appendChild(drect);
 
             // use the rectangle and draw it
-            let rect = document.createElementNS(SVG, 'use');
+            let rect = document.createElementNS(SVG, 'use') as SvgTripleElement;
             rect.setAttributeNS(XLINK, 'href', '#' + this.areaId(area));
             rect.triples = []; // for saving related triples of boxes
 
@@ -234,22 +255,22 @@ export default defineComponent({
             rect.onmouseout = () => {
                 thisObj.elementLeft(rect);
             };
-            rect.documentOrder = area.documentOrder; // for further sorting
+            rect.documentOrder = area.documentOrder as number; // for further sorting
 
-            this.areaBoxes.push(rect);
+            (this as any).areaBoxes.push(rect);
             return rect;
         },
 
-        drawConnection(a1, a2, rel) {
-            const b1 = a1.bounds;
-            const b2 = a2.bounds;
+        drawConnection(a1: RdfObject, a2: RdfObject, rel: Connection): SvgTripleElement {
+            const b1 = a1.bounds as any;
+            const b2 = a2.bounds as any;
             const x1 = b1.positionX + (b1.width / 2);
             const y1 = b1.positionY + (b1.height / 2);
             const x2 = b2.positionX + (b2.width / 2);
             const y2 = b2.positionY + (b2.height / 2);
 
             // create a mask for the boxes
-            const relId = 'm' + (++this.maskCnt);
+            const relId = 'm' + (++(this as any).maskCnt);
             let mask = document.createElementNS(SVG, 'mask');
             mask.setAttribute('id', relId);
             mask.setAttribute('maskUnits', 'userSpaceOnUse');
@@ -268,14 +289,14 @@ export default defineComponent({
             muse2.setAttributeNS(XLINK, 'href', '#' + this.areaId(a2));
             muse2.setAttribute('class', 'fblack');
             mask.appendChild(muse2);
-            this.masks.push(mask);
+            (this as any).masks.push(mask);
 
             // create the line and mask it
-            let line = document.createElementNS(SVG, 'line');
-            line.setAttribute('x1', x1);
-            line.setAttribute('y1', y1);
-            line.setAttribute('x2', x2);
-            line.setAttribute('y2', y2);
+            let line = document.createElementNS(SVG, 'line') as SvgTripleElement;
+            line.setAttribute('x1', String(x1));
+            line.setAttribute('y1', String(y1));
+            line.setAttribute('x2', String(x2));
+            line.setAttribute('y2', String(y2));
             line.setAttribute('mask', `url(#${relId})`);
             line.setAttribute('style', 'stroke:' + this.relationColor(rel.type));
             line.triples = [];  // for saving related triples of boxes
@@ -294,13 +315,13 @@ export default defineComponent({
             title.appendChild(document.createTextNode(reltype + '; w=' + rel.w));
             line.appendChild(title);
 
-            this.lineBoxes.push(line);
+            (this as any).lineBoxes.push(line);
             return line;
         },
 
-        async fetchConnections() {
+        async fetchConnections(): Promise<Connection[]> {
             if (this.selectedRelations) {
-                let rels = [];
+                let rels: Connection[] = [];
                 for (let relType of this.selectedRelations) {
                     let relsForRelType = await this.fetchSingleRelation(relType);
                     rels = rels.concat(relsForRelType);
@@ -311,7 +332,7 @@ export default defineComponent({
             }
         },
 
-        async fetchSingleRelation(relType) {
+        async fetchSingleRelation(relType: string): Promise<Connection[]> {
             const artifactIri = this.artifactModel._iri;
             const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
             const query = `PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
@@ -335,7 +356,7 @@ export default defineComponent({
             return rels;
         },
 
-        drawConnections()
+        drawConnections(): void
         {
             let maxw = 0;
             let maxh = 0;
@@ -352,24 +373,26 @@ export default defineComponent({
 
                     if (!this.selectedRect || iri1 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
                         const con = this.drawConnection(a1, a2, rel);
-                        const triple = {r1, con, r2};
+                        const triple: ConnectionTriple = {r1: r1!, con, r2: r2!};
                         this.connectionTriples.push(triple);
-                        r1.triples.push(triple);
-                        r2.triples.push(triple);
+                        r1!.triples.push(triple);
+                        r2!.triples.push(triple);
                         con.triples.push(triple);
                     }
 
-                    if (a1.bounds.positionX + a1.bounds.width > maxw) {
-                        maxw = a1.bounds.positionX + a1.bounds.width;
+                    const b1 = a1.bounds as any;
+                    const b2 = a2.bounds as any;
+                    if (b1.positionX + b1.width > maxw) {
+                        maxw = b1.positionX + b1.width;
                     }
-                    if (a1.bounds.positionY + a1.bounds.height > maxh) {
-                        maxh = a1.bounds.positionY + a1.bounds.height;
+                    if (b1.positionY + b1.height > maxh) {
+                        maxh = b1.positionY + b1.height;
                     }
-                    if (a2.bounds.positionX + a2.bounds.width > maxw) {
-                        maxw = a2.bounds.positionX + a2.bounds.width;
+                    if (b2.positionX + b2.width > maxw) {
+                        maxw = b2.positionX + b2.width;
                     }
-                    if (a2.bounds.positionY + a2.bounds.height > maxh) {
-                        maxh = a2.bounds.positionY + a2.bounds.height;
+                    if (b2.positionY + b2.height > maxh) {
+                        maxh = b2.positionY + b2.height;
                     }
                 }
             }
@@ -377,26 +400,27 @@ export default defineComponent({
             this.canvasHeight = maxh;
         },
 
-        updateDom() {
+        updateDom(): void {
+            const self = this as any;
             // sort area boxes by orderId
             //   to make them properly selectable
-            this.areaBoxes.sort((a, b) => {
-                return a.documentOrder - b.documentOrder;
+            self.areaBoxes.sort((a: SvgTripleElement, b: SvgTripleElement) => {
+                return (a.documentOrder ?? 0) - (b.documentOrder ?? 0);
             });
             // insert masks and lines
-            for (let mask of this.masks) {
-                this.svgRoot.appendChild(mask);
+            for (let mask of self.masks) {
+                self.svgRoot.appendChild(mask);
             }
-            for (let line of this.lineBoxes) {
-                this.svgRoot.appendChild(line);
+            for (let line of self.lineBoxes) {
+                self.svgRoot.appendChild(line);
             }
             // insert area boxes
-            for (let abox of this.areaBoxes) {
-                this.svgRoot.appendChild(abox);
+            for (let abox of self.areaBoxes) {
+                self.svgRoot.appendChild(abox);
             }
         },
 
-        relationColor(relIri) {
+        relationColor(relIri: string): string {
             //let colors = ['#4CAF50', '#2196F3', '#FFC107', '#9C27B0', '#00BCD4', '#FF9800'];
             //let colors = ['#2196F3', '#FFC107', '#9C27B0', '#00BCD4', '#FF9800', '#795548'];
             let colors = ["#fd7f6f", "#7eb0d5", "#b2e061", "#bd7ebe", "#ffb55a", "#ffee65", "#beb9db", "#fdcce5", "#8bd3c7"];
@@ -410,11 +434,11 @@ export default defineComponent({
             return colors[idx % colors.length];
         },
 
-        saveSelectedRelations() {
+        saveSelectedRelations(): void {
             window.localStorage.setItem('selectedRelations', JSON.stringify(this.selectedRelations));
         },
 
-        restoreSelectedRelations() {
+        restoreSelectedRelations(): void {
             const storedRelations = window.localStorage.getItem('selectedRelations');
             if (storedRelations) {
                 let toRestore = JSON.parse(storedRelations);

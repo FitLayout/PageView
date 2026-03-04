@@ -18,7 +18,7 @@ import { defineComponent, inject, type PropType } from 'vue';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
-import type { FLApiClient } from '@/common/apiclient.js';
+import type { FLApiClient, TagInfo } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
@@ -38,10 +38,11 @@ interface ComponentData {
 	leftBorderDiv: number;
 	bottomBorderDiv: number;
 	rightBorderDiv: number;
-	iriBoxes: any[];
+	canMove: boolean;
+	iriBoxes: RdfObject[];
 	newBounds: Record<string, number>;
 	selectedTag: string | null;
-	tags: any[];
+	tags: TagInfo[];
 	labelText: string | null;
 }
 
@@ -92,6 +93,7 @@ export default defineComponent({
 			rightBorderDiv: 0,
 
 			// array of selected iri boxes
+			canMove: false,
 			iriBoxes: [],
 			newBounds: {},
 
@@ -107,12 +109,12 @@ export default defineComponent({
 	},
 	methods: {
 		//get tag values
-		async fetchTags() {
+		async fetchTags(): Promise<void> {
 			this.tags = await this.apiClient.getTags();
-		},	
+		},
 
 		//create div and get its starging position
-		divCreator(event) { 
+		divCreator(event: MouseEvent): void {
 			//remove div of selected boxes
 			let el = document.getElementById('divBorder');
 			if (el != null) {
@@ -134,17 +136,17 @@ export default defineComponent({
 		},
 
 		//on mouse move compute new position of div
-		divMover(event) {
+		divMover(event: MouseEvent): void {
 			if (this.canMove) {
 				this.moveX = event.clientX;
 				this.moveY = event.clientY;
-				this.selectDiv.style.width= (this.moveX - this.startX) + 'px';
-				this.selectDiv.style.height= (this.moveY - this.startY) + 'px';
+				this.selectDiv!.style.width= (this.moveX - this.startX) + 'px';
+				this.selectDiv!.style.height= (this.moveY - this.startY) + 'px';
 			}
 		},
 
 		//on mouse up choose boxes in selection and remove selector div
-		divUp(event) {
+		divUp(event: MouseEvent): void {
 			//variable to let know mover to not be used
 			this.canMove = false;
 			//if any boxes are in selection set true
@@ -230,7 +232,7 @@ export default defineComponent({
 		},
 
 		//on mouse leave from pageview div remove selector div
-		divLeave() {
+		divLeave(): void {
 			//remove div 
 			let el = document.getElementById('divSelector');
 			if (el != null) {
@@ -242,7 +244,7 @@ export default defineComponent({
 		},
 		
 		//add selected areas to new super area and update view
-		async addIriObjectsToArea() {
+		async addIriObjectsToArea(): Promise<void> {
 			//array of areas
 			let sel = this.iriBoxes;
 			// iri of whole artifact

@@ -9,10 +9,11 @@
 import { defineComponent, type PropType } from 'vue';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
+import type { MenuItem } from 'primevue/menuitem';
 import type { UserInfo } from '@/common/apiclient';
 
 interface ComponentData {
-	items: any[];
+	items: MenuItem[];
 }
 
 export default defineComponent({
@@ -39,7 +40,7 @@ export default defineComponent({
 		userInfo: 'createMenu'
 	},
 	methods: {
-		createMenu() {
+		createMenu(): void {
 			this.items = [];
 			if (this.userInfo) {
 				if (this.userInfo.anonymous) {
@@ -87,11 +88,11 @@ export default defineComponent({
 				}
 			}
 		},
-		toggle(event) {
-			this.$refs.menu.toggle(event);
+		toggle(event: Event): void {
+			(this.$refs.menu as typeof Menu).toggle(event);
 		},
-		isAdmin() {
-			return this.userInfo && this.userInfo.roles && this.userInfo.roles.includes('admin');
+		isAdmin(): boolean {
+			return !!(this.userInfo && this.userInfo.roles && this.userInfo.roles.includes('admin'));
 		}
 	}
 })

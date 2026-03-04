@@ -50,18 +50,18 @@ import Message from 'primevue/message';
 
 import ParamPanel from './ParamPanel.vue';
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { RdfObject } from '@/common/types';
+import type { ParamDescr, RdfObject, ServiceGroupItem, ServiceInfo } from '@/common/types';
 
 interface ComponentData {
 	loading: boolean;
 	error: string | null;
-	services: any[] | null;
-	selection: Record<string, any> | null;
-	selList: any[] | null;
-	groupList: any[] | null;
+	services: ServiceInfo[] | null;
+	selection: Record<string, ServiceInfo> | null;
+	selList: ServiceInfo[] | null;
+	groupList: ServiceGroupItem[] | null;
 	key: string | null;
-	paramDescr: any;
-	params: Record<string, any> | null;
+	paramDescr: ParamDescr[] | null;
+	params: Record<string, string | number | boolean> | null;
 }
 
 export default defineComponent({
@@ -132,13 +132,13 @@ export default defineComponent({
 		'key': 'update'
 	},
 	methods: {
-		async loadServices() {
+		async loadServices(): Promise<void> {
 			try {
 				let data = await this.apiClient.fetchArtifactServices();
 				this.services = data;
 
 				this.selList = [];
-				let sel = {};
+				let sel: Record<string, ServiceInfo> = {};
 				for (let serv of this.services) {
 					if ((this.target === 'ANY' || (this.target === 'NONE' && !serv.produces) || (serv.produces === this.target))
 							&& (this.source === 'ANY' || (this.source === 'NONE' && !serv.consumes) || (serv.consumes === this.source))) {
@@ -159,20 +159,20 @@ export default defineComponent({
 			}
 		},
 
-		createGroups(list) {
+		createGroups(list: ServiceInfo[]): ServiceGroupItem[] {
 			// create a map from category to list of services
-			let cats = {};
+			let cats: Record<string, ServiceInfo[]> = {};
 			for (let serv of list) {
 				let cat = serv.category ? serv.category : 'Other';
-				let list = cats[cat];
-				if (!list) {
-					list = [];
-					cats[cat] = list;
+				let catList = cats[cat];
+				if (!catList) {
+					catList = [];
+					cats[cat] = catList;
 				}
-				list.push(serv);
+				catList.push(serv);
 			}
 			// transform to grouped list for Dropdown
-			let groupList = [];
+			let groupList: ServiceGroupItem[] = [];
 			for (let cat in cats) {
 				groupList.push({
 					label: cat,
@@ -182,16 +182,16 @@ export default defineComponent({
 			return groupList;
 		},
 
-		async update() {
+		async update(): Promise<void> {
 			if (this.key) {
 				//get the current param values
 				await this.restoreParams();
 				//choose the service description
-				this.paramDescr = this.selection[this.key].params;
+				this.paramDescr = this.selection![this.key].params ?? null;
 			}
 		},
 
-		async invoke() {
+		async invoke(): Promise<boolean> {
 			this.saveParams();
 			//console.log('invoke');
 			//console.log(this.params);
@@ -199,7 +199,7 @@ export default defineComponent({
 			this.loading = true;
 
 			let srcArtifact = null;
-			const srcType = this.selection[this.key].consumes;
+			const srcType = this.selection![this.key!].consumes;
 			if (srcType) {
 				srcArtifact = this.findParentOfType(srcType);
 			}
@@ -214,7 +214,7 @@ export default defineComponent({
 					this.$emit('created', srcIri);
 				}
 				this.error = null;
-			} catch (e) {
+			} catch (e: any) {
 				this.error = e.message;
 			} finally {
 				this.loading = false;
@@ -223,14 +223,14 @@ export default defineComponent({
 			return false;
 		},
 
-		restoreService() {
+		restoreService(): void {
 			let selected = localStorage.getItem('service-' + this.id);
-			if (selected && this.selection[selected] !== undefined) {
+			if (selected && this.selection && this.selection[selected] !== undefined) {
 				this.key = selected;
 			}
 		},
 
-		async restoreParams() {
+		async restoreParams(): Promise<void> {
 			if (this.key) {
 				// get the defaults (they may have been changed)
 				let params = await this.apiClient.getServiceParams(this.key);
@@ -255,18 +255,18 @@ export default defineComponent({
 			}
 		},
 
-		saveParams() {
+		saveParams(): void {
 			if (this.key) {
 				localStorage.setItem('service-' + this.id, this.key);
 				localStorage.setItem('params-' + this.key, JSON.stringify(this.params));
 			}
 		},
 
-		findParentOfType(type) {
-			let current = this.currentArtifact;
+		findParentOfType(type: string): RdfObject | null {
+			let current: RdfObject | null = this.currentArtifact;
 			while (current && current._type !== type) {
 				if (current.hasParentArtifact)  {
-					current = current.hasParentArtifact;
+					current = current.hasParentArtifact as RdfObject;
 				} else {
 					current = null;
 				}

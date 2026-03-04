@@ -45,6 +45,7 @@ import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 
+import type { DataTableRowEditInitEvent, DataTableRowEditSaveEvent, DataTableRowEditCancelEvent } from 'primevue/datatable';
 import type { FLApiClient, FLRepositoryInfo } from '@/common/apiclient.js';
 
 interface ComponentData {
@@ -82,14 +83,14 @@ export default defineComponent({
         this.apiClient.listAllRepositories().then(data => this.repos = data);
     },	
 	methods: {
-		onRowEditInit(event: any) {
+		onRowEditInit(event: DataTableRowEditInitEvent): void {
             this.originalRows[event.index] = {...this.repos[event.index]};
 		},
-        onRowEditSave(event: any) {
+        onRowEditSave(event: DataTableRowEditSaveEvent): void {
 			const rdata = this.repos[event.index];
 			this.apiClient.updateRepositoryInfo(rdata.id, rdata);
         },
-        onRowEditCancel(event: any) {
+        onRowEditCancel(event: DataTableRowEditCancelEvent): void {
             this.repos[event.index] = this.originalRows[event.index];
         }
 	}

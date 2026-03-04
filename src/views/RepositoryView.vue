@@ -82,21 +82,21 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		repoId() {
+		repoId(): string | string[] {
 			if (this.repoInfo) {
 				return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
 			} else {
 				return this.$route.params.repoId;
 			}
 		},
-		repoTitle() {
+		repoTitle(): string {
 			if (this.repoInfo) {
 				return this.repoInfo.description ? this.repoInfo.description : '(no name)';
 			} else {
 				return '(no name)';
 			}
 		},
-		repoLink() {
+		repoLink(): string {
 			return window.location.href;
 		}
 	},
@@ -113,12 +113,12 @@ export default defineComponent({
 	},
 	methods: {
 
-		async fetchUserInfo() {
+		async fetchUserInfo(): Promise<void> {
 			//this.error = null;
 			this.userInfo = await this.apiClient.getUserInfo();
 		},
 
-		quit() {
+		quit(): void {
 			this.$router.push({name: 'home'});
 		}
 

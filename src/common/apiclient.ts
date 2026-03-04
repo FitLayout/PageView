@@ -3,7 +3,7 @@ import IriDecoder from './iridecoder';
 import type { ApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
 import type { AskQueryResult, ContextDescription, RdfValueBinding, RdfValueSpec, RepositoryInfo, SavedQuery, SelectQueryResult, UpdateQueryResult } from '@/rdf4j-vue-components/src/common/types';
 import type RDFModel from './rdfmodel';
-import type { RdfObject } from './types';
+import type { RdfObject, ServiceInfo } from './types';
 
 const develMode = (window.location.port === '3000'); //development server detection
 const localMode = (window.location.hostname === 'localhost'); //local mode (http allowed)
@@ -151,7 +151,7 @@ export class FLApiClient implements ApiClient {
 		return data;
 	}
 
-    async getSubjectDescriptionObj(subjectIri: string): Promise<any> {
+    async getSubjectDescriptionObj(subjectIri: string): Promise<Record<string, RdfValueSpec[]>> {
 		const url = this.repositoryEndpoint() + '/describe/' + encodeURIComponent(subjectIri);
 		let response = await fetch(url, {
 			method: 'GET',
@@ -779,7 +779,7 @@ export class FLApiClient implements ApiClient {
 
 	//================================================================================
 
-	async fetchArtifactServices(): Promise<any> {
+	async fetchArtifactServices(): Promise<ServiceInfo[]> {
 		const url = this.serviceEndpoint();
 		let response = await fetch(url, {
 			method: 'GET',
@@ -790,7 +790,7 @@ export class FLApiClient implements ApiClient {
 		return data;
 	}
 
-	async getServiceParams(serviceId: string): Promise<any> {
+	async getServiceParams(serviceId: string): Promise<Record<string, string | number | boolean>> {
 		const url = this.serviceEndpoint() + '/config?' + new URLSearchParams({'id': serviceId});
 		let response = await fetch(url, {
 			method: 'GET',
@@ -850,13 +850,7 @@ export class FLApiClient implements ApiClient {
 
 	async getIriDecoder(): Promise<IriDecoder> {
 		if (!this.cachedIriDecoder) {
-			const fitlayoutNamespaces: { [key: string]: string } = {
-				b: 'http://fitlayout.github.io/ontology/render.owl#',
-				a: 'http://fitlayout.github.io/ontology/segmentation.owl#',
-				fl: 'http://fitlayout.github.io/ontology/fitlayout.owl#',
-				r: 'http://fitlayout.github.io/resource/'
-			};
-			this.cachedIriDecoder = new IriDecoder(fitlayoutNamespaces);
+			this.cachedIriDecoder = new IriDecoder();
 		}
 		return this.cachedIriDecoder;
 	}

@@ -148,10 +148,10 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		isReadOnly() {
-			return this.repoInfo && this.repoInfo.readOnly;
+		isReadOnly(): boolean {
+			return !!(this.repoInfo && this.repoInfo.readOnly);
 		},
-		
+
 	},
 	watch: {
 	},

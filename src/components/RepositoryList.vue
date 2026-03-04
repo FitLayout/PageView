@@ -96,10 +96,12 @@ import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 
 import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
+import type { MenuItem } from 'primevue/menuitem';
 import type { FLApiClient, FLRepositoryInfo } from '@/common/apiclient.js';
+import type { PopoverMethods } from 'primevue/popover';
 
 interface ComponentData {
-	menuItems: any[];
+	menuItems: MenuItem[];
 	newDescr: string;
 	newEmail: string;
 	error: string | null;
@@ -155,51 +157,51 @@ export default defineComponent({
 		this.newDescr = "Default repository";
 	},
 	methods: {
-		async createRepository() {
+		async createRepository(): Promise<void> {
 			try {
 				const rdata = await this.apiClient.createRepository({description: this.newDescr, email: this.newEmail});
 				this.$emit('created', rdata);
 				this.error = null;
-			} catch (e) {
+			} catch (e: any) {
 				this.error = e.message;
 			}
 		},
-		async sendReminder() {
+		async sendReminder(): Promise<void> {
 			if (this.remindEmail) {
 				try {
 					await this.apiClient.sendReminder(this.remindEmail);
 					this.remindSeverity = 'success';
 					this.remindError = 'Done.';
-				} catch (e) {
+				} catch (e: any) {
 					this.remindSeverity = 'error';
 					this.remindError = e.message;
 				}
 			}
 		},
-		toggleCreate(event) {
-			this.$refs.op.toggle(event);
+		toggleCreate(event: Event): void {
+			(this.$refs.op as PopoverMethods).toggle(event);
 			//this.$refs.inputDescr.focus(); //TODO this should be done later
 		},
-		toggleMissing(event) {
-			this.$refs.opMissing.toggle(event);
+		toggleMissing(event: Event): void {
+			(this.$refs.opMissing as PopoverMethods).toggle(event);
 		},
-		toggleRemind(event) {
-			this.$refs.opMissing.toggle(event);
-			this.$refs.opRemind.toggle(event);
+		toggleRemind(event: Event): void {
+			(this.$refs.opMissing as PopoverMethods).toggle(event);
+			(this.$refs.opRemind as PopoverMethods).toggle(event);
 		},
-		toggleShare(event, repoId) {
+		toggleShare(event: Event, repoId: string): void {
 			this.sharedUrl = this.getRepoUrl(repoId);
-			this.$refs.opsh.toggle(event);
+			(this.$refs.opsh as PopoverMethods).toggle(event);
 		},
-		openRepo(id) {
+		openRepo(id: string): void {
 			this.$router.push({name: 'repo', params: { repoId: id }});
 		},
-		browseRepo(id) {
+		browseRepo(id: string): void {
 			this.$router.push({name: 'browser', params: { repoId: id }});
 		},
-		getRepoUrl(id) {
+		getRepoUrl(id: string): string {
 			const res = this.$router.resolve({name: 'repo', params: { repoId: id }});
-			const ret = window.location.origin + this.$router.options.history.base + res.fullPath;
+			const ret = window.location.origin + (this.$router.options.history as any).base + res.fullPath;
 			return ret;
 		}
 	}

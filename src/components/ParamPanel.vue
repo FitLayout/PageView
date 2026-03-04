@@ -10,7 +10,7 @@ import ParamInput from './ParamInput.vue';
 import type { ParamDescr } from '@/common/types';
 
 interface ComponentData {
-	curValues: any;
+	curValues: Record<string, string | number | boolean> | null;
 }
 
 export default defineComponent({
@@ -42,7 +42,7 @@ export default defineComponent({
 		'descr': 'update'
 	},
 	methods: {
-		update() {
+		update(): void {
 			this.curValues = this.values;
 		}
 	}

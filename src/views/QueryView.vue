@@ -14,10 +14,11 @@ import { defineComponent, inject } from 'vue';
 import { RdfEditor, QueryResults } from '@/rdf4j-vue-components/src';
 
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { SelectQueryResult } from '@/rdf4j-vue-components/src/common/types';
 
 interface ComponentData {
 	loading: boolean;
-	queryResult: any;
+	queryResult: SelectQueryResult | null;
 }
 
 export default defineComponent({
@@ -43,21 +44,21 @@ export default defineComponent({
 		this.update();
 	},
 	computed: {
-		repoId() {
+		repoId(): string | string[] {
 			return this.$route.params.repoId;
 		}
 	},
 	watch: {
 	},
 	methods: {
-		update() {
+		update(): void {
 		},
 
-		loadingStart(start) {
+		loadingStart(start: boolean): void {
 			this.loading = start;
 		},
 
-		resultsHandler(r) {
+		resultsHandler(r: SelectQueryResult): void {
 			this.queryResult = r;
 			console.log(r);
 		},

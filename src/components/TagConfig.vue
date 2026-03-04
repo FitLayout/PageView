@@ -51,14 +51,15 @@ import Iri from './Iri.vue';
 import TagCard from './TagCard.vue';
 
 import { FilterMatchMode } from '@primevue/core/api';
+import type { DataTableFilterMeta } from 'primevue/datatable';
 
 import {stringColor} from '../common/utils.js';
-import type { FLApiClient } from '@/common/apiclient.js';
+import type { FLApiClient, TagInfo } from '@/common/apiclient.js';
 
 interface ComponentData {
-	tags: any[];
-	assignedTags: any[];
-	filters: Record<string, any>;
+	tags: TagInfo[];
+	assignedTags: TagInfo[];
+	filters: DataTableFilterMeta;
 }
 
 export default defineComponent({
@@ -96,12 +97,12 @@ export default defineComponent({
 		this.fetchTags();
 	},
 	methods: {
-		async fetchTags() {
+		async fetchTags(): Promise<void> {
 			const data = await this.apiClient.getTags();
 			this.tags = data;
 		},
 
-		async fetchAssignedTags() {
+		async fetchAssignedTags(): Promise<void> {
 			const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 				PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
 				PREFIX fl: <http://fitlayout.github.io/ontology/fitlayout.owl#>
@@ -130,12 +131,12 @@ export default defineComponent({
 			this.assignedTags = tags;
 		},
 
-		exploreTagLink(iri) {
+		exploreTagLink(iri: string): string {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			return route.href;
 		},
 
-		tagDisplayStyle(tag) {
+		tagDisplayStyle(tag: TagInfo): string {
 			return 'background-color:' + stringColor(tag.name);
 		}
 	}

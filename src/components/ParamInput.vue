@@ -64,13 +64,13 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		inputId() {
+		inputId(): string {
 			return 'P' + this.descr.name;
 		},
-		paramClass() {
+		paramClass(): string {
 			return 'p-' + this.descr.type;
 		},
-		paramDescription() {
+		paramDescription(): string {
 			return this.descr.description || '';
 		}
 	},

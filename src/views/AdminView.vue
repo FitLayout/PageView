@@ -81,12 +81,12 @@ export default defineComponent({
 	},
 	methods: {
 
-		async fetchUserInfo() {
+		async fetchUserInfo(): Promise<void> {
 			//this.error = null;
 			this.userInfo = await this.apiClient.getUserInfo();
 		},
 
-		quit() {
+		quit(): void {
 			this.$router.push({name: 'home'});
 		}
 

@@ -1,4 +1,4 @@
-import type { RdfValueBinding, DisplayValue } from '@/rdf4j-vue-components/src/common/types';
+import type { RdfValueBinding, DisplayValue, RdfValueSpec } from '@/rdf4j-vue-components/src/common/types';
 
 /**
  * Base type for all domain objects created from RDF data.
@@ -37,6 +37,27 @@ export type PropertyMap = { [key: string]: PropertyDef };
 export type RdfPropertyValue = string | number | (string | number)[] | RdfObject | RdfObject[];
 
 /**
+ * A descriptor for a service offered by the backend.
+ */
+export interface ServiceInfo {
+	id: string;
+	name: string;
+	description?: string;
+	category?: string;
+	consumes?: string;
+	produces?: string;
+	params?: ParamDescr[];
+}
+
+/**
+ * A grouped list item for use in grouped service dropdowns.
+ */
+export interface ServiceGroupItem {
+	label: string;
+	items: ServiceInfo[];
+}
+
+/**
  * A descriptor for a single service parameter.
  */
 export interface ParamDescr {
@@ -60,13 +81,14 @@ export interface AnnotationItem {
 
 /**
  * Current display status passed to ObjectResolver to enable artifact caching.
+ * All fields are optional so that a partial/initial status can be passed safely.
  */
 export interface ResolverStatus {
-	pageIri: string;
-	reloadArtifact: boolean;
-	page: RdfObject;
-	artifactIri: string;
-	artifact: RdfObject;
+	pageIri?: string;
+	reloadArtifact?: boolean;
+	page?: RdfObject;
+	artifactIri?: string;
+	artifact?: RdfObject;
 }
 
 /** Rectangle type discriminator for visualization. */
@@ -90,7 +112,7 @@ export type ResolvedObject =
 	| {
 		type: 'unknown';
 		description: RdfValueBinding[];
-		objData: any;
+		objData: Record<string, RdfValueSpec[]>;
 		artifactIri: string;
 		artifact: RdfObject;
 	  };

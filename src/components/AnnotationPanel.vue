@@ -70,16 +70,16 @@ import ValueInfo from './ValueInfo.vue';
 import Iri from './Iri.vue';
 
 import RDFS from '../ontology/RDFS.js';
-import type { FLApiClient } from '@/common/apiclient.js';
+import type { FLApiClient, TagInfo } from '@/common/apiclient.js';
 import type { AnnotationItem } from '@/common/types';
 
 interface ComponentData {
 	selectedTag: string | null;
-	tags: any[];
+	tags: TagInfo[];
 	selectedLabelType: number | null;
 	labelText: string | null;
 	labelTypes: Array<{id: number; name: string; property: string}>;
-	selectedAnnotForEdit: any;
+	selectedAnnotForEdit: AnnotationItem | null;
 	labelEditText: string | null;
 }
 
@@ -131,7 +131,7 @@ export default defineComponent({
 		this.fetchTags();
 	},
 	methods: {
-		async fetchTags() {
+		async fetchTags(): Promise<void> {
 			this.tags = await this.apiClient.getTags();
 		},
 

@@ -140,7 +140,7 @@ export default defineComponent({
 		this.update();
 	},
 	methods: {
-		update() {
+		update(): void {
 			//console.log(this.artifact);
 			this.isRoot = (this.artifact.hasParentArtifact === undefined);
 			switch (this.artifact._type) {
@@ -163,11 +163,11 @@ export default defineComponent({
 			}
 		},
 
-		async deleteArtifact() {
+		async deleteArtifact(): Promise<void> {
 			this.$emit('delete-artifact', this.iri);
 		},
 
-		toggleFocus() {
+		toggleFocus(): void {
 			if (this.focus) {
 				this.$emit('toggle-focus', null);
 			} else {

@@ -76,7 +76,7 @@ export default defineComponent({
 	watch: {
 	},
 	methods: {
-		async fetchParams() {
+		async fetchParams(): Promise<void> {
 			const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 				PREFIX segm: <http://fitlayout.github.io/ontology/segmentation.owl#>
 				PREFIX fl: <http://fitlayout.github.io/ontology/fitlayout.owl#>
@@ -97,12 +97,12 @@ export default defineComponent({
 			this.params = params;
 		},
 
-		exploreTagLink(iri) {
+		exploreTagLink(iri: string): string {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			return route.href;
 		},
 
-		tagDisplayStyle(tag) {
+		tagDisplayStyle(tag: TagInfo): string {
 			return 'background-color:' + stringColor(tag.name);
 		}
 

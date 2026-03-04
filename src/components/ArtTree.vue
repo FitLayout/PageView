@@ -31,14 +31,21 @@ import ArtInfo from '../components/ArtInfo.vue';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
 
+interface ArtTreeNode {
+	key: string;
+	data: RdfObject & { id: string; timestamp: number };
+	children: ArtTreeNode[];
+	parent?: string;
+}
+
 interface ComponentData {
 	error: string | null;
 	loading: boolean;
 	started: boolean;
 	artifacts: RdfObject[] | null;
-	artifactIndex: Record<string, any> | null;
-	nodes: any[] | null;
-	allNodes: any[] | null;
+	artifactIndex: Record<string, ArtTreeNode> | null;
+	nodes: ArtTreeNode[] | null;
+	allNodes: ArtTreeNode[] | null;
 	expandedKeys: Record<string, boolean>;
 	focusedArt: RdfObject | null;
 }
@@ -86,10 +93,10 @@ export default defineComponent({
 	},
 	methods: {
 
-		async fetchArtifacts() {
+		async fetchArtifacts(): Promise<void> {
 			this.error = null;
 			this.loading = true;
-			
+
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				this.loading = false;
@@ -107,17 +114,17 @@ export default defineComponent({
 				this.applyFilter();
 				this.expandSubtreeWithIri(this.currentIri);
 				this.scrollToView();
-			} catch (error) {
+			} catch (error: any) {
 				this.error = error.message;
 				this.loading = false;
 				console.error('Error while fetching artifact info!', error);
 			}
 		},
 
-		computeNodes(artifacts) {
+		computeNodes(artifacts: RdfObject[]): ArtTreeNode[] {
 			// build an index of artifacts
-			let list = [];
-			let index = {};
+			let list: ArtTreeNode[] = [];
+			let index: Record<string, ArtTreeNode> = {};
 			for (let art of artifacts) {
 				let newart = this.computeArtifactNode(art);
 				index[art._iri] = newart;
@@ -125,7 +132,7 @@ export default defineComponent({
 			}
 			this.artifactIndex = index;
 			// build the tree
-			let root = [];
+			let root: ArtTreeNode[] = [];
 			for (let nart of list) {
 				if (nart.parent === undefined) {
 					root.push(nart);
@@ -134,7 +141,6 @@ export default defineComponent({
 					if (part === undefined) {
 						console.warn('Artifact ' + nart.key + ' has parent ' + nart.parent
 						+ ' but there is no such artifact available.');
-						// console.log(nart);
 						root.push(nart);
 					} else {
 						part.children.push(nart);
@@ -144,11 +150,11 @@ export default defineComponent({
 			return root;
 		},
 
-		applyFilter() {
+		applyFilter(): void {
 			// filter the tree if a page was focused
 			if (this.focusedArt) {
-				let filtered = [];
-				for (let node of this.allNodes) {
+				let filtered: ArtTreeNode[] = [];
+				for (let node of this.allNodes!) {
 					if (node.key === this.focusedArt._iri) {
 						filtered.push(node);
 					}
@@ -166,43 +172,40 @@ export default defineComponent({
 			}
 		},
 
-		computeArtifactNode(art) {
-			const ret: any = {
+		computeArtifactNode(art: RdfObject): ArtTreeNode {
+			const ret: ArtTreeNode = {
 				key: art._iri,
 				data: {
-					... art,
+					...art,
 					id: art._iri,
-					timestamp: (new Date(art.createdOn)).getTime(),
+					timestamp: (new Date(art.createdOn as string)).getTime(),
 				},
 				children: []
 			};
 			if (art.hasParentArtifact !== undefined) {
-				ret.parent = art.hasParentArtifact._iri;
-			}
-			if (art.sourceUrl !== undefined) {
-				ret.data.url = art.sourceUrl;
+				ret.parent = (art.hasParentArtifact as RdfObject)._iri;
 			}
 			return ret;
 		},
 
-		iriChanged() {
+		iriChanged(): void {
 			this.expandSubtreeWithIri(this.currentIri);
 			this.scrollToView();
 		},
 
-		onNodeSelect(node) {
+		onNodeSelect(node: ArtTreeNode): void {
 			this.selectArtifact(node.key);
 		},
 
-		selectArtifact(iri) {
+		selectArtifact(iri: string): void {
 			this.$emit('select-artifact', iri);
 		},
 
-		deleteArtifact(iri) {
+		deleteArtifact(iri: string): void {
 			this.$emit('delete-artifact', iri);
 		},
 
-		toggleFocus(art) {
+		toggleFocus(art: RdfObject | null): void {
 			this.focusedArt = art;
 			this.applyFilter();
 			this.scrollToView();
@@ -210,9 +213,9 @@ export default defineComponent({
 
 		/**
 		 * Expands the entire subtree that contains the artifact with the given iri.
-		 * @param {*} iri 
 		 */
-		expandSubtreeWithIri(iri) {
+		expandSubtreeWithIri(iri: string | null): void {
+			if (!iri || !this.artifactIndex) return;
 			// expand to the parent
 			this.expandToRootFrom(iri);
 			// expand current subtree
@@ -226,9 +229,8 @@ export default defineComponent({
 
 		/**
 		 * Expands the subtree with the given root node.
-		 * @param {*} root 
 		 */
-		expandSubtree(root) {
+		expandSubtree(root: ArtTreeNode): void {
 			this.expandedKeys[root.key] = true;
 			if (root.children) {
 				for (let child of root.children) {
@@ -239,10 +241,10 @@ export default defineComponent({
 
 		/**
 		 * Expands the tree nodes from a given IRI node to the root.
-		 * @param {*} iri 
 		 */
-		expandToRootFrom(iri) {
-			let cur = this.artifactIndex[iri];
+		expandToRootFrom(iri: string | null): ArtTreeNode | undefined {
+			if (!iri || !this.artifactIndex) return undefined;
+			let cur: ArtTreeNode | undefined = this.artifactIndex[iri];
 			while (cur && cur.parent) {
 				this.expandedKeys[cur.key] = true;
 				cur = this.artifactIndex[cur.parent];
@@ -253,19 +255,20 @@ export default defineComponent({
 			return cur;
 		},
 
-		findRootForIri(iri) {
-			let cur = this.artifactIndex[iri];
+		findRootForIri(iri: string | null): ArtTreeNode | undefined {
+			if (!iri || !this.artifactIndex) return undefined;
+			let cur: ArtTreeNode | undefined = this.artifactIndex[iri];
 			while (cur && cur.parent) {
 				cur = this.artifactIndex[cur.parent];
 			}
 			return cur;
 		},
 
-		collapseAll() {
+		collapseAll(): void {
 			this.expandedKeys = {};
 		},
 
-		scrollToView() {
+		scrollToView(): void {
 			this.$nextTick(function() {
 				let elem = document.getElementById('artifact-selected');
 				if (elem) {

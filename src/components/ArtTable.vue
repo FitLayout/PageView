@@ -62,14 +62,32 @@ import Iri from '../components/Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
+import type { MenuItem } from 'primevue/menuitem';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
+
+interface ArtTableData {
+	id: string;
+	timestamp: number;
+	createdOn: unknown;
+	creator: unknown;
+	title: unknown;
+	type: string;
+	url?: unknown;
+}
+
+interface ArtTableNode {
+	key: string;
+	data: ArtTableData;
+	children: ArtTableNode[];
+	parent?: string;
+}
 
 interface ComponentData {
 	error: string | null;
 	loading: boolean;
 	artifacts: RdfObject[] | null;
-	nodes: any[] | null;
+	nodes: ArtTableNode[] | null;
 }
 
 export default defineComponent({
@@ -109,32 +127,32 @@ export default defineComponent({
 	},
 	methods: {
 
-		async fetchArtifacts() {
+		async fetchArtifacts(): Promise<void> {
 			this.error = null;
 			this.loading = true;
-			
+
 			try {
 				this.artifacts = await this.apiClient.fetchArtifactInfoAll();
 				this.loading = false;
 				this.nodes = this.computeNodes(this.artifacts);
-			} catch (error) {
+			} catch (error: any) {
 				this.error = error.message;
 				this.loading = false;
 				console.error('Error while fetching artifact info!', error);
 			}
 		},
 
-		computeNodes(artifacts) {
+		computeNodes(artifacts: RdfObject[]): ArtTableNode[] {
 			// build an index of artifacts
-			let list = [];
-			let index = {};
+			let list: ArtTableNode[] = [];
+			let index: Record<string, ArtTableNode> = {};
 			for (let art of artifacts) {
 				let newart = this.computeArtifactNode(art);
 				index[art._iri] = newart;
 				list.push(newart);
 			}
 			// build the tree
-			let root = [];
+			let root: ArtTableNode[] = [];
 			for (let nart of list) {
 				if (nart.parent === undefined) {
 					root.push(nart);
@@ -143,7 +161,6 @@ export default defineComponent({
 					if (part === undefined) {
 						console.warn('Artifact ' + nart.key + ' has parent ' + nart.parent
 						+ ' but there is no such artifact available.');
-						// console.log(nart);
 						root.push(nart);
 					} else {
 						part.children.push(nart);
@@ -153,12 +170,12 @@ export default defineComponent({
 			return root;
 		},
 
-		computeArtifactNode(art) {
-			const ret: any = {
+		computeArtifactNode(art: RdfObject): ArtTableNode {
+			const ret: ArtTableNode = {
 				key: art._iri,
 				data: {
 					id: art._iri,
-					timestamp: (new Date(art.createdOn)).getTime(),
+					timestamp: (new Date(art.createdOn as string)).getTime(),
 					createdOn: art.createdOn,
 					creator: art.creator,
 					title: art._label,
@@ -167,7 +184,7 @@ export default defineComponent({
 				children: []
 			};
 			if (art.hasParentArtifact !== undefined) {
-				ret.parent = art.hasParentArtifact._iri;
+				ret.parent = (art.hasParentArtifact as RdfObject)._iri;
 			}
 			if (art.sourceUrl !== undefined) {
 				ret.data.url = art.sourceUrl;
@@ -175,7 +192,7 @@ export default defineComponent({
 			return ret;
 		},
 
-		formatDate(dateString) {
+		formatDate(dateString: string): string {
 			const date = new Date(dateString);
 			const options: Intl.DateTimeFormatOptions = {
 				year: 'numeric', month: 'numeric', day: 'numeric',
@@ -183,18 +200,18 @@ export default defineComponent({
 			};
             return new Intl.DateTimeFormat('default', options).format(date);
 		},
-		
-		browseArtifact(id) {
+
+		browseArtifact(id: string): void {
 			const repoId = this.$route.params.repoId;
 			const route = this.$router.resolve({name: 'show', params: { repoId: repoId, iri: id }});
 			window.open(route.href, '_blank');
 		},
 
-		actionsAvailable(art) {
+		actionsAvailable(art: ArtTableNode): boolean {
 			return (art.data.type === BOX.Page); //currently, actions are only available for Pages
 		},
 
-		exportDefault(art) {
+		exportDefault(art: ArtTableNode): void {
 			if (art.data.type === BOX.Page || art.data.type === SEGM.AreaTree) {
 				this.exportArtifact(art, 'text/xml', '.xml');
 			} else {
@@ -202,8 +219,8 @@ export default defineComponent({
 			}
 		},
 
-		createExportMenu(art) {
-			let items = [];
+		createExportMenu(art: ArtTableNode): MenuItem[] {
+			let items: MenuItem[] = [];
 			// for pages and area trees, add the specific serializations
 			if (art.data.type === BOX.Page || art.data.type === SEGM.AreaTree) {
 				items.push(
@@ -255,8 +272,8 @@ export default defineComponent({
 			return items;
 		},
 
-		exportArtifact(art, mime, ext) {
-			this.apiClient.exportArtifact(art.data.id, mime, function(blob) {
+		exportArtifact(art: ArtTableNode, mime: string, ext: string): void {
+			this.apiClient.exportArtifact(art.data.id, mime, function(blob: Blob) {
 				const link = document.createElement('a');
 				link.href = URL.createObjectURL(blob);
 				link.download = 'export' + ext;
@@ -265,7 +282,7 @@ export default defineComponent({
 			});
 		},
 
-		deleteArtifact(iri) {
+		deleteArtifact(iri: string): void {
 			let dec = new IriDecoder({});
 			let shortIri = dec.encodeIri(iri);
 			this.$confirm.require({

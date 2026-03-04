@@ -38,20 +38,20 @@ export default defineComponent({
 		iri: 'update'
 	},
 	methods: {
-		update() {
+		update(): void {
 			let dec = new IriDecoder({});
 			this.shortForm = dec.encodeIri(this.iri);
 		},
 
-		clicked() {
+		clicked(): void {
 			this.$emit('show-iri', this.iri);
 		},
 
-		hoverIri() {
+		hoverIri(): void {
 			this.$emit('hover-iri', this.iri);
 		},
 
-		leaveIri() {
+		leaveIri(): void {
 			this.$emit('leave-iri', this.iri);
 		}
 	}

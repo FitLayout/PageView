@@ -44,7 +44,7 @@ export default defineComponent({
 		this.update();
 	},
 	methods: {
-		update() {
+		update(): void {
 			//console.log(this.artifact);
 			switch (this.typeIri) {
 				case BOX.Page:
