@@ -13,20 +13,20 @@
 			<Column field="owner" header="Owner" :sortable="true"></Column>
 			<Column field="email" header="E-mail">
 				<template #editor="slotProps">
-					<InputText v-model="slotProps.data[slotProps.column.props.field]" autofocus />
+					<InputText v-model="slotProps.data.email" autofocus />
 				</template>			
 			</Column>
 			<Column field="description" header="Description">
 				<template #editor="slotProps">
-					<InputText v-model="slotProps.data[slotProps.column.props.field]" autofocus />
+					<InputText v-model="slotProps.data.email" autofocus />
 				</template>			
 			</Column>
 			<Column field="readOnly" header="R/O">
 				<template #body="slotProps">
-					<span v-if="slotProps.data[slotProps.column.props.field]"><strong>yes</strong></span>
+					<span v-if="slotProps.data.readOnly"><strong>yes</strong></span>
 				</template>
 				<template #editor="slotProps">
-					<Checkbox v-model="slotProps.data[slotProps.column.props.field]" :binary="true" />
+					<Checkbox v-model="slotProps.data.readOnly" :binary="true" />
 				</template>			
 			</Column>
 			<Column field="createdOn" header="Created" :sortable="true"></Column>
@@ -60,9 +60,13 @@ export default defineComponent({
 		InputText,
 		Checkbox
 	},
-	setup() {
+	setup(): {
+		apiClient: FLApiClient;
+        originalRows: FLRepositoryInfo[];
+	} {
 		return {
-			apiClient: inject('apiClient') as FLApiClient
+			apiClient: inject('apiClient') as FLApiClient,
+			originalRows: []
 		}
 	},
 	data(): ComponentData {
@@ -73,20 +77,19 @@ export default defineComponent({
 	},
 	originalRows: null,
 	created () {
-		this.originalRows = {};
 	},
 	mounted() {
         this.apiClient.listAllRepositories().then(data => this.repos = data);
     },	
 	methods: {
-		onRowEditInit(event) {
+		onRowEditInit(event: any) {
             this.originalRows[event.index] = {...this.repos[event.index]};
 		},
-        onRowEditSave(event) {
+        onRowEditSave(event: any) {
 			const rdata = this.repos[event.index];
 			this.apiClient.updateRepositoryInfo(rdata.id, rdata);
         },
-        onRowEditCancel(event) {
+        onRowEditCancel(event: any) {
             this.repos[event.index] = this.originalRows[event.index];
         }
 	}

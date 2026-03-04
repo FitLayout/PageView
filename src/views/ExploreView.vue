@@ -19,74 +19,74 @@ import Select from 'primevue/select';
 import SubjectInfo from '../components/SubjectInfo.vue';
 import SubjectReferences from '../components/SubjectReferences.vue';
 
-import IriDecoder from '@/common/iridecoder';
+import IriDecoder from '@/common/iridecoder.ts';
 import type { FLApiClient } from '@/common/apiclient.ts';
 
 interface ComponentData {
-	destIri: string | null;
-	selMode: string;
-	modes: string[];
+    destIri: string | null;
+    selMode: string;
+    modes: string[];
 }
 
 export default defineComponent({
-	name: 'ExploreView',
-	components: {
-		Button,
-		InputText,
-		Select,
-		SubjectInfo,
-		SubjectReferences
-	},
-	props: {
-	},
-	setup() {
-		return {
-			apiClient: inject('apiClient') as FLApiClient
-		}
-	},
-	data (): ComponentData {
-		return {
-			destIri: null,
-			selMode: 'Subject',
-			modes: [ 'Subject', 'Object' ]
-			//modes: [ { label: 'Subject', value: 'subject' }, { label: 'Object', value: 'object' } ]
-		}
-	},
-	created () {
-		this.update();
-	},
-	computed: {
-		iri() {
-			return this.$route.params.iri;
-		},
-		repoId() {
-			return this.$route.params.repoId;
-		}
-	},
-	watch: {
-		'$route.params.iri': 'update'
-	},
-	methods: {
-		update() {
-			if (this.iri) {
-				let dec = new IriDecoder();
-				this.destIri = dec.encodeIri(this.iri);
-			} else {
-				this.destIri = '';
-			}
-		},
+    name: 'ExploreView',
+    components: {
+        Button,
+        InputText,
+        Select,
+        SubjectInfo,
+        SubjectReferences
+    },
+    props: {
+    },
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
+    data (): ComponentData {
+        return {
+            destIri: null,
+            selMode: 'Subject',
+            modes: [ 'Subject', 'Object' ]
+            //modes: [ { label: 'Subject', value: 'subject' }, { label: 'Object', value: 'object' } ]
+        }
+    },
+    created () {
+        this.update();
+    },
+    computed: {
+        iri() {
+            return this.$route.params.iri;
+        },
+        repoId() {
+            return this.$route.params.repoId;
+        }
+    },
+    watch: {
+        '$route.params.iri': 'update'
+    },
+    methods: {
+        update() {
+            if (this.iri) {
+                let dec = new IriDecoder();
+                this.destIri = dec.encodeIri(this.iri);
+            } else {
+                this.destIri = '';
+            }
+        },
 
-		showIri(iri) {
-			this.selMode = 'Subject';
-			this.$router.push({name: 'explore', params: { repoId: this.repoId, iri: iri }});
-		},
+        showIri(iri) {
+            this.selMode = 'Subject';
+            this.$router.push({name: 'explore', params: { repoId: this.repoId, iri: iri }});
+        },
 
-		changeIri() {
-			let dec = new IriDecoder();
-			let iri = dec.decodeIri(this.destIri);
-			this.showIri(iri);
-		}
-	}
+        changeIri() {
+            let dec = new IriDecoder();
+            let iri = dec.decodeIri(this.destIri);
+            this.showIri(iri);
+        }
+    }
 })
 </script>
 

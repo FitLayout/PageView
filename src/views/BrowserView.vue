@@ -142,41 +142,42 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		iri() {
-			return this.$route.params.iri;
+		iri(): string {
+			return this.$route.params.iri.toString();
 		},
-		treeSelectedIri() {
+		treeSelectedIri(): string {
 			if (this.currentArtifactIri) {
 				return this.currentArtifactIri; //obtained by resolving
 			} else {
-				return this.$route.params.iri; //nothing obtained yet; use the URL-specified iri 
+				return this.$route.params.iri.toString(); //nothing obtained yet; use the URL-specified iri 
 			}
 		},
-		repoId() {
-			return this.$route.params.repoId;
+		repoId(): string {
+			return this.$route.params.repoId.toString();
 		},
-		repoName() {
+		repoName(): string {
 			if (this.repoInfo) {
 				return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
 			} else {
-				return this.$route.params.repoId;
+				return this.$route.params.repoId.toString();
 			}
 		},
-		repoReadOnly() {
-			return this.repoInfo && this.repoInfo.readOnly;
+		repoReadOnly(): boolean {
+			return this.repoInfo ? this.repoInfo.readOnly : false;
 		} 
 	},
 	watch: {
 		'pageStatus': 'update'
 	},
 	created () {
-		this.apiClient.setRepository(this.$route.params.repoId);
-		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
+		const repoId = this.$route.params.repoId.toString();
+		this.apiClient.setRepository(repoId);
+		this.apiClient.getRepositoryInfo(repoId).then((info) => { 
 			this.repoInfo = info;
 		});
 	},
 	methods: {
-		selectMode(mode, index) {
+		selectMode(mode: string, index: number) {
 			if (mode == this.mode) {
 				this.mode = 'off';
 			} else {
@@ -190,17 +191,18 @@ export default defineComponent({
 				}
 			}
 		},
-		panelClass(mode) {
+
+		panelClass(mode: string): string {
 			return (mode === this.mode) ? 'visible' : 'hidden';
 		},
 
-		selectArtifact(iri) {
+		selectArtifact(iri: string) {
 			if (iri !== this.iri) {
 				this.$router.push({name: 'show', params: {repoId: this.repoId, iri: iri}});
 			}
 		},
 
-		async deleteArtifact(iri) {
+		async deleteArtifact(iri: string) {
 			let dec = new IriDecoder({});
 			let shortIri = dec.encodeIri(iri);
 			this.$confirm.require({
@@ -209,15 +211,15 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => {
 					try {
-						this.artifact = await this.apiClient.deleteArtifact(iri);
+						await this.apiClient.deleteArtifact(iri);
 					} catch (error) {
 						console.error('Couldnt delete artifact!', error);
 					}
-					this.$refs.artTree.fetchArtifacts();
+					(this.$refs.artTree as typeof ArtTree).fetchArtifacts();
 					// if the deleted artifact was selected try to select another one
-					if (this.currentArtifactIri === iri) {
+					if (this.currentArtifactIri === iri && this.currentArtifact) {
 						if (this.currentArtifact.hasParentArtifact) {
-							const parentIri = this.currentArtifact.hasParentArtifact._iri;
+							const parentIri = (this.currentArtifact.hasParentArtifact as RdfObject)._iri;
 							this.$router.push({name: 'show', params: {repoId: this.repoId, iri: parentIri}});
 						} else {
 							this.$router.push({name: 'browser', params: {repoId: this.repoId }});
@@ -246,7 +248,7 @@ export default defineComponent({
 			}
 		},
 
-		artifactCreated(iri) {
+		artifactCreated(iri: string) {
 			this.$refs.artTree.fetchArtifacts();
 			this.selectArtifact(iri);
 		},

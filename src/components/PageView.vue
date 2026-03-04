@@ -225,6 +225,8 @@ import TreeModel from '../common/treemodel.js';
 import {FilterMatchMode} from '@primevue/core/api';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
+import type { TreeNode } from 'primevue/treenode';
+import type { RdfValueBinding } from '@/rdf4j-vue-components/src/common/types.js';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
 
@@ -249,7 +251,7 @@ interface ComponentData {
 	subjectModel: any[] | null;
 	subjectRefs: any[] | null;
 	subjectAnnotations: any[] | null;
-	treeModel: any[] | null;
+	treeModel: TreeNode[] | null;
 	expandedTreeKeys: Record<string, boolean> | null;
 	selectedTreeKey: Record<string, boolean> | null;
 	tableModel: any[] | null;
@@ -358,12 +360,12 @@ export default defineComponent({
 		 * Reloads the artifact info.
 		 * @param {boolean} forceReload force reloading the entire artifact (e.g. all areas)
 		 */
-		async fetchData(forceReload) {
+		async fetchData(forceReload: boolean) {
 			//console.log('UPDATE ' + this.subjectIri)
 			if (!this.subjectIri) {
 				return;
 			}
-			this.error = this.post = null;
+			this.error = null;
 			this.loading = true;
 			
 			if (forceReload) {
@@ -431,14 +433,14 @@ export default defineComponent({
 				});
 
 				this.$emit('status-update', this.status);
-			} catch (error) {
+			} catch (error: any) {
 				this.error = error.message;
 				this.loading = false;
 				console.error('Error while fetching artifact data', error);
 			}
 		},
 
-		async resolveArtifact(resolver, iri) {
+		async resolveArtifact(resolver: ObjectResolver, iri: string) {
 			let baseDeps = await resolver.resolveObjectIRI(iri, this.status);
 			let deps = baseDeps;
 			let resolved = false;
@@ -461,8 +463,8 @@ export default defineComponent({
 		},
 
 		// scans the model and filters out the annotations only
-		getAnnotations(model) {
-			let ret = [];
+		getAnnotations(model: RdfValueBinding[]): any[] {
+			let ret: any[] = [];
 			for (let iri of this.annotationGroupIRIs) {
 				let values = [];
 				let rows = [];
@@ -488,7 +490,7 @@ export default defineComponent({
 
 		//============== Events =============================
 
-		treeNodeSelected(node) {
+		treeNodeSelected(node: TreeNode) {
 			const iri = node.data._iri;
 			this.$router.push({name: 'show', params: { iri: iri }});
 		},
@@ -502,9 +504,9 @@ export default defineComponent({
 
 		initTree() {
 			this.expandedTreeKeys = {};
-			this.expandedTreeKeys[0] = true;
+			this.expandedTreeKeys["0"] = true;
 			this.selectedTreeKey = {};
-			this.selectedTreeKey[0] = true;
+			this.selectedTreeKey["0"] = true;
 		},
 
 		showBoxInTree(box) {
@@ -521,11 +523,11 @@ export default defineComponent({
 
 		selectBox(box) {
 			this.selectedTreeKey = {};
-			this.selectedTreeKey[box.documentOrder] = true;
+			this.selectedTreeKey[String(box.documentOrder)] = true;
 		},
 		
 		expandForBox(box) {
-			let boxNode = this.findTreeNode(this.treeModel[0], box.documentOrder);
+			let boxNode = this.findTreeNode(this.treeModel[0], String(box.documentOrder));
 			while (boxNode) {
 				this.expandedTreeKeys[boxNode.key] = true;
 				boxNode = boxNode.parent;

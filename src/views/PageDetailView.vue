@@ -21,11 +21,11 @@
 			</table>
 
 			<LinkButton label="Open in Browser" icon="pi pi-globe" 
-				:to="{name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }}"
+				:to="{name: 'show', params: { repoId: repoId, iri: iri }}"
 				target="_blank" />
 			<LinkButton label="Open in RDF explorer" icon="pi pi-share-alt"
 				style="margin-left: 0.2em" class="p-button-warn" 
-				:to="{name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }}"
+				:to="{name: 'explore', params: { repoId: repoId, iri: iri }}"
 				target="_blank" />
 
 			<h2>Page model</h2>
@@ -48,7 +48,6 @@ import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
-	iri: string | null;
 	page: RdfObject | null;
 	pngImage: string | null;
 	loading: boolean;
@@ -69,24 +68,32 @@ export default defineComponent({
 	},
 	data(): ComponentData {
 		return {
-			iri: null,
 			page: null,
 			pngImage: null,
 			loading: false,
 		}
 	},
 	computed: {
-		pageTitle() {
-			return this.page.title ? this.page.title : '(no title)';
+		pageTitle(): string {
+			if (this.page) {
+				return this.page.title ? this.page.title : '(no title)';
+			} else {
+				return '(no page)';
+            }
 		},
-		pageImage() {
+		pageImage(): string {
 			return this.pngImage ? ('data:image/png;base64,' + this.pngImage) : ''; 
+		},
+		iri(): string {
+			return this.$route.params.iri?.toString();
+		},
+		repoId(): string {
+			return this.$route.params.repoId?.toString();
 		}
 	},
 	watch: {
 	},
 	created () {
-		this.iri = this.$route.params.iri;
 		this.fetchPageInfo();
 		this.fetchPageImage();
 	},
@@ -111,7 +118,7 @@ export default defineComponent({
 			}
 		},
 
-		showIri(iri) {
+		showIri(iri: string) {
 			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
 			window.open(route.href, '_blank');
 		},

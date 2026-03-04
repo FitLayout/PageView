@@ -178,7 +178,7 @@ export default defineComponent({
 				const iri = await this.apiClient.createArtifact(serviceId, params, null);
 				this.$router.push({name: 'page', params: { repoId: this.$route.params.repoId, iri: iri}});
 				this.error = null;
-			} catch (e) {
+			} catch (e: any) {
 				this.error = e.message;
 			} finally {
 				this.loading = false;

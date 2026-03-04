@@ -1,5 +1,7 @@
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
+import type { FLApiClient } from './apiclient';
+import type { RdfObject, ResolvedObject, ResolverStatus } from './types';
 
 
 /**
@@ -8,9 +10,9 @@ import SEGM from '../ontology/SEGM.js';
  */
 export default class ObjectResolver {
 
-	client: any;
+	client: FLApiClient;
 
-	constructor(apiClient: any) {
+	constructor(apiClient: FLApiClient) {
 		this.client = apiClient;
 	}
 
@@ -18,12 +20,12 @@ export default class ObjectResolver {
 	 * Identifies the type of object identified by the given iri and
 	 * loads the remaining artifacts necessary for displaying the object.
 	 */
-	async resolveObjectIRI(iri: string, currentStatus: any): Promise<any> {
+	async resolveObjectIRI(iri: string, currentStatus: ResolverStatus): Promise<ResolvedObject> {
 		const type = await this.client.getTypeByIRI(iri);
 		// get the general description
 		const descrData = await this.client.getSubjectDescription(iri);
 		const descr = descrData.results.bindings;
-		let ret: any = {};
+		let ret: ResolvedObject;
 		if (type === BOX.Page) {
 			const page = await this.getPage(iri, currentStatus);
 			ret = {
@@ -34,11 +36,11 @@ export default class ObjectResolver {
 				artifact: page,
 				pageIri: iri,
 				page: page,
-				rectangles: page.boxes
+				rectangles: page.boxes as RdfObject[]
 			}
 		} else if (type === SEGM.AreaTree) {
 			const atree = await this.getAreaTree(iri, currentStatus);
-			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
+			const page = await this.getPage((atree.hasSourcePage as RdfObject)._iri, currentStatus);
 			ret = {
 				type: 'areaTree',
 				description: descr,
@@ -47,7 +49,7 @@ export default class ObjectResolver {
 				artifact: atree,
 				pageIri: page._iri,
 				page: page,
-				rectangles: atree.areas
+				rectangles: atree.areas as RdfObject[]
 			}
 		} else if (type === SEGM.ChunkSet) {
 			const cset = await this.getArtifact(iri, currentStatus);
@@ -62,7 +64,7 @@ export default class ObjectResolver {
 				artifact: cset,
 				pageIri: page._iri,
 				page: page,
-				rectangles: cset.textChunks
+				rectangles: cset.textChunks as RdfObject[]
 			}
 		} else if (type === BOX.Box) {
 			const pageIri = await this.client.getSubjectValue(iri, BOX.belongsTo);
@@ -75,12 +77,12 @@ export default class ObjectResolver {
 				artifact: page,
 				pageIri: page._iri,
 				page: page,
-				rectangles: page.boxes
+				rectangles: page.boxes as RdfObject[]
 			}
 		} else if (type === SEGM.Area) {
 			const atreeIri = await this.client.getSubjectValue(iri, SEGM.belongsTo);
 			const atree = await this.getAreaTree(atreeIri.value, currentStatus);
-			const page = await this.getPage(atree.hasSourcePage._iri, currentStatus);
+			const page = await this.getPage((atree.hasSourcePage as RdfObject)._iri, currentStatus);
 			ret = {
 				type: 'area',
 				description: descr,
@@ -89,7 +91,7 @@ export default class ObjectResolver {
 				artifact: atree,
 				pageIri: page._iri,
 				page: page,
-				rectangles: atree.areas
+				rectangles: atree.areas as RdfObject[]
 			}
 		} else if (type === SEGM.TextChunk) {
 			const chunkSetIri = await this.client.getSubjectValue(iri, SEGM.belongsToChunkSet);
@@ -105,7 +107,7 @@ export default class ObjectResolver {
 				artifact: chunkSet,
 				pageIri: page._iri,
 				page: page,
-				rectangles: chunkSet.textChunks
+				rectangles: chunkSet.textChunks as RdfObject[]
 			}
 		} else {
 			const objData = await this.client.getSubjectDescriptionObj(iri);
@@ -121,31 +123,31 @@ export default class ObjectResolver {
 		return ret;
 	}
 
-	async getPage(iri: string, currentStatus: any): Promise<any> {
+	async getPage(iri: string, currentStatus: ResolverStatus): Promise<RdfObject> {
 		if (currentStatus.pageIri === iri && !currentStatus.reloadArtifact) {
 			return currentStatus.page;
 		} else {
 			console.log('RELOADING page');
 			currentStatus.reloadArtifact = false;
 			const page = await this.client.fetchArtifact(iri);
-			this.client.sortBoxes(page.boxes);
-			return page;
+			this.client.sortBoxes(page!.boxes as RdfObject[]);
+			return page!;
 		}
 	}
 
-	async getAreaTree(iri: string, currentStatus: any): Promise<any> {
+	async getAreaTree(iri: string, currentStatus: ResolverStatus): Promise<RdfObject> {
 		const ret = await this.getArtifact(iri, currentStatus);
-		this.client.sortBoxes(ret.areas);
+		this.client.sortBoxes(ret.areas as RdfObject[]);
 		return ret;
 	}
 
-	async getArtifact(iri: string, currentStatus: any): Promise<any> {
+	async getArtifact(iri: string, currentStatus: ResolverStatus): Promise<RdfObject> {
 		if (currentStatus.artifactIri === iri && !currentStatus.reloadArtifact) {
 			return currentStatus.artifact;
 		} else {
 			console.log('RELOADING atree');
 			currentStatus.reloadArtifact = false;
-			return await this.client.fetchArtifact(iri);
+			return (await this.client.fetchArtifact(iri))!;
 		}
 	}
 

@@ -103,8 +103,9 @@ export default defineComponent({
 	watch: {
 	},
 	created () {
-		this.apiClient.setRepository(this.$route.params.repoId);
-		this.apiClient.getRepositoryInfo(this.$route.params.repoId).then((info) => { 
+		const repoId = this.$route.params.repoId.toString();
+		this.apiClient.setRepository(repoId);
+		this.apiClient.getRepositoryInfo(repoId).then((info) => { 
 			this.repoInfo = info;
 			RepositoryData.addID(info.id); // add the repository to the list of known repositories
 		});
@@ -113,7 +114,7 @@ export default defineComponent({
 	methods: {
 
 		async fetchUserInfo() {
-			this.error = null;
+			//this.error = null;
 			this.userInfo = await this.apiClient.getUserInfo();
 		},
 

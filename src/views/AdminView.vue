@@ -82,7 +82,7 @@ export default defineComponent({
 	methods: {
 
 		async fetchUserInfo() {
-			this.error = null;
+			//this.error = null;
 			this.userInfo = await this.apiClient.getUserInfo();
 		},
 
