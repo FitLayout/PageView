@@ -12,8 +12,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
+import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
 	page: any;
@@ -27,14 +28,38 @@ interface ComponentData {
 export default defineComponent({
 	name: 'Page',
 	props: {
-		pageModel: null,
-		rectangles: null,
-		selectedRect: null,
-		zoom: null,
-		screenshot: null,
-		outlines: null,
-		rectSelection: null,
-		showTags: null
+		pageModel: {
+			type: Object as PropType<RdfObject | null>,
+			required: true
+		},
+		rectangles: {
+			type: Array as PropType<RdfObject[]>,
+			default: []
+		},
+		selectedRect: {
+			type: Object as PropType<RdfObject | null>,
+			default: null
+		},
+		zoom: {
+			type: Number,
+			required: true
+		},
+		screenshot: {
+			type: Boolean,
+			default: false
+		},
+		outlines: {
+			type: Boolean,
+			default: false
+		},
+		rectSelection: {
+			type: Boolean,
+			default: false
+		},
+		showTags: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data (): ComponentData {
 		return {

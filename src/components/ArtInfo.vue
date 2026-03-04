@@ -90,10 +90,11 @@
 </style>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import Iri from './Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
+import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
 	typeName: string | null;
@@ -107,8 +108,14 @@ export default defineComponent({
 		Iri
 	},
 	props: {
-		artifact: null,
-		focus: null
+		artifact: {
+			type: Object as PropType<RdfObject>,
+			required: true
+		},
+		focus: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data (): ComponentData {
 		return {

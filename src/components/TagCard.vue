@@ -17,12 +17,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import Card from 'primevue/card';
 import Iri from './Iri.vue';
 
 import {stringColor} from '../common/utils.js';
-import type { FLApiClient } from '@/common/apiclient.js';
+import type { FLApiClient, TagInfo } from '@/common/apiclient.js';
 
 interface ComponentData {
 	type: string | null;
@@ -38,7 +38,10 @@ export default defineComponent({
 		}
 	},
 	props: {
-		tag: null
+		tag: {
+			type: Object as PropType<TagInfo>,
+			required: true
+		}
 	},
 	components: {
 		Card,

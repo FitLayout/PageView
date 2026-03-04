@@ -14,11 +14,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
 	selectDiv: HTMLElement | null;
@@ -48,7 +49,10 @@ export default defineComponent({
 	name: 'Selection',
 
 	props: {
-		pageRectAreas:null,
+		pageRectAreas: {
+			type: Array as PropType<RdfObject[] | null>,
+			default: null
+		}
 	},
 
 	setup() {

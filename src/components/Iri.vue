@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import { IriDecoder } from '@/rdf4j-vue-components/src';
 
 interface ComponentData {
@@ -16,8 +16,14 @@ interface ComponentData {
 export default defineComponent({
 	name: 'Iri',
 	props: {
-		iri: null,
-		active: null
+		iri: {
+			type: String as PropType<string | null>,
+			default: null
+		},
+		active: {
+			type: Boolean,
+			default: false
+		}
 	},
 	emits: ['show-iri', 'hover-iri', 'leave-iri'],
 	data (): ComponentData {

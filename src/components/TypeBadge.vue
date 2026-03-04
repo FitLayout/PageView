@@ -8,7 +8,7 @@
 </style>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 
@@ -29,7 +29,10 @@ export default defineComponent({
 		}
 	},
 	props: {
-		typeIri: null
+		typeIri: {
+			type: String as PropType<string | null>,
+			default: null
+		}
 	},
 	data (): ComponentData {
 		return {

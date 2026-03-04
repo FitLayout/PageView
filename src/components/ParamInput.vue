@@ -35,10 +35,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Checkbox from 'primevue/checkbox';
+import type { ParamDescr } from '@/common/types';
 
 
 export default defineComponent({
@@ -49,8 +50,14 @@ export default defineComponent({
 		Checkbox
 	},
 	props: {
-		descr: null,
-		modelValue: null
+		descr: {
+			type: Object as PropType<ParamDescr>,
+			required: true
+		},
+		modelValue: {
+			type: [String, Number, Boolean] as PropType<string | number | boolean | null>,
+			default: null
+		}
 	},
 	data () {
 		return {

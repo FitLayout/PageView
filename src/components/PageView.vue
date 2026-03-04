@@ -198,7 +198,7 @@ import ProgressBar from 'primevue/progressbar';
 import Slider from 'primevue/slider';
 import InputText from 'primevue/inputtext';
 import ToggleSwitch from 'primevue/toggleswitch';
-import Tree from 'primevue/tree';
+import Tree, { type TreeExpandedKeys, type TreeSelectionKeys } from 'primevue/tree';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Badge from 'primevue/badge';
@@ -224,7 +224,7 @@ import TreeModel from '../common/treemodel.js';
 
 import {FilterMatchMode} from '@primevue/core/api';
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { RdfObject } from '@/common/types';
+import type { AnnotationItem, RdfObject } from '@/common/types';
 import type { TreeNode } from 'primevue/treenode';
 import type { RdfValueBinding } from '@/rdf4j-vue-components/src/common/types.js';
 
@@ -245,16 +245,16 @@ interface ComponentData {
 	status: any;
 	artifactModel: RdfObject | null;
 	pageModel: RdfObject | null;
-	rectangles: RdfObject[] | null;
+	rectangles: RdfObject[];
 	selectedRect: RdfObject | null;
 	activeTab: number;
-	subjectModel: any[] | null;
-	subjectRefs: any[] | null;
-	subjectAnnotations: any[] | null;
-	treeModel: TreeNode[] | null;
-	expandedTreeKeys: Record<string, boolean> | null;
-	selectedTreeKey: Record<string, boolean> | null;
-	tableModel: any[] | null;
+	subjectModel: RdfValueBinding[];
+	subjectRefs: RdfValueBinding[];
+	subjectAnnotations: AnnotationItem[];
+	treeModel: TreeNode[];
+	expandedTreeKeys: TreeExpandedKeys;
+	selectedTreeKey: TreeSelectionKeys;
+	tableModel: any[];
 	selectedTableRow: any;
 	dFilters: Record<string, any>;
 	rFilters: Record<string, any>;
@@ -315,20 +315,20 @@ export default defineComponent({
 			status: null, //artifact status (currently displayed artifacts)
 			artifactModel: null, //currently displayed artifact model
 			pageModel: null, //currently displayed page model
-			rectangles: null, //rectangle overlay on the page
+			rectangles: [], //rectangle overlay on the page
 			selectedRect: null, //selected rectangle
 			activeTab: 0, //active tab in the description
-			subjectModel: null, //selected subject model for the Description table
-			subjectRefs: null, //selected subject references for the References table
-			subjectAnnotations: null, //selected subject annotations for the Annotations table
+			subjectModel: [], //selected subject model for the Description table
+			subjectRefs: [], //selected subject references for the References table
+			subjectAnnotations: [], //selected subject annotations for the Annotations table
 
 			// Tree
-			treeModel: null,
-			expandedTreeKeys: null,
-			selectedTreeKey: null,
+			treeModel: [],
+			expandedTreeKeys: [],
+			selectedTreeKey: [],
 
 			// Data table for showing chunks
-			tableModel: null,
+			tableModel: [],
 			selectedTableRow: null,
 
 			// Property table filters
@@ -393,14 +393,14 @@ export default defineComponent({
 						if (deps.rectangleType === 'box') {
 							const model = (new TreeModel()).createForBoxes(deps.rectangles);
 							this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
-							this.tableModel = null;
+							this.tableModel = [];
 						} else if (deps.rectangleType === 'area') {
 							const model = (new TreeModel()).createForAreas(deps.rectangles);
 							this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
-							this.tableModel = null;
+							this.tableModel = [];
 						} else if (deps.rectangleType === 'textChunk') {
 							this.tableModel = this.createChunksModel(deps.rectangles);
-							this.treeModel = null;
+							this.treeModel = [];
 						}
 					}
 					// if the IRI identifies a box or area, highlight the corresponding rectangle

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 
@@ -51,7 +51,10 @@ export default defineComponent({
 		ArtInfo,
 	},
 	props: {
-		currentIri: null,
+		currentIri: {
+			type: String as PropType<string | null>,
+			default: null
+		}
 	},
 	setup() {
 		return {

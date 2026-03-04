@@ -54,7 +54,9 @@ export interface TagInfo {
 	iri: string,
 	name: string,
 	context: string,
-	type: string
+	type: string,
+	tagger?: string,
+	service?: string
 }
 
 export class FLApiClient implements ApiClient {

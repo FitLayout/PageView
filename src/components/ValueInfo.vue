@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import Iri from './Iri.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
@@ -49,6 +49,7 @@ import RDFS from '../ontology/RDFS.js';
 import IriDecoder from '../common/iridecoder.js';
 import {stringColor, inferTagName, inferTagType} from '../common/utils.js';
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { DisplayValue } from '@/rdf4j-vue-components/src/common/types';
 
 const knownTypes = {};
 knownTypes[BOX.Page] = { name: 'BoxTree', type: 'boxtree' }
@@ -81,12 +82,30 @@ export default defineComponent({
 	},
 	emits: ['show-iri', 'hover-iri', 'leave-iri', 'show-ext', 'show-struct'],
 	props: {
-		data: null,
-		activeIris: null, //force active IRIs
-		extIcon: null, //icon for opening a structural browser
-		extTooltip: null,
-		structIcon: null, //icon for structure values
-		extAll: null //show ext icon always
+		data: {
+			type: Object as PropType<DisplayValue>,
+			required: true
+		},
+		activeIris: { //force active IRIs
+			type: Boolean,
+			default: false
+		},
+		extIcon: { //icon for opening a structural browser
+			type: String as PropType<string | null>,
+			default: null
+		},
+		extTooltip: {
+			type: String as PropType<string | null>,
+			default: null
+		},
+		structIcon: { //icon for structure values
+			type: String as PropType<string | null>,
+			default: null
+		},
+		extAll: { //show ext icon always
+			type: Boolean,
+			default: false
+		}
 	},
 	data (): ComponentData {
 		return {

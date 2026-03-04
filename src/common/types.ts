@@ -1,4 +1,4 @@
-import type { RdfValueBinding } from '@/rdf4j-vue-components/src/common/types';
+import type { RdfValueBinding, DisplayValue } from '@/rdf4j-vue-components/src/common/types';
 
 /**
  * Base type for all domain objects created from RDF data.
@@ -8,6 +8,7 @@ import type { RdfValueBinding } from '@/rdf4j-vue-components/src/common/types';
 export interface RdfObject {
 	_iri: string;
 	_type: string;
+	_label?: string;
 	[key: string]: unknown;
 }
 
@@ -34,6 +35,28 @@ export type PropertyMap = { [key: string]: PropertyDef };
  *   - RdfObject[]       – an array of linked objects
  */
 export type RdfPropertyValue = string | number | (string | number)[] | RdfObject | RdfObject[];
+
+/**
+ * A descriptor for a single service parameter.
+ */
+export interface ParamDescr {
+	name: string;
+	type: 'string' | 'int' | 'float' | 'boolean';
+	description?: string;
+	minLength?: number;
+	maxLength?: number;
+	minValue?: number;
+	maxValue?: number;
+}
+
+/**
+ * An annotation item as displayed in the AnnotationPanel.
+ */
+export interface AnnotationItem {
+	iri: string;
+	value: string[];
+	row: DisplayValue[];
+}
 
 /**
  * Current display status passed to ObjectResolver to enable artifact caching.
@@ -67,7 +90,7 @@ export type ResolvedObject =
 	| {
 		type: 'unknown';
 		description: RdfValueBinding[];
-		objData: unknown;
+		objData: any;
 		artifactIri: string;
 		artifact: RdfObject;
 	  };

@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import Card from 'primevue/card';
 import Button from 'primevue/button';
 import Popover from 'primevue/popover';
@@ -96,7 +96,7 @@ import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 
 import LinkButton from '@/rdf4j-vue-components/src/components/LinkButton.vue';
-import type { FLApiClient } from '@/common/apiclient.js';
+import type { FLApiClient, FLRepositoryInfo } from '@/common/apiclient.js';
 
 interface ComponentData {
 	menuItems: any[];
@@ -126,10 +126,17 @@ export default defineComponent({
 	},
 	props: {
 		repositoryList: {
-			type: Array
+			type: Array as PropType<FLRepositoryInfo[]>,
+			default: () => []
 		},
-		createAvailable: null,
-		anonymous: null
+		createAvailable: {
+			type: Boolean,
+			default: false
+		},
+		anonymous: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data(): ComponentData {
 		return {

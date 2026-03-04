@@ -6,9 +6,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, type PropType } from 'vue';
 import Button from 'primevue/button';
 import Menu from 'primevue/menu';
+import type { UserInfo } from '@/common/apiclient';
 
 interface ComponentData {
 	items: any[];
@@ -21,7 +22,10 @@ export default defineComponent({
 		Menu
 	},
 	props: {
-		userInfo: null
+		userInfo: {
+			type: Object as PropType<UserInfo | null>,
+			default: null
+		}
 	},
 	data (): ComponentData {
 		return {

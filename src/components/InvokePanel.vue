@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
@@ -50,6 +50,7 @@ import Message from 'primevue/message';
 
 import ParamPanel from './ParamPanel.vue';
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
 	loading: boolean;
@@ -78,12 +79,30 @@ export default defineComponent({
 		}
 	},
 	props: {
-		id: null,
-		source: null, // use <iri> or 'ANY' or 'NONE'
-		target: null, // use <iri> or 'ANY' or 'NONE'
-		action: null,
-		grouped: null,
-		currentArtifact: null
+		id: {
+			type: String,
+			required: true
+		},
+		source: { // use <iri> or 'ANY' or 'NONE'
+			type: String,
+			required: true
+		},
+		target: { // use <iri> or 'ANY' or 'NONE'
+			type: String,
+			required: true
+		},
+		action: {
+			type: String,
+			required: true
+		},
+		grouped: {
+			type: Boolean,
+			default: false
+		},
+		currentArtifact: {
+			type: Object as PropType<RdfObject | null>,
+			default: null
+		}
 	},
 	data (): ComponentData {
 		return {

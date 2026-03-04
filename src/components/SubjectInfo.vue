@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -61,8 +61,14 @@ export default defineComponent({
 		}
 	},
 	props: {
-		iri: null,
-		activeIris: null
+		iri: {
+			type: String as PropType<string | null>,
+			default: null
+		},
+		activeIris: {
+			type: Boolean,
+			default: false
+		}
 	},
 	data (): ComponentData {
 		return {

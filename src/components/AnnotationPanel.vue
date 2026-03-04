@@ -61,8 +61,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from 'vue';
-import Popover from 'primevue/popover';
+import { defineComponent, inject, type PropType } from 'vue';
+import Popover, { type PopoverMethods } from 'primevue/popover';
 import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
@@ -71,6 +71,7 @@ import Iri from './Iri.vue';
 
 import RDFS from '../ontology/RDFS.js';
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { AnnotationItem } from '@/common/types';
 
 interface ComponentData {
 	selectedTag: string | null;
@@ -98,9 +99,18 @@ export default defineComponent({
 		}
 	},
 	props: {
-		subjectIri: null,
-		artifactIri: null,
-		subjectAnnotations: null
+		subjectIri: {
+			type: String as PropType<string>,
+			default: null
+		},
+		artifactIri: {
+			type: String as PropType<string>,
+			default: null
+		},
+		subjectAnnotations: {
+			type: Array as PropType<AnnotationItem[]>,
+			default: null
+		}
 	},
 	data (): ComponentData {
 		return {
@@ -143,7 +153,7 @@ export default defineComponent({
 			}
 			this.apiClient.addTag(this.subjectIri, tagDesc, this.artifactIri);
 			this.selectedTag = null;
-			this.$refs.addTagPanel.hide();
+			(this.$refs.addTagPanel as PopoverMethods).hide();
 			this.$emit('update');
 		},
 
@@ -161,20 +171,20 @@ export default defineComponent({
 			await this.apiClient.addValue(this.subjectIri, descType, this.labelText, this.artifactIri);
 			this.selectedLabelType = null;
 			this.labelText = null;
-			this.$refs.addAnnotationPanel.hide();
+			(this.$refs.addAnnotationPanel as PopoverMethods).hide();
 			this.$emit('update');
 		},
 
-		toggleTag(event) {
-			this.$refs.addTagPanel.toggle(event);
+		toggleTag(event: Event) {
+			(this.$refs.addTagPanel as PopoverMethods).toggle(event);
 		}, 
 
-		toggleAnnot(event) {
-			this.$refs.addAnnotationPanel.toggle(event);
+		toggleAnnot(event: Event) {
+			(this.$refs.addAnnotationPanel as PopoverMethods).toggle(event);
 		}, 
 
 		// decide if item is annotation or tag to be rendered
-		isAnnotation(item) {
+		isAnnotation(item: AnnotationItem) {
 			let itemIri = item.iri;
 			let splitIri = itemIri.split('#');
 			let hasTagIri = splitIri[splitIri.length - 1];
@@ -185,28 +195,27 @@ export default defineComponent({
 			}
 		},
 
-		//TODO FUNCTIONS
 		//open overlay panel for editation of annotation
-		editToggleAnnot(event,item) {
-			this.$refs.editAnnotationPanel.toggle(event);
+		editToggleAnnot(event: Event, item: AnnotationItem) {
+			(this.$refs.editAnnotationPanel as PopoverMethods).toggle(event);
 			this.selectedAnnotForEdit = item; //pass value of selected annotation
 			this.labelEditText = item.value[0]; // open overlay with actual value of annotation
 		},  
 		//edit annotation
-		async editAnnot(item) {
+		async editAnnot(item: AnnotationItem) {
 			await this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
 			await this.apiClient.addValue(this.subjectIri, item.iri, this.labelEditText, this.artifactIri);
-			this.$refs.editAnnotationPanel.hide();
+			(this.$refs.editAnnotationPanel as PopoverMethods).hide();
 			this.$emit('update');
 		}, 
 		//delete annotation
-		async deleteAnnot(item) {
+		async deleteAnnot(item: AnnotationItem) {
 			await this.apiClient.deleteValue(this.subjectIri, item.iri, this.artifactIri);
 			this.$emit('update');
 		}, 
 		//delete tag
-		async deleteTag(item) {
-			await this.apiClient.deleteTag(this.subjectIri, item, this.artifactIri);
+		async deleteTag(tagIri: string) {
+			await this.apiClient.deleteTag(this.subjectIri, tagIri, this.artifactIri);
 			this.$emit('update');
 		}, 
 		
