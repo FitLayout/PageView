@@ -60,7 +60,7 @@ export default defineComponent({
                     this.typeClass = 'chunkset';
                     break;
                 default:
-                    this.type = 'unknown';
+                    this.typeName = 'unknown';
                     this.typeClass = 'unknown';
                     break;
             }

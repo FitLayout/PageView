@@ -4,7 +4,7 @@
             <label :for="inputId" >{{descr.name}}</label>
             <InputText type="text" :id="inputId" :placeholder="descr.name"  class="w-full"
                 :minlength="descr.minLength" :data-maxlength="descr.maxLength"
-                v-bind:modelValue="modelValue" 
+                v-bind:modelValue="modelValue as string"
                 v-tooltip="paramDescription"
                 @update:modelValue="$emit('update:modelValue', $event)" />
         </div>
@@ -12,7 +12,7 @@
             <label :for="inputId" >{{descr.name}}</label>
             <InputNumber mode="decimal" showButtons :id="inputId" class="w-full"
                 :min="descr.minValue" :max="descr.maxValue"
-                v-bind:modelValue="modelValue" 
+                v-bind:modelValue="modelValue as number | null"
                 v-tooltip="paramDescription"
                 @update:modelValue="$emit('update:modelValue', $event)" />
         </div>
@@ -20,7 +20,7 @@
             <label :for="inputId" >{{descr.name}}</label>
             <InputNumber mode="decimal" showButtons :minFractionDigits="2" :maxFractionDigits="2" :id="inputId"  class="w-full"
                 :min="descr.minValue" :max="descr.maxValue" :step="0.2"
-                v-bind:modelValue="modelValue" 
+                v-bind:modelValue="modelValue as number | null"
                 v-tooltip="paramDescription"
                 @update:modelValue="$emit('update:modelValue', $event)" />
         </div>

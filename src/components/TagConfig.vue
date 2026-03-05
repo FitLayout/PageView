@@ -116,7 +116,7 @@ export default defineComponent({
                     } 
                 }`;
             let resp = await this.apiClient.selectQuery(query);
-            let tags = [];
+            let tags: TagInfo[] = [];
             if (resp && resp.results && resp.results.bindings) {
                 for (let binding of resp.results.bindings) {
                     const iri = binding.tag.value;
@@ -124,7 +124,7 @@ export default defineComponent({
                     const type = binding.type.value;
                     const tagger = binding.tagger.value;
                     const context = binding.context.value;
-                    const service = binding.service ? binding.service.value : null;
+                    const service = binding.service ? binding.service.value : undefined;
                     tags.push({iri, name, type, tagger, service, context});
                 }
             }

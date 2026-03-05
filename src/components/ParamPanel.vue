@@ -10,7 +10,7 @@ import ParamInput from './ParamInput.vue';
 import type { ParamDescr } from '@/common/types';
 
 interface ComponentData {
-    curValues: Record<string, string | number | boolean> | null;
+    curValues: Record<string, string | number | boolean>;
 }
 
 export default defineComponent({
@@ -20,17 +20,17 @@ export default defineComponent({
     },
     props: {
         descr: {
-            type: Array as PropType<ParamDescr[] | null>,
-            default: null
+            type: Array as PropType<ParamDescr[]>,
+            required: true
         },
         values: {
-            type: Object as PropType<Record<string, string | number | boolean> | null>,
-            default: null
+            type: Object as PropType<Record<string, string | number | boolean>>,
+            required: true
         }
     },
     data (): ComponentData {
         return {
-            curValues: []
+            curValues: {}
         }
     },
     computed: {

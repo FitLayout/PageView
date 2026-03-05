@@ -60,8 +60,8 @@ interface ComponentData {
     selList: ServiceInfo[];
     groupList: ServiceGroupItem[];
     key: string | null;
-    paramDescr: ParamDescr[] | null;
-    params: Record<string, string | number | boolean> | null;
+    paramDescr: ParamDescr[];
+    params: Record<string, string | number | boolean>;
 }
 
 export default defineComponent({
@@ -114,8 +114,8 @@ export default defineComponent({
             groupList: [], //grouped list if grouping is required
             key: null,		 //selected service key
 
-            paramDescr: null, //selected service param description
-            params: null	 //selected service params
+            paramDescr: [], //selected service param description
+            params: {}	 //selected service params
         }
     },
     computed: {
@@ -187,7 +187,7 @@ export default defineComponent({
                 //get the current param values
                 await this.restoreParams();
                 //choose the service description
-                this.paramDescr = this.selection![this.key].params ?? null;
+                this.paramDescr = this.selection![this.key].params ?? [];
             }
         },
 

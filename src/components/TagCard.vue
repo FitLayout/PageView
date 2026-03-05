@@ -7,7 +7,7 @@
                 <a target="_blank" :href="exploreTagLink(tag.iri)"><i v-tooltip="'Show in RDF explorer'" class="ml-2 pi pi-share-alt"></i></a>
             </template>
             <template #content>
-                <p><strong>Tagger: </strong><Iri :iri="tag.tagger" /></p>
+                <p><strong>Tagger: </strong><Iri :iri="tag.tagger" v-if="tag.tagger" /></p>
                 <div v-if="tag.service" class="service-descr">
                     <strong>Service:</strong> <code v-tooltip="serviceTooltip">{{ tag.service }}</code>
                 </div>

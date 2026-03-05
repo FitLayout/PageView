@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
+import { defineComponent, inject, type PropType } from 'vue';
 import Button from 'primevue/button';
-import Menu from 'primevue/menu';
+import Menu, { type MenuMethods } from 'primevue/menu';
 import type { MenuItem } from 'primevue/menuitem';
-import type { UserInfo } from '@/common/apiclient';
+import type { FLApiClient, UserInfo } from '@/common/apiclient';
 
 interface ComponentData {
     items: MenuItem[];
@@ -21,6 +21,11 @@ export default defineComponent({
     components: {
         Button,
         Menu
+    },
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
     },
     props: {
         userInfo: {
@@ -81,7 +86,7 @@ export default defineComponent({
                         icon: 'pi pi-fw pi-sign-out',
                         to: '/',
                         command: () => {
-                            this.$root.apiClient.logout();
+                            this.apiClient.logout();
                             location.reload();
                         }
                     });
@@ -89,7 +94,7 @@ export default defineComponent({
             }
         },
         toggle(event: Event): void {
-            (this.$refs.menu as typeof Menu).toggle(event);
+            (this.$refs.menu as MenuMethods).toggle(event);
         },
         isAdmin(): boolean {
             return !!(this.userInfo && this.userInfo.roles && this.userInfo.roles.includes('admin'));

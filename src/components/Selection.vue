@@ -171,7 +171,7 @@ export default defineComponent({
             this.rightBorderDiv =  0;
 
             //choose all boxes in selection and set coordinates for border div
-            var boxes = this.pageRectAreas;
+            let boxes = this.pageRectAreas;
 
             boxes.forEach(box => {
                 if (box.bounds.positionX > this.startBorderX && box.bounds.positionY > this.startBorderY && (box.bounds.height + box.bounds.positionY) < this.endBorderY && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
