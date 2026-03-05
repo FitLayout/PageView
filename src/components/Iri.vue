@@ -17,8 +17,8 @@ export default defineComponent({
     name: 'Iri',
     props: {
         iri: {
-            type: String as PropType<string | null>,
-            default: null
+            type: String as PropType<string>,
+            required: true
         },
         active: {
             type: Boolean,

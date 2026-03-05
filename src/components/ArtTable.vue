@@ -28,10 +28,10 @@
                         <LinkButton icon="pi pi-cog" class="p-button-warn"
                             v-tooltip.top="'Details and Actions'"
                             v-if="actionsAvailable(slotProps.node)"
-                            :to="{name: 'page', params: { repoId: (this.$route.params.repoId as string), iri: slotProps.node.data.id}}" /> 
+                            :to="{name: 'page', params: { repoId: repoId, iri: slotProps.node.data.id}}" /> 
                         <LinkButton icon="pi pi-globe" style="margin-left: 0.2em"
                             v-tooltip.top="'Open in Browser'"
-                            :to="{name: 'show', params: { repoId: (this.$route.params.repoId as string), iri: slotProps.node.data.id}}" 
+                            :to="{name: 'show', params: { repoId: repoId, iri: slotProps.node.data.id}}" 
                             target="_blank" /> 
                         <SplitButton icon="pi pi-download" severity="secondary" style="margin-left: 0.2em"
                             v-tooltip.top="'Export artifact'"
@@ -118,11 +118,13 @@ export default defineComponent({
         }
     },
     computed: {
+        repoId(): string {
+            return this.$route.params.repoId?.toString();
+        }
     },
     watch: {
     },
     created () {
-        this.apiClient.currentRepo = this.$route.params.repoId;
         this.fetchArtifacts();
     },
     methods: {
@@ -292,7 +294,7 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: async () => {
                     try {
-                        this.artifacts = await this.apiClient.deleteArtifact(iri);
+                        await this.apiClient.deleteArtifact(iri);
                     } catch (error) {
                         console.error('Couldnt delete artifact!', error);
                     }

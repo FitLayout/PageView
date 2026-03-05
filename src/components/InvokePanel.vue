@@ -55,10 +55,10 @@ import type { ParamDescr, RdfObject, ServiceGroupItem, ServiceInfo } from '@/com
 interface ComponentData {
     loading: boolean;
     error: string | null;
-    services: ServiceInfo[] | null;
-    selection: Record<string, ServiceInfo> | null;
-    selList: ServiceInfo[] | null;
-    groupList: ServiceGroupItem[] | null;
+    services: ServiceInfo[];
+    selection: Record<string, ServiceInfo>;
+    selList: ServiceInfo[];
+    groupList: ServiceGroupItem[];
     key: string | null;
     paramDescr: ParamDescr[] | null;
     params: Record<string, string | number | boolean> | null;
@@ -108,10 +108,10 @@ export default defineComponent({
         return {
             loading: false,
             error: null,
-            services: null,  //all services
-            selection: null, //acceptable services
-            selList: null,	 //acceptable service list
-            groupList: null, //grouped list if grouping is required
+            services: [],  //all services
+            selection: {}, //acceptable services
+            selList: [],	 //acceptable service list
+            groupList: [], //grouped list if grouping is required
             key: null,		 //selected service key
 
             paramDescr: null, //selected service param description
@@ -192,6 +192,11 @@ export default defineComponent({
         },
 
         async invoke(): Promise<boolean> {
+            if (!this.key || !this.params) {
+                this.error = 'No service selected';
+                return false;
+            }
+
             this.saveParams();
             //console.log('invoke');
             //console.log(this.params);

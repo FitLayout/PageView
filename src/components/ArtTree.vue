@@ -30,8 +30,9 @@ import Column from 'primevue/column';
 import ArtInfo from '../components/ArtInfo.vue';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
+import type { TreeNode } from 'primevue/treenode';
 
-interface ArtTreeNode {
+interface ArtTreeNode extends TreeNode {
     key: string;
     data: RdfObject & { id: string; timestamp: number };
     children: ArtTreeNode[];
@@ -87,7 +88,6 @@ export default defineComponent({
         'currentIri': 'iriChanged'
     },
     created () {
-        this.apiClient.currentRepo = this.$route.params.repoId;
         this.started = true;
         this.fetchArtifacts();
     },
@@ -193,7 +193,7 @@ export default defineComponent({
             this.scrollToView();
         },
 
-        onNodeSelect(node: ArtTreeNode): void {
+        onNodeSelect(node: TreeNode): void {
             this.selectArtifact(node.key);
         },
 
