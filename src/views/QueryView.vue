@@ -4,7 +4,14 @@
             <RdfEditor @resultReturn="resultsHandler" @loadingResult="loadingStart" />
         </div>
         <div class="query-results">
-            <QueryResults v-if="queryResult && !loading" :result="queryResult" />
+            <QueryResults v-if="queryResult && !loading" :result="queryResult">
+				<template #value="rdfValue">
+                    <ValueInfo :data="getValInfo(rdfValue)" :activeIris="true" 
+                        extIcon="pi pi-globe" extTooltip="Show in Browser"
+                        structIcon="pi pi-share-alt" 
+                        @show-iri="showIri"	@show-ext="showExt" @show-struct="showIri" />
+                </template>
+            </QueryResults>
         </div>
     </div>
 </template>
@@ -14,11 +21,11 @@ import { defineComponent, inject } from 'vue';
 import { RdfEditor, QueryResults } from '@/rdf4j-vue-components/src';
 
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { SelectQueryResult } from '@/rdf4j-vue-components/src/common/types';
+import type { DisplayValue, QueryResult, RdfValueSpec } from '@/rdf4j-vue-components/src/common/types';
 
 interface ComponentData {
     loading: boolean;
-    queryResult: SelectQueryResult | null;
+    queryResult: QueryResult | null;
 }
 
 export default defineComponent({
@@ -51,6 +58,10 @@ export default defineComponent({
     watch: {
     },
     methods: {
+        getValInfo(data: RdfValueSpec): DisplayValue {
+            return { v: data }; 
+        },
+
         update(): void {
         },
 
@@ -58,10 +69,20 @@ export default defineComponent({
             this.loading = start;
         },
 
-        resultsHandler(r: SelectQueryResult): void {
+        resultsHandler(r: QueryResult): void {
             this.queryResult = r;
             console.log(r);
         },
+
+        showIri(iri: string): void {
+			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
+			window.open(route.href, '_blank');
+		},
+
+		showExt(iri: string): void {
+			let route = this.$router.resolve({name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }});
+			window.open(route.href, '_blank');
+		}
 
     }
 })

@@ -56,11 +56,11 @@ export default defineComponent({
         this.update();
     },
     computed: {
-        iri(): string | string[] {
-            return this.$route.params.iri;
+        iri(): string {
+            return this.$route.params.iri.toString();
         },
-        repoId(): string | string[] {
-            return this.$route.params.repoId;
+        repoId(): string {
+            return this.$route.params.repoId.toString();
         }
     },
     watch: {
