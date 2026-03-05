@@ -1,5 +1,5 @@
 <template>
-	<div class="relations-display">
+    <div class="relations-display">
         <div class="floatRow">				
             <div class="floatBlock">
                 <MultiSelect v-model="selectedRelations" :options="relations" optionLabel="name" optionValue="iri" 
@@ -9,7 +9,7 @@
         </div>
         <svg ref="relcanvas" xmlns="http://www.w3.org/2000/svg" :width="canvasWidth" :height="canvasHeight">
         </svg>
-	</div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -25,63 +25,63 @@ const SVG = 'http://www.w3.org/2000/svg';
 const XLINK = 'http://www.w3.org/1999/xlink';
 
 interface RelationInfo {
-	name: string;
-	iri: string;
+    name: string;
+    iri: string;
 }
 
 interface Connection {
-	a1: string;  // IRI of first area
-	a2: string;  // IRI of second area
-	w: string;   // weight/support value
-	type: string; // relation type IRI
+    a1: string;  // IRI of first area
+    a2: string;  // IRI of second area
+    w: string;   // weight/support value
+    type: string; // relation type IRI
 }
 
 type SvgTripleElement = SVGElement & { triples: ConnectionTriple[]; documentOrder?: number };
 
 interface ConnectionTriple {
-	r1: SvgTripleElement;
-	con: SvgTripleElement;
-	r2: SvgTripleElement;
+    r1: SvgTripleElement;
+    con: SvgTripleElement;
+    r2: SvgTripleElement;
 }
 
 interface ComponentData {
-	relations: RelationInfo[];
-	selectedRelations: string[] | null;
-	areaIndex: Record<string, RdfObject>;
-	areaRects: Record<string, SvgTripleElement>;
-	connections: Connection[];
-	connectionTriples: ConnectionTriple[];
-	canvasWidth: number;
-	canvasHeight: number;
+    relations: RelationInfo[];
+    selectedRelations: string[] | null;
+    areaIndex: Record<string, RdfObject>;
+    areaRects: Record<string, SvgTripleElement>;
+    connections: Connection[];
+    connectionTriples: ConnectionTriple[];
+    canvasWidth: number;
+    canvasHeight: number;
 }
 
 export default defineComponent({
-	name: 'RelationsDisplay',
-	props: {
-		pageRectAreas: {
-			type: Array as PropType<RdfObject[] | null>,
-			default: null
-		},
-		artifactModel: {
-			type: Object as PropType<RdfObject | null>,
-			default: null
-		},
-		selectedRect: {
-			type: Object as PropType<RdfObject | null>,
-			default: null
-		}
-	},
-	setup() {
-		return {
-			apiClient: inject('apiClient') as FLApiClient
-		}
-	},
+    name: 'RelationsDisplay',
+    props: {
+        pageRectAreas: {
+            type: Array as PropType<RdfObject[] | null>,
+            default: null
+        },
+        artifactModel: {
+            type: Object as PropType<RdfObject | null>,
+            default: null
+        },
+        selectedRect: {
+            type: Object as PropType<RdfObject | null>,
+            default: null
+        }
+    },
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
     emits: ['area-click'],
-	components: {
+    components: {
         MultiSelect
-	},
-	data (): ComponentData {
-		return {
+    },
+    data (): ComponentData {
+        return {
             relations: [], // considered relations
             selectedRelations: null,
             areaIndex: {}, // index of all areas
@@ -90,25 +90,25 @@ export default defineComponent({
             connectionTriples: [], // triples of the generated area-connection-area SVG boxes
             canvasWidth: 0,
             canvasHeight: 0
-		}
-	},
+        }
+    },
     async created() {
-		await this.fetchRelations();
+        await this.fetchRelations();
         if (this.relations.length > 0) {
             this.restoreSelectedRelations();
             await this.update();
         }
     },
-	async mounted () {
+    async mounted () {
         await this.update();
-	},
-	watch: {
+    },
+    watch: {
         'pageRectAreas': 'update',
         'artifactModel': 'update',
         'selectedRect': 'redraw'
-	},
-	methods: {
-		async fetchRelations(): Promise<void> {
+    },
+    methods: {
+        async fetchRelations(): Promise<void> {
             const artifactIri = this.artifactModel._iri;
             const belongsRel = (this.artifactModel._type === SEGM.ChunkSet) ? SEGM.belongsToChunkSet : SEGM.belongsTo;
             const query =
@@ -129,7 +129,7 @@ export default defineComponent({
                 }
             }
             this.relations = rels;
-		},
+        },
 
         async updateRelation(): Promise<void> {
             this.saveSelectedRelations();
@@ -453,7 +453,7 @@ export default defineComponent({
                 this.selectedRelations = [ this.relations[0].iri ]; // select the first relation as default
             }
         }
-	}
+    }
 })
 </script>
 

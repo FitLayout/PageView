@@ -1,38 +1,38 @@
 <template>
-	<div class="page-view-main">
-		<p class="backlink"><router-link :to="{name: 'repo', params: { repoId: this.$route.params.repoId }}">
-			<i class="pi pi-arrow-circle-left"></i>
-			back to repository</router-link></p>
+    <div class="page-view-main">
+        <p class="backlink"><router-link :to="{name: 'repo', params: { repoId: this.$route.params.repoId }}">
+            <i class="pi pi-arrow-circle-left"></i>
+            back to repository</router-link></p>
 
-		<Iri :iri="iri" /><br/>
-		<ProgressSpinner v-if="loading" />
-		<div v-if="page">
-			<img v-if="pngImage" :src="pageImage" class="screenshot" />
+        <Iri :iri="iri" /><br/>
+        <ProgressSpinner v-if="loading" />
+        <div v-if="page">
+            <img v-if="pngImage" :src="pageImage" class="screenshot" />
 
-			<h1>{{pageTitle}}</h1>
-			<table class="info">
-				<tbody>
-					<tr><th>Source URL</th><td>{{page.sourceUrl}}</td></tr>
-					<tr><th>Size</th><td>{{page.width}} x {{page.height}} px</td></tr>
-					<tr><th>Rendered on</th><td>{{page.createdOn}}</td></tr>
-					<tr><th>Renderer</th><td>{{page.creator}}</td></tr>
-					<tr><th>Renderer params</th><td>{{page.creatorParams}}</td></tr>
-				</tbody>
-			</table>
+            <h1>{{pageTitle}}</h1>
+            <table class="info">
+                <tbody>
+                    <tr><th>Source URL</th><td>{{page.sourceUrl}}</td></tr>
+                    <tr><th>Size</th><td>{{page.width}} x {{page.height}} px</td></tr>
+                    <tr><th>Rendered on</th><td>{{page.createdOn}}</td></tr>
+                    <tr><th>Renderer</th><td>{{page.creator}}</td></tr>
+                    <tr><th>Renderer params</th><td>{{page.creatorParams}}</td></tr>
+                </tbody>
+            </table>
 
-			<LinkButton label="Open in Browser" icon="pi pi-globe" 
-				:to="{name: 'show', params: { repoId: repoId, iri: iri }}"
-				target="_blank" />
-			<LinkButton label="Open in RDF explorer" icon="pi pi-share-alt"
-				style="margin-left: 0.2em" class="p-button-warn" 
-				:to="{name: 'explore', params: { repoId: repoId, iri: iri }}"
-				target="_blank" />
+            <LinkButton label="Open in Browser" icon="pi pi-globe" 
+                :to="{name: 'show', params: { repoId: repoId, iri: iri }}"
+                target="_blank" />
+            <LinkButton label="Open in RDF explorer" icon="pi pi-share-alt"
+                style="margin-left: 0.2em" class="p-button-warn" 
+                :to="{name: 'explore', params: { repoId: repoId, iri: iri }}"
+                target="_blank" />
 
-			<h2>Page model</h2>
-			<SubjectInfo v-if="iri" :iri="iri" :activeIris="true" @show-iri="showIri" style="max-width: 75em" />
+            <h2>Page model</h2>
+            <SubjectInfo v-if="iri" :iri="iri" :activeIris="true" @show-iri="showIri" style="max-width: 75em" />
 
-		</div>
-	</div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -48,102 +48,102 @@ import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
-	page: RdfObject | null;
-	pngImage: string | null;
-	loading: boolean;
+    page: RdfObject | null;
+    pngImage: string | null;
+    loading: boolean;
 }
 
 export default defineComponent({
-	name: 'PageDetailView',
-	components: {
-		ProgressSpinner,
-		LinkButton,
-		Iri,
-		SubjectInfo
-	},
-	setup() {
-		return {
-			apiClient: inject('apiClient') as FLApiClient
-		}
-	},
-	data(): ComponentData {
-		return {
-			page: null,
-			pngImage: null,
-			loading: false,
-		}
-	},
-	computed: {
-		pageTitle(): string {
-			if (this.page) {
-				return this.page.title ? this.page.title : '(no title)';
-			} else {
-				return '(no page)';
+    name: 'PageDetailView',
+    components: {
+        ProgressSpinner,
+        LinkButton,
+        Iri,
+        SubjectInfo
+    },
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
+    data(): ComponentData {
+        return {
+            page: null,
+            pngImage: null,
+            loading: false,
+        }
+    },
+    computed: {
+        pageTitle(): string {
+            if (this.page) {
+                return this.page.title ? this.page.title : '(no title)';
+            } else {
+                return '(no page)';
             }
-		},
-		pageImage(): string {
-			return this.pngImage ? ('data:image/png;base64,' + this.pngImage) : ''; 
-		},
-		iri(): string {
-			return this.$route.params.iri?.toString();
-		},
-		repoId(): string {
-			return this.$route.params.repoId?.toString();
-		}
-	},
-	watch: {
-	},
-	created () {
-		this.fetchPageInfo();
-		this.fetchPageImage();
-	},
-	methods: {
+        },
+        pageImage(): string {
+            return this.pngImage ? ('data:image/png;base64,' + this.pngImage) : ''; 
+        },
+        iri(): string {
+            return this.$route.params.iri?.toString();
+        },
+        repoId(): string {
+            return this.$route.params.repoId?.toString();
+        }
+    },
+    watch: {
+    },
+    created () {
+        this.fetchPageInfo();
+        this.fetchPageImage();
+    },
+    methods: {
 
-		async fetchPageInfo() {
-			this.loading = true;
-			this.page = await this.apiClient.fetchArtifactInfo(this.iri);
-			if (this.page._type !== BOX.Page) {
-				// only Page artifacts are supported by this view
-				this.page = null;
-			}
-			this.loading = false;
-		},
+        async fetchPageInfo() {
+            this.loading = true;
+            this.page = await this.apiClient.fetchArtifactInfo(this.iri);
+            if (this.page._type !== BOX.Page) {
+                // only Page artifacts are supported by this view
+                this.page = null;
+            }
+            this.loading = false;
+        },
 
-		async fetchPageImage() {
-			try {
-				const val = await this.apiClient.getSubjectValue(this.iri, BOX.pngImage);
-				this.pngImage = val.value;
-			} catch (e) {
-				this.pngImage = null;
-			}
-		},
+        async fetchPageImage() {
+            try {
+                const val = await this.apiClient.getSubjectValue(this.iri, BOX.pngImage);
+                this.pngImage = val.value;
+            } catch (e) {
+                this.pngImage = null;
+            }
+        },
 
-		showIri(iri: string) {
-			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
-			window.open(route.href, '_blank');
-		},
+        showIri(iri: string) {
+            let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
+            window.open(route.href, '_blank');
+        },
 
-	}
+    }
 })
 </script>
 
 <style>
 .page-view-main {
-	margin: 2em;
+    margin: 2em;
 }
 .page-view-main .info {
-	margin: 1em 0;
+    margin: 1em 0;
 }
 .page-view-main .info th, .page-view-main .info td {
-	padding: 0.1em 0.3em;
+    padding: 0.1em 0.3em;
 }
 .page-view-main .info th {
-	text-align: left;
-	font-weight: bold;
+    text-align: left;
+    font-weight: bold;
 }
 .page-view-main .screenshot {
-	float: right;
-	max-height: 20em;
-	min-width: 10em;
+    float: right;
+    max-height: 20em;
+    min-width: 10em;
 }
 </style>

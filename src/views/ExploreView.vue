@@ -1,13 +1,13 @@
 <template>
-	<div class="explore-view">
-		<div class="subj-selection">
-			<Select v-model="selMode" :options="modes" /> 
-			<InputText type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
-			<Button class="ml-2" label="Explore" @click="changeIri()" />
-		</div>
-		<SubjectInfo v-if="iri && selMode === 'Subject'" :iri="iri" :activeIris="true" @show-iri="showIri" />
-		<SubjectReferences v-if="iri && selMode === 'Object'" :iri="iri" :activeIris="true" @show-iri="showIri" />
-	</div>
+    <div class="explore-view">
+        <div class="subj-selection">
+            <Select v-model="selMode" :options="modes" /> 
+            <InputText type="text" v-model="destIri" @keydown.enter="changeIri()" style="width: 50em" />
+            <Button class="ml-2" label="Explore" @click="changeIri()" />
+        </div>
+        <SubjectInfo v-if="iri && selMode === 'Subject'" :iri="iri" :activeIris="true" @show-iri="showIri" />
+        <SubjectReferences v-if="iri && selMode === 'Object'" :iri="iri" :activeIris="true" @show-iri="showIri" />
+    </div>
 </template>
 
 <script lang="ts">
@@ -92,6 +92,6 @@ export default defineComponent({
 
 <style>
 .explore-view .subj-selection {
-	padding: 1em;
+    padding: 1em;
 }
 </style>

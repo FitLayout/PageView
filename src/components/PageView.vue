@@ -1,191 +1,191 @@
 <template>
-	<div class="splitter-row">
-		<Splitter style="overflow: hidden; height: 100%">
-			<SplitterPanel>
-				<Splitter layout="vertical" style="overflow: hidden; width: 100%">
-					<SplitterPanel>
-						<div class="box-tree-scroll p-card">
-							<div class="box-tree">
-								<Tree :value="treeModel" v-if="treeModel"
-										v-model:expandedKeys="expandedTreeKeys"
-										v-model:selectionKeys="selectedTreeKey"
-										@node-select="treeNodeSelected" selectionMode="single">
-									<template #default="slotProps">
-										<span :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</span>
-									</template>
-									<template #text="slotProps">
-										<i :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</i>
-									</template>
-								</Tree>
-								<DataTable :value="tableModel" v-if="tableModel"
-									class="p-datatable-sm"
-									v-model:selection="selectedTableRow"
-									data-key="_iri"
-									selectionMode="single"
-									@rowSelect="tableRowSelected">
-									<Column>
-										<template #body="rowdata">
-											<span :id="'btr-' + rowdata.data.documentOrder">{{rowdata.data._label}}</span>
-										</template>
-									</Column>
-								</DataTable>
-							</div>
-						</div>
-					</SplitterPanel>
-					<SplitterPanel>
-						<div class="selected-info" v-if="subjectIri">
-							Subject: <Iri :iri="subjectIri" />
-							<i class="pi pi-share-alt" v-tooltip="'Show in RDF explorer'" 
-								style="margin-left: 0.5em; cursor: pointer" @click="exploreSubject" />
-						</div>
-						<Tabs value="0">
-							<TabList>
-        						<Tab value="0">Description</Tab>
-        						<Tab value="1">References</Tab>
-       							<Tab value="2">
-									<span class="p-tabview-title">Annotations</span>
-									<Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
-								</Tab>
-    						</TabList>
-							<TabPanels>
-								<TabPanel value="0">
-									<div class="descr-scroll">
-										<div class="descr-table" v-if="subjectModel">
-											<DataTable :value="subjectModel" class="p-datatable-sm"
-												v-model:filters="dFilters" filterDisplay="row"
-												:resizableColumns="true" columnResizeMode="expand"
-												:scrollable="true" scrollHeight="flex"
-												showGridlines>
-												<Column header="Property" filterField="p.value">
-													<template #body="rowdata">
-														<Iri :iri="rowdata.data.p.value" />
-													</template>
-													<template #filter="{filterModel,filterCallback}">
-														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-													</template>												
-												</Column>
-												<Column header="Value" filterField="v.value">
-													<template #body="rowdata">
-														<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer" 
-															:extAll="true" structIcon="pi pi-share-alt"
-															@show-iri="showIri"
-															@hover-iri="hoverIri"
-															@leave-iri="leaveIri"
-															@show-ext="showExt"
-															@show-struct="showExt" />
-													</template>
-													<template #filter="{filterModel,filterCallback}">
-														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-													</template>												
-												</Column>
-											</DataTable>
-										</div>
-									</div>
-								</TabPanel>
-								<TabPanel value="1">
-									<div class="descr-scroll">
-										<div class="descr-table" v-if="subjectRefs">
-											<DataTable :value="subjectRefs" class="p-datatable-sm" 
-												v-model:filters="rFilters" filterDisplay="row"
-												:resizableColumns="true" columnResizeMode="expand"
-												:scrollable="true" scrollHeight="flex" 
-												showGridlines>
-												<Column header="Subject" filterField="v.value">
-													<template #body="rowdata">
-														<ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer"
-															:extAll="true" 
-															@show-iri="showIri"
-															@hover-iri="hoverIri"
-															@leave-iri="leaveIri"
-															@show-ext="showExt" />
-													</template>
-													<template #filter="{filterModel,filterCallback}">
-														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-													</template>												
-												</Column>
-												<Column header="Property" filterField="p.value">
-													<template #body="rowdata">
-														<Iri :iri="rowdata.data.p.value" />
-													</template>
-													<template #filter="{filterModel,filterCallback}">
-														<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-													</template>												
-												</Column>
-											</DataTable>
-										</div>
-									</div>
-								</TabPanel>
-								<TabPanel value="2">
-									<AnnotationPanel
-										@update="fetchData(false)" 
-										:subjectIri="subjectIri" 
-										:artifactIri="status?.artifactIri"
-										:subjectAnnotations="subjectAnnotations" />
-								</TabPanel>
-							</TabPanels>
-						</Tabs>
-					</SplitterPanel>
-				</Splitter>
-			</SplitterPanel>
+    <div class="splitter-row">
+        <Splitter style="overflow: hidden; height: 100%">
+            <SplitterPanel>
+                <Splitter layout="vertical" style="overflow: hidden; width: 100%">
+                    <SplitterPanel>
+                        <div class="box-tree-scroll p-card">
+                            <div class="box-tree">
+                                <Tree :value="treeModel" v-if="treeModel"
+                                        v-model:expandedKeys="expandedTreeKeys"
+                                        v-model:selectionKeys="selectedTreeKey"
+                                        @node-select="treeNodeSelected" selectionMode="single">
+                                    <template #default="slotProps">
+                                        <span :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</span>
+                                    </template>
+                                    <template #text="slotProps">
+                                        <i :id="'btr-' + slotProps.node.key">{{slotProps.node.label}}</i>
+                                    </template>
+                                </Tree>
+                                <DataTable :value="tableModel" v-if="tableModel"
+                                    class="p-datatable-sm"
+                                    v-model:selection="selectedTableRow"
+                                    data-key="_iri"
+                                    selectionMode="single"
+                                    @rowSelect="tableRowSelected">
+                                    <Column>
+                                        <template #body="rowdata">
+                                            <span :id="'btr-' + rowdata.data.documentOrder">{{rowdata.data._label}}</span>
+                                        </template>
+                                    </Column>
+                                </DataTable>
+                            </div>
+                        </div>
+                    </SplitterPanel>
+                    <SplitterPanel>
+                        <div class="selected-info" v-if="subjectIri">
+                            Subject: <Iri :iri="subjectIri" />
+                            <i class="pi pi-share-alt" v-tooltip="'Show in RDF explorer'" 
+                                style="margin-left: 0.5em; cursor: pointer" @click="exploreSubject" />
+                        </div>
+                        <Tabs value="0">
+                            <TabList>
+                                <Tab value="0">Description</Tab>
+                                <Tab value="1">References</Tab>
+                                   <Tab value="2">
+                                    <span class="p-tabview-title">Annotations</span>
+                                    <Badge :value="subjectAnnotations.length" v-if="subjectAnnotations && subjectAnnotations.length > 0"></Badge>
+                                </Tab>
+                            </TabList>
+                            <TabPanels>
+                                <TabPanel value="0">
+                                    <div class="descr-scroll">
+                                        <div class="descr-table" v-if="subjectModel">
+                                            <DataTable :value="subjectModel" class="p-datatable-sm"
+                                                v-model:filters="dFilters" filterDisplay="row"
+                                                :resizableColumns="true" columnResizeMode="expand"
+                                                :scrollable="true" scrollHeight="flex"
+                                                showGridlines>
+                                                <Column header="Property" filterField="p.value">
+                                                    <template #body="rowdata">
+                                                        <Iri :iri="rowdata.data.p.value" />
+                                                    </template>
+                                                    <template #filter="{filterModel,filterCallback}">
+                                                        <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+                                                    </template>												
+                                                </Column>
+                                                <Column header="Value" filterField="v.value">
+                                                    <template #body="rowdata">
+                                                        <ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer" 
+                                                            :extAll="true" structIcon="pi pi-share-alt"
+                                                            @show-iri="showIri"
+                                                            @hover-iri="hoverIri"
+                                                            @leave-iri="leaveIri"
+                                                            @show-ext="showExt"
+                                                            @show-struct="showExt" />
+                                                    </template>
+                                                    <template #filter="{filterModel,filterCallback}">
+                                                        <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+                                                    </template>												
+                                                </Column>
+                                            </DataTable>
+                                        </div>
+                                    </div>
+                                </TabPanel>
+                                <TabPanel value="1">
+                                    <div class="descr-scroll">
+                                        <div class="descr-table" v-if="subjectRefs">
+                                            <DataTable :value="subjectRefs" class="p-datatable-sm" 
+                                                v-model:filters="rFilters" filterDisplay="row"
+                                                :resizableColumns="true" columnResizeMode="expand"
+                                                :scrollable="true" scrollHeight="flex" 
+                                                showGridlines>
+                                                <Column header="Subject" filterField="v.value">
+                                                    <template #body="rowdata">
+                                                        <ValueInfo :data="rowdata.data" extIcon="pi pi-share-alt" extTooltip="Show in RDF explorer"
+                                                            :extAll="true" 
+                                                            @show-iri="showIri"
+                                                            @hover-iri="hoverIri"
+                                                            @leave-iri="leaveIri"
+                                                            @show-ext="showExt" />
+                                                    </template>
+                                                    <template #filter="{filterModel,filterCallback}">
+                                                        <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+                                                    </template>												
+                                                </Column>
+                                                <Column header="Property" filterField="p.value">
+                                                    <template #body="rowdata">
+                                                        <Iri :iri="rowdata.data.p.value" />
+                                                    </template>
+                                                    <template #filter="{filterModel,filterCallback}">
+                                                        <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+                                                    </template>												
+                                                </Column>
+                                            </DataTable>
+                                        </div>
+                                    </div>
+                                </TabPanel>
+                                <TabPanel value="2">
+                                    <AnnotationPanel
+                                        @update="fetchData(false)" 
+                                        :subjectIri="subjectIri" 
+                                        :artifactIri="status?.artifactIri"
+                                        :subjectAnnotations="subjectAnnotations" />
+                                </TabPanel>
+                            </TabPanels>
+                        </Tabs>
+                    </SplitterPanel>
+                </Splitter>
+            </SplitterPanel>
 
-			<SplitterPanel>
-				<div class="col-page">
-					<div v-if="loading" class="loading">
-						<ProgressBar mode="indeterminate"/>
-					</div>
-					<div v-if="error" class="error alert alert-danger">
-					{{ error }}
-					</div>
-					<div class="tools" v-if="!loading && !error">
-						<div class="formgrid flex flex-row gap-4">
-							<div class="field flex-auto">
-								<label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
-								<Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
-							</div>
-							<div class="field">
-								<label for="screen" class="form-label">Screenshot</label>
-								<ToggleSwitch id="screen" v-model="screenshot" />
-							</div>
-							<div class="field">
-								<label for="outlines" class="form-label">Show outlines</label>
-								<ToggleSwitch id="outlines" v-model="outlines" title="Show area bounds" />
-							</div>
-							<div class="field">
-								<label for="selection" class="form-label">Selection</label>
-								<ToggleSwitch id="selection" v-model="rectSelection" title="Selection mode" />
-							</div>
-							<div class="field">
-								<label for="showTags" class="form-label">Show tags</label>
-								<ToggleSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
-							</div>
-							<div class="field">
-								<label for="showRelations" class="form-label">Show relations</label>
-								<ToggleSwitch id="showRelations" v-model="showRelations" />
-							</div>
-							<div class="field">
-								<label for="dragSelection" class="form-label">Drag select</label>
-								<ToggleSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
-							</div>
-						</div>
-					</div>
-					<div class="page-contents">
-						<Page ref="page" :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
-							:screenshot="screenshot"
-							:outlines="outlines"
-							:rectSelection="rectSelection"
-							:showTags="showTags"
-							:selectedRect="selectedRect"
-							@rect-selected="pageRectSelected">
-							<Selection v-if="dragSelection" :pageRectAreas="rectangles" @update="updateTreeView"></Selection>
-							<RelationsDisplay v-if="showRelations" :artifactModel="artifactModel" 
-								:selectedRect="selectedRect" :pageRectAreas="rectangles"
-								@area-click="pageRectSelected" />
-						</Page>
-					</div>
-				</div>
-			</SplitterPanel>
-		</Splitter>
-	</div>
+            <SplitterPanel>
+                <div class="col-page">
+                    <div v-if="loading" class="loading">
+                        <ProgressBar mode="indeterminate"/>
+                    </div>
+                    <div v-if="error" class="error alert alert-danger">
+                    {{ error }}
+                    </div>
+                    <div class="tools" v-if="!loading && !error">
+                        <div class="formgrid flex flex-row gap-4">
+                            <div class="field flex-auto">
+                                <label for="zoom" class="form-label">Zoom<br><b>{{ zoom }}%</b></label>
+                                <Slider id="zoom" v-model="zoom" :step="5" :min="20" :max="200" />
+                            </div>
+                            <div class="field">
+                                <label for="screen" class="form-label">Screenshot</label>
+                                <ToggleSwitch id="screen" v-model="screenshot" />
+                            </div>
+                            <div class="field">
+                                <label for="outlines" class="form-label">Show outlines</label>
+                                <ToggleSwitch id="outlines" v-model="outlines" title="Show area bounds" />
+                            </div>
+                            <div class="field">
+                                <label for="selection" class="form-label">Selection</label>
+                                <ToggleSwitch id="selection" v-model="rectSelection" title="Selection mode" />
+                            </div>
+                            <div class="field">
+                                <label for="showTags" class="form-label">Show tags</label>
+                                <ToggleSwitch id="showTags" v-model="showTags" title="Highlight tags by colors" />
+                            </div>
+                            <div class="field">
+                                <label for="showRelations" class="form-label">Show relations</label>
+                                <ToggleSwitch id="showRelations" v-model="showRelations" />
+                            </div>
+                            <div class="field">
+                                <label for="dragSelection" class="form-label">Drag select</label>
+                                <ToggleSwitch id="dragSelection" v-model="dragSelection" title="Select tags by dragging" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-contents">
+                        <Page ref="page" :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
+                            :screenshot="screenshot"
+                            :outlines="outlines"
+                            :rectSelection="rectSelection"
+                            :showTags="showTags"
+                            :selectedRect="selectedRect"
+                            @rect-selected="pageRectSelected">
+                            <Selection v-if="dragSelection" :pageRectAreas="rectangles" @update="updateTreeView"></Selection>
+                            <RelationsDisplay v-if="showRelations" :artifactModel="artifactModel" 
+                                :selectedRect="selectedRect" :pageRectAreas="rectangles"
+                                @area-click="pageRectSelected" />
+                        </Page>
+                    </div>
+                </div>
+            </SplitterPanel>
+        </Splitter>
+    </div>
 
 
 </template>
@@ -235,525 +235,525 @@ const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subjec
 type PageStatus = (ResolvedObject & { reloadArtifact?: boolean }) | null;
 
 interface ComponentData {
-	loading: boolean;
-	error: string | null;
-	zoom: number;
-	screenshot: boolean;
-	outlines: boolean;
-	rectSelection: boolean;
-	showTags: boolean;
-	showRelations: boolean;
-	dragSelection: boolean;
-	annotationIRIs: string[];
-	annotationGroupIRIs: string[];
-	status: PageStatus;
-	artifactModel: RdfObject | null;
-	pageModel: RdfObject | null;
-	rectangles: RdfObject[];
-	selectedRect: RdfObject | null;
-	activeTab: number;
-	subjectModel: RdfValueBinding[];
-	subjectRefs: RdfValueBinding[];
-	subjectAnnotations: AnnotationItem[];
-	treeModel: TreeNode[];
-	expandedTreeKeys: TreeExpandedKeys;
-	selectedTreeKey: TreeSelectionKeys;
-	tableModel: RdfObject[];
-	selectedTableRow: RdfObject | null;
-	dFilters: DataTableFilterMeta;
-	rFilters: DataTableFilterMeta;
+    loading: boolean;
+    error: string | null;
+    zoom: number;
+    screenshot: boolean;
+    outlines: boolean;
+    rectSelection: boolean;
+    showTags: boolean;
+    showRelations: boolean;
+    dragSelection: boolean;
+    annotationIRIs: string[];
+    annotationGroupIRIs: string[];
+    status: PageStatus;
+    artifactModel: RdfObject | null;
+    pageModel: RdfObject | null;
+    rectangles: RdfObject[];
+    selectedRect: RdfObject | null;
+    activeTab: number;
+    subjectModel: RdfValueBinding[];
+    subjectRefs: RdfValueBinding[];
+    subjectAnnotations: AnnotationItem[];
+    treeModel: TreeNode[];
+    expandedTreeKeys: TreeExpandedKeys;
+    selectedTreeKey: TreeSelectionKeys;
+    tableModel: RdfObject[];
+    selectedTableRow: RdfObject | null;
+    dFilters: DataTableFilterMeta;
+    rFilters: DataTableFilterMeta;
 }
 
 export default defineComponent({
-	name: 'PageView',
-	components: {
-		Splitter,
-		SplitterPanel,
-		ProgressBar,
-		Slider,
-		InputText,
-		ToggleSwitch,
-		Tree,
-		Tabs,
-		TabList,
+    name: 'PageView',
+    components: {
+        Splitter,
+        SplitterPanel,
+        ProgressBar,
+        Slider,
+        InputText,
+        ToggleSwitch,
+        Tree,
+        Tabs,
+        TabList,
         Tab,
         TabPanels,
-		TabPanel,
-		DataTable,
-		Column,
-		Badge,
-		Page,
-		Iri,
-		ValueInfo,
-		AnnotationPanel,
-		Selection,
-		RelationsDisplay
-	},
-	setup() {
-		return {
-			apiClient: inject('apiClient') as FLApiClient
-		}
-	},
-	props: {
-		subjectIri: null
-	},
-	data (): ComponentData {
-		return {
+        TabPanel,
+        DataTable,
+        Column,
+        Badge,
+        Page,
+        Iri,
+        ValueInfo,
+        AnnotationPanel,
+        Selection,
+        RelationsDisplay
+    },
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
+    props: {
+        subjectIri: null
+    },
+    data (): ComponentData {
+        return {
 
-			// UI
-			loading: false,
-			error: null,
-			zoom: 100,
-			screenshot: true,
-			outlines: false,
-			rectSelection: false,
-			showTags: true,
-			showRelations: false,
-			dragSelection: false,
+            // UI
+            loading: false,
+            error: null,
+            zoom: 100,
+            screenshot: true,
+            outlines: false,
+            rectSelection: false,
+            showTags: true,
+            showRelations: false,
+            dragSelection: false,
 
-			// Annotations to show
-			annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
-			annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
+            // Annotations to show
+            annotationIRIs: [RDFS.LABEL, RDFS.COMMENT], //properties to show in annotations (separate)
+            annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
 
-			// Displayed data
-			status: null, //artifact status (currently displayed artifacts)
-			artifactModel: null, //currently displayed artifact model
-			pageModel: null, //currently displayed page model
-			rectangles: [], //rectangle overlay on the page
-			selectedRect: null, //selected rectangle
-			activeTab: 0, //active tab in the description
-			subjectModel: [], //selected subject model for the Description table
-			subjectRefs: [], //selected subject references for the References table
-			subjectAnnotations: [], //selected subject annotations for the Annotations table
+            // Displayed data
+            status: null, //artifact status (currently displayed artifacts)
+            artifactModel: null, //currently displayed artifact model
+            pageModel: null, //currently displayed page model
+            rectangles: [], //rectangle overlay on the page
+            selectedRect: null, //selected rectangle
+            activeTab: 0, //active tab in the description
+            subjectModel: [], //selected subject model for the Description table
+            subjectRefs: [], //selected subject references for the References table
+            subjectAnnotations: [], //selected subject annotations for the Annotations table
 
-			// Tree
-			treeModel: [],
-			expandedTreeKeys: [],
-			selectedTreeKey: [],
+            // Tree
+            treeModel: [],
+            expandedTreeKeys: [],
+            selectedTreeKey: [],
 
-			// Data table for showing chunks
-			tableModel: [],
-			selectedTableRow: null,
+            // Data table for showing chunks
+            tableModel: [],
+            selectedTableRow: null,
 
-			// Property table filters
-			dFilters: {
+            // Property table filters
+            dFilters: {
                 'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
-				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
+                'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
             },
-			rFilters: {
-				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
+            rFilters: {
+                'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
                 'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
             },
 
-		}
-	},
-	created () {
-		this.update();
-	},
-	watch: {
-		'subjectIri': 'update'
-	},
-	methods: {
-		update(): void {
-			this.fetchData(false);
-			//this.activeTab = 0; //switch to the Description tab when the iri changes
-		},
+        }
+    },
+    created () {
+        this.update();
+    },
+    watch: {
+        'subjectIri': 'update'
+    },
+    methods: {
+        update(): void {
+            this.fetchData(false);
+            //this.activeTab = 0; //switch to the Description tab when the iri changes
+        },
 
-		/**
-		 * Reloads the artifact info.
-		 * @param {boolean} forceReload force reloading the entire artifact (e.g. all areas)
-		 */
-		async fetchData(forceReload: boolean): Promise<void> {
-			//console.log('UPDATE ' + this.subjectIri)
-			if (!this.subjectIri) {
-				return;
-			}
-			this.error = null;
-			this.loading = true;
+        /**
+         * Reloads the artifact info.
+         * @param {boolean} forceReload force reloading the entire artifact (e.g. all areas)
+         */
+        async fetchData(forceReload: boolean): Promise<void> {
+            //console.log('UPDATE ' + this.subjectIri)
+            if (!this.subjectIri) {
+                return;
+            }
+            this.error = null;
+            this.loading = true;
 
-			if (forceReload && this.status) {
-				this.status.reloadArtifact = true; // force the resolver to reload current artifact
-			}
+            if (forceReload && this.status) {
+                this.status.reloadArtifact = true; // force the resolver to reload current artifact
+            }
 
-			const client = this.apiClient;
-			try {
-				let resolver = new ObjectResolver(client);
-				//console.log('RESOLVING');
-				let deps = await this.resolveArtifact(resolver, this.subjectIri);
+            const client = this.apiClient;
+            try {
+                let resolver = new ObjectResolver(client);
+                //console.log('RESOLVING');
+                let deps = await this.resolveArtifact(resolver, this.subjectIri);
 
-				//console.log(deps);
-				if (deps.type !== 'unknown') {
-					if (forceReload || deps.artifactIri !== this.status?.artifactIri) {
-						//console.log('SET artifact')
-						this.artifactModel = deps.artifact;
-						this.rectangles = deps.rectangles;
-						if (deps.pageIri !== this.status?.pageIri) {
-							//console.log('SET page')
-							this.pageModel = deps.page;
-						}
-						//update trees for the new artifact
-						this.initTree();
-						if (deps.rectangleType === 'box') {
-							const model = (new TreeModel()).createForBoxes(deps.rectangles);
-							this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
-							this.tableModel = [];
-						} else if (deps.rectangleType === 'area') {
-							const model = (new TreeModel()).createForAreas(deps.rectangles);
-							this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
-							this.tableModel = [];
-						} else if (deps.rectangleType === 'textChunk') {
-							this.tableModel = this.createChunksModel(deps.rectangles);
-							this.treeModel = [];
-						}
-					}
-					// if the IRI identifies a box or area, highlight the corresponding rectangle
-					if (deps.type === 'box' || deps.type === 'area' || deps.type === 'textChunk') {
-						if (!this.selectedRect || this.selectedRect._iri !== this.subjectIri || forceReload) {
-							const rect = this.findRectangleByIri(this.subjectIri);
-							if (deps.type === 'box' || deps.type === 'area') {
-								this.showBoxInTree(rect);
-							} else if (deps.type === 'textChunk') {
-								this.showBoxInTable(rect);
-							}
-							this.selectedRect = rect;
-						}
-					} else {
-						this.selectedRect = null;
-					}
-				} else {
-					console.error('Unknown artifact type for ' + this.subjectIri)
-				}
+                //console.log(deps);
+                if (deps.type !== 'unknown') {
+                    if (forceReload || deps.artifactIri !== this.status?.artifactIri) {
+                        //console.log('SET artifact')
+                        this.artifactModel = deps.artifact;
+                        this.rectangles = deps.rectangles;
+                        if (deps.pageIri !== this.status?.pageIri) {
+                            //console.log('SET page')
+                            this.pageModel = deps.page;
+                        }
+                        //update trees for the new artifact
+                        this.initTree();
+                        if (deps.rectangleType === 'box') {
+                            const model = (new TreeModel()).createForBoxes(deps.rectangles);
+                            this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
+                            this.tableModel = [];
+                        } else if (deps.rectangleType === 'area') {
+                            const model = (new TreeModel()).createForAreas(deps.rectangles);
+                            this.treeModel = [model.root]; // the Tree component seems to expect an array of tree nodes
+                            this.tableModel = [];
+                        } else if (deps.rectangleType === 'textChunk') {
+                            this.tableModel = this.createChunksModel(deps.rectangles);
+                            this.treeModel = [];
+                        }
+                    }
+                    // if the IRI identifies a box or area, highlight the corresponding rectangle
+                    if (deps.type === 'box' || deps.type === 'area' || deps.type === 'textChunk') {
+                        if (!this.selectedRect || this.selectedRect._iri !== this.subjectIri || forceReload) {
+                            const rect = this.findRectangleByIri(this.subjectIri);
+                            if (deps.type === 'box' || deps.type === 'area') {
+                                this.showBoxInTree(rect);
+                            } else if (deps.type === 'textChunk') {
+                                this.showBoxInTable(rect);
+                            }
+                            this.selectedRect = rect;
+                        }
+                    } else {
+                        this.selectedRect = null;
+                    }
+                } else {
+                    console.error('Unknown artifact type for ' + this.subjectIri)
+                }
 
-				this.status = deps;
-				this.subjectModel = (deps.description.length <= MAX_PROPERTY_ITEMS) ? deps.description : deps.description.slice(MAX_PROPERTY_ITEMS);
-				this.subjectAnnotations = this.getAnnotations(deps.description);
-				this.loading = false;
+                this.status = deps;
+                this.subjectModel = (deps.description.length <= MAX_PROPERTY_ITEMS) ? deps.description : deps.description.slice(MAX_PROPERTY_ITEMS);
+                this.subjectAnnotations = this.getAnnotations(deps.description);
+                this.loading = false;
 
-				//fetch references
-				this.apiClient.getSubjectReferences(this.subjectIri).then((data) => {
-					let refs = data.results.bindings;
-					this.subjectRefs = (refs.length <= MAX_PROPERTY_ITEMS) ? refs : refs.slice(MAX_PROPERTY_ITEMS);
-				});
+                //fetch references
+                this.apiClient.getSubjectReferences(this.subjectIri).then((data) => {
+                    let refs = data.results.bindings;
+                    this.subjectRefs = (refs.length <= MAX_PROPERTY_ITEMS) ? refs : refs.slice(MAX_PROPERTY_ITEMS);
+                });
 
-				this.$emit('status-update', this.status);
-			} catch (error: any) {
-				this.error = error.message;
-				this.loading = false;
-				console.error('Error while fetching artifact data', error);
-			}
-		},
+                this.$emit('status-update', this.status);
+            } catch (error: any) {
+                this.error = error.message;
+                this.loading = false;
+                console.error('Error while fetching artifact data', error);
+            }
+        },
 
-		async resolveArtifact(resolver: ObjectResolver, iri: string): Promise<ResolvedObject> {
-			let baseDeps = await resolver.resolveObjectIRI(iri, this.status ?? {});
-			let deps = baseDeps;
-			let resolved = false;
-			while (!resolved) {
-				if (deps.type === 'unknown') { //if the type is unknown, repeat the resolution with a parent
-					if (deps.objData[FL.hasParentArtifact]) {
-						let pIri = deps.objData[FL.hasParentArtifact][0].value;
-						deps = await resolver.resolveObjectIRI(pIri, this.status);
-					} else {
-						resolved = true; //no parent - give up
-					}
-				} else {
-					resolved = true; //a know type found
-				}
-			}
-			deps.description = baseDeps.description;
-			deps.artifactIri = baseDeps.artifactIri;
-			deps.artifact = baseDeps.artifact;
-			return deps;
-		},
+        async resolveArtifact(resolver: ObjectResolver, iri: string): Promise<ResolvedObject> {
+            let baseDeps = await resolver.resolveObjectIRI(iri, this.status ?? {});
+            let deps = baseDeps;
+            let resolved = false;
+            while (!resolved) {
+                if (deps.type === 'unknown') { //if the type is unknown, repeat the resolution with a parent
+                    if (deps.objData[FL.hasParentArtifact]) {
+                        let pIri = deps.objData[FL.hasParentArtifact][0].value;
+                        deps = await resolver.resolveObjectIRI(pIri, this.status);
+                    } else {
+                        resolved = true; //no parent - give up
+                    }
+                } else {
+                    resolved = true; //a know type found
+                }
+            }
+            deps.description = baseDeps.description;
+            deps.artifactIri = baseDeps.artifactIri;
+            deps.artifact = baseDeps.artifact;
+            return deps;
+        },
 
-		// scans the model and filters out the annotations only
-		getAnnotations(model: RdfValueBinding[]): AnnotationItem[] {
-			let ret: AnnotationItem[] = [];
-			for (let iri of this.annotationGroupIRIs) {
-				let values = [];
-				let rows = [];
-				for (let row of model) {
-					if (row.p.value === iri) {
-						values.push(row.v.value);
-						rows.push(row);
-					}
-				}
-				if (values.length > 0) {
-					ret.push({iri: iri, value: values, row: rows});
-				}
-			}
-			for (let iri of this.annotationIRIs) {
-				for (let row of model) {
-					if (row.p.value === iri) {
-						ret.push({iri: iri, value: [row.v.value], row: [row]});
-					}
-				}
-			}
-			return ret;
-		},
+        // scans the model and filters out the annotations only
+        getAnnotations(model: RdfValueBinding[]): AnnotationItem[] {
+            let ret: AnnotationItem[] = [];
+            for (let iri of this.annotationGroupIRIs) {
+                let values = [];
+                let rows = [];
+                for (let row of model) {
+                    if (row.p.value === iri) {
+                        values.push(row.v.value);
+                        rows.push(row);
+                    }
+                }
+                if (values.length > 0) {
+                    ret.push({iri: iri, value: values, row: rows});
+                }
+            }
+            for (let iri of this.annotationIRIs) {
+                for (let row of model) {
+                    if (row.p.value === iri) {
+                        ret.push({iri: iri, value: [row.v.value], row: [row]});
+                    }
+                }
+            }
+            return ret;
+        },
 
-		//============== Events =============================
+        //============== Events =============================
 
-		treeNodeSelected(node: TreeNode) {
-			const iri = node.data._iri;
-			this.$router.push({name: 'show', params: { iri: iri }});
-		},
+        treeNodeSelected(node: TreeNode) {
+            const iri = node.data._iri;
+            this.$router.push({name: 'show', params: { iri: iri }});
+        },
 
-		pageRectSelected(rect: RdfObject): void {
-			const iri = rect._iri;
-			this.$router.push({name: 'show', params: { iri: iri }});
-		},
+        pageRectSelected(rect: RdfObject): void {
+            const iri = rect._iri;
+            this.$router.push({name: 'show', params: { iri: iri }});
+        },
 
-		//============== Tree operations =============================
+        //============== Tree operations =============================
 
-		initTree(): void {
-			this.expandedTreeKeys = {};
-			this.expandedTreeKeys["0"] = true;
-			this.selectedTreeKey = {};
-			this.selectedTreeKey["0"] = true;
-		},
+        initTree(): void {
+            this.expandedTreeKeys = {};
+            this.expandedTreeKeys["0"] = true;
+            this.selectedTreeKey = {};
+            this.selectedTreeKey["0"] = true;
+        },
 
-		showBoxInTree(box: RdfObject | null): void {
-			if (!box) return;
-			this.expandForBox(box);
-			this.selectBox(box);
-			//try to scroll into view
-			this.$nextTick(function() {
-				let elem = document.getElementById('btr-' + (box as RdfObject).documentOrder);
-				if (elem) {
-					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-				}
-			});
-		},
+        showBoxInTree(box: RdfObject | null): void {
+            if (!box) return;
+            this.expandForBox(box);
+            this.selectBox(box);
+            //try to scroll into view
+            this.$nextTick(function() {
+                let elem = document.getElementById('btr-' + (box as RdfObject).documentOrder);
+                if (elem) {
+                    elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+                }
+            });
+        },
 
-		selectBox(box: RdfObject): void {
-			this.selectedTreeKey = {};
-			this.selectedTreeKey[String(box.documentOrder)] = true;
-		},
+        selectBox(box: RdfObject): void {
+            this.selectedTreeKey = {};
+            this.selectedTreeKey[String(box.documentOrder)] = true;
+        },
 
-		expandForBox(box: RdfObject): void {
-			let boxNode: TreeNode | null = this.findTreeNode(this.treeModel[0], String(box.documentOrder));
-			while (boxNode) {
-				this.expandedTreeKeys[boxNode.key as string] = true;
-				boxNode = boxNode.parent ?? null;
-			}
-		},
+        expandForBox(box: RdfObject): void {
+            let boxNode: TreeNode | null = this.findTreeNode(this.treeModel[0], String(box.documentOrder));
+            while (boxNode) {
+                this.expandedTreeKeys[boxNode.key as string] = true;
+                boxNode = boxNode.parent ?? null;
+            }
+        },
 
-		findTreeNode(root: TreeNode, key: string): TreeNode | null {
-			if (root.key === key) {
-				return root;
-			} else if (root.children) {
-				for (let child of root.children) {
-					let sub = this.findTreeNode(child, key);
-					if (sub !== null) {
-						return sub;
-					}
-				}
-				return null;
-			}
-			return null;
-		},
+        findTreeNode(root: TreeNode, key: string): TreeNode | null {
+            if (root.key === key) {
+                return root;
+            } else if (root.children) {
+                for (let child of root.children) {
+                    let sub = this.findTreeNode(child, key);
+                    if (sub !== null) {
+                        return sub;
+                    }
+                }
+                return null;
+            }
+            return null;
+        },
 
-		// Table of rectangles
+        // Table of rectangles
 
-		createChunksModel(rects: RdfObject[]): RdfObject[] {
-			const list: RdfObject[] = [];
-			for (let rect of rects) {
-				list.push(rect);
-			}
-			return list;
-		},
+        createChunksModel(rects: RdfObject[]): RdfObject[] {
+            const list: RdfObject[] = [];
+            for (let rect of rects) {
+                list.push(rect);
+            }
+            return list;
+        },
 
-		tableRowSelected(node: DataTableRowSelectEvent): void {
-			const iri = (node.data as RdfObject)._iri;
-			this.$router.push({name: 'show', params: { iri: iri }});
-		},
+        tableRowSelected(node: DataTableRowSelectEvent): void {
+            const iri = (node.data as RdfObject)._iri;
+            this.$router.push({name: 'show', params: { iri: iri }});
+        },
 
-		showBoxInTable(rect: RdfObject | null): void {
-			this.selectedTableRow = rect;
-			this.$nextTick(function() {
-				if (!rect) return;
-				let elem = document.getElementById('btr-' + (rect as RdfObject).documentOrder);
-				if (elem) {
-					elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-				}
-			});
-		},
+        showBoxInTable(rect: RdfObject | null): void {
+            this.selectedTableRow = rect;
+            this.$nextTick(function() {
+                if (!rect) return;
+                let elem = document.getElementById('btr-' + (rect as RdfObject).documentOrder);
+                if (elem) {
+                    elem.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+                }
+            });
+        },
 
-		// ---
+        // ---
 
-		findRectangleByIri(iri: string): RdfObject | null {
-			for (let rect of this.rectangles) {
-				if (rect._iri === iri) {
-					return rect;
-				}
-			}
-			return null;
-		},
+        findRectangleByIri(iri: string): RdfObject | null {
+            for (let rect of this.rectangles) {
+                if (rect._iri === iri) {
+                    return rect;
+                }
+            }
+            return null;
+        },
 
-		//refresh tree view after adding selection
-		updateTreeView(): void {
-			this.fetchData(true);
-		},
+        //refresh tree view after adding selection
+        updateTreeView(): void {
+            this.fetchData(true);
+        },
 
-		showIri(iri: string): void {
-			this.$router.push({name: 'show', params: { iri: iri }});
-		},
+        showIri(iri: string): void {
+            this.$router.push({name: 'show', params: { iri: iri }});
+        },
 
-		showExt(iri: string): void {
-			let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
-			window.open(route.href, '_blank');
-		},
+        showExt(iri: string): void {
+            let route = this.$router.resolve({name: 'explore', params: { repoId: this.$route.params.repoId, iri: iri }});
+            window.open(route.href, '_blank');
+        },
 
-		hoverIri(iri: string): void {
-			const page = this.$refs['page'] as any;
-			if (page) {
-				page.highlightHoveredIri(iri);
-			}
-		},
+        hoverIri(iri: string): void {
+            const page = this.$refs['page'] as any;
+            if (page) {
+                page.highlightHoveredIri(iri);
+            }
+        },
 
-		leaveIri(iri: string): void {
-			const page = this.$refs['page'] as any;
-			if (page) {
-				page.unhighlightHoveredIri(iri);
-			}
-		},
+        leaveIri(iri: string): void {
+            const page = this.$refs['page'] as any;
+            if (page) {
+                page.unhighlightHoveredIri(iri);
+            }
+        },
 
-		exploreSubject(): void {
-			this.showExt(this.subjectIri as string);
-		}
+        exploreSubject(): void {
+            this.showExt(this.subjectIri as string);
+        }
 
-	}
+    }
 })
 </script>
 
 <style>
 .splitter-row {
-	flex: 1 1 auto;
-	overflow: hidden;
+    flex: 1 1 auto;
+    overflow: hidden;
 }
 .col-page {
-	height: 100%;
-	display: flex;
-	flex-direction: column;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 .col-page .loading {
-	margin: 20px 5px;
-	height: 23px;
-	box-sizing: border-box;
+    margin: 20px 5px;
+    height: 23px;
+    box-sizing: border-box;
 }
 .col-page .tools {
-	margin-top: 0;
-	background-color: var(--p-surface-100);
-	padding: 0.3rem 0;
-	font-size: 90%;
-	height: 65px;
-	box-sizing: border-box;
+    margin-top: 0;
+    background-color: var(--p-surface-100);
+    padding: 0.3rem 0;
+    font-size: 90%;
+    height: 65px;
+    box-sizing: border-box;
 }
 .col-page .tools .field {
-	text-align: center;
-	padding: 0 0.3em;
-	margin-bottom: 0.1em;
+    text-align: center;
+    padding: 0 0.3em;
+    margin-bottom: 0.1em;
 }
 .col-page .tools .field label {
-	display: block;
+    display: block;
 }
 .tools .field > label, .tools .field > .p-component {
-	margin-left: auto;
-	margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
 }
 .col-page .tools .field > .p-component {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 .page-contents {
-	border: 2px solid lightgray;
-	height: 100%;
-	width: 100%;
-	min-width: 200px;
-	overflow: auto;
-	position: relative;
+    border: 2px solid lightgray;
+    height: 100%;
+    width: 100%;
+    min-width: 200px;
+    overflow: auto;
+    position: relative;
 }
 
 .box-tree-scroll {
-	position: relative;
-	width: auto;
-	height: 100%;
-	min-height: 100px;
-	overflow: auto;
+    position: relative;
+    width: auto;
+    height: 100%;
+    min-height: 100px;
+    overflow: auto;
 }
 .box-tree {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 .box-tree .p-tree .p-tree-root .p-tree-node .p-tree-node-content {
-	padding: 0;
+    padding: 0;
 }
 .box-tree .p-tree .p-tree-root .p-tree-node .p-tree-node-content .p-tree-node-toggle-button {
-	width: 1.5rem;
-	height: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 .box-tree .p-tree-node-label {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .selected-info {
-	padding: 0.2em 0.5em;
-	font-weight: bold;
-	height: 2em;
+    padding: 0.2em 0.5em;
+    font-weight: bold;
+    height: 2em;
 }
 .splitter-row .p-tabs {
-	height: calc(100% - 2em);
+    height: calc(100% - 2em);
 }
 .splitter-row .p-tabs .p-tablist {
-	height: 2em;
+    height: 2em;
 }
 .splitter-row .p-tabs .p-tablist .p-tab {
-	padding: 0.2em 1em 0.2em 1em;
+    padding: 0.2em 1em 0.2em 1em;
 }
 .splitter-row .p-tabs .p-tabpanels {
-	height: calc(100% - 2em);
-	padding: 0;
+    height: calc(100% - 2em);
+    padding: 0;
 }
 .splitter-row .p-tabs .p-tabpanel {
-	height: 100%;
+    height: 100%;
 }
 .descr-scroll {
-	height: 100%;
-	min-height: 100px;
-	position: relative;
+    height: 100%;
+    min-height: 100px;
+    position: relative;
 }
 .descr-table {
-	height: 100%;
-	width: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 .descr-table .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-	padding: 0.25em 0.5em;
-	font-size: 90%;
+    padding: 0.25em 0.5em;
+    font-size: 90%;
 }
 .descr-table .p-datatable.p-datatable-sm .p-datatable-thead > tr > th.p-filter-column {
-	padding: 0.25em 0.5em;
-	font-size: 90%;
+    padding: 0.25em 0.5em;
+    font-size: 90%;
 }
 th.p-filter-column .p-inputtext {
-	padding: 0.25em 0.5em;
+    padding: 0.25em 0.5em;
 }
 .splitter-row .p-tabs .p-tablist li .p-tabview-nav-link .p-badge {
-	min-width: 1.5em;
-	height: 1.5em;
-	line-height: 1.5em;
-	margin-top: -0.5em;
-	margin-left: 0.5em;
+    min-width: 1.5em;
+    height: 1.5em;
+    line-height: 1.5em;
+    margin-top: -0.5em;
+    margin-left: 0.5em;
 }
 .splitter-row .p-tabs .p-tabpanel {
-	position: relative; /* because of annotationGui inside */
+    position: relative; /* because of annotationGui inside */
 }
 input.p-inputtext.p-component.descInput {
-	margin-right: 0.5em;
+    margin-right: 0.5em;
 }
 </style>

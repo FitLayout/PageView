@@ -1,31 +1,31 @@
 <template>
-	<div class="subject-info" v-if="iri">
-		<DataTable :value="subjectModel" class="p-datatable-sm"
-			v-model:filters="dFilters" filterDisplay="row"
-			:resizableColumns="true" columnResizeMode="expand"
-			:scrollable="true" scrollHeight="flex"
-			showGridlines>
-			<Column header="Subject" filterField="v.value">
-				<template #body="rowdata">
-					<ValueInfo :data="rowdata.data" :activeIris="activeIris" 
-						extIcon="pi pi-globe" extTooltip="Show in Browser"
-						structIcon="pi pi-share-alt" 
-						@show-iri="showIri"	@show-ext="showExt" @show-struct="showIri" />
-				</template>
-				<template #filter="{filterModel,filterCallback}">
-					<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-				</template>												
-			</Column>
-			<Column header="Property" filterField="p.value">
-				<template #body="rowdata">
-					<Iri :iri="rowdata.data.p.value" :active="activeIris" @show-iri="showIri"/>
-				</template>
-				<template #filter="{filterModel,filterCallback}">
-					<InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
-				</template>												
-			</Column>
-		</DataTable>
-	</div>
+    <div class="subject-info" v-if="iri">
+        <DataTable :value="subjectModel" class="p-datatable-sm"
+            v-model:filters="dFilters" filterDisplay="row"
+            :resizableColumns="true" columnResizeMode="expand"
+            :scrollable="true" scrollHeight="flex"
+            showGridlines>
+            <Column header="Subject" filterField="v.value">
+                <template #body="rowdata">
+                    <ValueInfo :data="rowdata.data" :activeIris="activeIris" 
+                        extIcon="pi pi-globe" extTooltip="Show in Browser"
+                        structIcon="pi pi-share-alt" 
+                        @show-iri="showIri"	@show-ext="showExt" @show-struct="showIri" />
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by value - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+                </template>												
+            </Column>
+            <Column header="Property" filterField="p.value">
+                <template #body="rowdata">
+                    <Iri :iri="rowdata.data.p.value" :active="activeIris" @show-iri="showIri"/>
+                </template>
+                <template #filter="{filterModel,filterCallback}">
+                    <InputText type="text" v-model="filterModel.value" @keydown.enter="filterCallback()" class="p-column-filter" :placeholder="`Search by name - `" v-tooltip.top.focus="'Hit enter key to filter'"/>
+                </template>												
+            </Column>
+        </DataTable>
+    </div>
 </template>
 
 <script lang="ts">
@@ -43,73 +43,73 @@ import type { FLApiClient } from '@/common/apiclient.js';
 import type { DisplayValue } from '@/rdf4j-vue-components/src/common/types';
 
 interface ComponentData {
-	subjectModel: DisplayValue[] | null;
-	dFilters: DataTableFilterMeta;
+    subjectModel: DisplayValue[] | null;
+    dFilters: DataTableFilterMeta;
 }
 
 export default defineComponent({
-	name: 'SubjectReferences',
-	components: {
-		InputText,
-		DataTable,
-		Column,
-		Iri,
-		ValueInfo,
-	},
-	emits: ['show-iri'],
-	setup() {
-		return {
-			apiClient: inject('apiClient') as FLApiClient
-		}
-	},
-	props: {
-		iri: {
-			type: String as PropType<string | null>,
-			default: null
-		},
-		activeIris: {
-			type: Boolean,
-			default: false
-		}
-	},
-	data (): ComponentData {
-		return {
-			subjectModel: null,
-			dFilters: {
-				'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
-				'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
-			}
-		}
-	},
-	created () {
-		this.update();
-	},
-	watch: {
-		iri: 'update'
-	},
-	methods: {
-		async update(): Promise<void> {
-			if (this.iri) {
-				const data = await this.apiClient.getSubjectReferences(this.iri);
-				this.subjectModel = data.results.bindings as DisplayValue[];
-				// fill missing values
-				for (let item of this.subjectModel) {
-					if (!item.v) {
-						item.v = { type:'literal', value:'' };
-					}
-				}
-			}
-		},
+    name: 'SubjectReferences',
+    components: {
+        InputText,
+        DataTable,
+        Column,
+        Iri,
+        ValueInfo,
+    },
+    emits: ['show-iri'],
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
+    props: {
+        iri: {
+            type: String as PropType<string | null>,
+            default: null
+        },
+        activeIris: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data (): ComponentData {
+        return {
+            subjectModel: null,
+            dFilters: {
+                'p.value': {value: null, matchMode: FilterMatchMode.CONTAINS},
+                'v.value': {value: null, matchMode: FilterMatchMode.CONTAINS}
+            }
+        }
+    },
+    created () {
+        this.update();
+    },
+    watch: {
+        iri: 'update'
+    },
+    methods: {
+        async update(): Promise<void> {
+            if (this.iri) {
+                const data = await this.apiClient.getSubjectReferences(this.iri);
+                this.subjectModel = data.results.bindings as DisplayValue[];
+                // fill missing values
+                for (let item of this.subjectModel) {
+                    if (!item.v) {
+                        item.v = { type:'literal', value:'' };
+                    }
+                }
+            }
+        },
 
-		showIri(iri: string): void {
-			this.$emit('show-iri', iri);
-		},
+        showIri(iri: string): void {
+            this.$emit('show-iri', iri);
+        },
 
-		showExt(iri: string): void {
-			let route = this.$router.resolve({name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }});
-			window.open(route.href, '_blank');
-		}
-	}
+        showExt(iri: string): void {
+            let route = this.$router.resolve({name: 'show', params: { repoId: this.$route.params.repoId, iri: iri }});
+            window.open(route.href, '_blank');
+        }
+    }
 })
 </script>
 

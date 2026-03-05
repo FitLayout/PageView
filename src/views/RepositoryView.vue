@@ -1,34 +1,34 @@
 <template>
     <div class="repository-view">
-		<!-- Repository menu -->
-		<div class="menu-row">
-			<Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
-				<template #start><router-link to="/"><span class="logo">FitLayout</span></router-link></template>
-				<template #end>
-					<span class="repo-info">Repository: <b>{{repoId}}</b></span>
-					<Button icon="pi pi-sign-out" 
-							class="p-button-rounded p-button-text" 
-							v-tooltip.bottom="'Close repository'" 
-							@click="quit()" />&nbsp;
-					<UserAvatar :userInfo="userInfo" v-tooltip.bottom="userInfo ? ('User: ' + userInfo.userId) : 'User'" />
-				</template>
-				<template #item="{ item, props, hasSubmenu }">
-					<router-link v-if="item.to" v-slot="{ href, navigate }" :to="item.to" custom>
-						<a :href="href" v-bind="props.action" @click="navigate">
-							<span :class="item.icon" />
-							<span class="ml-2">{{ item.label }}</span>
-						</a>
-					</router-link>
-					<a v-else :href="item.url" :target="item.target" v-bind="props.action">
-						<span :class="item.icon" />
-						<span class="ml-2">{{ item.label }}</span>
-						<span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
-					</a>
-				</template>
-			</Menubar>
-		</div>
-		<router-view></router-view>
-	</div>
+        <!-- Repository menu -->
+        <div class="menu-row">
+            <Menubar id="mainmenu" :model="menuItems" style="font-size:120%">
+                <template #start><router-link to="/"><span class="logo">FitLayout</span></router-link></template>
+                <template #end>
+                    <span class="repo-info">Repository: <b>{{repoId}}</b></span>
+                    <Button icon="pi pi-sign-out" 
+                            class="p-button-rounded p-button-text" 
+                            v-tooltip.bottom="'Close repository'" 
+                            @click="quit()" />&nbsp;
+                    <UserAvatar :userInfo="userInfo" v-tooltip.bottom="userInfo ? ('User: ' + userInfo.userId) : 'User'" />
+                </template>
+                <template #item="{ item, props, hasSubmenu }">
+                    <router-link v-if="item.to" v-slot="{ href, navigate }" :to="item.to" custom>
+                        <a :href="href" v-bind="props.action" @click="navigate">
+                            <span :class="item.icon" />
+                            <span class="ml-2">{{ item.label }}</span>
+                        </a>
+                    </router-link>
+                    <a v-else :href="item.url" :target="item.target" v-bind="props.action">
+                        <span :class="item.icon" />
+                        <span class="ml-2">{{ item.label }}</span>
+                        <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
+                    </a>
+                </template>
+            </Menubar>
+        </div>
+        <router-view></router-view>
+    </div>
 </template>
 
 <script lang="ts">
@@ -42,87 +42,87 @@ import {RepositoryData} from '../common/repositorydata.js';
 import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
 
 interface ComponentData {
-	userInfo: UserInfo | null;
-	repoInfo: FLRepositoryInfo | null;
-	menuItems: MenuItem[];
+    userInfo: UserInfo | null;
+    repoInfo: FLRepositoryInfo | null;
+    menuItems: MenuItem[];
 }
 
 export default defineComponent({
-	name: 'RepositoryView',
-	components: {
-		Menubar,
-		Button,
-		UserAvatar,
-	},
-	setup() {
-		return {
-			apiClient: inject('apiClient') as FLApiClient
-		}
-	},
-	data(): ComponentData {
-		return {
-			userInfo: null,
-			repoInfo: null,
+    name: 'RepositoryView',
+    components: {
+        Menubar,
+        Button,
+        UserAvatar,
+    },
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
+    data(): ComponentData {
+        return {
+            userInfo: null,
+            repoInfo: null,
 
-			menuItems: [
-				{label: 'Overview', to: {name: 'repo'}},
-				{label: 'Query', to: {name: 'query'}},
-				{label: 'Explore', to: {name: 'explore'}}
-			]
-		}
-	},
-	provide() {
-		return {
-			apiClient: this.apiClient,
-			userInfo: computed(() => this.userInfo),
-			repoInfo: computed(() => this.repoInfo),
-			repoId: computed(() => this.repoId),
-			repoTitle: computed(() =>this.repoTitle),
-			repoLink: computed(() => this.repoLink)
-		}
-	},
-	computed: {
-		repoId(): string | string[] {
-			if (this.repoInfo) {
-				return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
-			} else {
-				return this.$route.params.repoId;
-			}
-		},
-		repoTitle(): string {
-			if (this.repoInfo) {
-				return this.repoInfo.description ? this.repoInfo.description : '(no name)';
-			} else {
-				return '(no name)';
-			}
-		},
-		repoLink(): string {
-			return window.location.href;
-		}
-	},
-	watch: {
-	},
-	created () {
-		const repoId = this.$route.params.repoId.toString();
-		this.apiClient.setRepository(repoId);
-		this.apiClient.getRepositoryInfo(repoId).then((info) => { 
-			this.repoInfo = info;
-			RepositoryData.addID(info.id); // add the repository to the list of known repositories
-		});
-		this.fetchUserInfo();
-	},
-	methods: {
+            menuItems: [
+                {label: 'Overview', to: {name: 'repo'}},
+                {label: 'Query', to: {name: 'query'}},
+                {label: 'Explore', to: {name: 'explore'}}
+            ]
+        }
+    },
+    provide() {
+        return {
+            apiClient: this.apiClient,
+            userInfo: computed(() => this.userInfo),
+            repoInfo: computed(() => this.repoInfo),
+            repoId: computed(() => this.repoId),
+            repoTitle: computed(() =>this.repoTitle),
+            repoLink: computed(() => this.repoLink)
+        }
+    },
+    computed: {
+        repoId(): string | string[] {
+            if (this.repoInfo) {
+                return this.repoInfo.description ? this.repoInfo.description : this.repoInfo.id;
+            } else {
+                return this.$route.params.repoId;
+            }
+        },
+        repoTitle(): string {
+            if (this.repoInfo) {
+                return this.repoInfo.description ? this.repoInfo.description : '(no name)';
+            } else {
+                return '(no name)';
+            }
+        },
+        repoLink(): string {
+            return window.location.href;
+        }
+    },
+    watch: {
+    },
+    created () {
+        const repoId = this.$route.params.repoId.toString();
+        this.apiClient.setRepository(repoId);
+        this.apiClient.getRepositoryInfo(repoId).then((info) => { 
+            this.repoInfo = info;
+            RepositoryData.addID(info.id); // add the repository to the list of known repositories
+        });
+        this.fetchUserInfo();
+    },
+    methods: {
 
-		async fetchUserInfo(): Promise<void> {
-			//this.error = null;
-			this.userInfo = await this.apiClient.getUserInfo();
-		},
+        async fetchUserInfo(): Promise<void> {
+            //this.error = null;
+            this.userInfo = await this.apiClient.getUserInfo();
+        },
 
-		quit(): void {
-			this.$router.push({name: 'home'});
-		}
+        quit(): void {
+            this.$router.push({name: 'home'});
+        }
 
-	}
+    }
 })
 </script>
 

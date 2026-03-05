@@ -11,68 +11,68 @@ import AdminView from "../views/AdminView.vue";
 import AdminRepos from "../views/AdminRepos.vue";
 
 const routes: RouteRecordRaw[] = [
-	{
-		name: 'home',
-		path: '/',
-		component: Home
-	},
-	{
-		path: '/r/:repoId',
-		component: RepositoryView,
-		children: [
-			{
-				name: 'repo',
-				path: '',
-				component: RepositoryContentView
-			},
-			{
-				name: 'page',
-				path: 'page/:iri',
-				component: PageDetailView
-			},
-			{
-				name: 'explore',
-				path: 'explore/:iri?',
-				component: ExploreView
-			},
-			{
-				name: 'query',
-				path: 'query',
-				component: QueryView
-			},
-		]
-	},
-	{
-		name: 'browser',
-		path: '/b/:repoId',
-		component: BrowserView
-	},
-	{
-		name: 'show',
-		path: '/b/:repoId/show/:iri',
-		component: BrowserView
-	},
-	{
-		path: '/admin',
-		component: AdminView,
-		children: [
-			{
-				name: 'adminHome',
-				path: '',
-				redirect: '/admin/repos'
-			},
-			{
-				name: 'adminRepos',
-				path: '/admin/repos',
-				component: AdminRepos
-			}
-		]
-	}
+    {
+        name: 'home',
+        path: '/',
+        component: Home
+    },
+    {
+        path: '/r/:repoId',
+        component: RepositoryView,
+        children: [
+            {
+                name: 'repo',
+                path: '',
+                component: RepositoryContentView
+            },
+            {
+                name: 'page',
+                path: 'page/:iri',
+                component: PageDetailView
+            },
+            {
+                name: 'explore',
+                path: 'explore/:iri?',
+                component: ExploreView
+            },
+            {
+                name: 'query',
+                path: 'query',
+                component: QueryView
+            },
+        ]
+    },
+    {
+        name: 'browser',
+        path: '/b/:repoId',
+        component: BrowserView
+    },
+    {
+        name: 'show',
+        path: '/b/:repoId/show/:iri',
+        component: BrowserView
+    },
+    {
+        path: '/admin',
+        component: AdminView,
+        children: [
+            {
+                name: 'adminHome',
+                path: '',
+                redirect: '/admin/repos'
+            },
+            {
+                name: 'adminRepos',
+                path: '/admin/repos',
+                component: AdminRepos
+            }
+        ]
+    }
 ];
 
 const router = createRouter({
-	history: createWebHashHistory(),
-	routes
+    history: createWebHashHistory(),
+    routes
 });
 
 export default router;

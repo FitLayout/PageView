@@ -1,90 +1,90 @@
 <template>
-	<div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
-		<div class="icons">
-			<i class="pi pi-trash" title="Delete artifact" v-on:click="deleteArtifact"></i>
-		</div>
-		<p>
-			<strong class="badge">{{ typeName }}</strong>&nbsp;
-			<Iri :iri="artifact._iri"></Iri>
-			<span v-if="isRoot">
-				<i class="pi pi-eye" v-tooltip="'Focus on this page only'" v-if="!focus" @click="toggleFocus"></i>
-				<i class="pi pi-eye focused" v-tooltip="'Page focused, click to cancel focus'" v-if="focus" @click="toggleFocus"></i>
-			</span>
-		</p>
-		<div v-if="artifact">
-			<p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
-			<div class="ainfo">
-				<div v-if="typeName === 'Page'">
-					<p class="url">{{ artifact.sourceUrl }}</p>
-				</div>
-				<p class="creator" :title="creatorParams">{{ artifact.creator }}</p>
-				<p class="createdOn">{{ artifact.createdOn }}</p>
-			</div>
-		</div>
-	</div>
+    <div :class="typeClass" v-on:click="$emit('select-artifact', iri)">
+        <div class="icons">
+            <i class="pi pi-trash" title="Delete artifact" v-on:click="deleteArtifact"></i>
+        </div>
+        <p>
+            <strong class="badge">{{ typeName }}</strong>&nbsp;
+            <Iri :iri="artifact._iri"></Iri>
+            <span v-if="isRoot">
+                <i class="pi pi-eye" v-tooltip="'Focus on this page only'" v-if="!focus" @click="toggleFocus"></i>
+                <i class="pi pi-eye focused" v-tooltip="'Page focused, click to cancel focus'" v-if="focus" @click="toggleFocus"></i>
+            </span>
+        </p>
+        <div v-if="artifact">
+            <p class="alabel text-truncate" :title="artifact._label" v-if="artifact._label">{{ artifact._label }}</p>
+            <div class="ainfo">
+                <div v-if="typeName === 'Page'">
+                    <p class="url">{{ artifact.sourceUrl }}</p>
+                </div>
+                <p class="creator" :title="creatorParams">{{ artifact.creator }}</p>
+                <p class="createdOn">{{ artifact.createdOn }}</p>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style>
 .artifact {
-	margin: 0.5em 0;
-	padding: 0.5em 1em;
-	background-color: var(--p-surface-100);
-	border-radius: 5px;
-	border: 1px solid var(--p-surface-400);
-	word-wrap: break-word;
-	/*box-shadow: 0 6px 6px -6px black;*/
+    margin: 0.5em 0;
+    padding: 0.5em 1em;
+    background-color: var(--p-surface-100);
+    border-radius: 5px;
+    border: 1px solid var(--p-surface-400);
+    word-wrap: break-word;
+    /*box-shadow: 0 6px 6px -6px black;*/
 }
 .artifact .icons {
-	float: right;
+    float: right;
 }
 .artifact i.pi {
-	margin-left: 0.5em;
-	cursor: pointer;
-	font-size: 120%;
+    margin-left: 0.5em;
+    cursor: pointer;
+    font-size: 120%;
 }
 .artifact .pi-eye {
-	color: var(--p-primary-color);
-	padding: 3px;
+    color: var(--p-primary-color);
+    padding: 3px;
 }
 .artifact .pi-eye.focused {
-	background-color: var(--p-primary-color);
-	color: var(--p-primary-color-text);
-	font-weight: bold;
+    background-color: var(--p-primary-color);
+    color: var(--p-primary-color-text);
+    font-weight: bold;
 }
 .artifact .pi-trash:hover {
-	color: #D32F2F;
+    color: #D32F2F;
 }
 .artifact .ainfo {
-	display: block;
-	font-size: 0;
+    display: block;
+    font-size: 0;
 }
 .selected > .artifact {
-	border: 2px solid var(--p-primary-color);
-	/*box-shadow: 0 2px 6px -6px black;*/
+    border: 2px solid var(--p-primary-color);
+    /*box-shadow: 0 2px 6px -6px black;*/
 }
 .selected > .artifact .ainfo {
-	display: block;
-	font-size: 1em;
+    display: block;
+    font-size: 1em;
 }
 .artifact:hover .ainfo {
-	display: block;
-	font-size: 1em;
-	transition: all 0.2s 0.3s;
+    display: block;
+    font-size: 1em;
+    transition: all 0.2s 0.3s;
 }
 .artifact p {
-	margin: 0;
+    margin: 0;
 }
 .artifact .alabel {
-	font-weight: bold;
-	font-size: 100%;
-	margin: 0.25em 0;
+    font-weight: bold;
+    font-size: 100%;
+    margin: 0.25em 0;
 }
 .artifact .creator, .artifact .url {
-	font-size: 80%;
+    font-size: 80%;
 }
 .artifact .createdOn {
-	font-size: 80%;
-	font-style: italic;
+    font-size: 80%;
+    font-style: italic;
 }
 
 </style>
@@ -97,85 +97,85 @@ import SEGM from '../ontology/SEGM.js';
 import type { RdfObject } from '@/common/types';
 
 interface ComponentData {
-	typeName: string | null;
-	typeClass: string | null;
-	isRoot: boolean | null;
+    typeName: string | null;
+    typeClass: string | null;
+    isRoot: boolean | null;
 }
 
 export default defineComponent({
-	name: 'ArtInfo',
-	components: {
-		Iri
-	},
-	props: {
-		artifact: {
-			type: Object as PropType<RdfObject>,
-			required: true
-		},
-		focus: {
-			type: Boolean,
-			default: false
-		}
-	},
-	data (): ComponentData {
-		return {
-			typeName: null,
-			typeClass: null,
-			isRoot: null
-		}
-	},
-	computed: {
-		iri(): string {
-			return this.artifact._iri;
-		},
-		creatorParams(): string | undefined {
-			if (this.artifact && this.artifact.creatorParams) {
-				return this.artifact.creatorParams.toString();
-			} else {
-				return undefined;
-			}
-		}
-	},
-	created () {
-		this.update();
-	},
-	methods: {
-		update(): void {
-			//console.log(this.artifact);
-			this.isRoot = (this.artifact.hasParentArtifact === undefined);
-			switch (this.artifact._type) {
-				case BOX.Page:
-					this.typeName = 'Page';
-					this.typeClass = 'artifact boxtree';
-					break;
-				case SEGM.AreaTree:
-					this.typeName = 'Area Tree';
-					this.typeClass = 'artifact areatree';
-					break;
-				case SEGM.ChunkSet:
-					this.typeName = 'Chunk Set';
-					this.typeClass = 'artifact chunkset';
-					break;
-				default:
-					this.typeName = 'unknown';
-					this.typeClass = 'artifact unknown';
-					break;
-			}
-		},
+    name: 'ArtInfo',
+    components: {
+        Iri
+    },
+    props: {
+        artifact: {
+            type: Object as PropType<RdfObject>,
+            required: true
+        },
+        focus: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data (): ComponentData {
+        return {
+            typeName: null,
+            typeClass: null,
+            isRoot: null
+        }
+    },
+    computed: {
+        iri(): string {
+            return this.artifact._iri;
+        },
+        creatorParams(): string | undefined {
+            if (this.artifact && this.artifact.creatorParams) {
+                return this.artifact.creatorParams.toString();
+            } else {
+                return undefined;
+            }
+        }
+    },
+    created () {
+        this.update();
+    },
+    methods: {
+        update(): void {
+            //console.log(this.artifact);
+            this.isRoot = (this.artifact.hasParentArtifact === undefined);
+            switch (this.artifact._type) {
+                case BOX.Page:
+                    this.typeName = 'Page';
+                    this.typeClass = 'artifact boxtree';
+                    break;
+                case SEGM.AreaTree:
+                    this.typeName = 'Area Tree';
+                    this.typeClass = 'artifact areatree';
+                    break;
+                case SEGM.ChunkSet:
+                    this.typeName = 'Chunk Set';
+                    this.typeClass = 'artifact chunkset';
+                    break;
+                default:
+                    this.typeName = 'unknown';
+                    this.typeClass = 'artifact unknown';
+                    break;
+            }
+        },
 
-		async deleteArtifact(): Promise<void> {
-			this.$emit('delete-artifact', this.iri);
-		},
+        async deleteArtifact(): Promise<void> {
+            this.$emit('delete-artifact', this.iri);
+        },
 
-		toggleFocus(): void {
-			if (this.focus) {
-				this.$emit('toggle-focus', null);
-			} else {
-				this.$emit('toggle-focus', this.artifact);
-			}
-		}
-		
-	}
+        toggleFocus(): void {
+            if (this.focus) {
+                this.$emit('toggle-focus', null);
+            } else {
+                this.$emit('toggle-focus', this.artifact);
+            }
+        }
+        
+    }
 })
 </script>
 
