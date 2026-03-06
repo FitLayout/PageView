@@ -59,11 +59,11 @@ export default defineComponent({
     name: 'RelationsDisplay',
     props: {
         pageRectAreas: {
-            type: Array as PropType<RdfObject[] | null>,
+            type: Array as PropType<RdfObject[]>,
             default: null
         },
         artifactModel: {
-            type: Object as PropType<RdfObject | null>,
+            type: Object as PropType<RdfObject>,
             default: null
         },
         selectedRect: {
@@ -241,7 +241,7 @@ export default defineComponent({
             (this as any).svgDefs.appendChild(drect);
 
             // use the rectangle and draw it
-            let rect = document.createElementNS(SVG, 'use') as SvgTripleElement;
+            let rect = document.createElementNS(SVG, 'use') as SVGElement as SvgTripleElement;
             rect.setAttributeNS(XLINK, 'href', '#' + this.areaId(area));
             rect.triples = []; // for saving related triples of boxes
 
@@ -292,7 +292,7 @@ export default defineComponent({
             (this as any).masks.push(mask);
 
             // create the line and mask it
-            let line = document.createElementNS(SVG, 'line') as SvgTripleElement;
+            let line = document.createElementNS(SVG, 'line') as SVGElement as SvgTripleElement;
             line.setAttribute('x1', String(x1));
             line.setAttribute('y1', String(y1));
             line.setAttribute('x2', String(x2));

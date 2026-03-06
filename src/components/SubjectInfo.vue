@@ -40,7 +40,8 @@ import ValueInfo from './ValueInfo.vue';
 import {FilterMatchMode} from '@primevue/core/api';
 import type { DataTableFilterMeta } from 'primevue/datatable';
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { DisplayValue, RdfValueBinding } from '@/rdf4j-vue-components/src/common/types';
+import type { DisplayValue } from '@/rdf4j-vue-components/src/common/types';
+import { bindingToDisplayValue } from '@/common/types';
 
 interface ComponentData {
     subjectModel: DisplayValue[] | null;
@@ -91,7 +92,7 @@ export default defineComponent({
         async update(): Promise<void> {
             if (this.iri) {
                 const data = await this.apiClient.getSubjectDescription(this.iri);
-                this.subjectModel = data.results.bindings.map(this.bindingToDisplayValue);
+                this.subjectModel = data.results.bindings.map(bindingToDisplayValue);
                 // fill missing values
                 for (let item of this.subjectModel) {
                     if (!item.v) {
@@ -99,13 +100,6 @@ export default defineComponent({
                     }
                 }
             }
-        },
-
-        bindingToDisplayValue(bind: RdfValueBinding): DisplayValue {
-            return {
-                p: bind['p'],
-                v: bind['v']
-            };
         },
 
         showIri(iri: string): void {

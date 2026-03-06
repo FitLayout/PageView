@@ -1,7 +1,7 @@
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import type { FLApiClient } from './apiclient';
-import type { RdfObject, ResolvedObject, ResolverStatus } from './types';
+import type { RdfBox, RdfObject, ResolvedObject, ResolverStatus } from './types';
 
 
 /**
@@ -36,7 +36,7 @@ export default class ObjectResolver {
                 artifact: page,
                 pageIri: iri,
                 page: page,
-                rectangles: page.boxes as RdfObject[]
+                rectangles: page.boxes as RdfBox[]
             }
         } else if (type === SEGM.AreaTree) {
             const atree = await this.getAreaTree(iri, currentStatus);
@@ -49,7 +49,7 @@ export default class ObjectResolver {
                 artifact: atree,
                 pageIri: page._iri,
                 page: page,
-                rectangles: atree.areas as RdfObject[]
+                rectangles: atree.areas as RdfBox[]
             }
         } else if (type === SEGM.ChunkSet) {
             const cset = await this.getArtifact(iri, currentStatus);
@@ -64,7 +64,7 @@ export default class ObjectResolver {
                 artifact: cset,
                 pageIri: page._iri,
                 page: page,
-                rectangles: cset.textChunks as RdfObject[]
+                rectangles: cset.textChunks as RdfBox[]
             }
         } else if (type === BOX.Box) {
             const pageIri = await this.client.getSubjectValue(iri, BOX.belongsTo);
@@ -77,7 +77,7 @@ export default class ObjectResolver {
                 artifact: page,
                 pageIri: page._iri,
                 page: page,
-                rectangles: page.boxes as RdfObject[]
+                rectangles: page.boxes as RdfBox[]
             }
         } else if (type === SEGM.Area) {
             const atreeIri = await this.client.getSubjectValue(iri, SEGM.belongsTo);
@@ -91,7 +91,7 @@ export default class ObjectResolver {
                 artifact: atree,
                 pageIri: page._iri,
                 page: page,
-                rectangles: atree.areas as RdfObject[]
+                rectangles: atree.areas as RdfBox[]
             }
         } else if (type === SEGM.TextChunk) {
             const chunkSetIri = await this.client.getSubjectValue(iri, SEGM.belongsToChunkSet);
@@ -107,7 +107,7 @@ export default class ObjectResolver {
                 artifact: chunkSet,
                 pageIri: page._iri,
                 page: page,
-                rectangles: chunkSet.textChunks as RdfObject[]
+                rectangles: chunkSet.textChunks as RdfBox[]
             }
         } else {
             const objData = await this.client.getSubjectDescriptionObj(iri);

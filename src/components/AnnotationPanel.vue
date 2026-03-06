@@ -53,7 +53,7 @@
                         <h4>Edit annotation</h4>									
                         <InputText class="descInput" type="text" v-model="labelEditText" placeholder="Short description" />
                         <Button class="p-button-raised" icon="pi pi-plus" iconPos="right" :disabled="selectedAnnotForEdit === null"
-                            v-on:click="if (selectedAnnotForEdit !== null) { editAnnot(selectedAnnotForEdit) }" />
+                            v-on:click="selectedAnnotForEdit !== null && editAnnot(selectedAnnotForEdit)" />
                     </div>
                 </Popover>
             </div>

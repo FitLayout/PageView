@@ -106,8 +106,8 @@ export type ResolvedObject =
         artifactIri: string;
         artifact: RdfObject;
         pageIri: string;
-        page: RdfObject;
-        rectangles: RdfObject[];
+        page: RdfPage;
+        rectangles: RdfBox[];
       }
     | {
         type: 'unknown';
@@ -161,4 +161,11 @@ export interface RdfBox extends RdfObject {
     hasBottomBorder?: RdfObject;
     hasLeftBorder?: RdfObject;
     containsObject?: RdfObject[];
+}
+
+export function bindingToDisplayValue(bind: RdfValueBinding): DisplayValue {
+    return {
+        p: bind['p'],
+        v: bind['v']
+    };
 }

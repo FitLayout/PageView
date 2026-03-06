@@ -177,7 +177,7 @@
                             :selectedRect="selectedRect"
                             @rect-selected="pageRectSelected">
                             <Selection v-if="dragSelection" :pageRectAreas="rectangles" @update="updateTreeView"></Selection>
-                            <RelationsDisplay v-if="showRelations" :artifactModel="artifactModel" 
+                            <RelationsDisplay v-if="showRelations && artifactModel" :artifactModel="artifactModel" 
                                 :selectedRect="selectedRect" :pageRectAreas="rectangles"
                                 @area-click="pageRectSelected" />
                         </Page>
@@ -225,14 +225,11 @@ import TreeModel from '../common/treemodel.js';
 import {FilterMatchMode} from '@primevue/core/api';
 import type { DataTableFilterMeta, DataTableRowSelectEvent } from 'primevue/datatable';
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { AnnotationItem, RdfObject, ResolvedObject } from '@/common/types';
+import { bindingToDisplayValue, type AnnotationItem, type RdfBox, type RdfObject, type ResolvedObject, type ResolverStatus } from '@/common/types';
 import type { TreeNode } from 'primevue/treenode';
 import type { RdfValueBinding } from '@/rdf4j-vue-components/src/common/types.js';
 
 const MAX_PROPERTY_ITEMS = 1000; // max number of properties displated in subject properties
-
-// status starts null, then becomes ResolvedObject (with optional reloadArtifact mutation)
-type PageStatus = (ResolvedObject & { reloadArtifact?: boolean }) | null;
 
 interface ComponentData {
     loading: boolean;
@@ -246,10 +243,10 @@ interface ComponentData {
     dragSelection: boolean;
     annotationIRIs: string[];
     annotationGroupIRIs: string[];
-    status: PageStatus;
+    status: ResolverStatus;
     artifactModel: RdfObject | null;
     pageModel: RdfObject | null;
-    rectangles: RdfObject[];
+    rectangles: RdfBox[];
     selectedRect: RdfObject | null;
     activeTab: number;
     subjectModel: RdfValueBinding[];
@@ -316,7 +313,7 @@ export default defineComponent({
             annotationGroupIRIs: [SEGM.hasTag], //properties to show in annotations (grouped)
 
             // Displayed data
-            status: null, //artifact status (currently displayed artifacts)
+            status: {}, //artifact status (currently displayed artifacts)
             artifactModel: null, //currently displayed artifact model
             pageModel: null, //currently displayed page model
             rectangles: [], //rectangle overlay on the page
@@ -469,8 +466,8 @@ export default defineComponent({
         getAnnotations(model: RdfValueBinding[]): AnnotationItem[] {
             let ret: AnnotationItem[] = [];
             for (let iri of this.annotationGroupIRIs) {
-                let values = [];
-                let rows = [];
+                let values: string[] = [];
+                let rows: RdfValueBinding[] = [];
                 for (let row of model) {
                     if (row.p.value === iri) {
                         values.push(row.v.value);
@@ -478,13 +475,13 @@ export default defineComponent({
                     }
                 }
                 if (values.length > 0) {
-                    ret.push({iri: iri, value: values, row: rows});
+                    ret.push({iri: iri, value: values, row: rows.map(bindingToDisplayValue)});
                 }
             }
             for (let iri of this.annotationIRIs) {
                 for (let row of model) {
                     if (row.p.value === iri) {
-                        ret.push({iri: iri, value: [row.v.value], row: [row]});
+                        ret.push({iri: iri, value: [row.v.value], row: [bindingToDisplayValue(row)]});
                     }
                 }
             }
