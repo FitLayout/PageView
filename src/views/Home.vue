@@ -19,8 +19,8 @@
         <RepositoryList v-if="repositoryList !== null && error === null"
             style="margin:auto"
             :repositoryList="repositoryList"
-            :createAvailable="storageStatus && storageStatus.createAvailable"
-            :anonymous="userInfo && userInfo.anonymous"
+            :createAvailable="storageStatus !== null && storageStatus.createAvailable"
+            :anonymous="userInfo !== null && userInfo.anonymous"
             v-on:created="repositoryCreated" />
 
         <div class="error" v-if="error">
@@ -40,7 +40,7 @@ import UserAvatar from '../components/UserAvatar.vue';
 import RepositoryList from '../components/RepositoryList.vue';
 
 import {RepositoryData} from '../common/repositorydata.js';
-import type { FLApiClient, StorageStatus, UserInfo } from '@/common/apiclient.js';
+import type { FLApiClient, FLRepositoryInfo, StorageStatus, UserInfo } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
 import type { RepositoryInfo } from '@/rdf4j-vue-components/src/index.js';
 
@@ -48,7 +48,7 @@ interface ComponentData {
     error: string | null;
     userInfo: UserInfo | null;
     storageStatus: StorageStatus | null;
-    repositoryList: RepositoryInfo[] | null;
+    repositoryList: FLRepositoryInfo[];
     menuItems: MenuItem[];
 }
 
@@ -69,8 +69,7 @@ export default defineComponent({
             error: null,
             userInfo: null,
             storageStatus: null,
-            repositoryList: null,
-
+            repositoryList: [],
             menuItems: []
         }
     },

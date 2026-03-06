@@ -15,10 +15,10 @@
 <script lang="ts">
 import { defineComponent, inject, type PropType } from 'vue';
 import MultiSelect from 'primevue/multiselect';
-import { IriDecoder } from '@/rdf4j-vue-components/src';
 import SEGM from '../ontology/SEGM.js';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
+import IriDecoder from '@/common/iridecoder.js';
 
 // XML namespaces
 const SVG = 'http://www.w3.org/2000/svg';

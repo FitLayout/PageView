@@ -14,40 +14,7 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue';
 import {stringColor, stringsGradient, inferTagName} from '../common/utils.js';
-import type { RdfObject } from '@/common/types';
-
-interface RdfBounds extends RdfObject {
-    positionX: number;
-    positionY: number;
-    width: number;
-    height: number;
-}
-
-interface RdfBox extends RdfObject {
-    bounds?: RdfBounds;
-    documentOrder: string | number;
-    hasTag?: RdfObject[];
-    positionX: number;
-    positionY: number;
-    visualX: number;
-    visualY: number;
-    visualWidth: number;
-    visualHeight: number;
-    text?: string;
-    fontFamily?: string;
-    fontSize?: number;
-    fontWeight?: number;
-    fontStyle?: number;
-    underline?: number;
-    lineThrough?: number;
-    color?: string;
-    backgroundColor?: string;
-    hasTopBorder?: RdfObject;
-    hasRightBorder?: RdfObject;
-    hasBottomBorder?: RdfObject;
-    hasLeftBorder?: RdfObject;
-    containsObject?: RdfObject[];
-}
+import type { RdfBox, RdfObject } from '@/common/types';
 
 interface ComponentData {
     page: RdfObject | null;

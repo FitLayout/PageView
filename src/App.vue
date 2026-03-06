@@ -23,7 +23,8 @@ export default defineComponent({
     },
     provide() {
         return {
-            apiClient: this.apiClient
+            apiClient: this.apiClient,
+            rdfUtil: this.rdfUtil
         }
     },
     created () {

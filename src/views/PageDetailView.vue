@@ -1,6 +1,6 @@
 <template>
     <div class="page-view-main">
-        <p class="backlink"><router-link :to="{name: 'repo', params: { repoId: this.$route.params.repoId }}">
+        <p class="backlink"><router-link :to="{name: 'repo', params: { repoId: repoId }}">
             <i class="pi pi-arrow-circle-left"></i>
             back to repository</router-link></p>
 
@@ -45,10 +45,10 @@ import SubjectInfo from '../components/SubjectInfo.vue';
 
 import BOX from '../ontology/BOX.js';
 import type { FLApiClient } from '@/common/apiclient.js';
-import type { RdfObject } from '@/common/types';
+import type { RdfPage } from '@/common/types';
 
 interface ComponentData {
-    page: RdfObject | null;
+    page: RdfPage | null;
     pngImage: string | null;
     loading: boolean;
 }
@@ -101,10 +101,10 @@ export default defineComponent({
 
         async fetchPageInfo() {
             this.loading = true;
-            this.page = await this.apiClient.fetchArtifactInfo(this.iri);
-            if (this.page._type !== BOX.Page) {
+            let art = await this.apiClient.fetchArtifactInfo(this.iri);
+            if (art && art._type === BOX.Page) {
                 // only Page artifacts are supported by this view
-                this.page = null;
+                this.page = art as RdfPage;
             }
             this.loading = false;
         },

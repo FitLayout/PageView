@@ -19,7 +19,8 @@ import Button from 'primevue/button';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import type { FLApiClient, TagInfo } from '@/common/apiclient.js';
-import type { RdfObject } from '@/common/types';
+import type { RdfObject, RdfBox } from '@/common/types';
+import type { RdfUtil } from '@/common/rdfutil';
 
 interface ComponentData {
     selectDiv: HTMLElement | null;
@@ -39,7 +40,7 @@ interface ComponentData {
     bottomBorderDiv: number;
     rightBorderDiv: number;
     canMove: boolean;
-    iriBoxes: RdfObject[];
+    iriBoxes: RdfBox[];
     newBounds: Record<string, number>;
     selectedTag: string | null;
     tags: TagInfo[];
@@ -51,14 +52,15 @@ export default defineComponent({
 
     props: {
         pageRectAreas: {
-            type: Array as PropType<RdfObject[] | null>,
+            type: Array as PropType<RdfBox[] | null>,
             default: null
         }
     },
 
     setup() {
         return {
-            apiClient: inject('apiClient') as FLApiClient
+            apiClient: inject('apiClient') as FLApiClient,
+            rdfUtil: inject('rdfUtil') as RdfUtil
         }
     },
 
@@ -171,29 +173,35 @@ export default defineComponent({
             this.rightBorderDiv =  0;
 
             //choose all boxes in selection and set coordinates for border div
-            let boxes = this.pageRectAreas;
+            const boxes = this.pageRectAreas;
+            if (boxes) {
+                boxes.forEach(box => {
+                    if (box.bounds 
+                        && box.bounds.positionX > this.startBorderX 
+                        && box.bounds.positionY > this.startBorderY 
+                        && (box.bounds.height + box.bounds.positionY) < this.endBorderY 
+                        && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
 
-            boxes.forEach(box => {
-                if (box.bounds.positionX > this.startBorderX && box.bounds.positionY > this.startBorderY && (box.bounds.height + box.bounds.positionY) < this.endBorderY && (box.bounds.width + box.bounds.positionX) < this.endBorderX) {
-                    //add iris to array of selected boxes
-                    this.iriBoxes.push(box);
+                        //add iris to array of selected boxes
+                        this.iriBoxes.push(box);
 
-                    //set borders of div
-                    if (box.bounds.positionX < this.leftBorderDiv) {
-                        this.leftBorderDiv = box.bounds.positionX;
+                        //set borders of div
+                        if (box.bounds.positionX < this.leftBorderDiv) {
+                            this.leftBorderDiv = box.bounds.positionX;
+                        }
+                        if (box.bounds.positionY < this.topBorderDiv) {
+                            this.topBorderDiv = box.bounds.positionY;
+                        }
+                        if ((box.bounds.width + box.bounds.positionX) > this.rightBorderDiv) {
+                            this.rightBorderDiv = box.bounds.width + box.bounds.positionX;
+                        }
+                        if ((box.bounds.height + box.bounds.positionY) > this.bottomBorderDiv) {
+                            this.bottomBorderDiv =  box.bounds.height + box.bounds.positionY;
+                        }
+                        isBox = true;	
                     }
-                    if (box.bounds.positionY < this.topBorderDiv) {
-                        this.topBorderDiv = box.bounds.positionY;
-                    }
-                    if ((box.bounds.width + box.bounds.positionX) > this.rightBorderDiv) {
-                        this.rightBorderDiv = box.bounds.width + box.bounds.positionX;
-                    }
-                    if ((box.bounds.height + box.bounds.positionY) > this.bottomBorderDiv) {
-                        this.bottomBorderDiv =  box.bounds.height + box.bounds.positionY;
-                    }
-                    isBox = true;	
-                }
-            });
+                });
+            }
 
             //Selection containts at least one box and selection div will be drawn
             if (isBox)
@@ -203,7 +211,7 @@ export default defineComponent({
                 let heightDiv = this.bottomBorderDiv - this.topBorderDiv;
                 //create border div that will be removed on click
                 this.borderDiv = document.createElement('div');
-                this.$refs.dragView.appendChild(this.borderDiv);
+                (this.$refs.dragView as HTMLElement).appendChild(this.borderDiv);
                 this.borderDiv.setAttribute('id', 'divBorder');
                 // document.documentElement.appendChild(this.borderDiv);
                 let divStyle = 'position:absolute;' + 'z-index:-1;' + 'top:'+ this.topBorderDiv + 'px;' + 'left:'+ this.leftBorderDiv +'px;' + 'height:' + heightDiv + 'px;' + 'width:' + widthDiv + 'px;' + 'background:rgba(100,100,255,0.2);' + 'outline: 1px solid rgb(100,100,255)';
@@ -217,16 +225,16 @@ export default defineComponent({
                     height: heightDiv,
                 }
                 //show button for adding selection to tree
-                document.getElementById("addIriObjectsToAreaButton").style.display = "block";
-                document.getElementById("addLabelToAreaText").style.display = "block";
-                document.getElementById("addTagToAreaDropdown").style.display = "flex"; //dropdown is rendered wrong as block, flex must be used
+                document.getElementById("addIriObjectsToAreaButton")!.style.display = "block";
+                document.getElementById("addLabelToAreaText")!.style.display = "block";
+                document.getElementById("addTagToAreaDropdown")!.style.display = "flex"; //dropdown is rendered wrong as block, flex must be used
                 
             }
             else {
                 //hide button for adding selection to tree
-                document.getElementById("addIriObjectsToAreaButton").style.display = "none";
-                document.getElementById("addLabelToAreaText").style.display = "none";
-                document.getElementById("addTagToAreaDropdown").style.display = "none";
+                document.getElementById("addIriObjectsToAreaButton")!.style.display = "none";
+                document.getElementById("addLabelToAreaText")!.style.display = "none";
+                document.getElementById("addTagToAreaDropdown")!.style.display = "none";
 
             }		
         },
@@ -248,12 +256,12 @@ export default defineComponent({
             //array of areas
             let sel = this.iriBoxes;
             // iri of whole artifact
-            let artIri = sel[0].belongsTo._iri;
+            let artIri = (sel[0].belongsTo as RdfObject)._iri;
             //iri of parent area
-            let parent = sel[0].isChildOf._iri;
+            let parent = (sel[0].isChildOf as RdfObject)._iri;
 
             //array if children iris
-            let children = [];
+            let children: string[] = [];
             //new ID of area is concatenation of whole artifact ID and all children IDs
             let newID = artIri.concat('#');
             sel.forEach(area => {
@@ -301,14 +309,14 @@ export default defineComponent({
             console.log(data);
 
             //create new area and update tree view
-            await this.$root.rdfUtil.createSuperArea(artIri, parent, children, data);
+            await this.rdfUtil.createSuperArea(artIri, parent, children, data);
             await this.apiClient.refreshArtifact(artIri);
             this.$emit('update');	
 
             //hide buttons and controls for adding selection to tree
-            document.getElementById("addIriObjectsToAreaButton").style.display = "none";
-            document.getElementById("addLabelToAreaText").style.display = "none";
-            document.getElementById("addTagToAreaDropdown").style.display = "none";
+            document.getElementById("addIriObjectsToAreaButton")!.style.display = "none";
+            document.getElementById("addLabelToAreaText")!.style.display = "none";
+            document.getElementById("addTagToAreaDropdown")!.style.display = "none";
 
 
             //remove div of selected boxes

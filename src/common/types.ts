@@ -116,3 +116,49 @@ export type ResolvedObject =
         artifactIri: string;
         artifact: RdfObject;
       };
+
+/**
+ * A RDF object representing rectangle bounds.
+ */
+export interface RdfPage extends RdfObject {
+    title?: string;
+}
+
+    /**
+ * A RDF object representing rectangle bounds.
+ */
+export interface RdfBounds extends RdfObject {
+    positionX: number;
+    positionY: number;
+    width: number;
+    height: number;
+}
+
+/**
+ * A RDF object representing a rectangle displatyed in the page.
+ */
+export interface RdfBox extends RdfObject {
+    bounds?: RdfBounds;
+    documentOrder: string | number;
+    hasTag?: RdfObject[];
+    positionX: number;
+    positionY: number;
+    visualX: number;
+    visualY: number;
+    visualWidth: number;
+    visualHeight: number;
+    text?: string;
+    fontFamily?: string;
+    fontSize?: number;
+    fontWeight?: number;
+    fontStyle?: number;
+    underline?: number;
+    lineThrough?: number;
+    color?: string;
+    backgroundColor?: string;
+    hasTopBorder?: RdfObject;
+    hasRightBorder?: RdfObject;
+    hasBottomBorder?: RdfObject;
+    hasLeftBorder?: RdfObject;
+    containsObject?: RdfObject[];
+}
