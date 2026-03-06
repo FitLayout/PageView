@@ -157,7 +157,6 @@ export default defineComponent({
                     }
                 }
                 this.selection = sel;
-                console.log('Services selection:', this.selection);
                 if (this.grouped) {
                     this.groupList = this.createGroups(this.selList);
                 }
