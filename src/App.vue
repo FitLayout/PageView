@@ -120,6 +120,6 @@ body {
 
 #app {
     color: var(--p-text-color);
-    background-color: var(--p-surface-50);
+    background-color: var(--p-surface-0);
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <Card style="width: 50em; margin: 1em;">
+    <Card id="repo-list-card" style="width: 50em; margin: 1em;">
         <!-- <template #header>
             <img alt="user header" src="demo/images/usercard.png">
         </template> -->
@@ -209,12 +209,20 @@ export default defineComponent({
 </script>
 
 <style>
+#repo-list-card .p-card-title {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+#repo-list-card .p-card-footer {
+    padding: 1em 0 0;
+}
 .repo-list td {
     border: 1px solid var(--p-surface-300);
     padding: 1em 1em;
 }
 .repo-list .repo-id {
     text-align: left;
+    min-width: 10em;
 }
 .repo-list .repo-id span {
     font-weight: bold;

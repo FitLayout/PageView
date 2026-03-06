@@ -11,7 +11,14 @@
                                 <div class="option-descr">{{opt.option.description}}</div>
                             </div>
                         </template>
-                        <template #value="opt" v-if="selection">{{selection[opt.value].name}} ({{selection[opt.value].id}})</template>
+                        <template #value="opt">
+                            <div  v-if="selection && opt && opt.value && selection[opt.value]">
+                                {{selection[opt.value].name}} ({{selection[opt.value].id}})
+                            </div>
+                            <div v-else>
+                                ---
+                            </div>
+                        </template>
                     </Select>
                     <Select v-model="key" v-else :options="selList" optionLabel="name" optionValue="id">
                         <template #option="opt">
@@ -150,6 +157,7 @@ export default defineComponent({
                     }
                 }
                 this.selection = sel;
+                console.log('Services selection:', this.selection);
                 if (this.grouped) {
                     this.groupList = this.createGroups(this.selList);
                 }

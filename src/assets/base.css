@@ -1,13 +1,8 @@
 @layer tailwind-base, primevue, tailwind-utilities;
 
-@layer tailwind-base {
-  @tailwind base;
-}
-
-@layer tailwind-utilities {
-  @tailwind components;
-  @tailwind utilities;
-}
+/*@import "tailwindcss/preflight" layer(tailwind-base);*/
+@import "tailwindcss/theme" layer(tailwind-base);
+@import "tailwindcss/utilities" layer(tailwind-utilities);
 
 html {
     font-size: 11pt;

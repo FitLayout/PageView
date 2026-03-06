@@ -12,21 +12,21 @@
 
         <div class="render-panel" v-if="!isReadOnly">
             <h2>Render new page</h2>
-            <div class="p-fluid formgrid grid grid-cols-12 gap-4">
-                <div class="field col-span-12">
+            <div class="grid grid-cols-12 gap-3">
+                <div class="flex flex-col gap-1 col-span-12">
                     <label for="url">URL</label>
                     <InputText id="url" class="w-full" type="text" placeholder="http://" v-model="renderUrl" />
                 </div>
-                <div class="field col-span-4">
+                <div class="flex flex-col gap-1 col-span-4">
                     <label for="width">Page width</label>
                     <InputNumber id="width" class="w-full" type="decimal" v-model="renderWidth" showButtons :min="10" :max="10000" :step="10" />
                 </div>
-                <div class="field col-span-4">
+                <div class="flex flex-col gap-1 col-span-4">
                     <label for="height">Height</label>
                     <InputNumber id="height" class="w-full" type="decimal" v-model="renderHeight" showButtons :min="10" :max="10000" :step="10" />
                 </div>
-                <div class="field col-span-12">
-                    <Button @click="renderPage()" class="justify-content-center w-full" :disabled="loading">
+                <div class="col-span-12">
+                    <Button @click="renderPage()" class="justify-center w-full" :disabled="loading">
                         <span class="font-bold">Render</span>
                         <ProgressSpinner v-if="loading" style="width:1.5em;height:1.5em;margin:0" />
                     </Button>
@@ -66,7 +66,7 @@
                 </TabPanel>
                 <TabPanel value="1">
                     <div class="context-view">
-                        <ContextTable />
+                        <ContextTable ref="contextTable" />
                     </div>
                 </TabPanel>
                 <TabPanel value="2">
@@ -102,6 +102,7 @@ import ArtTable from '../components/ArtTable.vue';
 import TagConfig from '../components/TagConfig.vue';
 import { ContextTable, PrefixConfig } from '@/rdf4j-vue-components/src';
 import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
+import type { MenuItem } from 'primevue/menuitem';
 
 interface ComponentData {
     renderUrl: string;
@@ -109,6 +110,7 @@ interface ComponentData {
     renderHeight: number;
     loading: boolean;
     error: string | null;
+    serviceMenu: MenuItem[];
 }
 
 export default defineComponent({
@@ -144,7 +146,16 @@ export default defineComponent({
             renderWidth: 1200,
             renderHeight: 800,
             loading: false,
-            error: null
+            error: null,
+
+            serviceMenu: [
+                {
+                    label: 'Re-initialize metadata contexts',
+                    command: async () => {
+                        await this.reinitMetadata();
+                    }
+                }
+            ]
         }
     },
     computed: {
@@ -157,6 +168,7 @@ export default defineComponent({
     },
     created () {
         this.loading = false;
+        //(this.$refs.serviceMenu as typeof ContextTable).serviceMenu = this.serviceMenu; //TODO how to set serviceMenu for ContextTable?
     },
     methods: {
 
@@ -187,6 +199,25 @@ export default defineComponent({
             return false;
         },
 
+        async reinitMetadata() {
+            this.$confirm.require({
+                group: 'confirmContext',
+                message: 'This will replace the metadata contexts by their default contents. Proceed?',
+                header: 'Re-initialize metadata',
+                icon: 'pi pi-exclamation-triangle',
+                accept: async () => {
+                    try {
+                        await this.apiClient.forceInitMetadata();
+                    } catch (error) {
+                        console.error('Error!', error);
+                    }
+                    (this.$refs.serviceMenu as typeof ContextTable).update();
+                },
+                reject: () => {
+                }
+            });
+        }
+
     }
 })
 </script>
@@ -209,5 +240,8 @@ export default defineComponent({
 }
 .artifact-view {
     margin-top: 2em;
+}
+.repository-view-main .p-inputnumber-stacked .p-inputnumber-input { /* Hack: remove strange padding specified in primevue */
+    padding-inline-end: 0;
 }
 </style>
