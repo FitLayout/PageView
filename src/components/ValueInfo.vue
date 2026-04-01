@@ -10,7 +10,7 @@
                 @show-iri="showIri"
                 @hover-iri="hoverIri"
                 @leave-iri="leaveIri" />
-            <span v-if="typeInfo.name" class="badge">{{typeInfo.name}}</span>
+            <span v-if="typeInfo.name !== 'Unknown'" class="badge">{{typeInfo.name}}</span>
             <i v-if="showExt && extIcon" v-tooltip="extTooltip" class="i-action" :class="extIcon" 
                 style="cursor: pointer" @click="showExternal" />
         </span>
