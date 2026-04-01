@@ -6,8 +6,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue';
-import { IriDecoder } from '@/rdf4j-vue-components/src';
+import { defineComponent, inject, type PropType } from 'vue';
+import type { FLApiClient } from '@/common/apiclient.js';
 
 interface ComponentData {
     shortForm: string | null;
@@ -26,6 +26,11 @@ export default defineComponent({
         }
     },
     emits: ['show-iri', 'hover-iri', 'leave-iri'],
+    setup() {
+        return {
+            apiClient: inject('apiClient') as FLApiClient
+        }
+    },
     data (): ComponentData {
         return {
             shortForm: null
@@ -38,8 +43,8 @@ export default defineComponent({
         iri: 'update'
     },
     methods: {
-        update(): void {
-            let dec = new IriDecoder({});
+        async update(): Promise<void> {
+            const dec = await this.apiClient.getIriDecoder();
             this.shortForm = dec.encodeIri(this.iri);
         },
 

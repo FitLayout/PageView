@@ -61,7 +61,6 @@ import Iri from '../components/Iri.vue';
 
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
-import { IriDecoder } from '@/rdf4j-vue-components/src';
 import type { MenuItem } from 'primevue/menuitem';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
@@ -284,8 +283,8 @@ export default defineComponent({
             });
         },
 
-        deleteArtifact(iri: string): void {
-            let dec = new IriDecoder({});
+        async deleteArtifact(iri: string): Promise<void> {
+            const dec = await this.apiClient.getIriDecoder();
             let shortIri = dec.encodeIri(iri);
             this.$confirm.require({
                 group: 'confirmDeleteArtifact',

@@ -1,38 +1,14 @@
-export default class IriDecoder {
+import { IriDecoder } from '@/rdf4j-vue-components/src';
 
-    namespaces: { [key: string]: string } = {
-        rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-        rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
-        xsd: 'http://www.w3.org/2001/XMLSchema#',
-        owl: 'http://www.w3.org/2002/07/owl#',
-        b: 'http://fitlayout.github.io/ontology/render.owl#',
-        a: 'http://fitlayout.github.io/ontology/segmentation.owl#',
-        fl: 'http://fitlayout.github.io/ontology/fitlayout.owl#',
-        r: 'http://fitlayout.github.io/resource/'
-    };
+export default class FLIriDecoder extends IriDecoder {
 
-    decodeIri(shortForm: string): string {
-        const si = shortForm.indexOf(':');
-        if (si > 0) {
-            const prefix = shortForm.substring(0, si);
-            for (let key in this.namespaces) {
-                if (prefix === key) {
-                    const suffix = shortForm.substring(si + 1);
-                    return this.namespaces[key] + suffix;
-                }
-            }
-        }
-        return shortForm;
-    }
-
-    encodeIri(longForm: string): string {
-        for (let key in this.namespaces) {
-            const iprefix = this.namespaces[key];
-            if (longForm.indexOf(iprefix) === 0) {
-                return key + ':' + longForm.substring(iprefix.length);
-            }
-        }
-        return longForm;
+    constructor() {
+        super({
+            b: 'http://fitlayout.github.io/ontology/render.owl#',
+            a: 'http://fitlayout.github.io/ontology/segmentation.owl#',
+            fl: 'http://fitlayout.github.io/ontology/fitlayout.owl#',
+            r: 'http://fitlayout.github.io/resource/'
+        });
     }
 
 }

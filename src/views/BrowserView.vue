@@ -76,7 +76,6 @@ import PageView from '../components/PageView.vue';
 import ArtTree from '../components/ArtTree.vue';
 import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
-import { IriDecoder } from '@/rdf4j-vue-components/src';
 import type { FLApiClient, FLRepositoryInfo, UserInfo } from '@/common/apiclient.js';
 import type { RdfObject, ResolvedObject } from '@/common/types';
 
@@ -203,7 +202,7 @@ export default defineComponent({
         },
 
         async deleteArtifact(iri: string) {
-            let dec = new IriDecoder({});
+            const dec = await this.apiClient.getIriDecoder();
             let shortIri = dec.encodeIri(iri);
             this.$confirm.require({
                 message: 'Are you sure to delete the artifact ' + shortIri + ' and all derived artifacts?',

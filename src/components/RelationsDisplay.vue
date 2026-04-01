@@ -18,7 +18,7 @@ import MultiSelect from 'primevue/multiselect';
 import SEGM from '../ontology/SEGM.js';
 import type { FLApiClient } from '@/common/apiclient.js';
 import type { RdfObject } from '@/common/types';
-import IriDecoder from '@/common/iridecoder.js';
+import type { IriDecoder } from '@/rdf4j-vue-components/src';
 
 // XML namespaces
 const SVG = 'http://www.w3.org/2000/svg';
@@ -119,7 +119,7 @@ export default defineComponent({
                     ?d segm:hasRelationType ?p
                 }`;
             let resp = await this.apiClient.selectQuery(query);
-            let dec = new IriDecoder();
+            const dec = await this.apiClient.getIriDecoder();
             let rels = [];
             if (resp && resp.results && resp.results.bindings) {
                 for (let binding of resp.results.bindings) {
@@ -164,7 +164,8 @@ export default defineComponent({
         async redraw(): Promise<void> {
             this.areaRects = {};
             this.clear();
-            this.drawConnections();
+            const dec = await this.apiClient.getIriDecoder();
+            this.drawConnections(dec);
             this.updateDom();
         },
 
@@ -261,7 +262,7 @@ export default defineComponent({
             return rect;
         },
 
-        drawConnection(a1: RdfObject, a2: RdfObject, rel: Connection): SvgTripleElement {
+        drawConnection(a1: RdfObject, a2: RdfObject, rel: Connection, dec: IriDecoder): SvgTripleElement {
             const b1 = a1.bounds as any;
             const b2 = a2.bounds as any;
             const x1 = b1.positionX + (b1.width / 2);
@@ -309,7 +310,6 @@ export default defineComponent({
                 thisObj.elementLeft(line);
             };
 
-            let dec = new IriDecoder();
             let reltype = dec.encodeIri(rel.type);
             let title = document.createElementNS(SVG, 'title');
             title.appendChild(document.createTextNode(reltype + '; w=' + rel.w));
@@ -356,7 +356,7 @@ export default defineComponent({
             return rels;
         },
 
-        drawConnections(): void
+        drawConnections(dec: IriDecoder): void
         {
             let maxw = 0;
             let maxh = 0;
@@ -372,7 +372,7 @@ export default defineComponent({
                     const r2 = this.drawAreaByIri(iri2);
 
                     if (!this.selectedRect || iri1 === this.selectedRect._iri) { // if a rect is selected, use only relations that include that box
-                        const con = this.drawConnection(a1, a2, rel);
+                        const con = this.drawConnection(a1, a2, rel, dec);
                         const triple: ConnectionTriple = {r1: r1!, con, r2: r2!};
                         this.connectionTriples.push(triple);
                         r1!.triples.push(triple);

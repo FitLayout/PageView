@@ -46,9 +46,9 @@ import BOX from '../ontology/BOX.js';
 import SEGM from '../ontology/SEGM.js';
 import RDF from '../ontology/RDF.js';
 import RDFS from '../ontology/RDFS.js';
-import IriDecoder from '../common/iridecoder.ts';
 import {stringColor, inferTagName, inferTagType} from '../common/utils.js';
 import type { FLApiClient } from '@/common/apiclient.js';
+import type { IriDecoder } from '@/rdf4j-vue-components/src';
 import type { DisplayValue } from '@/rdf4j-vue-components/src/common/types';
 
 interface ComponentData {
@@ -60,6 +60,7 @@ interface ComponentData {
     displayValue: any;
     displayStyle: string | null;
     displayTooltip: any;
+    iriDecoder: IriDecoder | null;
 }
 
 interface TypeInfo {
@@ -123,7 +124,8 @@ export default defineComponent({
             typeIri: null,
             displayValue: null,
             displayStyle: null,
-            displayTooltip: null
+            displayTooltip: null,
+            iriDecoder: null
         }
     },
     computed: {
@@ -147,8 +149,7 @@ export default defineComponent({
         literalTooltip(): string {
             let s = '';
             if (this.data.v.datatype) {
-                const dec = new IriDecoder();
-                s = '(' + dec.encodeIri(this.data.v.datatype) + ') ';
+                s = '(' + (this.iriDecoder?.encodeIri(this.data.v.datatype) ?? this.data.v.datatype) + ') ';
             }
             let val = s + this.data.v.value.toString(); 
             //limit the displayed length
@@ -158,7 +159,8 @@ export default defineComponent({
             return val;
         }
     },
-    created () {
+    async created () {
+        this.iriDecoder = await this.apiClient.getIriDecoder();
         this.update();
     },
     watch: {

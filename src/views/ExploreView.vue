@@ -19,7 +19,6 @@ import Select from 'primevue/select';
 import SubjectInfo from '../components/SubjectInfo.vue';
 import SubjectReferences from '../components/SubjectReferences.vue';
 
-import IriDecoder from '@/common/iridecoder.ts';
 import type { FLApiClient } from '@/common/apiclient.ts';
 
 interface ComponentData {
@@ -67,9 +66,9 @@ export default defineComponent({
         '$route.params.iri': 'update'
     },
     methods: {
-        update(): void {
+        async update(): Promise<void> {
             if (this.iri) {
-                let dec = new IriDecoder();
+                const dec = await this.apiClient.getIriDecoder();
                 this.destIri = dec.encodeIri(this.iri as string);
             } else {
                 this.destIri = '';
@@ -81,8 +80,8 @@ export default defineComponent({
             this.$router.push({name: 'explore', params: { repoId: this.repoId, iri: iri }});
         },
 
-        changeIri(): void {
-            let dec = new IriDecoder();
+        async changeIri(): Promise<void> {
+            const dec = await this.apiClient.getIriDecoder();
             let iri = dec.decodeIri(this.destIri ?? '');
             this.showIri(iri);
         }

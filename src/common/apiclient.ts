@@ -1,5 +1,5 @@
 import {Model as BoxModel} from '../common/boxMappers';
-import IriDecoder from './iridecoder';
+import FLIriDecoder from './iridecoder';
 import type { ApiClient } from '@/rdf4j-vue-components/src/common/apiclient';
 import type { AskQueryResult, ContextDescription, RdfValueBinding, RdfValueSpec, RepositoryInfo, SavedQuery, SelectQueryResult, UpdateQueryResult } from '@/rdf4j-vue-components/src/common/types';
 import type RDFModel from './rdfmodel';
@@ -68,7 +68,7 @@ export class FLApiClient implements ApiClient {
     serverUrl: string = SERVER_ROOT;
     serverLogin: string | null = null;
 
-    private cachedIriDecoder: IriDecoder | null = null;
+    private cachedIriDecoder: FLIriDecoder | null = null;
 
     repositoryRoot(): string {
         return SERVER_ROOT + '/r/' + this.currentRepo;
@@ -848,9 +848,9 @@ export class FLApiClient implements ApiClient {
 
     //================================================================================
 
-    async getIriDecoder(): Promise<IriDecoder> {
+    async getIriDecoder(): Promise<FLIriDecoder> {
         if (!this.cachedIriDecoder) {
-            this.cachedIriDecoder = new IriDecoder();
+            this.cachedIriDecoder = new FLIriDecoder();
         }
         return this.cachedIriDecoder;
     }
