@@ -169,7 +169,8 @@
                         </div>
                     </div>
                     <div class="page-contents">
-                        <Page ref="page" :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
+                        <Page ref="page" v-if="pageModel"
+                            :pageModel="pageModel" :rectangles="rectangles" :zoom="zoom"
                             :screenshot="screenshot"
                             :outlines="outlines"
                             :rectSelection="rectSelection"

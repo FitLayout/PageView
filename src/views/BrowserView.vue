@@ -55,8 +55,8 @@
             </div>
 
             <PageView :subjectIri="iri" v-if="iri" v-on:status-update="update" />
-            <div class="empty-page w-12 flex align-items-center justify-content-center h-100" v-if="!iri">
-                <p class="text-center p-text-secondary">No page selected</p>
+            <div class="empty-page w-full flex items-center justify-center h-full" v-if="!iri">
+                <p class="text-center text-gray-400">No page selected</p>
             </div>
 
         </div>
@@ -141,14 +141,18 @@ export default defineComponent({
         }
     },
     computed: {
-        iri(): string {
-            return this.$route.params.iri.toString();
+        iri(): string | null {
+            return this.$route.params.iri ? this.$route.params.iri.toString() : null;
         },
-        treeSelectedIri(): string {
+        treeSelectedIri(): string | null {
             if (this.currentArtifactIri) {
                 return this.currentArtifactIri; //obtained by resolving
             } else {
-                return this.$route.params.iri.toString(); //nothing obtained yet; use the URL-specified iri 
+                if (this.$route.params.iri) {
+                    return this.$route.params.iri.toString(); //nothing obtained yet; use the URL-specified iri 
+                } else {
+                    return null;
+                }
             }
         },
         repoId(): string {
