@@ -20,7 +20,7 @@ export default defineComponent({
     },
     props: {
         descr: {
-            type: Array as PropType<ParamDescr[]>,
+            type: Object as PropType<Record<string, ParamDescr>>,
             required: true
         },
         values: {

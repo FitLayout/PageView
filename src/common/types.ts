@@ -46,7 +46,7 @@ export interface ServiceInfo {
     category?: string;
     consumes?: string;
     produces?: string;
-    params?: ParamDescr[];
+    params?: Record<string, ParamDescr>;
 }
 
 /**
