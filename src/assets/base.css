@@ -43,6 +43,9 @@ html:root {
     --p-button-secondary-border-color: var(--p-slate-300);
     --p-button-secondary-hover-background: var(--p-slate-400);
     --p-button-secondary-hover-border-color: var(--p-slate-400);
+    /* number input padding fix */
+    --p-inputnumber-button-width: 1em;
+    --p-form-field-padding-x: 0.5em;
 }
 
 /* Some default element style, currently not used (we use the browser defaults) */
